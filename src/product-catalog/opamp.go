@@ -14,11 +14,6 @@ import (
 	"github.com/open-telemetry/opamp-go/protobufs"
 )
 
-// startOpAmpClient reports this service's status to the demo's OpAMP server,
-// demonstrating OpAMP as a control plane for an SDK-instrumented application
-// alongside the Collector. It returns a nil client (and no error) when
-// OPAMP_SERVER_ENDPOINT is not set, i.e. when running without the observability
-// stack.
 func startOpAmpClient(ctx context.Context, serviceName string) (client.OpAMPClient, error) {
 	endpoint := os.Getenv("OPAMP_SERVER_ENDPOINT")
 	if endpoint == "" {

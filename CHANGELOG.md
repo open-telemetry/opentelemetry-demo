@@ -88,7 +88,7 @@ version section directly below the marker and deletes them.
   `opamp-go` client, demonstrating OpAMP as a control plane for an
   SDK-instrumented application alongside the Collector. Enabled only when
   running with the observability stack.
-  ([#PR](https://github.com/open-telemetry/opentelemetry-demo/pull/PR))
+  ([#3657](https://github.com/open-telemetry/opentelemetry-demo/pull/3657))
 * [email] Set `event_name` on the order-confirmation log record
   (`email.confirmation_sent`), using the OTel Ruby Logs API's `event_name`
   parameter directly.
