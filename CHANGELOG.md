@@ -7,67 +7,6 @@ the release.
 
 ## Unreleased
 
-* [load-generator] Lower the `WebsiteBrowserUser` weight so only a small
-  proportion of virtual users spawn a persistent headless Chromium process
-  when browser traffic is enabled, instead of scaling 1:1 with `LOCUST_USERS`
-  and exhausting the container's memory limit. Ratio is configurable via the
-  new `LOCUST_HTTP_USER_WEIGHT` and `LOCUST_BROWSER_USER_WEIGHT` variables,
-  documented in the load generator's README
-  ([#2678](https://github.com/open-telemetry/opentelemetry-demo/issues/2678))
-* [email] Set `event_name` on the order-confirmation log record
-  (`email.confirmation_sent`), using the OTel Ruby Logs API's `event_name`
-  parameter directly.
-* [cart] Make the `cartFailure` feature flag rate configurable as percentage
-  (off - no failures, 10%, 25%, 50%, 75%, 90%, 100% - always fail) instead of
-  a fixed all-or-nothing toggle, matching the `paymentFailure` pattern
-  ([#1721](https://github.com/open-telemetry/opentelemetry-demo/issues/1721))
-* [frontend] Avoid hardcoded `localhost:8080` image URLs during SSR and
-  normalize leading slashes in the custom image loader
-  ([#3582](https://github.com/open-telemetry/opentelemetry-demo/pull/3582))
-* [load-generator] Fix `synthetic_request` (and `session.id`) baggage being
-  discarded before reaching any backend service, due to the baggage-bearing
-  context being attached inside a span's `with` block so that the span's exit
-  detached past it. Regression introduced in #2265
-  ([#3627](https://github.com/open-telemetry/opentelemetry-demo/pull/3627))
-* [payment] Annotate synthetic load-generator payment requests with the
-  `user_agent.synthetic.type` semantic convention attribute.
-  ([#3613](https://github.com/open-telemetry/opentelemetry-demo/pull/3613))
-* [grafana] Add exemplar-to-logs navigation: metric exemplars now link to the
-  Demo Dashboard's Log Records panel, filtered to the exemplar's trace ID. The
-  `Service` filter is now multi-select with an "All" option so the trace's
-  logs across every service involved are shown by default, with the option to
-  narrow back down to a single service.
-  ([#3617](https://github.com/open-telemetry/opentelemetry-demo/pull/3617))
-* [checkout] Migrate OTLP exporters (traces, metrics, logs) from gRPC to
-  http/protobuf
-  ([#3618](https://github.com/open-telemetry/opentelemetry-demo/pull/3618))
-* [checkout] Annotate synthetic load-generator orders with the
-  `user_agent.synthetic.type` semantic convention attribute on the `PlaceOrder`
-  span.
-  ([#3628](https://github.com/open-telemetry/opentelemetry-demo/pull/3628))
-* [shipping] Migrate OTLP exporters (traces, metrics, logs) from gRPC to
-  http/protobuf
-  ([#3619](https://github.com/open-telemetry/opentelemetry-demo/pull/3619))
-* [grafana] Add a "Self-Observability" dashboard that visualizes the internal
-  metrics emitted by the OpenTelemetry SDKs themselves (experimental
-  `otel.sdk.*` semantic conventions), and opt the `ad`, `fraud-detection` and
-  `kafka` (Java) services in to SDK self-monitoring via
-  `OTEL_EXPERIMENTAL_SDK_TELEMETRY_VERSION=latest`.
-  The dashboard is driven by a `Service` template variable, so any additional
-  service that opts in appears automatically.
-  ([#3620](https://github.com/open-telemetry/opentelemetry-demo/pull/3620),
-  [#3653](https://github.com/open-telemetry/opentelemetry-demo/pull/3653))
-* [accounting] Run the Kafka consumer as a hosted background service so process
-  shutdown can stop the consumer cleanly
-  ([#3608](https://github.com/open-telemetry/opentelemetry-demo/pull/3608))
-* [collector] Add `gen_ai_normalizer` processor to the traces pipeline to
-  convert OpenLLMetry/Traceloop instrumentation telemetry (from the agent
-  service) into official GenAI semantic conventions (`gen_ai.*` attributes).
-  Bump collector-contrib to v0.155.0 which includes the processor
-  ([#3526](https://github.com/open-telemetry/opentelemetry-demo/issues/3526))
-* [opamp] Add an OpAMP server and configure the Collector to report status,
-  version, attributes, and effective configuration through the OpAMP extension
-  ([#3566](https://github.com/open-telemetry/opentelemetry-demo/pull/3566))
 * [llm] Increase `llm` service memory limit from 50M to 100M to prevent a
   startup restart loop caused by the container exceeding its memory limit
   ([#2944](https://github.com/open-telemetry/opentelemetry-demo/issues/2944))
@@ -319,6 +258,9 @@ the release.
   ([#3521](https://github.com/open-telemetry/opentelemetry-demo/pull/3521))
 * [cart,accounting] Use source-generated logging with EventName
   ([#3559](https://github.com/open-telemetry/opentelemetry-demo/pull/3559))
+* [opamp] Add an OpAMP server and configure the Collector to report status,
+  version, attributes, and effective configuration through the OpAMP extension
+  ([#3566](https://github.com/open-telemetry/opentelemetry-demo/pull/3566))
 * [cleanup] Remove loadgen traffic to product reviews
   ([#3567](https://github.com/open-telemetry/opentelemetry-demo/pull/3567))
 * [cleanup] Remove product reviews from frontend
@@ -343,6 +285,9 @@ the release.
   ([#3573](https://github.com/open-telemetry/opentelemetry-demo/pull/3573))
 * [shipping] Add host resource detection to enrich SDK resource metadata
   ([#3581](https://github.com/open-telemetry/opentelemetry-demo/pull/3581))
+* [frontend] Avoid hardcoded `localhost:8080` image URLs during SSR and
+  normalize leading slashes in the custom image loader
+  ([#3582](https://github.com/open-telemetry/opentelemetry-demo/pull/3582))
 * [cleanup] Remove product-reviews service
   ([#3587](https://github.com/open-telemetry/opentelemetry-demo/pull/3587))
 * [cleanup] Remove LLM service
@@ -350,8 +295,66 @@ the release.
 * [cleanup] Remove tracetest
 ([#3602](https://github.com/open-telemetry/opentelemetry-demo/pull/3602),
   [#3603](https://github.com/open-telemetry/opentelemetry-demo/pull/3603))
+* [accounting] Run the Kafka consumer as a hosted background service so process
+  shutdown can stop the consumer cleanly
+  ([#3608](https://github.com/open-telemetry/opentelemetry-demo/pull/3608))
 * [chore] Add tests to agentic services
   ([#3611](https://github.com/open-telemetry/opentelemetry-demo/pull/3611))
+* [payment] Annotate synthetic load-generator payment requests with the
+  `user_agent.synthetic.type` semantic convention attribute.
+  ([#3613](https://github.com/open-telemetry/opentelemetry-demo/pull/3613))
+* [grafana] Add exemplar-to-logs navigation: metric exemplars now link to the
+  Demo Dashboard's Log Records panel, filtered to the exemplar's trace ID. The
+  `Service` filter is now multi-select with an "All" option so the trace's
+  logs across every service involved are shown by default, with the option to
+  narrow back down to a single service.
+  ([#3617](https://github.com/open-telemetry/opentelemetry-demo/pull/3617))
+* [checkout] Migrate OTLP exporters (traces, metrics, logs) from gRPC to
+  http/protobuf
+  ([#3618](https://github.com/open-telemetry/opentelemetry-demo/pull/3618))
+* [shipping] Migrate OTLP exporters (traces, metrics, logs) from gRPC to
+  http/protobuf
+  ([#3619](https://github.com/open-telemetry/opentelemetry-demo/pull/3619))
+* [grafana] Add a "Self-Observability" dashboard that visualizes the internal
+  metrics emitted by the OpenTelemetry SDKs themselves (experimental
+  `otel.sdk.*` semantic conventions), and opt the `ad`, `fraud-detection` and
+  `kafka` (Java) services in to SDK self-monitoring via
+  `OTEL_EXPERIMENTAL_SDK_TELEMETRY_VERSION=latest`.
+  The dashboard is driven by a `Service` template variable, so any additional
+  service that opts in appears automatically.
+  ([#3620](https://github.com/open-telemetry/opentelemetry-demo/pull/3620),
+  [#3653](https://github.com/open-telemetry/opentelemetry-demo/pull/3653))
+* [cart] Make the `cartFailure` feature flag rate configurable as percentage
+  (off - no failures, 10%, 25%, 50%, 75%, 90%, 100% - always fail) instead of
+  a fixed all-or-nothing toggle, matching the `paymentFailure` pattern
+  ([#3625](https://github.com/open-telemetry/opentelemetry-demo/pull/3625))
+* [collector] Add `gen_ai_normalizer` processor to the traces pipeline to
+  convert OpenLLMetry/Traceloop instrumentation telemetry (from the agent
+  service) into official GenAI semantic conventions (`gen_ai.*` attributes).
+  Bump collector-contrib to v0.155.0 which includes the processor
+  ([#3526](https://github.com/open-telemetry/opentelemetry-demo/issues/3526))
+* [load-generator] Fix `synthetic_request` (and `session.id`) baggage being
+  discarded before reaching any backend service, due to the baggage-bearing
+  context being attached inside a span's `with` block so that the span's exit
+  detached past it. Regression introduced in #2265
+  ([#3627](https://github.com/open-telemetry/opentelemetry-demo/pull/3627))
+* [checkout] Annotate synthetic load-generator orders with the
+  `user_agent.synthetic.type` semantic convention attribute on the `PlaceOrder`
+  span.
+  ([#3628](https://github.com/open-telemetry/opentelemetry-demo/pull/3628))
+* [load-generator] Lower the `WebsiteBrowserUser` weight so only a small
+  proportion of virtual users spawn a persistent headless Chromium process
+  when browser traffic is enabled, instead of scaling 1:1 with `LOCUST_USERS`
+  and exhausting the container's memory limit. Ratio is configurable via the
+  new `LOCUST_HTTP_USER_WEIGHT` and `LOCUST_BROWSER_USER_WEIGHT` variables,
+  documented in the load generator's README
+  ([#3632](https://github.com/open-telemetry/opentelemetry-demo/pull/3632))
+* [email] Set `event_name` on the order-confirmation log record
+  (`email.confirmation_sent`), using the OTel Ruby Logs API's `event_name`
+  parameter directly.
+  ([#3633](https://github.com/open-telemetry/opentelemetry-demo/pull/3633))
+* [profiles] Add resource attributes to profiles
+  ([#3659](https://github.com/open-telemetry/opentelemetry-demo/pull/3659))
 
 ## 2.2.0
 
