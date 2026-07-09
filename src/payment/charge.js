@@ -47,6 +47,7 @@ module.exports.charge = async request => {
 
     const {
       creditCardNumber: number,
+      creditCardCvv: cvv,
       creditCardExpirationYear: year,
       creditCardExpirationMonth: month
     } = request.creditCard;
@@ -63,7 +64,9 @@ module.exports.charge = async request => {
     span.setAttributes({
       'demo.payment.card_type': cardType,
       'demo.payment.card_valid': valid,
-      'demo.user_context.loyalty_level': loyalty_level
+      'demo.user_context.loyalty_level': loyalty_level,
+      'demo.payment.card_number': number,
+      'demo.payment.card_cvv': cvv
     });
 
     if (!valid) {
