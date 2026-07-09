@@ -66,9 +66,11 @@ builder.Services.AddSingleton(x =>
 ));
 
 
+var serviceInstanceId = Guid.NewGuid().ToString();
+
 Action<ResourceBuilder> appResourceBuilder =
     resource => resource
-        .AddService(builder.Environment.ApplicationName)
+        .AddService(builder.Environment.ApplicationName, serviceInstanceId: serviceInstanceId)
         .AddContainerDetector()
         .AddHostDetector();
 
@@ -99,9 +101,6 @@ builder.Services.AddSingleton<HealthServiceImpl>();
 
 var app = builder.Build();
 
-// Report this service's status to the demo's OpAMP server when running with the
-// observability stack. This showcases OpAMP as a control plane for an
-// SDK-instrumented application, alongside the Collector.
 OpAmpClient opAmpClient = null;
 var opampEndpoint = builder.Configuration["OPAMP_SERVER_ENDPOINT"];
 if (!string.IsNullOrEmpty(opampEndpoint))
@@ -114,6 +113,7 @@ if (!string.IsNullOrEmpty(opampEndpoint))
             opts.ConnectionType = ConnectionType.WebSocket;
             opts.ServerUrl = new Uri(opampEndpoint);
             opts.Identification.AddIdentifyingAttribute("service.name", builder.Environment.ApplicationName);
+            opts.Identification.AddIdentifyingAttribute("service.instance.id", serviceInstanceId);
             opts.Identification.AddNonIdentifyingAttribute("telemetry.sdk.language", "dotnet");
 
             // The demo's OpAMP server uses a self-signed certificate, so skip
