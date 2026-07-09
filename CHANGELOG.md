@@ -7,6 +7,11 @@ the release.
 
 ## Unreleased
 
+* [cart] Report status to the demo's OpAMP server using the
+  `OpenTelemetry.OpAmp.Client`, demonstrating OpAMP as a control plane for an
+  SDK-instrumented application alongside the Collector. Enabled only when
+  running with the observability stack.
+  ([#PR](https://github.com/open-telemetry/opentelemetry-demo/pull/PR))
 * [email] Set `event_name` on the order-confirmation log record
   (`email.confirmation_sent`), using the OTel Ruby Logs API's `event_name`
   parameter directly.

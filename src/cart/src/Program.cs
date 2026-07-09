@@ -1,6 +1,8 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 using System;
+using System.Net.Security;
+using System.Net.WebSockets;
 
 using Grpc.Health.V1;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -26,6 +28,8 @@ using OpenTelemetry.Trace;
 using OpenFeature;
 using OpenFeature.Hooks;
 using OpenFeature.Providers.Flagd;
+using OpenTelemetry.OpAmp.Client;
+using OpenTelemetry.OpAmp.Client.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 string valkeyAddress = builder.Configuration["VALKEY_ADDR"];
@@ -95,6 +99,43 @@ builder.Services.AddSingleton<HealthServiceImpl>();
 
 var app = builder.Build();
 
+// Report this service's status to the demo's OpAMP server when running with the
+// observability stack. This showcases OpAMP as a control plane for an
+// SDK-instrumented application, alongside the Collector.
+OpAmpClient opAmpClient = null;
+var opampEndpoint = builder.Configuration["OPAMP_SERVER_ENDPOINT"];
+if (!string.IsNullOrEmpty(opampEndpoint))
+{
+    var opAmpLogger = app.Services.GetRequiredService<ILogger<Program>>();
+    try
+    {
+        opAmpClient = new OpAmpClient(opts =>
+        {
+            opts.ConnectionType = ConnectionType.WebSocket;
+            opts.ServerUrl = new Uri(opampEndpoint);
+            opts.Identification.AddIdentifyingAttribute("service.name", builder.Environment.ApplicationName);
+            opts.Identification.AddNonIdentifyingAttribute("telemetry.sdk.language", "dotnet");
+
+            // The demo's OpAMP server uses a self-signed certificate, so skip
+            // certificate validation for the demo's wss:// connection.
+            opts.ClientWebSocketFactory = () =>
+            {
+                var socket = new ClientWebSocket();
+                socket.Options.RemoteCertificateValidationCallback =
+                    (sender, certificate, chain, sslPolicyErrors) => true;
+                return socket;
+            };
+        });
+
+        await opAmpClient.StartAsync();
+    }
+    catch (Exception ex)
+    {
+        opAmpLogger.LogWarning(ex, "Failed to start OpAMP client");
+        opAmpClient = null;
+    }
+}
+
 var ValkeyCartStore = (ValkeyCartStore)app.Services.GetRequiredService<ICartStore>();
 app.Services.GetRequiredService<StackExchangeRedisInstrumentation>().AddConnection(ValkeyCartStore.GetConnection());
 
@@ -107,5 +148,11 @@ app.MapGet("/", async context =>
 });
 
 app.Run();
+
+if (opAmpClient != null)
+{
+    await opAmpClient.StopAsync();
+    opAmpClient.Dispose();
+}
 
 

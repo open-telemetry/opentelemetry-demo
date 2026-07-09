@@ -21,6 +21,7 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.Process" Version="1.15.1-beta.1" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.1" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.StackExchangeRedis" Version="1.15.1-beta.2" />
+    <PackageVersion Include="OpenTelemetry.OpAmp.Client" Version="0.6.0-alpha.1" />
     <PackageVersion Include="OpenTelemetry.Resources.Container" Version="1.15.1-beta.1" />
     <PackageVersion Include="OpenTelemetry.Resources.Host" Version="1.15.1-beta.1" />
     <PackageVersion Include="StackExchange.Redis" Version="2.13.17" />
