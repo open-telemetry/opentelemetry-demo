@@ -4,7 +4,7 @@
 receivers:
   profiling:
     samples_per_second: 19
-    include_env_vars: "OTEL_SERVICE_NAME"
+    include_env_vars: "OTEL_SERVICE_NAME,OTEL_RESOURCE_ATTRIBUTES"
 
 processors:
   transform/set_service_name:
