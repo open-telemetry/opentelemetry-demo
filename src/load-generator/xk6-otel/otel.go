@@ -17,16 +17,15 @@ import (
 	"github.com/grafana/sobek"
 	"go.k6.io/k6/v2/js/modules"
 	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc"
-	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
-	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp"
+	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	otellog "go.opentelemetry.io/otel/log"
 	"go.opentelemetry.io/otel/metric"
 	sdklog "go.opentelemetry.io/otel/sdk/log"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	"go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
-	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -54,38 +53,22 @@ var (
 	histograms sync.Map // name -> metric.Float64Histogram
 )
 
-// collectorEndpoint returns host:4317 from OTEL_COLLECTOR_NAME, which is the
-// demo chart's convention for the collector hostname. Returns empty string if
-// unset, letting the SDK fall back to OTEL_EXPORTER_OTLP_ENDPOINT.
-func collectorEndpoint() string {
-	if host := os.Getenv("OTEL_COLLECTOR_NAME"); host != "" {
-		return host + ":4317"
-	}
-	return ""
-}
-
 func initProviders() {
 	providerOnce.Do(func() {
 		ctx := context.Background()
 
-		// resource.WithFromEnv reads OTEL_SERVICE_NAME and OTEL_RESOURCE_ATTRIBUTES;
-		// the hardcoded attribute is the fallback when the env var is absent.
-		res, err := resource.New(ctx,
-			resource.WithFromEnv(),
-			resource.WithAttributes(semconv.ServiceName("load-generator")),
+		extraResources, _ := resource.New(ctx,
+			resource.WithOS(),
+			resource.WithProcess(),
+			resource.WithContainer(),
+			resource.WithHost(),
 		)
+		res, err := resource.Merge(resource.Default(), extraResources)
 		if err != nil {
 			res = resource.Default()
 		}
 
-		// WithInsecure is explicit because the demo Collector does not use TLS.
-		// Endpoint is read from OTEL_COLLECTOR_NAME (demo chart convention);
-		// falls back to OTEL_EXPORTER_OTLP_ENDPOINT if unset.
-		traceOpts := []otlptracegrpc.Option{otlptracegrpc.WithInsecure()}
-		if ep := collectorEndpoint(); ep != "" {
-			traceOpts = append(traceOpts, otlptracegrpc.WithEndpoint(ep))
-		}
-		traceExp, err := otlptracegrpc.New(ctx, traceOpts...)
+		traceExp, err := otlptracehttp.New(ctx)
 		if err != nil {
 			providerErr = fmt.Errorf("xk6-otel: creating OTLP trace exporter: %w", err)
 			return
@@ -98,11 +81,7 @@ func initProviders() {
 		globalTracer = tp.Tracer("load-generator")
 
 		// Log provider — non-fatal if unavailable so traces still work.
-		logOpts := []otlploggrpc.Option{otlploggrpc.WithInsecure()}
-		if ep := collectorEndpoint(); ep != "" {
-			logOpts = append(logOpts, otlploggrpc.WithEndpoint(ep))
-		}
-		if logExp, lerr := otlploggrpc.New(ctx, logOpts...); lerr != nil {
+		if logExp, lerr := otlploghttp.New(ctx); lerr != nil {
 			fmt.Fprintf(os.Stderr, "xk6-otel: warning: OTLP log exporter unavailable: %v\n", lerr)
 		} else {
 			lp := sdklog.NewLoggerProvider(
@@ -113,11 +92,7 @@ func initProviders() {
 		}
 
 		// Metric provider — non-fatal if unavailable so traces still work.
-		metricOpts := []otlpmetricgrpc.Option{otlpmetricgrpc.WithInsecure()}
-		if ep := collectorEndpoint(); ep != "" {
-			metricOpts = append(metricOpts, otlpmetricgrpc.WithEndpoint(ep))
-		}
-		if metricExp, merr := otlpmetricgrpc.New(ctx, metricOpts...); merr != nil {
+		if metricExp, merr := otlpmetrichttp.New(ctx); merr != nil {
 			fmt.Fprintf(os.Stderr, "xk6-otel: warning: OTLP metric exporter unavailable: %v\n", merr)
 		} else {
 			mp := sdkmetric.NewMeterProvider(
