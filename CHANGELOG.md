@@ -50,16 +50,13 @@ the release.
   ([#3619](https://github.com/open-telemetry/opentelemetry-demo/pull/3619))
 * [grafana] Add a "Self-Observability" dashboard that visualizes the internal
   metrics emitted by the OpenTelemetry SDKs themselves (experimental
-  `otel.sdk.*` semantic conventions), and opt the `ad` (Java) service in to
-  SDK self-monitoring via `OTEL_EXPERIMENTAL_SDK_TELEMETRY_VERSION=latest`.
+  `otel.sdk.*` semantic conventions), and opt the `ad`, `fraud-detection` and
+  `kafka` (Java) services in to SDK self-monitoring via
+  `OTEL_EXPERIMENTAL_SDK_TELEMETRY_VERSION=latest`.
   The dashboard is driven by a `Service` template variable, so any additional
-  service that opts in appears automatically. Note: `kafka` and
-  `fraud-detection` (also Java) will show up too with a single
-  `otel.sdk.metric_reader.collection.duration` metric even without opting in,
-  due to an upstream opentelemetry-java bug
-  (open-telemetry/opentelemetry-java#8566) that emits this one metric
-  unconditionally.
-  (#3620)
+  service that opts in appears automatically.
+  ([#3620](https://github.com/open-telemetry/opentelemetry-demo/pull/3620),
+  [#3653](https://github.com/open-telemetry/opentelemetry-demo/pull/3653))
 * [accounting] Run the Kafka consumer as a hosted background service so process
   shutdown can stop the consumer cleanly
   ([#3608](https://github.com/open-telemetry/opentelemetry-demo/pull/3608))

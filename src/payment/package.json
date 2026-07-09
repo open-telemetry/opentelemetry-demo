@@ -33,8 +33,9 @@
     "uuid": "14.0.1"
   },
   "overrides": {
-    "@opentelemetry/otlp-transformer": {
-      "protobufjs": "8.2.0"
-    }
+    "@opentelemetry/core": "2.9.0",
+    "@opentelemetry/resources": "2.9.0",
+    "@opentelemetry/sdk-metrics": "2.9.0",
+    "@opentelemetry/sdk-trace-base": "2.9.0"
   }
 }
