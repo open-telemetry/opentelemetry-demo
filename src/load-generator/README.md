@@ -34,3 +34,12 @@ meter.recordHistogram('loadgen.cart.items', itemCount, { currency: 'USD' })
 Metrics from the `xk6-otel` extension are separate from k6's own built-in test
 metrics, which are exported via the `--out opentelemetry` output configured in
 the [`Dockerfile`](./Dockerfile).
+
+## Controlling traffic and concurrency via feature flags
+
+* `loadGeneratorTraffic` - pauses all synthetic traffic (both scenarios) when
+  turned off, checked every iteration with no restart required.
+* `loadGeneratorVUs` - sets the number of concurrent virtual users the HTTP
+  scenario runs. k6's `constant-vus` executor can't resize its VU pool at
+  runtime, so [`entrypoint.sh`](./entrypoint.sh) polls flagd and restarts k6
+  with the new VU count only when this flag's value actually changes.

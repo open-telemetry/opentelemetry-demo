@@ -29,8 +29,11 @@ COPY --from=builder /build/k6 /usr/bin/k6
 WORKDIR /home/k6
 COPY ./src/load-generator/script.js .
 COPY ./src/load-generator/people.json .
+COPY --chmod=755 ./src/load-generator/entrypoint.sh .
 
-# --out opentelemetry sends k6 test metrics to the OTel Collector via OTLP.
-# The collector endpoint and protocol are configured in compose.yaml via the
-# K6_OTEL_* env vars consumed by this built-in k6 output.
-ENTRYPOINT ["k6", "run", "script.js", "--out", "opentelemetry"]
+# entrypoint.sh restarts k6 when the loadGeneratorVUs feature flag changes
+# (see the comment in entrypoint.sh for why this can't be done in-process).
+# --out opentelemetry sends k6 test metrics to the OTel Collector via OTLP;
+# the endpoint/protocol are configured in compose.yaml via the K6_OTEL_* env
+# vars consumed by this built-in k6 output.
+ENTRYPOINT ["./entrypoint.sh"]

@@ -111,6 +111,17 @@
         "on": 1
       }
     },
+    "loadGeneratorVUs": {
+      "defaultVariant": "10",
+      "description": "Number of concurrent virtual users the load generator's HTTP scenario runs. Changes take effect on the wrapper's next poll, restarting k6.",
+      "state": "ENABLED",
+      "variants": {
+        "5": 5,
+        "10": 10,
+        "25": 25,
+        "50": 50
+      }
+    },
     "paymentFailure": {
       "defaultVariant": "off",
       "description": "Fail payment service charge requests n%",
