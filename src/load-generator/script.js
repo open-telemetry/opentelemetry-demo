@@ -21,14 +21,14 @@ export const options = {
             executor: 'constant-vus',
             exec: 'httpScenario',
             vus: parseInt(__ENV.K6_VUS || '10'),
-            duration: __ENV.K6_DURATION || '999h',
+            duration: __ENV.K6_DURATION || '9999h',
         },
         ...(browserEnabled ? {
             browser: {
                 executor: 'constant-vus',
                 exec: 'browserScenario',
                 vus: 1,
-                duration: __ENV.K6_DURATION || '999h',
+                duration: __ENV.K6_DURATION || '9999h',
                 options: {
                     browser: {
                         type: 'chromium',
@@ -256,6 +256,11 @@ function selectTask() {
 // ---- HTTP entrypoint --------------------------------------------------------
 
 export function httpScenario() {
+    if (getFlagdValue('loadGeneratorTraffic') <= 0) {
+        sleep(cryptoRandom() * 9 + 1)
+        return
+    }
+
     if (sessionId === null) {
         onStart()
     }
@@ -290,6 +295,11 @@ async function addProductToCartBrowser(page) {
 // ---- browser entrypoint -----------------------------------------------------
 
 export async function browserScenario() {
+    if (getFlagdValue('loadGeneratorTraffic') <= 0) {
+        sleep(cryptoRandom() * 9 + 1)
+        return
+    }
+
     const page = await browser.newPage()
     const isCurrencyChange = cryptoRandom() < 0.5
     const span = tracer.startSpan(isCurrencyChange ? 'browser_change_currency' : 'browser_add_to_cart')

@@ -11,6 +11,9 @@ the release.
   extension for OTel trace/log correlation and k6's built-in browser module
   for browser-driven traffic
   ([#3503](https://github.com/open-telemetry/opentelemetry-demo/issues/3503))
+* [load-generator] Add a `loadGeneratorTraffic` feature flag that pauses
+  all synthetic traffic when turned off, resuming when toggled back on
+  ([#3503](https://github.com/open-telemetry/opentelemetry-demo/issues/3503))
 * [email] Set `event_name` on the order-confirmation log record
   (`email.confirmation_sent`), using the OTel Ruby Logs API's `event_name`
   parameter directly.
