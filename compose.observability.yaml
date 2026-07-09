@@ -201,9 +201,6 @@ services:
       opamp-server:
         condition: service_healthy
 
-  # Patch product-catalog to report its status to the OpAMP server, demonstrating
-  # OpAMP as a control plane for an SDK-instrumented application alongside the
-  # Collector.
   product-catalog:
     environment:
       - OPAMP_SERVER_ENDPOINT=wss://${OPAMP_SERVER_HOST}:4320/v1/opamp
