@@ -244,9 +244,9 @@ processors:
     trace_statements:
       - context: span
         statements:
-          - delete_key(attributes, "demo.payment.card_cvv")
-          - set(attributes["demo.user.email"], SHA256(attributes["demo.user.email"]))
-          - replace_pattern(attributes["demo.payment.card_number"], "^\\d{4}-\\d{4}-\\d{4}-", "****-****-****-")
+          - delete_key(attributes, "demo.payment.fake_card_cvv")
+          - set(attributes["demo.user.fake_email"], SHA256(attributes["demo.user.fake_email"]))
+          - replace_pattern(attributes["demo.payment.fake_card_number"], "^\\d{4}-\\d{4}-\\d{4}-", "****-****-****-")
 
 connectors:
   span_metrics:
