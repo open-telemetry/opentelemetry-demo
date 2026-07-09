@@ -18,8 +18,8 @@ The extension also exposes a `Meter` for emitting OTel metrics. Every span
 started via the `Tracer` automatically produces two metrics, labelled with the
 span name (`span.name`):
 
-* `loadgen.spans.started` — counter of spans started.
-* `loadgen.span.duration` — histogram of span durations in milliseconds.
+* `loadgen.spans.started` - counter of spans started.
+* `loadgen.span.duration` - histogram of span durations in milliseconds.
 
 Scripts can emit custom metrics through the `Meter`:
 
