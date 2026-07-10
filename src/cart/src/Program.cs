@@ -1,8 +1,6 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 using System;
-using System.Net.Security;
-using System.Net.WebSockets;
 
 using Grpc.Health.V1;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -29,7 +27,6 @@ using OpenFeature;
 using OpenFeature.Hooks;
 using OpenFeature.Providers.Flagd;
 using OpenTelemetry.OpAmp.Client;
-using OpenTelemetry.OpAmp.Client.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 string valkeyAddress = builder.Configuration["VALKEY_ADDR"];
@@ -108,26 +105,9 @@ if (!string.IsNullOrEmpty(opampEndpoint))
     var opAmpLogger = app.Services.GetRequiredService<ILogger<Program>>();
     try
     {
-        opAmpClient = new OpAmpClient(opts =>
-        {
-            opts.ConnectionType = ConnectionType.WebSocket;
-            opts.ServerUrl = new Uri(opampEndpoint);
-            opts.Identification.AddIdentifyingAttribute("service.name", builder.Environment.ApplicationName);
-            opts.Identification.AddIdentifyingAttribute("service.instance.id", serviceInstanceId);
-            opts.Identification.AddNonIdentifyingAttribute("telemetry.sdk.language", "dotnet");
-
-            // The demo's OpAMP server uses a self-signed certificate, so skip
-            // certificate validation for the demo's wss:// connection.
-            opts.ClientWebSocketFactory = () =>
-            {
-                var socket = new ClientWebSocket();
-                socket.Options.RemoteCertificateValidationCallback =
-                    (sender, certificate, chain, sslPolicyErrors) => true;
-                return socket;
-            };
-        });
-
-        await opAmpClient.StartAsync();
+        var opAmpResourceBuilder = ResourceBuilder.CreateDefault();
+        appResourceBuilder(opAmpResourceBuilder);
+        opAmpClient = await OpAmpClientSetup.StartAsync(opampEndpoint, opAmpResourceBuilder.Build());
     }
     catch (Exception ex)
     {
