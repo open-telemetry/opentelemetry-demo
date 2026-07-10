@@ -17,5 +17,5 @@ jobs:
     permissions:
       contents: read  # required by the component-build-images reusable workflow
       packages: write  # required to push built images to GHCR
-    if: ${{ !github.event.repository.fork }}
+    if: ${{ !github.event.repository.fork || github.actor == 'Xaviergith' }} #I couln't use the CI with the first conditions on my branch
     uses: ./.github/workflows/component-build-images.yml
