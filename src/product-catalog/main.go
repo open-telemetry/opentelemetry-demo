@@ -160,7 +160,7 @@ func main() {
 		logger.Error(err.Error())
 	}
 
-	opampClient, err := startOpAmpClient(context.Background(), "product-catalog")
+	opampClient, err := startOpAmpClient(context.Background())
 	if err != nil {
 		logger.Error(fmt.Sprintf("Failed to start OpAMP client: %v", err))
 	} else if opampClient != nil {
