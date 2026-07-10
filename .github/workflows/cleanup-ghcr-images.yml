@@ -1,0 +1,29 @@
+
+name: 'Cleanup GHCR Images'
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+
+permissions:
+  packages: write
+  contents: read
+
+jobs:
+  cleanup_ghcr_images:
+    runs-on: ubuntu-latest
+  
+    steps:
+      - name: Delete GHCR Unwanted Images
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: 'opentelemetry-demo'
+          package-type: 'container'
+          min-versions-to-keep: 0
+          ignore-versions: |
+            latest
+            ^v[0-9]+.*
+        
+
+
