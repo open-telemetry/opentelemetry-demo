@@ -12,29 +12,51 @@ import (
 	"github.com/open-telemetry/opamp-go/client"
 	"github.com/open-telemetry/opamp-go/client/types"
 	"github.com/open-telemetry/opamp-go/protobufs"
+	"go.opentelemetry.io/otel/sdk/resource"
 )
 
-func startOpAmpClient(ctx context.Context, serviceName string) (client.OpAMPClient, error) {
+var opampIdentifyingKeys = map[string]bool{
+	"service.name":        true,
+	"service.version":     true,
+	"service.instance.id": true,
+}
+
+func startOpAmpClient(ctx context.Context) (client.OpAMPClient, error) {
 	endpoint := os.Getenv("OPAMP_SERVER_ENDPOINT")
 	if endpoint == "" {
 		return nil, nil
 	}
 
+	res, err := resource.New(ctx,
+		resource.WithFromEnv(),
+		resource.WithTelemetrySDK(),
+		resource.WithHost(),
+		resource.WithContainer(),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to build resource: %w", err)
+	}
+
+	var identifying, nonIdentifying []*protobufs.KeyValue
+	for _, attr := range res.Attributes() {
+		kv := &protobufs.KeyValue{
+			Key: string(attr.Key),
+			Value: &protobufs.AnyValue{
+				Value: &protobufs.AnyValue_StringValue{StringValue: attr.Value.Emit()},
+			},
+		}
+		if opampIdentifyingKeys[string(attr.Key)] {
+			identifying = append(identifying, kv)
+		} else {
+			nonIdentifying = append(nonIdentifying, kv)
+		}
+	}
+
 	opampClient := client.NewWebSocket(nil)
 
-	err := opampClient.SetAgentDescription(&protobufs.AgentDescription{
-		IdentifyingAttributes: []*protobufs.KeyValue{
-			{
-				Key:   "service.name",
-				Value: &protobufs.AnyValue{Value: &protobufs.AnyValue_StringValue{StringValue: serviceName}},
-			},
-		},
-		NonIdentifyingAttributes: []*protobufs.KeyValue{
-			{
-				Key:   "telemetry.sdk.language",
-				Value: &protobufs.AnyValue{Value: &protobufs.AnyValue_StringValue{StringValue: "go"}},
-			},
-		},
+	err = opampClient.SetAgentDescription(&protobufs.AgentDescription{
+		IdentifyingAttributes:    identifying,
+		NonIdentifyingAttributes: nonIdentifying,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to set agent description: %w", err)
