@@ -71,7 +71,7 @@
         "on": 100,
         "off": 0
       },
-      "defaultVariant": "on"
+      "defaultVariant": "off"
     },
     "cartFailure": {
       "description": "Fail cart service",
