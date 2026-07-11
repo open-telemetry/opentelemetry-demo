@@ -23,7 +23,7 @@ import dev.openfeature.sdk.ImmutableContext
 import dev.openfeature.sdk.Value
 import dev.openfeature.sdk.OpenFeatureAPI
 
-const val topic = "orders"
+val topic: String = System.getenv("KAFKA_TOPIC") ?: "orders"
 const val groupID = "fraud-detection"
 
 private val logger: Logger = LogManager.getLogger(groupID)

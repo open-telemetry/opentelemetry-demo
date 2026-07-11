@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [kafka] Add `KAFKA_TOPIC` environment variable to configure the Kafka topic
+  name used by `checkout`, `accounting`, and `fraud-detection`, defaulting to
+  `orders` to preserve existing behavior
 * [compose] Run `checkout`, `product-catalog`, and `shipping` with a
   read-only root filesystem (`read_only: true` plus a `/tmp` tmpfs mount),
   for container platforms that prohibit writable root filesystems. Limited
