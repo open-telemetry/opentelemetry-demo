@@ -7,6 +7,12 @@ the release.
 
 ## Unreleased
 
+* [otel-collector] Add an observer collector, managed by the OpAMP Supervisor,
+  that receives the main collector's own (self) telemetry and demonstrates OpAMP
+  remote configuration with a contained blast radius. The main collector's
+  self-telemetry (now including internal traces) is routed to the observer via a
+  configurable endpoint.
+  ([#PR](https://github.com/open-telemetry/opentelemetry-demo/pull/PR))
 * [llm] Increase `llm` service memory limit from 50M to 100M to prevent a
   startup restart loop caused by the container exceeding its memory limit
   ([#2944](https://github.com/open-telemetry/opentelemetry-demo/issues/2944))

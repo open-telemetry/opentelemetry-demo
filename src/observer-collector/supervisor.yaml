@@ -1,0 +1,29 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+# Supervisor configuration for the observer collector. The Supervisor is the
+# OpAMP client that connects to the demo's OpAMP server, manages the observer
+# collector process, and applies remote configuration pushed from the server.
+
+server:
+  endpoint: wss://opamp-server:4320/v1/opamp
+  tls:
+    insecure_skip_verify: true
+
+capabilities:
+  reports_effective_config: true
+  reports_health: true
+  accepts_remote_config: true
+  reports_remote_config: true
+
+storage:
+  directory: /etc/otel/supervisor-data
+
+agent:
+  executable: /otelcol-contrib
+  passthrough_logs: true
+  config_files:
+    - /etc/otel/observer-collector-config.yml
+  description:
+    non_identifying_attributes:
+      demo.collector.role: observer

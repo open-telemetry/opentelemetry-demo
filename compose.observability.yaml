@@ -164,6 +164,44 @@ services:
         max-size: "5m"
         max-file: "2"
 
+  # Observer collector: a second collector, managed by the OpAMP Supervisor, that
+  # receives the main collector's own (self) telemetry. It demonstrates OpAMP
+  # remote configuration with a contained blast radius: remote config pushes only
+  # affect the collector's self-telemetry, never the webstore's application
+  # telemetry.
+  observer-collector:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-observer-collector
+    container_name: observer-collector
+    build:
+      context: ./
+      dockerfile: ${OBSERVER_COLLECTOR_DOCKERFILE}
+      args:
+        COLLECTOR_CONTRIB_IMAGE: ${COLLECTOR_CONTRIB_IMAGE}
+        OPAMP_SUPERVISOR_IMAGE: ${OPAMP_SUPERVISOR_IMAGE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-observer-collector
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+    restart: unless-stopped
+    environment:
+      - GOMEMLIMIT=200MiB
+    depends_on:
+      opamp-server:
+        condition: service_healthy
+      prometheus:
+        condition: service_started
+      jaeger:
+        condition: service_started
+      opensearch:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
   # Patch frontend-proxy to wait for observability UIs
   frontend-proxy:
     depends_on:
@@ -193,6 +231,7 @@ services:
       - ${OTEL_COLLECTOR_CONFIG_EXTRAS}:/etc/otelcol-config-extras.yml
     environment:
       - KAFKA_ADDR
+      - OTEL_COLLECTOR_SELF_TELEMETRY_OTLP_ENDPOINT=http://observer-collector:4318
     depends_on:
       jaeger:
         condition: service_started

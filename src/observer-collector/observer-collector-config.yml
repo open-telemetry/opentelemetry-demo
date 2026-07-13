@@ -1,0 +1,78 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+# Base configuration for the observer collector. This collector is managed by the
+# OpAMP Supervisor and receives the main collector's own (self) telemetry
+# (metrics, logs and traces). The Supervisor merges remote configuration pushed
+# from the OpAMP server on top of this base and restarts the collector to apply
+# it.
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  memory_limiter:
+    check_interval: 5s
+    limit_percentage: 80
+    spike_limit_percentage: 25
+  batch:
+  transform/sanitize_logs:
+    error_mode: ignore
+    log_statements:
+      - context: scope
+        statements:
+          # Rename flat "otelcol.signal" scope attribute to prevent mapping
+          # conflict with the dotted "otelcol.signal.output" attribute.
+          # Upstream Issue: https://github.com/open-telemetry/opentelemetry-collector/issues/15221
+          - set(attributes["otelcol_signal"], attributes["otelcol.signal"]) where attributes["otelcol.signal"] != nil and not IsMap(attributes["otelcol.signal"])
+          - delete_key(attributes, "otelcol.signal") where attributes["otelcol_signal"] != nil
+
+exporters:
+  debug:
+    verbosity: normal
+  otlp_http/prometheus:
+    endpoint: "http://prometheus:9090/api/v1/otlp"
+    tls:
+      insecure: true
+  opensearch:
+    logs_index: otel-logs
+    logs_index_time_format: "yyyy-MM-dd"
+    http:
+      endpoint: "http://opensearch:9200"
+      tls:
+        insecure: true
+  otlp_grpc/jaeger:
+    endpoint: "jaeger:4317"
+    tls:
+      insecure: true
+
+service:
+  telemetry:
+    resource:
+      service.name: observer-collector
+      demo.collector.role: observer
+    metrics:
+      readers:
+        - periodic:
+            exporter:
+              otlp:
+                protocol: http/protobuf
+                endpoint: http://localhost:4318
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [debug, otlp_grpc/jaeger]
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [debug, otlp_http/prometheus]
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, transform/sanitize_logs, batch]
+      exporters: [debug, opensearch]
