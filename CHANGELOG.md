@@ -362,6 +362,8 @@ the release.
   ([#3633](https://github.com/open-telemetry/opentelemetry-demo/pull/3633))
 * [profiles] Add resource attributes to profiles
   ([#3659](https://github.com/open-telemetry/opentelemetry-demo/pull/3659))
+* [flagd] Fix OTel exporter config
+  ([#3667](https://github.com/open-telemetry/opentelemetry-demo/pull/3667))
 
 ## 2.2.0
 
