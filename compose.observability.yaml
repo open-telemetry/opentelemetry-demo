@@ -165,10 +165,9 @@ services:
         max-file: "2"
 
   # Observer collector: a second collector, managed by the OpAMP Supervisor, that
-  # receives the main collector's own (self) telemetry. It demonstrates OpAMP
-  # remote configuration with a contained blast radius: remote config pushes only
-  # affect the collector's self-telemetry, never the webstore's application
-  # telemetry.
+  # receives the main collector's own (self) telemetry. Splitting self-observability
+  # into a separate, non-critical collector keeps the alpha OpAMP Supervisor
+  # isolated from the webstore's application telemetry.
   observer-collector:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-observer-collector
     container_name: observer-collector
