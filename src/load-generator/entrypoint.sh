@@ -35,21 +35,24 @@ on_term() {
 trap on_term TERM INT
 
 # Reads an integer feature flag via flagd's OFREP endpoint, falling back to the
-# given default if flagd is unreachable or returns a non-positive value.
-# Usage: fetch_flag <flag_name> <default_value>
+# given default if flagd is unreachable or returns a non-numeric value. Pass
+# allow_zero as the third argument for flags where 0 is a meaningful value
+# (loadGeneratorBrowserVUs uses 0 to disable the browser scenario); otherwise 0
+# is treated as unreachable and falls back to the default.
+# Usage: fetch_flag <flag_name> <default_value> [allow_zero]
 fetch_flag() {
   value=$(wget -qO- --post-data='{}' --header='Content-Type: application/json' \
     "http://${FLAGD_HOST}:${FLAGD_OFREP_PORT}/ofrep/v1/evaluate/flags/$1" 2>/dev/null \
     | grep -o '"value":[0-9]*' | cut -d: -f2)
   case "$value" in
     ''|*[!0-9]*) echo "$2" ;;
-    0) echo "$2" ;;
+    0) [ "${3:-}" = "allow_zero" ] && echo 0 || echo "$2" ;;
     *) echo "$value" ;;
   esac
 }
 
 current_vus=$(fetch_flag loadGeneratorVUs "$DEFAULT_VUS")
-current_browser_vus=$(fetch_flag loadGeneratorBrowserVUs "$DEFAULT_BROWSER_VUS")
+current_browser_vus=$(fetch_flag loadGeneratorBrowserVUs "$DEFAULT_BROWSER_VUS" allow_zero)
 
 while [ "$running" -eq 1 ]; do
   echo "entrypoint.sh: starting k6 with K6_VUS=${current_vus} K6_BROWSER_VUS=${current_browser_vus}"
@@ -59,7 +62,7 @@ while [ "$running" -eq 1 ]; do
   while [ "$running" -eq 1 ] && kill -0 "$child" 2>/dev/null; do
     sleep "$POLL_INTERVAL_SECONDS"
     new_vus=$(fetch_flag loadGeneratorVUs "$DEFAULT_VUS")
-    new_browser_vus=$(fetch_flag loadGeneratorBrowserVUs "$DEFAULT_BROWSER_VUS")
+    new_browser_vus=$(fetch_flag loadGeneratorBrowserVUs "$DEFAULT_BROWSER_VUS" allow_zero)
     if [ "$new_vus" != "$current_vus" ] || [ "$new_browser_vus" != "$current_browser_vus" ]; then
       echo "entrypoint.sh: VU flags changed (VUs ${current_vus} -> ${new_vus}, browser VUs ${current_browser_vus} -> ${new_browser_vus}), restarting k6"
       current_vus="$new_vus"

@@ -30,4 +30,8 @@ configured in the [`Dockerfile`](./Dockerfile).
 * `loadGeneratorBrowserVUs` - sets the number of concurrent virtual users the
   browser scenario runs (only when the browser scenario is enabled via
   `K6_BROWSER_ENABLED`). Applied the same way as `loadGeneratorVUs`:
-  [`entrypoint.sh`](./entrypoint.sh) restarts k6 when the value changes.
+  [`entrypoint.sh`](./entrypoint.sh) restarts k6 when the value changes. Set it
+  to `0` to drop the browser scenario entirely and free its CPU - k6 launches a
+  Chromium instance per browser VU at every iteration's start, so the browser
+  scenario keeps using CPU even while `loadGeneratorTraffic` is off; omitting
+  the scenario is the only way to stop that.

@@ -13,7 +13,11 @@ const FLAGD_OFREP_PORT = __ENV.FLAGD_OFREP_PORT || '8016'
 // Browser scenario is opt-in via K6_BROWSER_ENABLED=true.
 // Default-off because Chromium requires a relaxed pod security context that
 // most Kubernetes clusters do not grant by default.
-const browserEnabled = (__ENV.K6_BROWSER_ENABLED || '').toLowerCase() === 'true'
+// K6_BROWSER_VUS=0 also omits the scenario: k6 launches a Chromium instance per
+// browser VU at each iteration's start, so leaving the scenario in with an
+// idle guard still burns CPU. Dropping the scenario is the only way to free it.
+const browserVUs = parseInt(__ENV.K6_BROWSER_VUS || '1')
+const browserEnabled = (__ENV.K6_BROWSER_ENABLED || '').toLowerCase() === 'true' && browserVUs > 0
 
 export const options = {
     scenarios: {
@@ -27,7 +31,7 @@ export const options = {
             browser: {
                 executor: 'constant-vus',
                 exec: 'browserScenario',
-                vus: parseInt(__ENV.K6_BROWSER_VUS || '1'),
+                vus: browserVUs,
                 duration: __ENV.K6_DURATION || '9999h',
                 options: {
                     browser: {
