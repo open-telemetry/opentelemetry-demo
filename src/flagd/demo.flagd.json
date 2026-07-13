@@ -103,7 +103,7 @@
       }
     },
     "loadGeneratorVUs": {
-      "defaultVariant": "5",
+      "defaultVariant": "25",
       "description": "Number of concurrent virtual users the load generator's HTTP scenario runs. Changes take effect on the wrapper's next poll, restarting k6.",
       "state": "ENABLED",
       "variants": {
@@ -111,6 +111,17 @@
         "25": 25,
         "5": 5,
         "50": 50
+      }
+    },
+    "loadGeneratorBrowserVUs": {
+      "defaultVariant": "1",
+      "description": "Number of concurrent virtual users the load generator's browser scenario runs (only when the browser scenario is enabled). Changes take effect on the wrapper's next poll, restarting k6.",
+      "state": "ENABLED",
+      "variants": {
+        "1": 1,
+        "2": 2,
+        "4": 4,
+        "8": 8
       }
     },
     "paymentFailure": {

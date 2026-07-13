@@ -27,3 +27,7 @@ configured in the [`Dockerfile`](./Dockerfile).
   scenario runs. k6's `constant-vus` executor can't resize its VU pool at
   runtime, so [`entrypoint.sh`](./entrypoint.sh) polls flagd and restarts k6
   with the new VU count only when this flag's value actually changes.
+* `loadGeneratorBrowserVUs` - sets the number of concurrent virtual users the
+  browser scenario runs (only when the browser scenario is enabled via
+  `K6_BROWSER_ENABLED`). Applied the same way as `loadGeneratorVUs`:
+  [`entrypoint.sh`](./entrypoint.sh) restarts k6 when the value changes.
