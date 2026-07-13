@@ -20,6 +20,8 @@ jobs:
         with:
           package-name: 'opentelemetry-demo'
           package-type: 'container'
+          # Set to 0 because keeping a fixed count of images is unreliable.
+          # We protect important release images strictly by their tags in ignore-versions below.
           min-versions-to-keep: 0
           ignore-versions: |
             latest
