@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+* [ci] add GitHub Actions workflow for automatic GHCR image cleanup
+  ([#3663](https://github.com/open-telemetry/opentelemetry-demo/pull/3663))
 * [llm] Increase `llm` service memory limit from 50M to 100M to prevent a
   startup restart loop caused by the container exceeding its memory limit
   ([#2944](https://github.com/open-telemetry/opentelemetry-demo/issues/2944))
