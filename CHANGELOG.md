@@ -9,6 +9,13 @@ the release.
 
 * [ci] add GitHub Actions workflow for automatic GHCR image cleanup
   ([#3663](https://github.com/open-telemetry/opentelemetry-demo/pull/3663))
+* [compose] Run `checkout`, `product-catalog`, and `shipping` with a
+  read-only root filesystem (`read_only: true` plus a `/tmp` tmpfs mount),
+  for container platforms that prohibit writable root filesystems. Limited
+  to these three services for now since they're the ones verified to have
+  no runtime file writes of their own; other services write files at
+  startup and need dedicated tmpfs mounts before they can be switched over
+  ([#1731](https://github.com/open-telemetry/opentelemetry-demo/issues/1731))
 * [llm] Increase `llm` service memory limit from 50M to 100M to prevent a
   startup restart loop caused by the container exceeding its memory limit
   ([#2944](https://github.com/open-telemetry/opentelemetry-demo/issues/2944))
@@ -357,6 +364,8 @@ the release.
   ([#3633](https://github.com/open-telemetry/opentelemetry-demo/pull/3633))
 * [profiles] Add resource attributes to profiles
   ([#3659](https://github.com/open-telemetry/opentelemetry-demo/pull/3659))
+* [flagd] Fix OTel exporter config
+  ([#3667](https://github.com/open-telemetry/opentelemetry-demo/pull/3667))
 
 ## 2.2.0
 
