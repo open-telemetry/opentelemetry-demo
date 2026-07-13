@@ -8,11 +8,9 @@ the release.
 ## Unreleased
 
 * [observer-collector] Add an observer collector, managed by the OpAMP
-  Supervisor, that receives the main collector's own (self) telemetry and
-  forwards it to the observability backends. Splitting self-observability into a
-  separate, non-critical collector keeps the alpha OpAMP Supervisor isolated from
-  the webstore's application telemetry. The main collector's self-telemetry host
-  is configurable and defaults to the collector itself.
+  Supervisor, that receives the main collector's own (self) telemetry (metrics
+  and logs) and forwards it to the observability backends. The main collector's
+  self-telemetry host is configurable and defaults to the collector itself.
   ([#3669](https://github.com/open-telemetry/opentelemetry-demo/pull/3669))
 * [compose] Run `checkout`, `product-catalog`, and `shipping` with a
   read-only root filesystem (`read_only: true` plus a `/tmp` tmpfs mount),

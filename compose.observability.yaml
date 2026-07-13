@@ -165,9 +165,8 @@ services:
         max-file: "2"
 
   # Observer collector: a second collector, managed by the OpAMP Supervisor, that
-  # receives the main collector's own (self) telemetry. Splitting self-observability
-  # into a separate, non-critical collector keeps the alpha OpAMP Supervisor
-  # isolated from the webstore's application telemetry.
+  # receives the main collector's own (self) telemetry and forwards it to the
+  # observability backends.
   observer-collector:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-observer-collector
     container_name: observer-collector
