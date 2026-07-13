@@ -192,8 +192,6 @@ services:
         condition: service_healthy
       prometheus:
         condition: service_started
-      jaeger:
-        condition: service_started
       opensearch:
         condition: service_healthy
     logging:

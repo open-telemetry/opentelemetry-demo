@@ -275,11 +275,3 @@ service:
                 protocol: http/protobuf
                 # replace with your observability meta monitoring backend
                 endpoint: ${env:OTEL_COLLECTOR_SELF_TELEMETRY_OTLP_ENDPOINT}
-    traces:
-      processors:
-        - batch:
-            exporter:
-              otlp:
-                protocol: http/protobuf
-                # replace with your observability meta monitoring backend
-                endpoint: ${env:OTEL_COLLECTOR_SELF_TELEMETRY_OTLP_ENDPOINT}

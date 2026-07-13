@@ -3,9 +3,8 @@
 
 # Base configuration for the observer collector. This collector is managed by the
 # OpAMP Supervisor and receives the main collector's own (self) telemetry
-# (metrics, logs and traces). The Supervisor merges remote configuration pushed
-# from the OpAMP server on top of this base and restarts the collector to apply
-# it.
+# (metrics and logs). The Supervisor merges remote configuration pushed from the
+# OpAMP server on top of this base and restarts the collector to apply it.
 
 receivers:
   otlp:
@@ -46,10 +45,6 @@ exporters:
       endpoint: "http://opensearch:9200"
       tls:
         insecure: true
-  otlp_grpc/jaeger:
-    endpoint: "jaeger:4317"
-    tls:
-      insecure: true
 
 service:
   telemetry:
@@ -64,10 +59,6 @@ service:
                 protocol: http/protobuf
                 endpoint: http://localhost:4318
   pipelines:
-    traces:
-      receivers: [otlp]
-      processors: [memory_limiter, batch]
-      exporters: [debug, otlp_grpc/jaeger]
     metrics:
       receivers: [otlp]
       processors: [memory_limiter, batch]
