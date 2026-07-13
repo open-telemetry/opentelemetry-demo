@@ -266,7 +266,7 @@ service:
               otlp:
                 protocol: http/protobuf
                 # replace with your observability meta monitoring backend
-                endpoint: ${env:OTEL_COLLECTOR_SELF_TELEMETRY_OTLP_ENDPOINT}
+                endpoint: http://${env:OTEL_COLLECTOR_SELF_TELEMETRY_HOST}:${env:OTEL_COLLECTOR_PORT_HTTP}
     logs:
       processors:
         - batch:
@@ -274,4 +274,4 @@ service:
               otlp:
                 protocol: http/protobuf
                 # replace with your observability meta monitoring backend
-                endpoint: ${env:OTEL_COLLECTOR_SELF_TELEMETRY_OTLP_ENDPOINT}
+                endpoint: http://${env:OTEL_COLLECTOR_SELF_TELEMETRY_HOST}:${env:OTEL_COLLECTOR_PORT_HTTP}

@@ -229,7 +229,7 @@ services:
       - ${OTEL_COLLECTOR_CONFIG_EXTRAS}:/etc/otelcol-config-extras.yml
     environment:
       - KAFKA_ADDR
-      - OTEL_COLLECTOR_SELF_TELEMETRY_OTLP_ENDPOINT=http://observer-collector:4318
+      - OTEL_COLLECTOR_SELF_TELEMETRY_HOST=observer-collector
     depends_on:
       jaeger:
         condition: service_started
