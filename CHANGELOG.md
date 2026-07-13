@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [docker] fix `compose.yaml` to allow
+  OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION to be overridden by
+  .env.override.
 * [compose] Run `checkout`, `product-catalog`, and `shipping` with a
   read-only root filesystem (`read_only: true` plus a `/tmp` tmpfs mount),
   for container platforms that prohibit writable root filesystems. Limited
