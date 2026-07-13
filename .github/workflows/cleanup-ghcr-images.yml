@@ -16,16 +16,15 @@ jobs:
   
     steps:
       - name: Delete GHCR Unwanted Images
-        uses: actions/delete-package-versions@v5
+        # Pins to v5.0.0 for strict security compliance
+        uses: actions/delete-package-versions@e5bc658cc4c965c472efe991f8beea3981499c55
         with:
-          package-name: 'opentelemetry-demo'
+          package-name: 'demo'
           package-type: 'container'
           # Keeps the last 3 images as a backup so running tests don't fail.
           min-versions-to-keep: 3
           # Strict SemVer anchor. Keeps pure versions (like 1.12.0) and wipes nightly/ephemeral tags.
-          ignore-versions: |
-            latest
-            ^[0-9]+\.[0-9]+\.[0-9]+$
+          ignore-versions: '^(latest|[0-9]+\.[0-9]+\.[0-9]+)$'
         
 
 
