@@ -93,15 +93,6 @@
         "on": 100
       }
     },
-    "loadGeneratorFloodHomepage": {
-      "defaultVariant": "off",
-      "description": "Flood the frontend with a large amount of requests.",
-      "state": "ENABLED",
-      "variants": {
-        "off": 0,
-        "on": 100
-      }
-    },
     "loadGeneratorTraffic": {
       "defaultVariant": "on",
       "description": "Enable synthetic traffic from the load generator. Turn off to pause all load-generator scenarios.",
@@ -112,13 +103,13 @@
       }
     },
     "loadGeneratorVUs": {
-      "defaultVariant": "10",
+      "defaultVariant": "5",
       "description": "Number of concurrent virtual users the load generator's HTTP scenario runs. Changes take effect on the wrapper's next poll, restarting k6.",
       "state": "ENABLED",
       "variants": {
-        "5": 5,
         "10": 10,
         "25": 25,
+        "5": 5,
         "50": 50
       }
     },

@@ -22,7 +22,6 @@ import (
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	otellog "go.opentelemetry.io/otel/log"
-	"go.opentelemetry.io/otel/metric"
 	sdklog "go.opentelemetry.io/otel/sdk/log"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	"go.opentelemetry.io/otel/sdk/resource"
@@ -39,19 +38,8 @@ func init() {
 var (
 	globalTracer trace.Tracer
 	globalLogger otellog.Logger
-	globalMeter  metric.Meter
 	providerOnce sync.Once
 	providerErr  error
-
-	// Auto instruments derived from span lifecycle. Nil when the metric
-	// exporter is unavailable, so callers must nil-check before use.
-	spanStartCounter metric.Int64Counter
-	spanDurationHist metric.Float64Histogram
-
-	// Instruments created on demand by the JS Meter API, keyed by name so
-	// repeated calls across VUs reuse a single instrument.
-	counters   sync.Map // name -> metric.Int64Counter
-	histograms sync.Map // name -> metric.Float64Histogram
 )
 
 func initProviders() {
@@ -106,17 +94,6 @@ func initProviders() {
 			); err != nil {
 				fmt.Fprintf(os.Stderr, "xk6-otel: warning: runtime instrumentation unavailable: %v\n", err)
 			}
-			globalMeter = mp.Meter("load-generator")
-			spanStartCounter, _ = globalMeter.Int64Counter(
-				"loadgen.spans.started",
-				metric.WithDescription("Spans started by the load generator"),
-				metric.WithUnit("{span}"),
-			)
-			spanDurationHist, _ = globalMeter.Float64Histogram(
-				"loadgen.span.duration",
-				metric.WithDescription("Duration of load generator spans"),
-				metric.WithUnit("ms"),
-			)
 		}
 	})
 }
@@ -141,12 +118,11 @@ func (*RootModule) NewModuleInstance(vu modules.VU) modules.Instance {
 	return &ModuleInstance{vu: vu}
 }
 
-// Exports surfaces the named exports { Tracer, Meter } to JavaScript.
+// Exports surfaces the named exports { Tracer } to JavaScript.
 func (m *ModuleInstance) Exports() modules.Exports {
 	return modules.Exports{
 		Named: map[string]any{
 			"Tracer": m.newTracer,
-			"Meter":  m.newMeter,
 		},
 	}
 }
@@ -164,98 +140,6 @@ func (m *ModuleInstance) newTracer(call sobek.ConstructorCall, rt *sobek.Runtime
 	}
 
 	return nil
-}
-
-// newMeter is called when the script does `new Meter()`. It exposes the
-// custom metric API alongside the span-derived auto metrics.
-//
-// Signatures:
-//   meter.addCounter(name, value?, attrs?)       // value defaults to 1
-//   meter.recordHistogram(name, value, attrs?)
-func (m *ModuleInstance) newMeter(call sobek.ConstructorCall, rt *sobek.Runtime) *sobek.Object {
-	initProviders()
-	if providerErr != nil {
-		panic(rt.NewGoError(providerErr))
-	}
-
-	if err := call.This.Set("addCounter", makeAddCounter(rt)); err != nil {
-		panic(rt.NewGoError(err))
-	}
-	if err := call.This.Set("recordHistogram", makeRecordHistogram(rt)); err != nil {
-		panic(rt.NewGoError(err))
-	}
-
-	return nil
-}
-
-// getCounter returns the named counter, creating it once and caching it so
-// concurrent VUs share a single instrument. Returns false when no meter exists.
-func getCounter(name string) (metric.Int64Counter, bool) {
-	if globalMeter == nil {
-		return nil, false
-	}
-	if c, ok := counters.Load(name); ok {
-		return c.(metric.Int64Counter), true
-	}
-	c, err := globalMeter.Int64Counter(name)
-	if err != nil {
-		return nil, false
-	}
-	actual, _ := counters.LoadOrStore(name, c)
-	return actual.(metric.Int64Counter), true
-}
-
-// getHistogram mirrors getCounter for Float64 histograms.
-func getHistogram(name string) (metric.Float64Histogram, bool) {
-	if globalMeter == nil {
-		return nil, false
-	}
-	if h, ok := histograms.Load(name); ok {
-		return h.(metric.Float64Histogram), true
-	}
-	h, err := globalMeter.Float64Histogram(name)
-	if err != nil {
-		return nil, false
-	}
-	actual, _ := histograms.LoadOrStore(name, h)
-	return actual.(metric.Float64Histogram), true
-}
-
-// makeAddCounter returns the JS function exposed as meter.addCounter(name, value?, attrs?).
-func makeAddCounter(rt *sobek.Runtime) func(sobek.FunctionCall) sobek.Value {
-	return func(fc sobek.FunctionCall) sobek.Value {
-		c, ok := getCounter(fc.Argument(0).String())
-		if !ok {
-			return nil
-		}
-		value := int64(1)
-		if len(fc.Arguments) > 1 && !sobek.IsUndefined(fc.Argument(1)) {
-			value = fc.Argument(1).ToInteger()
-		}
-		var kvs []attribute.KeyValue
-		if len(fc.Arguments) > 2 && !sobek.IsUndefined(fc.Argument(2)) {
-			kvs = jsObjToAttrs(fc.Argument(2).ToObject(rt))
-		}
-		c.Add(context.Background(), value, metric.WithAttributes(kvs...))
-		return nil
-	}
-}
-
-// makeRecordHistogram returns the JS function exposed as meter.recordHistogram(name, value, attrs?).
-func makeRecordHistogram(rt *sobek.Runtime) func(sobek.FunctionCall) sobek.Value {
-	return func(fc sobek.FunctionCall) sobek.Value {
-		h, ok := getHistogram(fc.Argument(0).String())
-		if !ok {
-			return nil
-		}
-		value := fc.Argument(1).ToFloat()
-		var kvs []attribute.KeyValue
-		if len(fc.Arguments) > 2 && !sobek.IsUndefined(fc.Argument(2)) {
-			kvs = jsObjToAttrs(fc.Argument(2).ToObject(rt))
-		}
-		h.Record(context.Background(), value, metric.WithAttributes(kvs...))
-		return nil
-	}
 }
 
 // makeStartSpan returns the JS function that scripts call as tracer.startSpan().
@@ -281,12 +165,6 @@ func makeStartSpan(rt *sobek.Runtime) func(sobek.FunctionCall) sobek.Value {
 			trace.WithAttributes(kvs...),
 			trace.WithSpanKind(trace.SpanKindClient),
 		)
-		start := time.Now()
-
-		nameAttr := metric.WithAttributes(attribute.String("span.name", name))
-		if spanStartCounter != nil {
-			spanStartCounter.Add(context.Background(), 1, nameAttr)
-		}
 
 		obj := rt.NewObject()
 		if err := obj.Set("traceParent", makeTraceParent(span)); err != nil {
@@ -294,10 +172,6 @@ func makeStartSpan(rt *sobek.Runtime) func(sobek.FunctionCall) sobek.Value {
 		}
 		if err := obj.Set("end", func() {
 			span.End()
-			if spanDurationHist != nil {
-				ms := float64(time.Since(start)) / float64(time.Millisecond)
-				spanDurationHist.Record(context.Background(), ms, nameAttr)
-			}
 		}); err != nil {
 			panic(rt.NewGoError(err))
 		}
