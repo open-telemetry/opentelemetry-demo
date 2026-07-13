@@ -117,6 +117,7 @@ def must_map_env(key: str):
 # DB_CONNECTION_STRING format: postgresql://user:pass@host:5432/dbname
 # DB_CONNECTION_STRING format: postgresql://user:pass@host:5432/dbname
 # DB_CONNECTION_STRING format: postgresql://user:pass@host:5432/dbname
+# DB_CONNECTION_STRING format: postgresql://user:pass@host:5432/dbname
 db_connection_str = must_map_env('DB_CONNECTION_STRING')
 
 def fetch_product_reviews(product_id):
