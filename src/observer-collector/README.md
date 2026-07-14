@@ -8,9 +8,8 @@ forwards it to the observability backends (Prometheus and OpenSearch).
 The main Collector's self-telemetry is routed here, instead of back to itself, via
 the `OTEL_COLLECTOR_SELF_TELEMETRY_HOST` setting.
 
-The Supervisor is the OpAMP client: it connects to the demo's OpAMP server,
-manages the observer Collector process, and can apply remote configuration pushed
-from the server.
+The Supervisor is the OpAMP client: it connects to the demo's OpAMP server and
+manages the observer Collector process.
 
 Only enabled when running with the observability stack
 (`compose.observability.yaml`).

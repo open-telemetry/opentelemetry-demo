@@ -3,7 +3,7 @@
 
 # Supervisor configuration for the observer collector. The Supervisor is the
 # OpAMP client that connects to the demo's OpAMP server, manages the observer
-# collector process, and applies remote configuration pushed from the server.
+# collector process, and reports its status.
 
 server:
   endpoint: wss://opamp-server:4320/v1/opamp
@@ -13,8 +13,6 @@ server:
 capabilities:
   reports_effective_config: true
   reports_health: true
-  accepts_remote_config: true
-  reports_remote_config: true
 
 storage:
   directory: /etc/otel/supervisor-data

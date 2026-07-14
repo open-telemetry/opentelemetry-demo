@@ -3,9 +3,7 @@
 
 # Base configuration for the observer collector. This collector is managed by the
 # OpAMP Supervisor and receives the main collector's own (self) telemetry
-# (metrics and logs). The Supervisor is the OpAMP client; it can apply remote
-# configuration pushed from the OpAMP server and restart the collector to apply
-# it.
+# (metrics and logs).
 
 receivers:
   otlp:
