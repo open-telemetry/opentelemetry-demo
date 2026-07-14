@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/baggage"
 	"go.opentelemetry.io/otel/log/global"
 	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
 	"go.opentelemetry.io/otel/trace"
@@ -36,9 +37,9 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/runtime"
 	"go.opentelemetry.io/otel"
 	otelcodes "go.opentelemetry.io/otel/codes"
-	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc"
-	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
-	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp"
+	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/propagation"
 
 	sdklog "go.opentelemetry.io/otel/sdk/log"
@@ -93,9 +94,9 @@ func initResource() *sdkresource.Resource {
 func initTracerProvider() *sdktrace.TracerProvider {
 	ctx := context.Background()
 
-	exporter, err := otlptracegrpc.New(ctx)
+	exporter, err := otlptracehttp.New(ctx)
 	if err != nil {
-		logger.Error(fmt.Sprintf("new otlp trace grpc exporter failed: %v", err))
+		logger.Error(fmt.Sprintf("new otlp trace http exporter failed: %v", err))
 	}
 	tp := sdktrace.NewTracerProvider(
 		sdktrace.WithBatcher(exporter),
@@ -109,9 +110,9 @@ func initTracerProvider() *sdktrace.TracerProvider {
 func initMeterProvider() *sdkmetric.MeterProvider {
 	ctx := context.Background()
 
-	exporter, err := otlpmetricgrpc.New(ctx)
+	exporter, err := otlpmetrichttp.New(ctx)
 	if err != nil {
-		logger.Error(fmt.Sprintf("new otlp metric grpc exporter failed: %v", err))
+		logger.Error(fmt.Sprintf("new otlp metric http exporter failed: %v", err))
 	}
 
 	mp := sdkmetric.NewMeterProvider(
@@ -125,7 +126,7 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 func initLoggerProvider() *sdklog.LoggerProvider {
 	ctx := context.Background()
 
-	logExporter, err := otlploggrpc.New(ctx)
+	logExporter, err := otlploghttp.New(ctx)
 	if err != nil {
 		return nil
 	}
@@ -308,6 +309,11 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 		attribute.String("user.id", req.UserId),
 		attribute.String("demo.user_context.selected_currency", req.UserCurrency),
 	)
+
+	if baggage.FromContext(ctx).Member("synthetic_request").Value() == "true" {
+		span.SetAttributes(attribute.String("user_agent.synthetic.type", "test"))
+	}
+
 	logger.LogAttrs(
 		ctx,
 		slog.LevelInfo, "[PlaceOrder]",
