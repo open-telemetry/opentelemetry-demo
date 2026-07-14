@@ -11,8 +11,12 @@ const FLAGD_HOST = __ENV.FLAGD_HOST || 'flagd'
 const FLAGD_OFREP_PORT = __ENV.FLAGD_OFREP_PORT || '8016'
 
 // See README.md#controlling-traffic-and-concurrency-via-feature-flags for why
-// the browser scenario defaults off and why K6_BROWSER_VUS=0 also disables it.
-const browserVUs = parseInt(__ENV.K6_BROWSER_VUS || '1')
+// the browser scenario defaults off and why LOAD_GENERATOR_BROWSER_VUS=0 also
+// disables it. VU counts are read from LOAD_GENERATOR_VUS/
+// LOAD_GENERATOR_BROWSER_VUS rather than k6's own K6_VUS/K6_BROWSER_VUS,
+// since as of k6 v2.1.0 a K6_VUS env var makes k6 discard this scenarios
+// config entirely in favor of an implicit single scenario (see README.md).
+const browserVUs = parseInt(__ENV.LOAD_GENERATOR_BROWSER_VUS || '1')
 const browserEnabled = (__ENV.K6_BROWSER_ENABLED || '').toLowerCase() === 'true' && browserVUs > 0
 
 export const options = {
@@ -20,7 +24,7 @@ export const options = {
         load: {
             executor: 'constant-vus',
             exec: 'httpScenario',
-            vus: parseInt(__ENV.K6_VUS || '10'),
+            vus: parseInt(__ENV.LOAD_GENERATOR_VUS || '10'),
             duration: __ENV.K6_DURATION || '9999h',
         },
         ...(browserEnabled ? {

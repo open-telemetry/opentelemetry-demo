@@ -420,8 +420,8 @@ services:
           memory: 512M
     restart: unless-stopped
     environment:
-      - K6_VUS
-      - K6_BROWSER_VUS
+      - LOAD_GENERATOR_VUS
+      - LOAD_GENERATOR_BROWSER_VUS
       - K6_TARGET_URL
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf

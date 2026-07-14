@@ -4,15 +4,16 @@
 
 # See ../README.md#controlling-traffic-and-concurrency-via-feature-flags for
 # why this wrapper polls flagd and restarts k6 on VU changes instead of
-# resizing VUs in place, and why K6_DURATION must not be passed alongside
-# K6_VUS/K6_BROWSER_VUS.
+# resizing VUs in place, and why the VU counts are passed to k6 as
+# LOAD_GENERATOR_VUS/LOAD_GENERATOR_BROWSER_VUS rather than K6_VUS/
+# K6_BROWSER_VUS or K6_DURATION.
 
 set -u
 
 FLAGD_HOST="${FLAGD_HOST:-flagd}"
 FLAGD_OFREP_PORT="${FLAGD_OFREP_PORT:-8016}"
-DEFAULT_VUS="${K6_VUS:-10}"
-DEFAULT_BROWSER_VUS="${K6_BROWSER_VUS:-1}"
+DEFAULT_VUS="${LOAD_GENERATOR_VUS:-10}"
+DEFAULT_BROWSER_VUS="${LOAD_GENERATOR_BROWSER_VUS:-1}"
 POLL_INTERVAL_SECONDS=10
 
 running=1
@@ -53,8 +54,8 @@ current_vus=$(fetch_flag loadGeneratorVUs "$DEFAULT_VUS")
 current_browser_vus=$(fetch_flag loadGeneratorBrowserVUs "$DEFAULT_BROWSER_VUS" allow_zero)
 
 while [ "$running" -eq 1 ]; do
-  echo "entrypoint.sh: starting k6 with K6_VUS=${current_vus} K6_BROWSER_VUS=${current_browser_vus}"
-  K6_VUS="$current_vus" K6_BROWSER_VUS="$current_browser_vus" k6 run script.js --out opentelemetry &
+  echo "entrypoint.sh: starting k6 with LOAD_GENERATOR_VUS=${current_vus} LOAD_GENERATOR_BROWSER_VUS=${current_browser_vus}"
+  LOAD_GENERATOR_VUS="$current_vus" LOAD_GENERATOR_BROWSER_VUS="$current_browser_vus" k6 run script.js --out opentelemetry &
   child=$!
 
   while [ "$running" -eq 1 ] && kill -0 "$child" 2>/dev/null; do

@@ -58,11 +58,14 @@ dominates over checkout:
   scenario keeps using CPU even while `loadGeneratorTraffic` is off; omitting
   the scenario is the only way to stop that.
 
-`entrypoint.sh` passes the VU counts to k6 through the `K6_VUS` and
-`K6_BROWSER_VUS` env vars, which k6 auto-maps to its global CLI flags. Don't
-also set `K6_DURATION` as a container env var: having both set at once makes
-k6 discard the script's `scenarios` config entirely in favor of a single
-implicit `default` scenario.
+`entrypoint.sh` passes the VU counts to k6 through the `LOAD_GENERATOR_VUS`
+and `LOAD_GENERATOR_BROWSER_VUS` env vars, which `script.js` reads directly
+via `__ENV` to set each scenario's `vus`. These are deliberately not named
+`K6_VUS`/`K6_BROWSER_VUS`: as of k6 v2.1.0, a `K6_VUS` env var (or `--vus`
+flag) makes k6 discard the script's `scenarios` config entirely in favor of a
+single implicit scenario, the same way `K6_DURATION`/`K6_ITERATIONS`/
+`K6_STAGES` already did — so none of those reserved names should ever be set
+as a container env var here.
 
 The browser scenario itself is opt-in via `K6_BROWSER_ENABLED` (default off),
 since headless Chromium requires a relaxed pod security context that most
