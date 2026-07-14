@@ -37,7 +37,7 @@ export const options = {
                     browser: {
                         type: 'chromium',
                         headless: true,
-                        // executablePath/args come from env vars, not this field — see README.md.
+                        // executablePath/args come from env vars, not this field - see README.md.
                     },
                 },
             },

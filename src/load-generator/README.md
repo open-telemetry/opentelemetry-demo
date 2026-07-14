@@ -64,7 +64,7 @@ via `__ENV` to set each scenario's `vus`. These are deliberately not named
 `K6_VUS`/`K6_BROWSER_VUS`: as of k6 v2.1.0, a `K6_VUS` env var (or `--vus`
 flag) makes k6 discard the script's `scenarios` config entirely in favor of a
 single implicit scenario, the same way `K6_DURATION`/`K6_ITERATIONS`/
-`K6_STAGES` already did — so none of those reserved names should ever be set
+`K6_STAGES` already did - so none of those reserved names should ever be set
 as a container env var here.
 
 The browser scenario itself is opt-in via `K6_BROWSER_ENABLED` (default off),
