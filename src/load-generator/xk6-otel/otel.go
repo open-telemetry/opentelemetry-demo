@@ -103,8 +103,16 @@ func initProviders() {
 // RootModule is the module factory; one instance exists for the whole test run.
 type RootModule struct{}
 
-// ModuleInstance is created once per VU that imports the module.
-type ModuleInstance struct{ vu modules.VU }
+// ModuleInstance is created once per VU that imports the module. ctxStack
+// tracks the currently "active" span context, mirroring the Locust
+// implementation's use of context.get_current() so that nested startSpan()
+// calls (e.g. user_add_to_cart inside checkout()) become child spans instead
+// of unrelated root traces.
+type ModuleInstance struct {
+	vu       modules.VU
+	ctxStack []context.Context
+	lastIter int64
+}
 
 var (
 	_ modules.Module   = &RootModule{}
@@ -116,6 +124,31 @@ func New() *RootModule { return &RootModule{} }
 
 func (*RootModule) NewModuleInstance(vu modules.VU) modules.Instance {
 	return &ModuleInstance{vu: vu}
+}
+
+// currentContext returns the context of the innermost open span, or
+// context.Background() if there is none. The stack is reset at the start of
+// each iteration so a span left unclosed by a failed iteration (e.g. a
+// thrown exception) can't leak into the next one.
+func (m *ModuleInstance) currentContext() context.Context {
+	if state := m.vu.State(); state != nil && state.Iteration != m.lastIter {
+		m.lastIter = state.Iteration
+		m.ctxStack = nil
+	}
+	if len(m.ctxStack) == 0 {
+		return context.Background()
+	}
+	return m.ctxStack[len(m.ctxStack)-1]
+}
+
+func (m *ModuleInstance) pushContext(ctx context.Context) {
+	m.ctxStack = append(m.ctxStack, ctx)
+}
+
+func (m *ModuleInstance) popContext() {
+	if len(m.ctxStack) > 0 {
+		m.ctxStack = m.ctxStack[:len(m.ctxStack)-1]
+	}
 }
 
 // Exports surfaces the named exports { Tracer } to JavaScript.
@@ -135,7 +168,7 @@ func (m *ModuleInstance) newTracer(call sobek.ConstructorCall, rt *sobek.Runtime
 		panic(rt.NewGoError(providerErr))
 	}
 
-	if err := call.This.Set("startSpan", makeStartSpan(rt)); err != nil {
+	if err := call.This.Set("startSpan", makeStartSpan(m, rt)); err != nil {
 		panic(rt.NewGoError(err))
 	}
 
@@ -146,11 +179,16 @@ func (m *ModuleInstance) newTracer(call sobek.ConstructorCall, rt *sobek.Runtime
 //
 // Signature: startSpan(name, attrs?)
 //
+// Starts the span as a child of whichever span is currently open on this VU
+// (see ModuleInstance.currentContext), so e.g. the user_add_to_cart span
+// started inside checkout() nests under user_checkout_single rather than
+// becoming its own root trace.
+//
 // Returns an object with:
 //   - traceParent() → W3C traceparent string for injection into HTTP request headers
 //   - log(message)  → emits a correlated OTel log record
 //   - end()         → ends the span
-func makeStartSpan(rt *sobek.Runtime) func(sobek.FunctionCall) sobek.Value {
+func makeStartSpan(m *ModuleInstance, rt *sobek.Runtime) func(sobek.FunctionCall) sobek.Value {
 	return func(fc sobek.FunctionCall) sobek.Value {
 		name := fc.Argument(0).String()
 
@@ -159,12 +197,13 @@ func makeStartSpan(rt *sobek.Runtime) func(sobek.FunctionCall) sobek.Value {
 			kvs = jsObjToAttrs(fc.Argument(1).ToObject(rt))
 		}
 
-		_, span := globalTracer.Start(
-			context.Background(),
+		ctx, span := globalTracer.Start(
+			m.currentContext(),
 			name,
 			trace.WithAttributes(kvs...),
 			trace.WithSpanKind(trace.SpanKindClient),
 		)
+		m.pushContext(ctx)
 
 		obj := rt.NewObject()
 		if err := obj.Set("traceParent", makeTraceParent(span)); err != nil {
@@ -172,6 +211,7 @@ func makeStartSpan(rt *sobek.Runtime) func(sobek.FunctionCall) sobek.Value {
 		}
 		if err := obj.Set("end", func() {
 			span.End()
+			m.popContext()
 		}); err != nil {
 			panic(rt.NewGoError(err))
 		}

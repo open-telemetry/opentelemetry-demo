@@ -3,7 +3,7 @@
 
 # Build stage: compile a custom k6 binary that includes the OTel extension.
 # k6 v2 requires Go 1.25; xk6 is the official k6 extension build tool.
-FROM docker.io/library/golang:1.25-bookworm@sha256:a9c020ee3d1508c7be5435c262434e3d3fc1d0e76a11afeb9ddae7d60bc86aa4 AS builder
+FROM docker.io/library/golang:1.26.5-bookworm@sha256:d9132cce84391efab786495288756d60e1da215b1f94e87860aeefc3d4c45b6d AS builder
 
 # xk6 is the build tool, not part of the runtime image; pin to a known-good
 # release independent of the k6 version being built below.
@@ -22,7 +22,7 @@ RUN xk6 build v2.0.0 \
 # Runtime on Grafana's k6 browser image for a working headless Chromium
 # (Debian's Chromium crashes on startup). Its stock k6 lacks the xk6-otel
 # extension script.js needs, so overwrite it with the build from above.
-FROM docker.io/grafana/k6:2.0.0-with-browser@sha256:880501ca99b97a0e519c7ed6a038d7ce031b4181cf4843066aa97d33936294ad
+FROM docker.io/grafana/k6:2.1.0-with-browser@sha256:40612240f5e37819faedb12b1df4e2cfbd7b0894475ff3c8b8f8f05239b7aff6
 
 COPY --from=builder /build/k6 /usr/bin/k6
 
@@ -31,9 +31,5 @@ COPY ./src/load-generator/script.js .
 COPY ./src/load-generator/people.json .
 COPY --chmod=755 ./src/load-generator/entrypoint.sh .
 
-# entrypoint.sh restarts k6 when the loadGeneratorVUs feature flag changes
-# (see the comment in entrypoint.sh for why this can't be done in-process).
-# --out opentelemetry sends k6 test metrics to the OTel Collector via OTLP;
-# the endpoint/protocol are configured in compose.yaml via the K6_OTEL_* env
-# vars consumed by this built-in k6 output.
+# entrypoint.sh wraps k6 to support flagd-driven VU restarts
 ENTRYPOINT ["./entrypoint.sh"]

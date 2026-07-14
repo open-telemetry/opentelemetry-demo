@@ -2,18 +2,10 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-# k6's constant-vus executor can't resize its VU pool at runtime - k6 v2
-# dropped the externally-controlled executor, and its REST API now rejects
-# live VU changes outright ("live VU configuration updates are not
-# supported"). To make the loadGeneratorVUs and loadGeneratorBrowserVUs feature
-# flags take effect without operator intervention, this wrapper polls flagd and
-# restarts k6 with the new VU counts only when a flag's value actually changes,
-# rather than on a fixed timer.
-#
-# Do not also pass K6_DURATION through as a container env var alongside
-# K6_VUS: k6 auto-maps K6_-prefixed env vars to its global CLI flags, and
-# having both set at once makes k6 discard the script's `scenarios` config
-# entirely in favor of a single implicit "default" scenario.
+# See ../README.md#controlling-traffic-and-concurrency-via-feature-flags for
+# why this wrapper polls flagd and restarts k6 on VU changes instead of
+# resizing VUs in place, and why K6_DURATION must not be passed alongside
+# K6_VUS/K6_BROWSER_VUS.
 
 set -u
 
@@ -67,8 +59,10 @@ while [ "$running" -eq 1 ]; do
 
   while [ "$running" -eq 1 ] && kill -0 "$child" 2>/dev/null; do
     sleep "$POLL_INTERVAL_SECONDS"
-    new_vus=$(fetch_flag loadGeneratorVUs "$DEFAULT_VUS")
-    new_browser_vus=$(fetch_flag loadGeneratorBrowserVUs "$DEFAULT_BROWSER_VUS" allow_zero)
+    # Fall back to the last successfully evaluated value (not DEFAULT_*) so a
+    # transient flagd outage doesn't look like a flag change and restart k6.
+    new_vus=$(fetch_flag loadGeneratorVUs "$current_vus")
+    new_browser_vus=$(fetch_flag loadGeneratorBrowserVUs "$current_browser_vus" allow_zero)
     if [ "$new_vus" != "$current_vus" ] || [ "$new_browser_vus" != "$current_browser_vus" ]; then
       echo "entrypoint.sh: VU flags changed (VUs ${current_vus} -> ${new_vus}, browser VUs ${current_browser_vus} -> ${new_browser_vus}), restarting k6"
       current_vus="$new_vus"

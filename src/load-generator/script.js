@@ -10,12 +10,8 @@ const BASE_URL = __ENV.K6_TARGET_URL || 'http://frontend-proxy:8080'
 const FLAGD_HOST = __ENV.FLAGD_HOST || 'flagd'
 const FLAGD_OFREP_PORT = __ENV.FLAGD_OFREP_PORT || '8016'
 
-// Browser scenario is opt-in via K6_BROWSER_ENABLED=true.
-// Default-off because Chromium requires a relaxed pod security context that
-// most Kubernetes clusters do not grant by default.
-// K6_BROWSER_VUS=0 also omits the scenario: k6 launches a Chromium instance per
-// browser VU at each iteration's start, so leaving the scenario in with an
-// idle guard still burns CPU. Dropping the scenario is the only way to free it.
+// See README.md#controlling-traffic-and-concurrency-via-feature-flags for why
+// the browser scenario defaults off and why K6_BROWSER_VUS=0 also disables it.
 const browserVUs = parseInt(__ENV.K6_BROWSER_VUS || '1')
 const browserEnabled = (__ENV.K6_BROWSER_ENABLED || '').toLowerCase() === 'true' && browserVUs > 0
 
@@ -37,9 +33,7 @@ export const options = {
                     browser: {
                         type: 'chromium',
                         headless: true,
-                        // executablePath and args are set via K6_BROWSER_EXECUTABLE_PATH
-                        // and K6_BROWSER_ARGS env vars (comma-separated, no -- prefix)
-                        // — the scenario options field is ignored.
+                        // executablePath/args come from env vars, not this field — see README.md.
                     },
                 },
             },

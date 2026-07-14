@@ -17,16 +17,38 @@ outgoing HTTP requests.
 The extension also emits Go runtime metrics (memory, GC, goroutines) via the
 OTel contrib `runtime` instrumentation. These are separate from k6's own
 built-in test metrics, which are exported via the `--out opentelemetry` output
-configured in the [`Dockerfile`](./Dockerfile).
+enabled in [`entrypoint.sh`](./entrypoint.sh)'s `k6 run` invocation; the OTLP
+endpoint and protocol for that output are configured via the `K6_OTEL_*` env
+vars in `compose.yaml`.
+
+## Traffic mix
+
+Each `httpScenario` iteration picks one task at random, weighted so browsing
+dominates over checkout:
+
+| Task                  | Weight |
+| --------------------- | -----: |
+| `index`               |      1 |
+| `browseProduct`       |     10 |
+| `getRecommendations`  |      3 |
+| `getAds`              |      3 |
+| `viewCart`            |      3 |
+| `addToCart`           |      2 |
+| `checkout`            |      1 |
+| `checkoutMulti`       |      1 |
+| `floodHome`           |      5 |
 
 ## Controlling traffic and concurrency via feature flags
 
 * `loadGeneratorTraffic` - pauses all synthetic traffic (both scenarios) when
   turned off, checked every iteration with no restart required.
 * `loadGeneratorVUs` - sets the number of concurrent virtual users the HTTP
-  scenario runs. k6's `constant-vus` executor can't resize its VU pool at
-  runtime, so [`entrypoint.sh`](./entrypoint.sh) polls flagd and restarts k6
-  with the new VU count only when this flag's value actually changes.
+  scenario runs. k6 v2's `constant-vus` executor can't resize its VU pool at
+  runtime - it dropped the externally-controlled executor, and its REST API
+  now rejects live VU changes outright - so
+  [`entrypoint.sh`](./entrypoint.sh) polls flagd and restarts k6 with the new
+  VU count only when this flag's value actually changes, rather than on a
+  fixed timer.
 * `loadGeneratorBrowserVUs` - sets the number of concurrent virtual users the
   browser scenario runs (only when the browser scenario is enabled via
   `K6_BROWSER_ENABLED`). Applied the same way as `loadGeneratorVUs`:
@@ -35,3 +57,16 @@ configured in the [`Dockerfile`](./Dockerfile).
   Chromium instance per browser VU at every iteration's start, so the browser
   scenario keeps using CPU even while `loadGeneratorTraffic` is off; omitting
   the scenario is the only way to stop that.
+
+`entrypoint.sh` passes the VU counts to k6 through the `K6_VUS` and
+`K6_BROWSER_VUS` env vars, which k6 auto-maps to its global CLI flags. Don't
+also set `K6_DURATION` as a container env var: having both set at once makes
+k6 discard the script's `scenarios` config entirely in favor of a single
+implicit `default` scenario.
+
+The browser scenario itself is opt-in via `K6_BROWSER_ENABLED` (default off),
+since headless Chromium requires a relaxed pod security context that most
+Kubernetes clusters don't grant by default. When enabled, Chromium's
+executable path and launch args come from the `K6_BROWSER_EXECUTABLE_PATH`
+and `K6_BROWSER_ARGS` env vars (comma-separated, no `--` prefix) rather than
+the scenario's own `browser` options field, which k6 ignores for these.
