@@ -15,7 +15,7 @@
       }
     ]
   },
-  "description": "Explore logs by their OpenTelemetry Event Name, a durable identifier for a log record.",
+  "description": "Explore Events: log records that carry an OpenTelemetry EventName, a durable identifier for the class of event.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
@@ -243,8 +243,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Logs by Event Name",
-  "uid": "otel-demo-logs-by-event-name",
+  "title": "Events by Name",
+  "uid": "otel-demo-events-by-name",
   "version": 1,
   "weekStart": ""
 }
