@@ -9,7 +9,7 @@ the release.
 
 * [grafana] Add a "Logs by Event Name" dashboard that shows log record volume
   by OpenTelemetry Event Name (top event names and volume over time).
-  ([#XXXX](https://github.com/open-telemetry/opentelemetry-demo/pull/XXXX))
+  ([#3691](https://github.com/open-telemetry/opentelemetry-demo/pull/3691))
 * [opamp-server] Bump `OPAMP_GO_REF` to pick up example-server UI improvements
   from `opamp-go` (improved agent list, agent uptime on the agent page, and
   startup logging of the OpAMP/admin UI addresses).
