@@ -19,6 +19,9 @@ storage:
 
 agent:
   executable: /otelcol-contrib
+  # Fixed instance UID so the observer reports as a stable agent across restarts,
+  # matching the main collector's hardcoded opampextension instance_uid.
+  instance_id: 00000000-0000-7000-8000-000000000002
   passthrough_logs: true
   config_files:
     - /etc/otel/observer-collector-config.yml
