@@ -9,6 +9,12 @@ the release.
 
 * [ci] add GitHub Actions workflow for automatic GHCR image cleanup
   ([#3663](https://github.com/open-telemetry/opentelemetry-demo/pull/3663))
+  
+* [opamp-server] Bump `OPAMP_GO_REF` to pick up example-server UI improvements
+  from `opamp-go` (improved agent list, agent uptime on the agent page, and
+  startup logging of the OpAMP/admin UI addresses).
+  ([#3685](https://github.com/open-telemetry/opentelemetry-demo/pull/3685))
+
 * [compose] Run `checkout`, `product-catalog`, and `shipping` with a
   read-only root filesystem (`read_only: true` plus a `/tmp` tmpfs mount),
   for container platforms that prohibit writable root filesystems. Limited
