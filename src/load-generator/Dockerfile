@@ -15,7 +15,7 @@ WORKDIR /build
 # local module via the --with flag rather than fetched from a remote registry.
 COPY ./src/load-generator/xk6-otel ./xk6-otel
 
-RUN xk6 build v2.0.0 \
+RUN xk6 build v2.1.0 \
     --with github.com/open-telemetry/opentelemetry-demo/src/load-generator/xk6-otel=./xk6-otel \
     --output ./k6
 

@@ -118,7 +118,6 @@ Once the images are built and containers are started, visit:
 - **Grafana**: [http://localhost:8080/grafana/](http://localhost:8080/grafana/)
 - **OpAMP**: [http://localhost:8080/opamp/](http://localhost:8080/opamp/)
 - **Feature Flags UI**: [http://localhost:8080/feature/](http://localhost:8080/feature/)
-- **Load Generator UI**: [http://localhost:8080/loadgen/](http://localhost:8080/loadgen/)
 
 The OpAMP UI shows the OpenTelemetry Collector as a managed agent. Click the
 collector instance ID to view its health status, version, attributes, and
