@@ -7,6 +7,11 @@ the release.
 
 ## Unreleased
 
+* [frontend] Add custom `404` and `500` error pages. Without them, `_app.tsx`'s
+  custom `getInitialProps` disables Next.js's automatic static optimization
+  for the built-in error pages too, so a server-side error crashes with
+  `Cannot find module for page: /500` instead of showing an error page
+  ([#2144](https://github.com/open-telemetry/opentelemetry-demo/issues/2144))
 * [opamp-server] Bump `OPAMP_GO_REF` to pick up example-server UI improvements
   from `opamp-go` (improved agent list, agent uptime on the agent page, and
   startup logging of the OpAMP/admin UI addresses).
