@@ -26,7 +26,7 @@
         "type": "grafana-opensearch-datasource",
         "uid": "webstore-logs"
       },
-      "description": "Log records grouped by their Event Name, ordered by volume.",
+      "description": "Events grouped by their EventName, ordered by volume.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -98,7 +98,7 @@
             },
             "renameByName": {
               "eventName": "Event Name",
-              "log_count": "Log Records"
+              "log_count": "Events"
             }
           }
         }
@@ -110,7 +110,7 @@
         "type": "grafana-opensearch-datasource",
         "uid": "webstore-logs"
       },
-      "description": "Log record volume over time, split by the top Event Names.",
+      "description": "Event volume over time, split by the top Event Names.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -124,7 +124,7 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 15,
+            "fillOpacity": 0,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -133,7 +133,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 1,
+            "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -142,7 +142,7 @@
             "spanNulls": false,
             "stacking": {
               "group": "A",
-              "mode": "normal"
+              "mode": "none"
             },
             "thresholdsStyle": {
               "mode": "off"
