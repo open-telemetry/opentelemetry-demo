@@ -46,7 +46,13 @@ fetch_flag() {
     | grep -o '"value":[0-9]*' | cut -d: -f2)
   case "$value" in
     ''|*[!0-9]*) echo "$2" ;;
-    0) [ "${3:-}" = "allow_zero" ] && echo 0 || echo "$2" ;;
+    0)
+      if [ "${3:-}" = "allow_zero" ]; then
+        echo 0
+      else
+        echo "$2"
+      fi
+      ;;
     *) echo "$value" ;;
   esac
 }
