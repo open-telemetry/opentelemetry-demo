@@ -20,10 +20,10 @@
     "@opentelemetry/resources": "^2.8.0",
     "@opentelemetry/sdk-trace-base": "^2.8.0",
     "@opentelemetry/sdk-trace-web": "^2.8.0",
-    "@opentelemetry/semantic-conventions": "^1.42.0",
+    "@opentelemetry/semantic-conventions": "^1.43.0",
     "@react-native-async-storage/async-storage": "3.1.1",
     "@tanstack/react-query": "^5.101.2",
-    "expo": "~57.0.3",
+    "expo": "~57.0.4",
     "expo-constants": "~57.0.3",
     "expo-font": "~57.0.0",
     "expo-linking": "~57.0.2",
@@ -38,8 +38,8 @@
     "react-native-get-random-values": "~2.0.0",
     "react-native-reanimated": "4.5.1",
     "react-native-safe-area-context": "~5.8.0",
-    "react-native-screens": "~4.25.2",
-    "react-native-toast-message": "^2.3.3",
+    "react-native-screens": "~4.26.0",
+    "react-native-toast-message": "^2.4.0",
     "react-native-web": "~0.21.2",
     "react-native-worklets": "0.10.2",
     "uuid": "^14.0.1"
@@ -47,11 +47,11 @@
   "devDependencies": {
     "@types/react": "~19.2.17",
     "@types/react-native-get-random-values": "^1.8.2",
-    "eslint": "^9.39.4",
+    "eslint": "^10.7.0",
     "eslint-config-expo": "~57.0.0",
-    "eslint-import-resolver-typescript": "^3.10.1",
+    "eslint-import-resolver-typescript": "^4.4.5",
     "ts-proto": "^2.12.0",
-    "typescript": "~6.0.3"
+    "typescript": "~7.0.2"
   },
   "overrides": {
     "postcss": "8.5.14",
