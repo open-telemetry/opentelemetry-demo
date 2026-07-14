@@ -256,7 +256,7 @@ service:
       exporters: [debug]
     profiles:
       receivers: [otlp]
-      processors: [filter/sanitize_profiles, memory_limiter]
+      processors: [resourcedetection, filter/sanitize_profiles, memory_limiter]
       exporters: [debug]
   telemetry:
     metrics:

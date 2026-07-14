@@ -111,6 +111,7 @@ people_file = open('people.json')
 people = json.load(people_file)
 
 class WebsiteUser(HttpUser):
+    weight = int(os.environ.get("LOCUST_HTTP_USER_WEIGHT", "9"))
     wait_time = between(1, 10)
 
     def __init__(self, *args, **kwargs):
@@ -224,6 +225,7 @@ browser_traffic_enabled = os.environ.get("LOCUST_BROWSER_TRAFFIC_ENABLED", "").l
 
 if browser_traffic_enabled:
     class WebsiteBrowserUser(PlaywrightUser):
+        weight = int(os.environ.get("LOCUST_BROWSER_USER_WEIGHT", "1"))
         headless = True  # to use a headless browser, without a GUI
 
         @task
