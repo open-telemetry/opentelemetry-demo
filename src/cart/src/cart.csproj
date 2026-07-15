@@ -8,6 +8,7 @@
     <SelfContained>true</SelfContained>
     <PublishTrimmed>false</PublishTrimmed>
     <ProtosDir>$(ProjectDir)..\pb</ProtosDir>
+    <NuGetAudit>false</NuGetAudit>
   </PropertyGroup>
 
   <PropertyGroup Condition="!Exists('$(ProtosDir)')">
