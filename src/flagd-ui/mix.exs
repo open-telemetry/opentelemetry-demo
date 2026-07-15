@@ -43,7 +43,7 @@ defmodule FlagdUi.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.8.8", override: true},
+      {:phoenix, "~> 1.8.9", override: true},
       {:phoenix_html, "~> 4.3.0"},
       {:phoenix_live_reload, "~> 1.6.2", only: :dev},
       {:phoenix_live_view, "~> 1.2.3"},
@@ -58,7 +58,7 @@ defmodule FlagdUi.MixProject do
        app: false,
        compile: false,
        depth: 1},
-      {:swoosh, "~> 1.26.1"},
+      {:swoosh, "~> 1.26.3"},
       {:req, "~> 0.6.2"},
       {:telemetry_metrics, "~> 1.1.0"},
       {:telemetry_poller, "~> 1.3.0"},

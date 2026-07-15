@@ -5,7 +5,7 @@
 # Layer additional files on top with -f:
 #   Full demo (adds Kafka, accounting, fraud-detection):
 #     docker compose -f compose.yaml -f compose.full.yaml up
-#   With observability stack (Jaeger, Prometheus, OpenSearch, Grafana):
+#   With observability stack (Jaeger, Prometheus, OpenSearch, Grafana, OpAMP):
 #     docker compose -f compose.yaml -f compose.observability.yaml up
 #   Default (full + observability):
 #     docker compose -f compose.yaml -f compose.full.yaml -f compose.observability.yaml up
@@ -57,6 +57,9 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=medium
       - OTEL_LOGS_EXPORTER=otlp
       - OTEL_SERVICE_NAME=ad
+      # Opt in to experimental OTel SDK self-observability metrics (otel.sdk.*)
+      # feeding the "self-observability" Grafana dashboard.
+      - OTEL_EXPERIMENTAL_SDK_TELEMETRY_VERSION=latest
       # Workaround on OSX for https://bugs.openjdk.org/browse/JDK-8345296
       - _JAVA_OPTIONS
     healthcheck:
@@ -162,6 +165,9 @@ services:
         condition: service_started
       flagd:
         condition: service_started
+    read_only: true
+    tmpfs:
+      - /tmp
     logging: *logging
 
   # Currency service
@@ -330,6 +336,8 @@ services:
       - GRAFANA_HOST
       - JAEGER_UI_PORT
       - JAEGER_HOST
+      - OPAMP_SERVER_HOST
+      - OPAMP_SERVER_UI_PORT
       - OTEL_COLLECTOR_HOST
       - IMAGE_PROVIDER_HOST
       - IMAGE_PROVIDER_PORT
@@ -424,6 +432,8 @@ services:
       - LOCUST_HEADLESS
       - LOCUST_AUTOSTART
       - LOCUST_BROWSER_TRAFFIC_ENABLED=true
+      - LOCUST_HTTP_USER_WEIGHT
+      - LOCUST_BROWSER_USER_WEIGHT
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
@@ -538,6 +548,9 @@ services:
         condition: service_healthy
     volumes:
       - ./otel-config.yml:/otel-config.yml
+    read_only: true
+    tmpfs:
+      - /tmp
     logging: *logging
 
   # Quote service
@@ -656,6 +669,9 @@ services:
         condition: service_started
       flagd:
         condition: service_started
+    read_only: true
+    tmpfs:
+      - /tmp
     logging: *logging
 
   # ******************
@@ -672,8 +688,8 @@ services:
           memory: 75M
     restart: unless-stopped
     environment:
-      - FLAGD_OTEL_COLLECTOR_URI=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
-      - FLAGD_METRICS_EXPORTER=otel
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
       - GOMEMLIMIT=60MiB
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
       - OTEL_SERVICE_NAME=flagd
@@ -806,7 +822,7 @@ services:
 
   # OpenTelemetry Collector
   # Base configuration: receives and processes telemetry, exports to debug only.
-  # Add compose.observability.yaml to enable Jaeger, Prometheus, OpenSearch, and Grafana.
+  # Add compose.observability.yaml to enable Jaeger, Prometheus, OpenSearch, Grafana, and OpAMP.
   otel-collector:
     image: ${COLLECTOR_CONTRIB_IMAGE}
     container_name: otel-collector
