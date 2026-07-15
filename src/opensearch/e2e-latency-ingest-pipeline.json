@@ -1,0 +1,25 @@
+{
+  "description": "Compute end-to-end pipeline latency for synthetic e2e probe logs (eventName == synthetic.e2e.probe).",
+  "processors": [
+    {
+      "set": {
+        "if": "ctx.eventName == 'synthetic.e2e.probe'",
+        "field": "_ingest_ts_str",
+        "value": "{{{_ingest.timestamp}}}"
+      }
+    },
+    {
+      "script": {
+        "lang": "painless",
+        "source": "if (ctx.eventName == 'synthetic.e2e.probe' && ctx._ingest_ts_str != null) { def emitted = ctx.attributes?.probe_emitted_at_unix_millis; if (emitted != null) { long ingest = Instant.parse(ctx._ingest_ts_str).toEpochMilli(); ctx.probe_e2e_latency_ms = ingest - (long)emitted; } }"
+      }
+    },
+    {
+      "remove": {
+        "if": "ctx._ingest_ts_str != null",
+        "field": "_ingest_ts_str",
+        "ignore_missing": true
+      }
+    }
+  ]
+}

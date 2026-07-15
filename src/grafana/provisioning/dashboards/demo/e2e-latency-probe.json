@@ -1,0 +1,171 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "End-to-end pipeline latency measured with synthetic probe logs (eventName == synthetic.e2e.probe). Latency is computed at ingest time by OpenSearch (ingest time minus probe emit time).",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "panels": [
+    {
+      "datasource": { "type": "grafana-opensearch-datasource", "uid": "webstore-logs" },
+      "description": "Average and p99 end-to-end latency of synthetic probe logs over time.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 8,
+            "gradientMode": "none",
+            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": { "type": "linear" },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": { "group": "A", "mode": "none" },
+            "thresholdsStyle": { "mode": "off" }
+          },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 10, "w": 18, "x": 0, "y": 0 },
+      "id": 1,
+      "options": {
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": { "type": "grafana-opensearch-datasource", "uid": "webstore-logs" },
+          "query": "eventName.keyword:\"synthetic.e2e.probe\"",
+          "queryType": "lucene",
+          "timeField": "observedTimestamp",
+          "metrics": [
+            { "id": "1", "type": "avg", "field": "probe_e2e_latency_ms" },
+            { "id": "2", "type": "percentiles", "field": "probe_e2e_latency_ms", "settings": { "percents": ["99"] } }
+          ],
+          "bucketAggs": [
+            { "type": "date_histogram", "field": "observedTimestamp", "id": "3", "settings": { "interval": "auto", "min_doc_count": "0" } }
+          ],
+          "refId": "A"
+        }
+      ],
+      "title": "E2E Pipeline Latency (avg and p99)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "grafana-opensearch-datasource", "uid": "webstore-logs" },
+      "description": "Average end-to-end latency over the selected time range.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 500 }, { "color": "red", "value": 2000 } ] },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 6, "x": 18, "y": 0 },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["mean"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": { "type": "grafana-opensearch-datasource", "uid": "webstore-logs" },
+          "query": "eventName.keyword:\"synthetic.e2e.probe\"",
+          "queryType": "lucene",
+          "timeField": "observedTimestamp",
+          "metrics": [ { "id": "1", "type": "avg", "field": "probe_e2e_latency_ms" } ],
+          "bucketAggs": [
+            { "type": "date_histogram", "field": "observedTimestamp", "id": "3", "settings": { "interval": "auto", "min_doc_count": "0" } }
+          ],
+          "refId": "A"
+        }
+      ],
+      "title": "Avg Latency",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "grafana-opensearch-datasource", "uid": "webstore-logs" },
+      "description": "p99 end-to-end latency over the selected time range.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 500 }, { "color": "red", "value": 2000 } ] },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 6, "x": 18, "y": 5 },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["max"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": { "type": "grafana-opensearch-datasource", "uid": "webstore-logs" },
+          "query": "eventName.keyword:\"synthetic.e2e.probe\"",
+          "queryType": "lucene",
+          "timeField": "observedTimestamp",
+          "metrics": [ { "id": "1", "type": "percentiles", "field": "probe_e2e_latency_ms", "settings": { "percents": ["99"] } } ],
+          "bucketAggs": [
+            { "type": "date_histogram", "field": "observedTimestamp", "id": "3", "settings": { "interval": "auto", "min_doc_count": "0" } }
+          ],
+          "refId": "A"
+        }
+      ],
+      "title": "p99 Latency",
+      "type": "stat"
+    }
+  ],
+  "preload": false,
+  "refresh": "10s",
+  "schemaVersion": 40,
+  "tags": ["opentelemetry", "latency"],
+  "templating": { "list": [] },
+  "time": { "from": "now-15m", "to": "now" },
+  "timepicker": {},
+  "timezone": "",
+  "title": "E2E Pipeline Latency (Synthetic Probes)",
+  "uid": "otel-demo-e2e-latency-probe",
+  "version": 1,
+  "weekStart": ""
+}

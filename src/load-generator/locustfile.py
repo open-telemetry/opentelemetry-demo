@@ -6,10 +6,12 @@
 import json
 import os
 import random
+import time
 import uuid
 import logging
 
-from locust import HttpUser, task, between
+import gevent
+from locust import HttpUser, task, between, events
 from locust_plugins.users.playwright import PlaywrightUser, pw, PageWithRetry, event
 
 from opentelemetry import context, baggage, trace
@@ -26,10 +28,10 @@ from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.instrumentation.system_metrics import SystemMetricsInstrumentor
 from opentelemetry.instrumentation.urllib3 import URLLib3Instrumentor
 from opentelemetry.instrumentation.logging import LoggingInstrumentor
-from opentelemetry._logs import set_logger_provider
+from opentelemetry._logs import set_logger_provider, SeverityNumber
 from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
-from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+from opentelemetry.sdk._logs.export import BatchLogRecordProcessor, SimpleLogRecordProcessor
 from opentelemetry.sdk.resources import Resource
 
 from openfeature import api
@@ -62,6 +64,59 @@ root_logger.setLevel(logging.INFO)
 # Configure metrics
 metric_exporter = OTLPMetricExporter(insecure=True)
 set_meter_provider(MeterProvider([PeriodicExportingMetricReader(metric_exporter)]))
+
+# --- E2E pipeline latency probe (prototype) ---
+# Periodically emit a synthetic "probe" log used to measure end-to-end pipeline
+# latency. The probe carries eventName == "synthetic.e2e.probe" and its emit
+# time; an OpenSearch ingest pipeline stamps the ingest time and records
+# probe_e2e_latency_ms = ingest_time - emit_time. Gated by an env var so it is
+# only active when the observability stack (with OpenSearch) is running.
+E2E_PROBE_EVENT_NAME = "synthetic.e2e.probe"
+E2E_PROBE_ENABLED = os.environ.get("E2E_LATENCY_PROBE_ENABLED", "false").lower() == "true"
+E2E_PROBE_INTERVAL_SECONDS = float(os.environ.get("E2E_LATENCY_PROBE_INTERVAL_SECONDS", "1"))
+
+# Dedicated logger provider with a simple (unbatched) processor so probes are
+# exported immediately. This keeps the measured latency focused on the
+# Collector -> backend path rather than the load generator's own log batching.
+probe_logger_provider = LoggerProvider()
+probe_logger_provider.add_log_record_processor(
+    SimpleLogRecordProcessor(OTLPLogExporter(insecure=True))
+)
+probe_logger = probe_logger_provider.get_logger("e2e-latency-probe")
+
+
+def emit_e2e_probe():
+    now_ns = time.time_ns()
+    now_ms = now_ns // 1_000_000
+    probe_logger.emit(
+        timestamp=now_ns,
+        observed_timestamp=now_ns,
+        event_name=E2E_PROBE_EVENT_NAME,
+        body="e2e latency probe",
+        severity_number=SeverityNumber.INFO,
+        attributes={
+            "probe_emitted_at_unix_millis": now_ms,
+            "probe_source": "load-generator",
+            "probe_id": str(uuid.uuid4()),
+        },
+    )
+
+
+def run_e2e_probe_loop():
+    while True:
+        try:
+            emit_e2e_probe()
+        except Exception as e:
+            logging.error(f"e2e latency probe emit failed: {e}")
+        gevent.sleep(E2E_PROBE_INTERVAL_SECONDS)
+
+
+@events.init.add_listener
+def start_e2e_probe(environment, **kwargs):
+    if E2E_PROBE_ENABLED:
+        gevent.spawn(run_e2e_probe_loop)
+        logging.info("E2E latency probe emitter started")
+
 
 # Instrument logging to automatically inject trace context
 LoggingInstrumentor().instrument(set_logging_format=True)

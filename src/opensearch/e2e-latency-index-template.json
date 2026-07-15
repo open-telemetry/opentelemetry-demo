@@ -1,0 +1,9 @@
+{
+  "index_patterns": ["otel-logs-*"],
+  "priority": 1,
+  "template": {
+    "settings": {
+      "index.default_pipeline": "e2e-latency-probe"
+    }
+  }
+}

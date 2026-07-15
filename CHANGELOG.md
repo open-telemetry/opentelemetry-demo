@@ -7,6 +7,11 @@ the release.
 
 ## Unreleased
 
+* [prototype] Add an end-to-end pipeline latency probe: the load generator
+  emits synthetic probe logs (`eventName == synthetic.e2e.probe`) and an
+  OpenSearch ingest pipeline computes ingest-time minus emit-time, visualized
+  by a new "E2E Pipeline Latency" Grafana dashboard.
+  ([#XXXX](https://github.com/open-telemetry/opentelemetry-demo/pull/XXXX))
 * [frontend] Add custom `404` and `500` error pages. Without them, `_app.tsx`'s
   custom `getInitialProps` disables Next.js's automatic static optimization
   for the built-in error pages too, so a server-side error crashes with

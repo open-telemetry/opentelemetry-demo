@@ -134,6 +134,39 @@ services:
         max-size: "5m"
         max-file: "2"
 
+  # E2E latency bootstrap (prototype, one-shot): registers the OpenSearch ingest
+  # pipeline and index template that compute end-to-end pipeline latency for
+  # synthetic probe logs, then exits. The probes themselves are emitted by the
+  # load generator (E2E_LATENCY_PROBE_ENABLED).
+  e2e-latency-init:
+    image: curlimages/curl:8.11.1
+    container_name: e2e-latency-init
+    restart: "no"
+    environment:
+      - OPENSEARCH_URL=http://opensearch:9200
+    volumes:
+      - ./src/opensearch/e2e-latency-bootstrap.sh:/bootstrap/e2e-latency-bootstrap.sh:ro
+      - ./src/opensearch/e2e-latency-ingest-pipeline.json:/bootstrap/e2e-latency-ingest-pipeline.json:ro
+      - ./src/opensearch/e2e-latency-index-template.json:/bootstrap/e2e-latency-index-template.json:ro
+    entrypoint: ["sh", "/bootstrap/e2e-latency-bootstrap.sh"]
+    depends_on:
+      opensearch:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # Enable the E2E latency probe emitter in the load generator when the
+  # observability stack (with OpenSearch) is running.
+  load-generator:
+    environment:
+      - E2E_LATENCY_PROBE_ENABLED=true
+    depends_on:
+      e2e-latency-init:
+        condition: service_completed_successfully
+
   # OpAMP Server
   # The collector connects to this control plane and reports status through the
   # opampextension.
