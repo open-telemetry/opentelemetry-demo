@@ -417,7 +417,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 1536M
     restart: unless-stopped
     environment:
       - LOAD_GENERATOR_VUS
