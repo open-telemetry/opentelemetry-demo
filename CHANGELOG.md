@@ -377,6 +377,8 @@ the release.
   ([#3659](https://github.com/open-telemetry/opentelemetry-demo/pull/3659))
 * [flagd] Fix OTel exporter config
   ([#3667](https://github.com/open-telemetry/opentelemetry-demo/pull/3667))
+* [jaeger] Enable OTel semantics in Jaeger UI
+  ([#3694](https://github.com/open-telemetry/opentelemetry-demo/pull/3694))
 
 ## 2.2.0
 
