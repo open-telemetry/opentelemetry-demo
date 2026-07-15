@@ -49,27 +49,19 @@ dominates over checkout:
   [`entrypoint.sh`](./entrypoint.sh) polls flagd and restarts k6 with the new
   VU count only when this flag's value actually changes, rather than on a
   fixed timer.
-* `loadGeneratorBrowserVUs` - sets the number of concurrent virtual users the
-  browser scenario runs (only when the browser scenario is enabled via
-  `K6_BROWSER_ENABLED`). Applied the same way as `loadGeneratorVUs`:
-  [`entrypoint.sh`](./entrypoint.sh) restarts k6 when the value changes. Set it
-  to `0` to drop the browser scenario entirely and free its CPU - k6 launches a
-  Chromium instance per browser VU at every iteration's start, so the browser
-  scenario keeps using CPU even while `loadGeneratorTraffic` is off; omitting
-  the scenario is the only way to stop that.
+`entrypoint.sh` passes the VU count to k6 through the `LOAD_GENERATOR_VUS`
+env var, which `script.js` reads directly via `__ENV` to set the HTTP
+scenario's `vus`. It is deliberately not named `K6_VUS`: as of k6 v2.1.0, a
+`K6_VUS` env var (or `--vus` flag) makes k6 discard the script's `scenarios`
+config entirely in favor of a single implicit scenario, the same way
+`K6_DURATION`/`K6_ITERATIONS`/`K6_STAGES` already did - so none of those
+reserved names should ever be set as a container env var here.
 
-`entrypoint.sh` passes the VU counts to k6 through the `LOAD_GENERATOR_VUS`
-and `LOAD_GENERATOR_BROWSER_VUS` env vars, which `script.js` reads directly
-via `__ENV` to set each scenario's `vus`. These are deliberately not named
-`K6_VUS`/`K6_BROWSER_VUS`: as of k6 v2.1.0, a `K6_VUS` env var (or `--vus`
-flag) makes k6 discard the script's `scenarios` config entirely in favor of a
-single implicit scenario, the same way `K6_DURATION`/`K6_ITERATIONS`/
-`K6_STAGES` already did - so none of those reserved names should ever be set
-as a container env var here.
-
-The browser scenario itself is opt-in via `K6_BROWSER_ENABLED` (default off),
-since headless Chromium requires a relaxed pod security context that most
-Kubernetes clusters don't grant by default. When enabled, Chromium's
-executable path and launch args come from the `K6_BROWSER_EXECUTABLE_PATH`
-and `K6_BROWSER_ARGS` env vars (comma-separated, no `--` prefix) rather than
-the scenario's own `browser` options field, which k6 ignores for these.
+The browser scenario mirrors the previous Locust load generator, which ran a
+single headless browser session alongside the HTTP traffic, so it always runs
+one browser VU. It is opt-in via `K6_BROWSER_ENABLED` (default off), since
+headless Chromium requires a relaxed pod security context that most Kubernetes
+clusters don't grant by default. When enabled, Chromium's executable path and
+launch args come from the `K6_BROWSER_EXECUTABLE_PATH` and `K6_BROWSER_ARGS`
+env vars (comma-separated, no `--` prefix) rather than the scenario's own
+`browser` options field, which k6 ignores for these.

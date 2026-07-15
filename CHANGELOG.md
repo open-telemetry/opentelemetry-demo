@@ -286,9 +286,6 @@ the release.
   entrypoint.sh wrapper restarts k6 with the new VU count whenever the flag
   changes
   ([#3564](https://github.com/open-telemetry/opentelemetry-demo/pull/3564))
-* [load-generator] Add a `loadGeneratorBrowserVUs` feature flag to control
-  browser scenario concurrency, applied the same way as `loadGeneratorVUs`
-  ([#3564](https://github.com/open-telemetry/opentelemetry-demo/pull/3564))
 * [opamp] Add an OpAMP server and configure the Collector to report status,
   version, attributes, and effective configuration through the OpAMP extension
   ([#3566](https://github.com/open-telemetry/opentelemetry-demo/pull/3566))
