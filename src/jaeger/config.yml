@@ -34,6 +34,8 @@ extensions:
       traces: memory_backend
       metrics: metrics_backend
     base_path: /jaeger/ui
+    ui:
+      config_file: /etc/jaeger/ui-config.json
   jaeger_storage:
     backends:
       memory_backend:
