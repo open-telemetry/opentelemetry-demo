@@ -7,6 +7,10 @@ the release.
 
 ## Unreleased
 
+* [grafana] Add an "Events by Name" dashboard that shows Event volume by
+  OpenTelemetry `EventName` (top events and volume over time). A log record
+  with an `EventName` is an OpenTelemetry Event.
+  ([#3691](https://github.com/open-telemetry/opentelemetry-demo/pull/3691))
 * [frontend] Add custom `404` and `500` error pages. Without them, `_app.tsx`'s
   custom `getInitialProps` disables Next.js's automatic static optimization
   for the built-in error pages too, so a server-side error crashes with
