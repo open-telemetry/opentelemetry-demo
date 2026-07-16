@@ -11,11 +11,10 @@ const FLAGD_HOST = __ENV.FLAGD_HOST || 'flagd'
 const FLAGD_OFREP_PORT = __ENV.FLAGD_OFREP_PORT || '8016'
 
 // The HTTP scenario's VU count is read from LOAD_GENERATOR_VUS rather than
-// k6's own K6_VUS, since as of k6 v2.1.0 a K6_VUS env var makes k6 discard
-// this script's scenarios config entirely in favor of an implicit single
-// scenario (see README.md). The browser scenario mirrors the previous Locust
-// load generator, which ran a single headless browser session alongside the
-// HTTP traffic; it stays opt-in via K6_BROWSER_ENABLED.
+// k6's own K6_VUS, since a K6_VUS env var makes k6 discard this script's
+// scenarios config entirely in favor of an implicit single scenario (see
+// README.md). The browser scenario runs a single headless browser session
+// alongside the HTTP traffic; it stays opt-in via K6_BROWSER_ENABLED.
 const browserEnabled = (__ENV.K6_BROWSER_ENABLED || '').toLowerCase() === 'true'
 
 export const options = {

@@ -51,17 +51,16 @@ dominates over checkout:
   fixed timer.
 `entrypoint.sh` passes the VU count to k6 through the `LOAD_GENERATOR_VUS`
 env var, which `script.js` reads directly via `__ENV` to set the HTTP
-scenario's `vus`. It is deliberately not named `K6_VUS`: as of k6 v2.1.0, a
-`K6_VUS` env var (or `--vus` flag) makes k6 discard the script's `scenarios`
-config entirely in favor of a single implicit scenario, the same way
-`K6_DURATION`/`K6_ITERATIONS`/`K6_STAGES` already did - so none of those
-reserved names should ever be set as a container env var here.
+scenario's `vus`. It is deliberately not named `K6_VUS`: a `K6_VUS` env var
+(or `--vus` flag) makes k6 discard the script's `scenarios` config entirely in
+favor of a single implicit scenario, the same way `K6_DURATION`/
+`K6_ITERATIONS`/`K6_STAGES` do - so none of those reserved names should ever
+be set as a container env var here.
 
-The browser scenario mirrors the previous Locust load generator, which ran a
-single headless browser session alongside the HTTP traffic, so it always runs
-one browser VU. It is opt-in via `K6_BROWSER_ENABLED` (default off), since
-headless Chromium requires a relaxed pod security context that most Kubernetes
-clusters don't grant by default. When enabled, Chromium's executable path and
-launch args come from the `K6_BROWSER_EXECUTABLE_PATH` and `K6_BROWSER_ARGS`
-env vars (comma-separated, no `--` prefix) rather than the scenario's own
-`browser` options field, which k6 ignores for these.
+The browser scenario runs a single headless browser session alongside the HTTP
+traffic, so it always runs one browser VU. It is opt-in via `K6_BROWSER_ENABLED`
+(default off), since headless Chromium requires a relaxed pod security context
+that most Kubernetes clusters don't grant by default. When enabled, Chromium's
+executable path and launch args come from the `K6_BROWSER_EXECUTABLE_PATH` and
+`K6_BROWSER_ARGS` env vars (comma-separated, no `--` prefix) rather than the
+scenario's own `browser` options field, which k6 ignores for these.
