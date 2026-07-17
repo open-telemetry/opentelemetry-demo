@@ -3,34 +3,10 @@
 name: Weaver Live Check
 
 on:
-  pull_request:
-    branches: [main]
-    paths:
-      - '.env'
-      - '.github/workflows/weaver-live-check.yml'
-      - 'compose.yaml'
-      - 'compose.observability.yaml'
-      - 'src/**'
-      - 'telemetry-schema/**'
-      - 'test/telemetry/**'
-  push:
-    branches: [main]
-    paths:
-      - '.env'
-      - '.github/workflows/weaver-live-check.yml'
-      - 'compose.yaml'
-      - 'compose.observability.yaml'
-      - 'src/**'
-      - 'telemetry-schema/**'
-      - 'test/telemetry/**'
-  workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
 
 env:
   WEAVER_VERSION: v0.24.2
@@ -43,7 +19,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.ref }}
           persist-credentials: false
+
+      - name: Download demo images artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: demo-images-${{ github.run_id }}
+
+      - name: Load demo images
+        run: zstd -d -c demo-images.tar.zst | docker load
 
       - name: Setup Weaver
         uses: open-telemetry/weaver/.github/actions/setup-weaver@14b8a6028f69c4ba70e3d112480b75c4cf06a508  # v0.24.2
@@ -165,6 +150,7 @@ jobs:
           YAML
 
       - name: Start minimal demo with live-check export
+        id: demo
         run: |
           touch .env.override
           docker compose \
@@ -174,6 +160,7 @@ jobs:
             -f /tmp/compose-weaver-live-check.yaml \
             -f compose.extras.yaml \
             up --force-recreate --remove-orphans --detach
+          echo "started=true" >> "$GITHUB_OUTPUT"
 
       - name: Drive checkout traffic
         run: |
@@ -185,14 +172,17 @@ jobs:
           sleep 8
 
       - name: Flush trace telemetry
+        if: always() && steps.demo.outputs.started == 'true'
         run: |
+          load_generator_status=0
+          collector_status=0
           docker compose \
             --env-file .env --env-file .env.override \
             -f compose.yaml \
             -f compose.observability.yaml \
             -f /tmp/compose-weaver-live-check.yaml \
             -f compose.extras.yaml \
-            stop load-generator
+            stop load-generator || load_generator_status=$?
           sleep 5
           docker compose \
             --env-file .env --env-file .env.override \
@@ -200,11 +190,14 @@ jobs:
             -f compose.observability.yaml \
             -f /tmp/compose-weaver-live-check.yaml \
             -f compose.extras.yaml \
-            stop --timeout 30 otel-collector
+            stop --timeout 30 otel-collector || collector_status=$?
+          if ((load_generator_status != 0 || collector_status != 0)); then
+            exit 1
+          fi
 
       - name: Stop Weaver live-check and collect report
         id: live-check-report
-        if: always()
+        if: always() && steps.live-check.outcome == 'success'
         uses: open-telemetry/weaver/.github/actions/weaver-live-check-stop@14b8a6028f69c4ba70e3d112480b75c4cf06a508  # v0.24.2
         with:
           state-dir: ${{ runner.temp }}/weaver-live-check-demo
@@ -216,7 +209,7 @@ jobs:
         run: python3 test/telemetry/check_weaver_live_report.py "${{ steps.live-check-report.outputs.report-path }}"
 
       - name: Print service logs on failure
-        if: failure()
+        if: failure() && steps.demo.outputs.started == 'true'
         run: |
           docker compose \
             --env-file .env --env-file .env.override \
@@ -235,7 +228,7 @@ jobs:
           tail -n 50 /tmp/weaver-live-check-forwarder.log 2>/dev/null || true
 
       - name: Stop demo
-        if: always()
+        if: always() && steps.demo.outputs.started == 'true'
         run: |
           docker compose \
             --env-file .env --env-file .env.override \
