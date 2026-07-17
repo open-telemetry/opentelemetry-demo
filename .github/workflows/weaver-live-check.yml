@@ -141,6 +141,11 @@ jobs:
 
           cat > /tmp/compose-weaver-live-check.yaml <<'YAML'
           services:
+            load-generator:
+              environment:
+                - LOCUST_AUTOSTART=false
+                - LOCUST_BROWSER_TRAFFIC_ENABLED=false
+
             otel-collector:
               command:
                 - "--config=/etc/otelcol-config.yml"
@@ -178,6 +183,24 @@ jobs:
             -v "${GITHUB_WORKSPACE}/test/telemetry/weaver_live_check_smoke.py:/weaver_live_check_smoke.py:ro" \
             python:3.12-alpine python /weaver_live_check_smoke.py
           sleep 8
+
+      - name: Flush trace telemetry
+        run: |
+          docker compose \
+            --env-file .env --env-file .env.override \
+            -f compose.yaml \
+            -f compose.observability.yaml \
+            -f /tmp/compose-weaver-live-check.yaml \
+            -f compose.extras.yaml \
+            stop load-generator
+          sleep 5
+          docker compose \
+            --env-file .env --env-file .env.override \
+            -f compose.yaml \
+            -f compose.observability.yaml \
+            -f /tmp/compose-weaver-live-check.yaml \
+            -f compose.extras.yaml \
+            stop --timeout 30 otel-collector
 
       - name: Stop Weaver live-check and collect report
         id: live-check-report
