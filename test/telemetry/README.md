@@ -171,8 +171,25 @@ telemetry flows end-to-end. They are complementary:
 - **Weaver**: "Are the attribute definitions correct?" (static)
 - **Telemetry tests**: "Is each service sending data?" (runtime)
 
-The `Weaver Live Check` CI workflow starts a Weaver live-check listener, runs the
-minimal demo, drives two checkout requests through the frontend, and uploads the
-live-check report as a workflow artifact. The smoke check verifies that
-live-check receives real trace telemetry from multiple services before the
-report is used for stricter policy gates.
+The `Weaver Live Check` CI job compares telemetry emitted by the running Demo
+with the definitions in `telemetry-schema/`. It starts a Weaver OTLP listener,
+runs the minimal Demo with background Locust traffic disabled, and drives two
+controlled checkout requests through the frontend. The Collector sends traces
+and custom `demo.*` metrics to Weaver, then flushes before the job collects the
+report.
+
+The job checks that the checkout path covered the expected services and that
+Weaver matched observed attributes and metrics to entries in the registry.
+The Collector sends only the Demo's custom `demo.*` attributes and metrics to
+Weaver, while retaining `service.name` to identify each source. This keeps the
+report focused on the custom promises made by `telemetry-schema/`; the live-check
+configuration suppresses findings for the retained identification attribute.
+Weaver's step summary shows registry coverage and advisory counts. The complete
+`weaver-live-check-report` JSON artifact contains every sample and finding.
+
+The job currently uses `fail-on: none`: findings are reported but do not fail
+CI. A green job means the live validation path worked and observed the expected
+registered telemetry; it does not mean the report contains no violations.
+This report-only stage provides a baseline before stricter policy gates are
+enabled. Logs are not sent to live-check because the Demo registry currently
+defines custom attributes and metrics, not log event schemas.

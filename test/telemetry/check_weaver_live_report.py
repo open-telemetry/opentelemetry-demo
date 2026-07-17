@@ -2,16 +2,30 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import json
+import os
 import sys
 from collections import Counter
+
+EXPECTED_SERVICES = {"cart", "frontend", "payment"}
+EXPECTED_METRICS = {
+    "demo.cart.add_item.latency",
+    "demo.payment.transactions",
+}
+
+
+def positive_counts(values):
+    return {name: count for name, count in values.items() if count > 0}
 
 
 def main():
     if len(sys.argv) != 2:
         raise SystemExit("usage: check_weaver_live_report.py <live_check.json>")
 
-    report = json.load(open(sys.argv[1], encoding="utf-8"))
+    with open(sys.argv[1], encoding="utf-8") as report_file:
+        report = json.load(report_file)
     stats = report.get("statistics", {}) or {}
+    registry_attributes = positive_counts(stats.get("seen_registry_attributes", {}) or {})
+    registry_metrics = positive_counts(stats.get("seen_registry_metrics", {}) or {})
     services = Counter()
     spans = Counter()
 
@@ -30,13 +44,35 @@ def main():
     print(f"  advice levels: {stats.get('advice_level_counts', {})}")
     print(f"  services: {dict(services)}")
     print(f"  top spans: {spans.most_common(10)}")
+    print(f"  observed registry attributes: {registry_attributes}")
+    print(f"  observed registry metrics: {registry_metrics}")
 
     if stats.get("total_entities", 0) <= 0:
         raise SystemExit("Weaver live-check report did not contain any entities")
-    if len(services) < 2:
-        raise SystemExit("Weaver live-check report covered fewer than two services")
+    missing_services = EXPECTED_SERVICES - services.keys()
+    if missing_services:
+        raise SystemExit(
+            f"Weaver live-check report did not cover expected services: {sorted(missing_services)}"
+        )
     if not spans:
         raise SystemExit("Weaver live-check report did not contain any spans")
+    if not registry_attributes:
+        raise SystemExit("Weaver live-check did not observe any registry attributes")
+    missing_metrics = EXPECTED_METRICS - registry_metrics.keys()
+    if missing_metrics:
+        raise SystemExit(
+            f"Weaver live-check did not observe expected registry metrics: {sorted(missing_metrics)}"
+        )
+
+    summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+    if summary_path:
+        with open(summary_path, "a", encoding="utf-8") as summary:
+            summary.write("### Observed Demo telemetry\n\n")
+            summary.write(f"- Checkout-path services: {', '.join(sorted(EXPECTED_SERVICES))}\n")
+            summary.write(f"- Matched registry attributes: {len(registry_attributes)}\n")
+            summary.write(
+                f"- Matched registry metrics: {', '.join(sorted(registry_metrics))}\n\n"
+            )
 
 
 if __name__ == "__main__":
