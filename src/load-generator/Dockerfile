@@ -3,7 +3,7 @@
 
 # Build stage: compile a custom k6 binary that includes the OTel extension.
 # k6 v2 requires Go 1.25; xk6 is the official k6 extension build tool.
-FROM docker.io/library/golang:1.26.5-bookworm@sha256:d9132cce84391efab786495288756d60e1da215b1f94e87860aeefc3d4c45b6d AS builder
+FROM docker.io/library/golang:1.26.5-bookworm@sha256:1ecb7edf62a0408027bd5729dfd6b1b8766e578e8df93995b225dfd0944eb651 AS builder
 
 # xk6 is the build tool, not part of the runtime image; pin to a known-good
 # release independent of the k6 version being built below.
