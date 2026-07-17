@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+* [grafana] Add service, EventName, and severity filters to the "Events by Name"
+  dashboard.
 * [grafana] Add an "Events by Name" dashboard that shows Event volume by
   OpenTelemetry `EventName` (top events and volume over time). A log record
   with an `EventName` is an OpenTelemetry Event.
