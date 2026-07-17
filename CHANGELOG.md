@@ -9,6 +9,11 @@ the release.
 
 * [grafana] Add service, EventName, and severity filters to the "Events by Name"
   dashboard.
+* [flagd-ui] Navigate between the `Basic` and `Advanced` tabs with LiveView
+  navigation instead of plain links. The plain links triggered a full page
+  reload, which tore down the LiveView WebSocket and produced a trace
+  containing a span with a `connection termination` error
+  ([#2588](https://github.com/open-telemetry/opentelemetry-demo/issues/2588))
 * [grafana] Add an "Events by Name" dashboard that shows Event volume by
   OpenTelemetry `EventName` (top events and volume over time). A log record
   with an `EventName` is an OpenTelemetry Event.
@@ -379,6 +384,8 @@ the release.
   ([#3659](https://github.com/open-telemetry/opentelemetry-demo/pull/3659))
 * [flagd] Fix OTel exporter config
   ([#3667](https://github.com/open-telemetry/opentelemetry-demo/pull/3667))
+* [jaeger] Enable OTel semantics in Jaeger UI
+  ([#3694](https://github.com/open-telemetry/opentelemetry-demo/pull/3694))
 
 ## 2.2.0
 

@@ -48,6 +48,7 @@ defmodule FlagdUi.MixProject do
       {:phoenix_live_reload, "~> 1.6.2", only: :dev},
       {:phoenix_live_view, "~> 1.2.3"},
       {:floki, "~> 0.38.4", only: :test},
+      {:lazy_html, "~> 0.1.9", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.7"},
       {:esbuild, "~> 0.10.0", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.5.1", runtime: Mix.env() == :dev},
