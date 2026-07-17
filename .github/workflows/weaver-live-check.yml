@@ -40,6 +40,7 @@ jobs:
         uses: open-telemetry/weaver/.github/actions/weaver-live-check-start@14b8a6028f69c4ba70e3d112480b75c4cf06a508  # v0.24.2
         with:
           registry: telemetry-schema
+          config: test/telemetry/weaver-live-check.toml
           otlp-grpc-port: '4317'
           admin-port: '4320'
           inactivity-timeout: '300'
@@ -118,14 +119,56 @@ jobs:
               sending_queue:
                 batch:
 
+          processors:
+            filter/weaver_metrics:
+              metrics:
+                include:
+                  match_type: regexp
+                  metric_names:
+                    - ^demo\..*
+            transform/weaver:
+              error_mode: propagate
+              trace_statements:
+                - context: resource
+                  statements:
+                    - keep_keys(attributes, ["service.name"])
+                - context: span
+                  statements:
+                    - keep_matching_keys(attributes, "^demo\\.")
+                - context: spanevent
+                  statements:
+                    - keep_matching_keys(attributes, "^demo\\.")
+              metric_statements:
+                - context: resource
+                  statements:
+                    - keep_keys(attributes, ["service.name"])
+                - context: datapoint
+                  statements:
+                    - keep_matching_keys(attributes, "^demo\\.")
+
+          connectors:
+            forward/weaver:
+
           service:
             pipelines:
               traces:
-                exporters: [debug, otlp_grpc/jaeger, span_metrics, otlp_grpc/weaver]
+                exporters: [debug, otlp_grpc/jaeger, span_metrics, forward/weaver]
+              traces/weaver:
+                receivers: [forward/weaver]
+                processors: [transform/weaver]
+                exporters: [otlp_grpc/weaver]
+              metrics/weaver:
+                receivers: [otlp]
+                processors: [filter/weaver_metrics, transform/weaver]
+                exporters: [otlp_grpc/weaver]
           YAML
 
           cat > /tmp/compose-weaver-live-check.yaml <<'YAML'
           services:
+            cart:
+              environment:
+                - OTEL_METRIC_EXPORT_INTERVAL=5000
+
             load-generator:
               environment:
                 - LOCUST_AUTOSTART=false
@@ -147,6 +190,10 @@ jobs:
                 - ${OTEL_COLLECTOR_CONFIG_EXTRAS}:/etc/otelcol-config-extras.yml
               extra_hosts:
                 - "host.docker.internal:host-gateway"
+
+            payment:
+              environment:
+                - OTEL_METRIC_EXPORT_INTERVAL=5000
           YAML
 
       - name: Start minimal demo with live-check export
@@ -169,9 +216,9 @@ jobs:
             -e CHECKOUT_COUNT=2 \
             -v "${GITHUB_WORKSPACE}/test/telemetry/weaver_live_check_smoke.py:/weaver_live_check_smoke.py:ro" \
             python:3.12-alpine python /weaver_live_check_smoke.py
-          sleep 8
+          sleep 15
 
-      - name: Flush trace telemetry
+      - name: Flush telemetry
         if: always() && steps.demo.outputs.started == 'true'
         run: |
           load_generator_status=0
@@ -202,9 +249,8 @@ jobs:
         with:
           state-dir: ${{ runner.temp }}/weaver-live-check-demo
           fail-on: none
-          report-artifact-name: weaver-live-check-demo
 
-      - name: Check live-check report coverage
+      - name: Check observed telemetry coverage
         if: always() && steps.live-check-report.outputs.report-path != ''
         run: python3 test/telemetry/check_weaver_live_report.py "${{ steps.live-check-report.outputs.report-path }}"
 
