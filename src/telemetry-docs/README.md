@@ -20,7 +20,7 @@ The service uses a **3-stage Docker build** for optimal performance and observab
 
 ### Stage 1: Schema Generation (Weaver)
 
-- Uses the official `otel/weaver:v0.24.2` image
+- Uses the official `otel/weaver:v0.21.2` image
 - Reads the telemetry schema from `/telemetry-schema` directory
 - Generates service-centric Markdown documentation files
 - Generates fully resolved schema as JSON
