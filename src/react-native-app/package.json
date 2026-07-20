@@ -47,11 +47,11 @@
   "devDependencies": {
     "@types/react": "~19.2.17",
     "@types/react-native-get-random-values": "^1.8.2",
-    "eslint": "^10.7.0",
+    "eslint": "^9.39.5",
     "eslint-config-expo": "~57.0.0",
-    "eslint-import-resolver-typescript": "^4.4.5",
+    "eslint-import-resolver-typescript": "^3.10.1",
     "ts-proto": "^2.12.0",
-    "typescript": "~7.0.2"
+    "typescript": "~6.0.3"
   },
   "overrides": {
     "postcss": "8.5.14",
