@@ -32,6 +32,7 @@ services:
       - MEMORY_MAX_TRACES=25000
     volumes:
       - ./src/jaeger/config.yml:/etc/jaeger/config.yml
+      - ./src/jaeger/ui-config.json:/etc/jaeger/ui-config.json
     logging:
       driver: "json-file"
       options:

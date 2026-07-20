@@ -321,7 +321,7 @@ updates:
     patterns:
       - "*"
     multi-ecosystem-group: "src-chatbot"
-  - package-ecosystem: "pip"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
+  - package-ecosystem: "gomod"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
     directories:
       - "/src/load-generator/**"
     patterns:

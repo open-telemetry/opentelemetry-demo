@@ -10,6 +10,26 @@ the release.
 * [kafka] Add `KAFKA_TOPIC` environment variable to configure the Kafka topic
   name used by `checkout`, `accounting`, and `fraud-detection`, defaulting to
   `orders` to preserve existing behavior
+* [grafana] Add service, EventName, and severity filters to the "Events by Name"
+  dashboard.
+* [flagd-ui] Navigate between the `Basic` and `Advanced` tabs with LiveView
+  navigation instead of plain links. The plain links triggered a full page
+  reload, which tore down the LiveView WebSocket and produced a trace
+  containing a span with a `connection termination` error
+  ([#2588](https://github.com/open-telemetry/opentelemetry-demo/issues/2588))
+* [grafana] Add an "Events by Name" dashboard that shows Event volume by
+  OpenTelemetry `EventName` (top events and volume over time). A log record
+  with an `EventName` is an OpenTelemetry Event.
+  ([#3691](https://github.com/open-telemetry/opentelemetry-demo/pull/3691))
+* [frontend] Add custom `404` and `500` error pages. Without them, `_app.tsx`'s
+  custom `getInitialProps` disables Next.js's automatic static optimization
+  for the built-in error pages too, so a server-side error crashes with
+  `Cannot find module for page: /500` instead of showing an error page
+  ([#2144](https://github.com/open-telemetry/opentelemetry-demo/issues/2144))
+* [opamp-server] Bump `OPAMP_GO_REF` to pick up example-server UI improvements
+  from `opamp-go` (improved agent list, agent uptime on the agent page, and
+  startup logging of the OpAMP/admin UI addresses).
+  ([#3685](https://github.com/open-telemetry/opentelemetry-demo/pull/3685))
 * [compose] Run `checkout`, `product-catalog`, and `shipping` with a
   read-only root filesystem (`read_only: true` plus a `/tmp` tmpfs mount),
   for container platforms that prohibit writable root filesystems. Limited
@@ -268,6 +288,18 @@ the release.
   ([#3521](https://github.com/open-telemetry/opentelemetry-demo/pull/3521))
 * [cart,accounting] Use source-generated logging with EventName
   ([#3559](https://github.com/open-telemetry/opentelemetry-demo/pull/3559))
+* [load-generator] Replace Locust with k6, using a custom `xk6-otel`
+  extension for OTel trace/log/metric correlation and k6's built-in browser
+  module for browser-driven traffic
+  ([#3564](https://github.com/open-telemetry/opentelemetry-demo/pull/3564))
+* [load-generator] Add a `loadGeneratorTraffic` feature flag that pauses
+  all synthetic traffic when turned off, resuming when toggled back on
+  ([#3564](https://github.com/open-telemetry/opentelemetry-demo/pull/3564))
+* [load-generator] Add a `loadGeneratorVUs` feature flag to control HTTP
+  scenario concurrency. k6 v2 can't resize a running test's VU pool, so an
+  entrypoint.sh wrapper restarts k6 with the new VU count whenever the flag
+  changes
+  ([#3564](https://github.com/open-telemetry/opentelemetry-demo/pull/3564))
 * [opamp] Add an OpAMP server and configure the Collector to report status,
   version, attributes, and effective configuration through the OpAMP extension
   ([#3566](https://github.com/open-telemetry/opentelemetry-demo/pull/3566))
@@ -342,7 +374,7 @@ the release.
   convert OpenLLMetry/Traceloop instrumentation telemetry (from the agent
   service) into official GenAI semantic conventions (`gen_ai.*` attributes).
   Bump collector-contrib to v0.155.0 which includes the processor
-  ([#3526](https://github.com/open-telemetry/opentelemetry-demo/issues/3526))
+  ([#3604](https://github.com/open-telemetry/opentelemetry-demo/pull/3604))
 * [load-generator] Fix `synthetic_request` (and `session.id`) baggage being
   discarded before reaching any backend service, due to the baggage-bearing
   context being attached inside a span's `with` block so that the span's exit
@@ -365,6 +397,10 @@ the release.
   ([#3633](https://github.com/open-telemetry/opentelemetry-demo/pull/3633))
 * [profiles] Add resource attributes to profiles
   ([#3659](https://github.com/open-telemetry/opentelemetry-demo/pull/3659))
+* [flagd] Fix OTel exporter config
+  ([#3667](https://github.com/open-telemetry/opentelemetry-demo/pull/3667))
+* [jaeger] Enable OTel semantics in Jaeger UI
+  ([#3694](https://github.com/open-telemetry/opentelemetry-demo/pull/3694))
 
 ## 2.2.0
 
