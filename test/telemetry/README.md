@@ -171,25 +171,8 @@ telemetry flows end-to-end. They are complementary:
 - **Weaver**: "Are the attribute definitions correct?" (static)
 - **Telemetry tests**: "Is each service sending data?" (runtime)
 
-The `Weaver Live Check` CI job compares telemetry emitted by the running Demo
-with the definitions in `telemetry-schema/`. It starts a Weaver OTLP listener,
-runs the minimal Demo without the default load-generator traffic, and invokes
-two deterministic checkout iterations from the existing k6 script. The
-Collector sends spans with custom `demo.*` attributes and custom `demo.*`
-metrics to Weaver, then flushes before the job collects the report.
-
-The job checks that the checkout path produced spans with registered attributes
-and the expected Cart and Payment metrics.
-The Collector sends only the Demo's custom `demo.*` attributes and metrics to
-Weaver, while retaining `service.name` to identify each source. This keeps the
-report focused on the custom promises made by `telemetry-schema/`; the live-check
-configuration suppresses findings for the retained identification attribute.
-Weaver's step summary shows registry coverage and advisory counts. The complete
-`weaver-live-check-report` JSON artifact contains every sample and finding.
-
-The job currently uses `fail-on: none`: findings are reported but do not fail
-CI. A green job means the live validation path worked and observed the expected
-registered telemetry; it does not mean the report contains no violations.
-This report-only stage provides a baseline before stricter policy gates are
-enabled. Logs are not sent to live-check because the Demo registry currently
-defines custom attributes and metrics, not log event schemas.
+The `Weaver Live Check` CI job compares emitted custom telemetry with
+`telemetry-schema/`. Findings are reported in the job summary and the
+`weaver-live-check-report` artifact. The job is currently report-only, so a
+green result confirms that expected registered telemetry was observed, not that
+the report contains no violations.
