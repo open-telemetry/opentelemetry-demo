@@ -173,13 +173,13 @@ telemetry flows end-to-end. They are complementary:
 
 The `Weaver Live Check` CI job compares telemetry emitted by the running Demo
 with the definitions in `telemetry-schema/`. It starts a Weaver OTLP listener,
-runs the minimal Demo with background Locust traffic disabled, and drives two
-controlled checkout requests through the frontend. The Collector sends traces
-and custom `demo.*` metrics to Weaver, then flushes before the job collects the
-report.
+runs the minimal Demo without the default load-generator traffic, and invokes
+two deterministic checkout iterations from the existing k6 script. The
+Collector sends spans with custom `demo.*` attributes and custom `demo.*`
+metrics to Weaver, then flushes before the job collects the report.
 
-The job checks that the checkout path covered the expected services and that
-Weaver matched observed attributes and metrics to entries in the registry.
+The job checks that the checkout path produced spans with registered attributes
+and the expected Cart and Payment metrics.
 The Collector sends only the Demo's custom `demo.*` attributes and metrics to
 Weaver, while retaining `service.name` to identify each source. This keeps the
 report focused on the custom promises made by `telemetry-schema/`; the live-check
