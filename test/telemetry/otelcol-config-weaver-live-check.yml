@@ -1,0 +1,51 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+exporters:
+  otlp_grpc/weaver:
+    endpoint: host.docker.internal:4317
+    compression: none
+    tls:
+      insecure: true
+
+processors:
+  filter/weaver_metrics:
+    metrics:
+      include:
+        match_type: regexp
+        metric_names:
+          - ^demo\..*
+  filter/weaver_traces:
+    traces:
+      span:
+        - Len(attributes) == 0
+  transform/weaver:
+    error_mode: propagate
+    trace_statements:
+      - context: resource
+        statements:
+          - keep_keys(attributes, ["service.name"])
+      - context: span
+        statements:
+          - keep_matching_keys(attributes, "^demo\\.")
+      - context: spanevent
+        statements:
+          - keep_matching_keys(attributes, "^demo\\.")
+    metric_statements:
+      - context: resource
+        statements:
+          - keep_keys(attributes, ["service.name"])
+      - context: datapoint
+        statements:
+          - keep_matching_keys(attributes, "^demo\\.")
+
+service:
+  pipelines:
+    traces/weaver:
+      receivers: [otlp]
+      processors: [transform/weaver, filter/weaver_traces]
+      exporters: [otlp_grpc/weaver]
+    metrics/weaver:
+      receivers: [otlp]
+      processors: [filter/weaver_metrics, transform/weaver]
+      exporters: [otlp_grpc/weaver]

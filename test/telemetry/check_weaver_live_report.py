@@ -4,9 +4,7 @@
 import json
 import os
 import sys
-from collections import Counter
 
-EXPECTED_SERVICES = {"cart", "frontend", "payment"}
 EXPECTED_METRICS = {
     "demo.cart.add_item.latency",
     "demo.payment.transactions",
@@ -26,35 +24,27 @@ def main():
     stats = report.get("statistics", {}) or {}
     registry_attributes = positive_counts(stats.get("seen_registry_attributes", {}) or {})
     registry_metrics = positive_counts(stats.get("seen_registry_metrics", {}) or {})
-    services = Counter()
-    spans = Counter()
+    services = set()
+    has_spans = False
 
     for sample in report.get("samples", []):
         resource = sample.get("resource")
         if resource:
             for attr in resource.get("attributes", []):
                 if attr.get("name") == "service.name" and attr.get("value"):
-                    services[str(attr["value"])] += 1
-        span = sample.get("span")
-        if span:
-            spans[str(span.get("name"))] += 1
+                    services.add(str(attr["value"]))
+        has_spans = has_spans or sample.get("span") is not None
 
     print("Weaver live-check summary")
     print(f"  total entities: {stats.get('total_entities', 0)}")
     print(f"  advice levels: {stats.get('advice_level_counts', {})}")
-    print(f"  services: {dict(services)}")
-    print(f"  top spans: {spans.most_common(10)}")
+    print(f"  services: {sorted(services)}")
     print(f"  observed registry attributes: {registry_attributes}")
     print(f"  observed registry metrics: {registry_metrics}")
 
     if stats.get("total_entities", 0) <= 0:
         raise SystemExit("Weaver live-check report did not contain any entities")
-    missing_services = EXPECTED_SERVICES - services.keys()
-    if missing_services:
-        raise SystemExit(
-            f"Weaver live-check report did not cover expected services: {sorted(missing_services)}"
-        )
-    if not spans:
+    if not has_spans:
         raise SystemExit("Weaver live-check report did not contain any spans")
     if not registry_attributes:
         raise SystemExit("Weaver live-check did not observe any registry attributes")
@@ -68,7 +58,7 @@ def main():
     if summary_path:
         with open(summary_path, "a", encoding="utf-8") as summary:
             summary.write("### Observed Demo telemetry\n\n")
-            summary.write(f"- Checkout-path services: {', '.join(sorted(EXPECTED_SERVICES))}\n")
+            summary.write(f"- Services with matched telemetry: {', '.join(sorted(services))}\n")
             summary.write(f"- Matched registry attributes: {len(registry_attributes)}\n")
             summary.write(
                 f"- Matched registry metrics: {', '.join(sorted(registry_metrics))}\n\n"

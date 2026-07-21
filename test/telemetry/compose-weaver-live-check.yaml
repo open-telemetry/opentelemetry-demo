@@ -1,0 +1,28 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+services:
+  cart:
+    environment:
+      - OTEL_METRIC_EXPORT_INTERVAL=5000
+
+  load-generator:
+    volumes:
+      - ./test/telemetry/weaver-checkout.js:/home/k6/weaver-checkout.js:ro
+
+  otel-collector:
+    command:
+      - "--config=/etc/otelcol-config.yml"
+      - "--config=/etc/otelcol-config-weaver-live-check.yml"
+      - "--config=/etc/otelcol-config-extras.yml"
+      - "--feature-gates=service.profilesSupport"
+    volumes:
+      - ${OTEL_COLLECTOR_CONFIG}:/etc/otelcol-config.yml
+      - ./test/telemetry/otelcol-config-weaver-live-check.yml:/etc/otelcol-config-weaver-live-check.yml
+      - ${OTEL_COLLECTOR_CONFIG_EXTRAS}:/etc/otelcol-config-extras.yml
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  payment:
+    environment:
+      - OTEL_METRIC_EXPORT_INTERVAL=5000
