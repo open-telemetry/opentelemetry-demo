@@ -305,5 +305,5 @@ jobs:
             ${{ inputs.dockerhub_repo }}:latest-${{matrix.file_tag.tag_suffix }}
             ${{ inputs.ghcr_repo }}:${{ inputs.version }}-${{ matrix.file_tag.tag_suffix }}
             ${{ inputs.ghcr_repo }}:latest-${{ matrix.file_tag.tag_suffix }}
-          cache-from: type=gha
-          cache-to: type=gha
+          cache-from: type=gha,scope=${{ matrix.file_tag.tag_suffix }}
+          cache-to: type=gha,scope=${{ matrix.file_tag.tag_suffix }}
