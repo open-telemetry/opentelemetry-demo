@@ -71,7 +71,6 @@ defmodule FlagdUi.Storage do
           end
 
         {flag, updated_data}
-      {flag, data} when flag == flag_name -> {flag, Map.replace(data, "defaultVariant", value)}
       {flag, data} -> {flag, data}
     end)
     |> Map.new()
