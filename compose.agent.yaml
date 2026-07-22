@@ -29,7 +29,7 @@ services:
     volumes:
       - ./src/agent/fixtures:/app/fixtures
     environment:
-      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
+      - TRACELOOP_BASE_URL
       - GRAPH_RECURSION_LIMIT
       - MCP_ENDPOINT
       - MCP_PORT
@@ -38,10 +38,11 @@ services:
       - AGENT_PORT
       - LLM_BASE_URL
       - LLM_MODEL
+      - LLM_TLS_VERIFY
       - API_KEY
       - USE_VCR
       - OPENAI_API_KEY=${API_KEY}
-      - APPLICATION_ENDPOINT=frontend:8080
+      - APPLICATION_ENDPOINT
       - OTEL_EXPORTER_OTLP_INSECURE=true
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
       - OTEL_SERVICE_NAME=agent
@@ -73,11 +74,11 @@ services:
     ports:
       - "${MCP_PORT}"
     environment:
-      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
+      - TRACELOOP_BASE_URL
       - MCP_ENDPOINT
       - MCP_PORT
       - OTEL_EXPORTER_OTLP_INSECURE=true
-      - APPLICATION_ENDPOINT=frontend:8080
+      - APPLICATION_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
       - OTEL_SERVICE_NAME=mcp
     depends_on:
@@ -110,7 +111,7 @@ services:
       - CHATBOT_ROOT_PATH
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
       - OTEL_SERVICE_NAME=chatbot
-      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_INSECURE=true
     depends_on:
       agent:
