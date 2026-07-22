@@ -10,6 +10,7 @@ the release.
 * [currency] Guard the `VERSION` environment variable lookup against `nullptr`:
   constructing a `std::string` directly from `std::getenv("VERSION")` crashes
   when the variable is unset, so fall back to `"unknown"` instead
+  ([#3743](https://github.com/open-telemetry/opentelemetry-demo/pull/3743))
 * [kafka] Add `KAFKA_TOPIC` environment variable to configure the Kafka topic
   name used by `checkout`, `accounting`, and `fraud-detection`, defaulting to
   `orders` to preserve existing behavior
