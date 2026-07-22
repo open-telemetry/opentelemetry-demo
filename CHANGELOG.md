@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+* [agentic] Move agent, chatbot and mcp to OTLP http exporter
+  ([#3745](https://github.com/open-telemetry/opentelemetry-demo/pull/3745))
 * [currency] Guard the `VERSION` environment variable lookup against `nullptr`:
   constructing a `std::string` directly from `std::getenv("VERSION")` crashes
   when the variable is unset, so fall back to `"unknown"` instead
