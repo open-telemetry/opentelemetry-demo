@@ -11,6 +11,17 @@ import gradio as gr
 import requests
 from pydantic import BaseModel
 
+chatbot_requests_counter = None
+
+
+def init_metrics(meter):
+    global chatbot_requests_counter
+    chatbot_requests_counter = meter.create_counter(
+        "demo.chatbot.requests",
+        unit="{request}",
+        description="Number of chat messages sent from the chatbot UI to the agent",
+    )
+
 
 class ChatUiConfig(BaseModel):
     uiBaseUrl: str
@@ -26,6 +37,8 @@ class ChatAgentUI:
         self.config = chat_ui_config
 
     def chat_with_agent(self, message, history, request: gr.Request):
+        if chatbot_requests_counter is not None:
+            chatbot_requests_counter.add(1)
         try:
             # session_id = request.session_hash or self.config.sessionId
             payload = {
