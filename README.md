@@ -88,7 +88,6 @@ Wednesday at 8:30 AM PST and anyone is welcome.
 - [Cyrille Le Clerc](https://github.com/cyrille-leclerc), Datadog
 - [Juliano Costa](https://github.com/julianocosta89), Datadog
 - [Pierre Tessier](https://github.com/puckpuck), Resolve AI
-- [Roger Coll](https://github.com/rogercoll), Elastic
 
 For more information about the maintainer role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).
 
@@ -110,6 +109,7 @@ For more information about the approver role, see the [community repository](htt
 - [Morgan McLean](https://github.com/mtwo), Approver
 - [Penghan Wang](https://github.com/wph95), Approver
 - [Reiley Yang](https://github.com/reyang), Approver
+- [Roger Coll](https://github.com/rogercoll), Maintainer
 - [Ziqi Zhao](https://github.com/fatsheep9146), Approver
 
 For more information about the emeritus role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#emeritus-maintainerapprovertriager).

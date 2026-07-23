@@ -36,7 +36,7 @@
     "@opentelemetry/sdk-trace-base": "2.9.0",
     "@opentelemetry/sdk-trace-node": "2.9.0",
     "@opentelemetry/sdk-trace-web": "2.9.0",
-    "@tanstack/react-query": "5.101.2",
+    "@tanstack/react-query": "5.101.3",
     "cookies-next": "6.1.1",
     "currency-symbol-map": "5.1.0",
     "dotenv": "17.4.2",
@@ -45,7 +45,7 @@
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "sharp": "0.35.3",
-    "styled-components": "6.4.3",
+    "styled-components": "6.4.4",
     "uuid": "14.0.1"
   },
   "devDependencies": {
@@ -53,8 +53,8 @@
     "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",
     "@types/styled-components": "5.1.36",
-    "@typescript-eslint/eslint-plugin": "8.64.0",
-    "@typescript-eslint/parser": "8.64.0",
+    "@typescript-eslint/eslint-plugin": "8.65.0",
+    "@typescript-eslint/parser": "8.65.0",
     "cypress": "15.18.1",
     "eslint": "9.39.5",
     "eslint-config-next": "16.2.10",

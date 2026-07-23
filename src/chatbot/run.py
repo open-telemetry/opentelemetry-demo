@@ -6,19 +6,17 @@
 
 import asyncio
 import logging
-import os
 
 from dotenv import load_dotenv
 from opentelemetry import metrics, trace
-from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import (
+from opentelemetry.exporter.otlp.proto.http.metric_exporter import (
     OTLPMetricExporter,
 )
-from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
-from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from src.chat_interface.chat_interface import (
@@ -33,17 +31,11 @@ load_dotenv()
 
 
 def _configure_telemetry() -> None:
-    resource = Resource.create(
-        {
-            "service.name": os.getenv("OTEL_SERVICE_NAME", "chatbot"),
-        }
-    )
-    provider = TracerProvider(resource=resource)
+    provider = TracerProvider()
     provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
     trace.set_tracer_provider(provider)
 
     meter_provider = MeterProvider(
-        resource=resource,
         metric_readers=[PeriodicExportingMetricReader(OTLPMetricExporter())],
     )
     metrics.set_meter_provider(meter_provider)

@@ -79,7 +79,7 @@
             "uid": "webstore-logs"
           },
           "format": "table",
-          "query": "source=otel-logs-*\n| where eventName != ''\n| stats count() as log_count by eventName\n| sort - log_count\n| head 20",
+          "query": "source=otel-logs-*\n| where eventName != ''\n| where resource.service.name in (${service:singlequote})\n| where eventName in (${event_name:singlequote})\n| where severity.text in (${severity:singlequote})\n| stats count() as log_count by eventName\n| sort - log_count\n| head 20",
           "queryType": "PPL",
           "refId": "A",
           "timeField": "observedTimestamp"
@@ -217,7 +217,7 @@
               "type": "count"
             }
           ],
-          "query": "eventName:*",
+          "query": "eventName.keyword:$event_name AND resource.service.name.keyword:$service AND severity.text.keyword:$severity",
           "queryType": "lucene",
           "refId": "A",
           "timeField": "observedTimestamp"
@@ -235,7 +235,83 @@
     "logs"
   ],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "grafana-opensearch-datasource",
+          "uid": "webstore-logs"
+        },
+        "definition": "{\"find\":\"terms\",\"field\":\"resource.service.name.keyword\",\"query\":\"eventName:*\",\"size\":1000}",
+        "includeAll": true,
+        "label": "Service",
+        "multi": true,
+        "name": "service",
+        "options": [],
+        "query": "{\"find\":\"terms\",\"field\":\"resource.service.name.keyword\",\"query\":\"eventName:*\",\"size\":1000}",
+        "refresh": 2,
+        "regex": "",
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "grafana-opensearch-datasource",
+          "uid": "webstore-logs"
+        },
+        "definition": "{\"find\":\"terms\",\"field\":\"eventName.keyword\",\"query\":\"eventName:* AND resource.service.name.keyword:$service\",\"size\":1000}",
+        "includeAll": true,
+        "label": "Event Name",
+        "multi": true,
+        "name": "event_name",
+        "options": [],
+        "query": "{\"find\":\"terms\",\"field\":\"eventName.keyword\",\"query\":\"eventName:* AND resource.service.name.keyword:$service\",\"size\":1000}",
+        "refresh": 2,
+        "regex": "",
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "grafana-opensearch-datasource",
+          "uid": "webstore-logs"
+        },
+        "definition": "{\"find\":\"terms\",\"field\":\"severity.text.keyword\",\"query\":\"eventName:* AND resource.service.name.keyword:$service AND eventName.keyword:$event_name\",\"size\":1000}",
+        "includeAll": true,
+        "label": "Severity",
+        "multi": true,
+        "name": "severity",
+        "options": [],
+        "query": "{\"find\":\"terms\",\"field\":\"severity.text.keyword\",\"query\":\"eventName:* AND resource.service.name.keyword:$service AND eventName.keyword:$event_name\",\"size\":1000}",
+        "refresh": 2,
+        "regex": "",
+        "sort": 1,
+        "type": "query"
+      }
+    ]
   },
   "time": {
     "from": "now-15m",

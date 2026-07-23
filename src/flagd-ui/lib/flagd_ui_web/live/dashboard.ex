@@ -29,7 +29,7 @@ defmodule FlagdUiWeb.Dashboard do
             >
               <div>
                 <p class="mb-4 text-lg font-semibold">{name}</p>
-                <p class="-4 text-sm">{data["description"]}</p>
+                <p class="mb-4 text-sm">{data["description"]}</p>
               </div>
               <div>
                 <div class="flex items-center justify-between">

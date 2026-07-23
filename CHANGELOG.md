@@ -7,11 +7,51 @@ the release.
 
 ## Unreleased
 
+* [react-native-app] Fix `ProductCard` price calculation where `nanos` was
+  divided by `100_000_000` (1e8) instead of `1_000_000_000` (1e9), inflating
+  the displayed price
+  ([#3751](https://github.com/open-telemetry/opentelemetry-demo/issues/3751))
+* [agentic] Move agent, chatbot and mcp to OTLP http exporter
+  ([#3745](https://github.com/open-telemetry/opentelemetry-demo/pull/3745))
+* [currency] Guard the `VERSION` environment variable lookup against `nullptr`:
+  constructing a `std::string` directly from `std::getenv("VERSION")` crashes
+  when the variable is unset, so fall back to `"unknown"` instead
+  ([#3743](https://github.com/open-telemetry/opentelemetry-demo/pull/3743))
+* [checkout] Fix `demo.shipping.amount` and `demo.order.amount` telemetry
+  always dropping the cents. `Money.nanos` is billionths of a unit, so
+  dividing by `1_000_000_000` is integer division of a value that never
+  reaches that divisor, always producing `0`; divide by `10_000_000` instead
+  to get the cents component
+  ([#3742](https://github.com/open-telemetry/opentelemetry-demo/issues/3742))
+* [react-native-app] Use `getUniqueIdSync()` instead of `getDeviceId()` to
+  populate the `device.id` resource attribute. `getDeviceId()` returns the
+  hardware/model identifier (e.g. `iPhone13,4`), which is the same for every
+  physical unit of that model, so `device.id` was identical across different
+  devices instead of uniquely identifying each one
+  ([#3722](https://github.com/open-telemetry/opentelemetry-demo/issues/3722))
+* [currency] Fix `IPV6_ENABLED` check comparing a `const char*` pointer
+  against a string literal instead of the string's contents, so the check
+  was always false and the service could never bind to `[::]`
+  ([#3735](https://github.com/open-telemetry/opentelemetry-demo/issues/3735))
+* [kafka] Add `KAFKA_TOPIC` environment variable to configure the Kafka topic
+  name used by `checkout`, `accounting`, and `fraud-detection`, defaulting to
+  `orders` to preserve existing behavior
+* [grafana] Add service, EventName, and severity filters to the "Events by Name"
+  dashboard.
+* [flagd-ui] Fix invalid `-4` Tailwind class on the flag description text in
+  the dashboard. `-4` has no matching utility and is dropped during the
+  build, so the description ended up with no bottom margin; replaced with
+  `mb-4` to match the flag name above it
+  ([#3715](https://github.com/open-telemetry/opentelemetry-demo/issues/3715))
 * [flagd-ui] Navigate between the `Basic` and `Advanced` tabs with LiveView
   navigation instead of plain links. The plain links triggered a full page
   reload, which tore down the LiveView WebSocket and produced a trace
   containing a span with a `connection termination` error
   ([#2588](https://github.com/open-telemetry/opentelemetry-demo/issues/2588))
+* [docs] Document the `telemetry-schema` Weaver registry in `AGENTS.md`, so
+  that new instrumentation reuses existing attributes and defines new ones in
+  the schema
+  ([#3248](https://github.com/open-telemetry/opentelemetry-demo/issues/3248))
 * [grafana] Add an "Events by Name" dashboard that shows Event volume by
   OpenTelemetry `EventName` (top events and volume over time). A log record
   with an `EventName` is an OpenTelemetry Event.
