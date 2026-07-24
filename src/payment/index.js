@@ -25,6 +25,7 @@ async function chargeServiceHandler(call, callback) {
     logger.warn({ err })
 
     span?.setStatus({ code: opentelemetry.SpanStatusCode.ERROR, message: err.message })
+    span?.setAttribute('error.type', err.name || 'Error')
     callback(err)
   }
 }

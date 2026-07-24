@@ -100,6 +100,7 @@ module.exports.charge = async request => {
   } catch (err) {
     span.recordException(err);
     span.setStatus({ code: SpanStatusCode.ERROR, message: err.message });
+    span.setAttribute('error.type', err.name || 'Error');
 
     throw err;
   } finally {
