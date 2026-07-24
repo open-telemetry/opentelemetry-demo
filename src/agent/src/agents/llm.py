@@ -11,7 +11,7 @@ from src.agents.llm_cache import CacheKey, LLMCacheMiss, get_cache
 
 
 class ChatLLM(ChatOpenAI):
-    def __init__(self, **kwargs):
+    def __init__(self, is_synthetic=False, **kwargs):
         model_name = os.getenv("LLM_MODEL", "default")
         llm_tls_verify = os.getenv("LLM_TLS_VERIFY", "True").lower() == "true"
         if "http_async_client" not in kwargs:
@@ -29,6 +29,20 @@ class ChatLLM(ChatOpenAI):
         super().__init__(**kwargs)
 
         object.__setattr__(self, "_llm_cache", get_cache(model_name))
+        object.__setattr__(self, "_is_synthetic", is_synthetic)
+
+    def _effective_mode(self, cache):
+        """Cache mode to use for this call.
+
+        Synthetic (load-generator) traffic fires a fixed, high-volume
+        prompt set concurrently, so it is forced into "replay" regardless
+        of LLM_CACHE_MODE: a hybrid/record fallback to the live LLM would
+        make load-test runs slow, non-deterministic, and costly. Organic
+        traffic (e.g. a human typing into the chatbot) keeps the
+        configured process-wide mode, so custom questions still get
+        recorded on the fly.
+        """
+        return "replay" if self._is_synthetic else cache.mode
 
     def _cache_context(self, messages, stop, kwargs):
         """Return (cache, payload) or (None, None) when not cacheable.
@@ -48,11 +62,11 @@ class ChatLLM(ChatOpenAI):
             return None, None
         return cache, payload
 
-    def _cached_result(self, cache, key):
-        cached = cache.lookup(key) if cache.mode != "record" else None
+    def _cached_result(self, cache, key, mode):
+        cached = cache.lookup(key) if mode != "record" else None
         if cached is not None:
             return self._create_chat_result(cached)
-        if cache.mode == "replay":
+        if mode == "replay":
             raise LLMCacheMiss(
                 "no cached LLM response matches this request; run with "
                 "LLM_CACHE_MODE=hybrid and a configured LLM to record one"
@@ -65,8 +79,9 @@ class ChatLLM(ChatOpenAI):
             return super()._generate(
                 messages, stop=stop, run_manager=run_manager, **kwargs
             )
+        mode = self._effective_mode(cache)
         key = CacheKey(payload)
-        result = self._cached_result(cache, key)
+        result = self._cached_result(cache, key, mode)
         if result is not None:
             return result
         response = self._response_dict(self.client.create(**payload))
@@ -79,8 +94,9 @@ class ChatLLM(ChatOpenAI):
             return await super()._agenerate(
                 messages, stop=stop, run_manager=run_manager, **kwargs
             )
+        mode = self._effective_mode(cache)
         key = CacheKey(payload)
-        result = self._cached_result(cache, key)
+        result = self._cached_result(cache, key, mode)
         if result is not None:
             return result
         response = await cache.fetch(key, lambda: self._alive_call(payload))

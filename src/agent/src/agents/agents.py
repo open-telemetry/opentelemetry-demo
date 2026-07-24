@@ -13,6 +13,7 @@ from fastapi import FastAPI, HTTPException
 from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain_mcp_adapters.tools import load_mcp_tools
+from opentelemetry import baggage
 from pydantic import BaseModel
 from src.agents.llm import ChatLLM
 from src.agents.mcp_client import MCPClient
@@ -57,7 +58,8 @@ class Agent:
             await self.mcp_server.cleanup()
 
     async def handle_prompt(self, request: ChatRequest):
-        return await self.run_agent(request.message, request.history)
+        is_synthetic = baggage.get_baggage("synthetic_request") == "true"
+        return await self.run_agent(request.message, request.history, is_synthetic)
 
     async def get_tool_list(self):
         mcp_enabled = os.getenv("MCP_ENABLED", "False") == "True"
@@ -79,8 +81,10 @@ class Agent:
             return [tool(t) for t in tool_list]
 
     @workflow(name="astronomy_shop_agent_workflow")
-    async def run_agent(self, input_prompt, history: List[Dict] | None = None):
-        model = ChatLLM()
+    async def run_agent(
+        self, input_prompt, history: List[Dict] | None = None, is_synthetic=False
+    ):
+        model = ChatLLM(is_synthetic=is_synthetic)
         tools = await self.get_tool_list()
         agent = create_agent(
             model,
