@@ -14,7 +14,7 @@ async function chargeServiceHandler(call, callback) {
   try {
     const amount = call.request.amount
     span?.setAttributes({
-      'demo.payment.amount': parseFloat(`${amount.units}.${amount.nanos}`).toFixed(2)
+      'demo.payment.amount': (Number(amount.units) + amount.nanos / 1000000000).toFixed(2)
     })
     logger.info("Charge request received.")
 
