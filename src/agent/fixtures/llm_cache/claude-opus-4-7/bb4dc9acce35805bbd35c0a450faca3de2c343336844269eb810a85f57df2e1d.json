@@ -6,8 +6,27 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Get the details for product ID 1YMWWN1N4O, but only return its exact price and nothing else.",
         "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"1YMWWN1N4O\"}",
+              "name": "get_product"
+            },
+            "id": "tooluse_oZ6yc2VKNUeH8AQDELVSx0",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"id\": \"1YMWWN1N4O\", \"name\": \"Eclipsmart Travel Refractor Telescope\", \"description\": \"Dedicated white-light solar scope for the observer on the go. The 50mm refracting solar scope uses Solar Safe, ISO compliant, full-aperture glass filter material to ensure the safest view of solar events.  The kit comes complete with everything you need, including the dedicated travel solar scope, a Solar Safe finderscope, tripod, a high quality 20mm (18x) Kellner eyepiece and a nylon backpack to carry everything in.  This Travel Solar Scope makes it easy to share the Sun as well as partial and total solar eclipses with the whole family and offers much higher magnifications than you would otherwise get using handheld solar viewers or binoculars.\", \"picture\": \"EclipsmartTravelRefractorTelescope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 129, \"nanos\": 950000000}, \"categories\": [\"telescopes\", \"travel\"]}",
+        "role": "tool",
+        "tool_call_id": "tooluse_oZ6yc2VKNUeH8AQDELVSx0"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +210,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "$129.95",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

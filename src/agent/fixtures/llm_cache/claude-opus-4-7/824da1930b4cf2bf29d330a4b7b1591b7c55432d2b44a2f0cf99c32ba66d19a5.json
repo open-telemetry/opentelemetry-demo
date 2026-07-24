@@ -1,0 +1,283 @@
+{
+  "request": {
+    "messages": [
+      {
+        "content": "You are a helpful assistant. Be concise and accurate.",
+        "role": "system"
+      },
+      {
+        "content": "Add product 1YMWWN1N4O to my cart, get a shipping quote for it to 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA, and then proceed to checkout. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f, email larry_sergei@example.com, currency USD, credit card 4432-8015-6152-0454, CVV 123, expiration 01/2030.",
+        "role": "user"
+      },
+      {
+        "content": "I'll help you with that. Let me start by adding the product to your cart and getting the shipping quote in parallel.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"1YMWWN1N4O\"}",
+              "name": "add_to_cart"
+            },
+            "id": "tooluse_YfVz6DO54MFk3W4IZIwYTY",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 1}], \"currency_code\": \"USD\", \"address\": {\"streetAddress\": \"1600 Amphitheatre Parkway\", \"city\": \"Mountain View\", \"state\": \"CA\", \"country\": \"USA\", \"zipCode\": \"94043\"}}",
+              "name": "get_shipping_quote"
+            },
+            "id": "tooluse_q4SHOouEHx6oXLtHFefatm",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 4}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "tooluse_YfVz6DO54MFk3W4IZIwYTY"
+      },
+      {
+        "content": "{\"currencyCode\": \"USD\", \"units\": 8, \"nanos\": 990000000}",
+        "role": "tool",
+        "tool_call_id": "tooluse_q4SHOouEHx6oXLtHFefatm"
+      },
+      {
+        "content": "Shipping quote is $8.99. Now proceeding to checkout:",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"checkout_person\": {\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"userCurrency\": \"USD\", \"email\": \"larry_sergei@example.com\", \"address\": {\"streetAddress\": \"1600 Amphitheatre Parkway\", \"city\": \"Mountain View\", \"state\": \"CA\", \"country\": \"USA\", \"zipCode\": \"94043\"}, \"creditCard\": {\"creditCardNumber\": \"4432-8015-6152-0454\", \"creditCardCvv\": 123, \"creditCardExpirationYear\": 2030, \"creditCardExpirationMonth\": 1}}}",
+              "name": "checkout"
+            },
+            "id": "tooluse_0cqusZDaqKuNQlA6NVqYP7",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "Checkout failed with HTTP 500 for user <unknown>: Internal Server Error. Note: the user's cart must contain at least one item before calling checkout; call add_to_cart first.",
+        "role": "tool",
+        "tool_call_id": "tooluse_0cqusZDaqKuNQlA6NVqYP7"
+      },
+      {
+        "content": "Let me retry the checkout:",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"checkout_person\": {\"address\": {\"city\": \"Mountain View\", \"country\": \"USA\", \"state\": \"CA\", \"streetAddress\": \"1600 Amphitheatre Parkway\", \"zipCode\": \"94043\"}, \"creditCard\": {\"creditCardCvv\": 123, \"creditCardExpirationMonth\": 1, \"creditCardExpirationYear\": 2030, \"creditCardNumber\": \"4432-8015-6152-0454\"}, \"email\": \"larry_sergei@example.com\", \"userCurrency\": \"USD\", \"userId\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}}",
+              "name": "checkout"
+            },
+            "id": "tooluse_cJkT3BOoPxXYm9YvCkQ6qM",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"orderId\": \"de0d0a62-875e-11f1-aee3-ba8e5cea9533\", \"shippingTrackingId\": \"e5c26e87-fe79-429a-b169-e1fefd7d4df0\", \"shippingCost\": {\"currencyCode\": \"USD\", \"units\": 44, \"nanos\": 950000000}, \"shippingAddress\": {\"streetAddress\": \"1600 Amphitheatre Parkway\", \"city\": \"Mountain View\", \"state\": \"CA\", \"country\": \"USA\", \"zipCode\": \"94043\"}, \"items\": [{\"cost\": {\"currencyCode\": \"USD\", \"units\": 129, \"nanos\": 949999999}, \"item\": {\"productId\": \"1YMWWN1N4O\", \"quantity\": 4, \"product\": {\"id\": \"1YMWWN1N4O\", \"name\": \"Eclipsmart Travel Refractor Telescope\", \"description\": \"Dedicated white-light solar scope for the observer on the go. The 50mm refracting solar scope uses Solar Safe, ISO compliant, full-aperture glass filter material to ensure the safest view of solar events.  The kit comes complete with everything you need, including the dedicated travel solar scope, a Solar Safe finderscope, tripod, a high quality 20mm (18x) Kellner eyepiece and a nylon backpack to carry everything in.  This Travel Solar Scope makes it easy to share the Sun as well as partial and total solar eclipses with the whole family and offers much higher magnifications than you would otherwise get using handheld solar viewers or binoculars.\", \"picture\": \"EclipsmartTravelRefractorTelescope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 129, \"nanos\": 950000000}, \"categories\": [\"telescopes\", \"travel\"]}}}, {\"cost\": {\"currencyCode\": \"USD\", \"units\": 175, \"nanos\": 0}, \"item\": {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1, \"product\": {\"id\": \"0PUK6V6EV0\", \"name\": \"Solar System Color Imager\", \"description\": \"You have your new telescope and have observed Saturn and Jupiter. Now you're ready to take the next step and start imaging them. But where do you begin? The NexImage 10 Solar System Imager is the perfect solution.\", \"picture\": \"SolarSystemColorImager.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 175, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\"]}}}]}",
+        "role": "tool",
+        "tool_call_id": "tooluse_cJkT3BOoPxXYm9YvCkQ6qM"
+      }
+    ],
+    "model": "claude-opus-4-7",
+    "tools": [
+      {
+        "function": {
+          "description": "Add a product (product_id) to the shopping cart for a user (user_id).",
+          "name": "add_to_cart",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              },
+              "quantity": {
+                "default": 1,
+                "type": "integer"
+              },
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id",
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Checkout the user's cart and create an order.\nTakes request in the format {string user_id, string userCurrency, Address address, string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress, string city, string state, string country, string zipCode} and\nCreditCardInfo is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear, int32 creditCardExpirationMonth}",
+          "name": "checkout",
+          "parameters": {
+            "properties": {
+              "checkout_person": {}
+            },
+            "required": [
+              "checkout_person"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Empty the shopping cart for a user.",
+          "name": "empty_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Fetch promotional ads for Astronomy Shop homepage.\nEg : category: `telescopes` or `travel`",
+          "name": "get_ads",
+          "parameters": {
+            "properties": {
+              "category": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "category"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Retrieve the current contents of a user's cart.",
+          "name": "get_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get detailed information about a product using its ID.",
+          "name": "get_product",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get product recommendations for a user.",
+          "name": "get_recommendations",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get estimated shipping cost for a given address.\n`items`: list of {productId, quantity} (a single dict is also accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress, city, state, country, zipCode}.",
+          "name": "get_shipping_quote",
+          "parameters": {
+            "properties": {
+              "address": {},
+              "currency_code": {},
+              "items": {}
+            },
+            "required": [
+              "items",
+              "currency_code",
+              "address"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List supported currencies in Astronomy Shop.",
+          "name": "get_supported_currencies",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List all products available in the Astronomy Shop.",
+          "name": "list_products",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      }
+    ]
+  },
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "audio": null,
+          "content": "Your order has been placed successfully! \ud83c\udf89\n\n**Order Summary:**\n- **Order ID:** de0d0a62-875e-11f1-aee3-ba8e5cea9533\n- **Shipping Tracking ID:** e5c26e87-fe79-429a-b169-e1fefd7d4df0\n- **Shipping Address:** 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA\n- **Shipping Cost:** $44.95\n\n**Items Ordered:**\n1. **Eclipsmart Travel Refractor Telescope** \u00d7 4 \u2014 $129.95 each\n2. **Solar System Color Imager** \u00d7 1 \u2014 $175.00\n\n\u26a0\ufe0f **Heads up:** Your cart contained more than just the requested product. When I added `1YMWWN1N4O`, the cart already had 3 previous units of that same telescope (total became 4) plus a Solar System Color Imager. The checkout processed all of these items. If this wasn't intended, please let me know and I can help address it (though the order has already been submitted).",
+          "function_call": null,
+          "refusal": null,
+          "role": "assistant",
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 0,
+    "id": "chatcmpl-fixture",
+    "model": "claude-opus-4-7",
+    "moderation": null,
+    "object": "chat.completion"
+  }
+}

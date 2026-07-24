@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "I want to buy a telescope. Show me the details for product 1YMWWN1N4O, add 2 of them to my cart, check the cart contents, and give me a shipping quote to 10 Downing Street, London, Greater London, SW1A 2AA, United Kingdom in GBP. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
         "role": "user"
       }
     ],
@@ -196,18 +196,36 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'll help you with all of that. Let me run these in parallel where possible.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
-                "arguments": "{}",
-                "name": "list_products"
+                "arguments": "{\"product_id\": \"1YMWWN1N4O\"}",
+                "name": "get_product"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_xl7nIjAzl2aw80MWZyOeiF",
               "index": 1,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"1YMWWN1N4O\", \"quantity\": 2}",
+                "name": "add_to_cart"
+              },
+              "id": "tooluse_PKZZMPUyTESxpbGoMdS0ZB",
+              "index": 2,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 2}], \"currency_code\": \"GBP\", \"address\": {\"streetAddress\": \"10 Downing Street\", \"city\": \"London\", \"state\": \"Greater London\", \"country\": \"United Kingdom\", \"zipCode\": \"SW1A 2AA\"}}",
+                "name": "get_shipping_quote"
+              },
+              "id": "tooluse_SGgiAPt4jZ1pcIS9M5115c",
+              "index": 3,
               "type": "function"
             }
           ]

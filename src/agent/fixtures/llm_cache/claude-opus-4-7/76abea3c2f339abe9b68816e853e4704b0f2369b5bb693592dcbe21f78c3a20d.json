@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Fetch ads for 'telescopes', 'travel', 'accessories', and 'books'. For each ad, extract the product_id from the redirect URL. Then call get_product on each ID. Return a table showing which ads point to products that (a) exist, (b) are in the claimed category, and (c) have a price consistent with the promo text. Flag any mismatches.",
         "role": "user"
       }
     ],
@@ -196,18 +196,45 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'll fetch ads for all four categories in parallel, then look up each referenced product.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
-                "arguments": "{}",
-                "name": "list_products"
+                "arguments": "{\"category\": \"telescopes\"}",
+                "name": "get_ads"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_rQhR0wlj3iwo6fQ1lgbSJS",
               "index": 1,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"category\": \"travel\"}",
+                "name": "get_ads"
+              },
+              "id": "tooluse_Nwoya1MML874x1A95IbK9v",
+              "index": 2,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"category\": \"accessories\"}",
+                "name": "get_ads"
+              },
+              "id": "tooluse_pHc1VYVBQjFgPTZAkQ3C1q",
+              "index": 3,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"category\": \"books\"}",
+                "name": "get_ads"
+              },
+              "id": "tooluse_ZBrCUPdaTBKOHNrTcl21f3",
+              "index": 4,
               "type": "function"
             }
           ]

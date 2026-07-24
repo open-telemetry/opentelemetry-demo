@@ -6,8 +6,40 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Add product 1YMWWN1N4O to my cart, get a shipping quote for it to 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA, and then proceed to checkout. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f, email larry_sergei@example.com, currency USD, credit card 4432-8015-6152-0454, CVV 123, expiration 01/2030.",
         "role": "user"
+      },
+      {
+        "content": "I'll help you with that. Let me start by adding the product to your cart and getting the shipping quote in parallel.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"1YMWWN1N4O\"}",
+              "name": "add_to_cart"
+            },
+            "id": "tooluse_YfVz6DO54MFk3W4IZIwYTY",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 1}], \"currency_code\": \"USD\", \"address\": {\"streetAddress\": \"1600 Amphitheatre Parkway\", \"city\": \"Mountain View\", \"state\": \"CA\", \"country\": \"USA\", \"zipCode\": \"94043\"}}",
+              "name": "get_shipping_quote"
+            },
+            "id": "tooluse_q4SHOouEHx6oXLtHFefatm",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 4}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "tooluse_YfVz6DO54MFk3W4IZIwYTY"
+      },
+      {
+        "content": "{\"currencyCode\": \"USD\", \"units\": 8, \"nanos\": 990000000}",
+        "role": "tool",
+        "tool_call_id": "tooluse_q4SHOouEHx6oXLtHFefatm"
       }
     ],
     "model": "claude-opus-4-7",
@@ -196,17 +228,17 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Shipping quote is $8.99. Now proceeding to checkout:",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
-                "arguments": "{}",
-                "name": "list_products"
+                "arguments": "{\"checkout_person\": {\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"userCurrency\": \"USD\", \"email\": \"larry_sergei@example.com\", \"address\": {\"streetAddress\": \"1600 Amphitheatre Parkway\", \"city\": \"Mountain View\", \"state\": \"CA\", \"country\": \"USA\", \"zipCode\": \"94043\"}, \"creditCard\": {\"creditCardNumber\": \"4432-8015-6152-0454\", \"creditCardCvv\": 123, \"creditCardExpirationYear\": 2030, \"creditCardExpirationMonth\": 1}}}",
+                "name": "checkout"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_0cqusZDaqKuNQlA6NVqYP7",
               "index": 1,
               "type": "function"
             }

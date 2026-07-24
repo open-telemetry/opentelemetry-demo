@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Track my recent order. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f and email is larry_sergei@example.com.",
         "role": "user"
       }
     ],
@@ -191,26 +191,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'd like to help, but I have to be upfront: I don't have a tool available to look up or track existing orders. The tools I have access to for this shop only support:\n\n- Browsing products and recommendations\n- Managing your cart (view, add, empty)\n- Getting shipping quotes and supported currencies\n- Placing a new checkout/order\n- Fetching promotional ads\n\nIf you'd like, I can:\n1. Show your current cart contents, or\n2. Help you place a new order.\n\nFor tracking an existing order, you'll need to contact the shop's customer support directly, as that functionality isn't exposed to me.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

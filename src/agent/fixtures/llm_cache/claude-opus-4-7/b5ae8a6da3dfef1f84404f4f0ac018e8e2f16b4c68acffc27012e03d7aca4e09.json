@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "List the supported currencies. If JPY is supported, list all products and show their prices in JPY. If not, just show them in USD.",
         "role": "user"
       }
     ],
@@ -196,7 +196,7 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'll check the supported currencies and list products in parallel to save time.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
@@ -204,10 +204,19 @@
             {
               "function": {
                 "arguments": "{}",
+                "name": "get_supported_currencies"
+              },
+              "id": "tooluse_spb7SzMg1wuOE5wel2ASX4",
+              "index": 1,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{}",
                 "name": "list_products"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
+              "id": "tooluse_7S9DIREOUu6TAk7iE1Ti7e",
+              "index": 2,
               "type": "function"
             }
           ]

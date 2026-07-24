@@ -6,8 +6,27 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Tell me more about the features of the Eclipsmart Travel Refractor Telescope model (product ID 1YMWWN1N4O).",
         "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"1YMWWN1N4O\"}",
+              "name": "get_product"
+            },
+            "id": "tooluse_DUZ7bzw77WxqIICP0YSDnN",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"id\": \"1YMWWN1N4O\", \"name\": \"Eclipsmart Travel Refractor Telescope\", \"description\": \"Dedicated white-light solar scope for the observer on the go. The 50mm refracting solar scope uses Solar Safe, ISO compliant, full-aperture glass filter material to ensure the safest view of solar events.  The kit comes complete with everything you need, including the dedicated travel solar scope, a Solar Safe finderscope, tripod, a high quality 20mm (18x) Kellner eyepiece and a nylon backpack to carry everything in.  This Travel Solar Scope makes it easy to share the Sun as well as partial and total solar eclipses with the whole family and offers much higher magnifications than you would otherwise get using handheld solar viewers or binoculars.\", \"picture\": \"EclipsmartTravelRefractorTelescope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 129, \"nanos\": 950000000}, \"categories\": [\"telescopes\", \"travel\"]}",
+        "role": "tool",
+        "tool_call_id": "tooluse_DUZ7bzw77WxqIICP0YSDnN"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +210,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Here are the key features of the **Eclipsmart Travel Refractor Telescope** (ID: 1YMWWN1N4O):\n\n### \ud83d\udd2d Overview\nA dedicated **white-light solar telescope** designed for observers on the go \u2014 perfect for viewing the Sun, partial eclipses, and total solar eclipses safely.\n\n### \u2728 Key Features\n- **50mm refracting solar scope** \u2014 optimized specifically for solar observation\n- **Solar Safe, ISO-compliant, full-aperture glass filter** \u2014 ensures the safest possible view of the Sun\n- **Higher magnification** than handheld solar viewers or binoculars, making solar events more detailed and shareable\n- **Portable travel design** \u2014 ideal for eclipse chasers and travelers\n\n### \ud83d\udce6 What's in the Kit\n- Dedicated travel solar telescope\n- Solar Safe finderscope\n- Tripod\n- High-quality **20mm (18x) Kellner eyepiece**\n- **Nylon backpack** to carry everything conveniently\n\n### \ud83d\udcb2 Price\n- **$129.95 USD**\n\n### \ud83c\udff7\ufe0f Categories\n- Telescopes\n- Travel\n\nWould you like me to add it to your cart, check shipping costs, or show you some recommended related products?",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

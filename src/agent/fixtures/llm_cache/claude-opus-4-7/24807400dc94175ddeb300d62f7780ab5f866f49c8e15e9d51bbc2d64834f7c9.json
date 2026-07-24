@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Recommend popular travel and books.",
         "role": "user"
       }
     ],
@@ -196,18 +196,27 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'll fetch promotional ads for both travel and books categories for you.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
-                "arguments": "{}",
-                "name": "list_products"
+                "arguments": "{\"category\": \"travel\"}",
+                "name": "get_ads"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_ACkNj6wxgN8vyBqHQsVOih",
               "index": 1,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"category\": \"books\"}",
+                "name": "get_ads"
+              },
+              "id": "tooluse_vHJRGtF4uhTN7kwCysJ3PA",
+              "index": 2,
               "type": "function"
             }
           ]

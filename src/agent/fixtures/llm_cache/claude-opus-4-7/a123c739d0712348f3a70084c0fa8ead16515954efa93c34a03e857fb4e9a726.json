@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "I want to do a full simulation. Empty my cart. Check the supported currencies to ensure CAD is available. Look up the ads for 'telescopes'. Find the product ID of the advertised telescope. Add 1 of those to my cart. Then, get recommendations for that telescope and add 2 units of the first recommended item to my cart. After that, verify my cart contents. Get a shipping quote for this entire cart to 100 Queens Quay E, Toronto, ON, Canada M5V 2H1 in CAD. Finally, execute the checkout using email test@example.com and a test credit card 4432-8015-6152-0454, CVV 123, expiration 01/2030. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
         "role": "user"
       }
     ],
@@ -196,18 +196,36 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'll execute this simulation step by step. Let me start with the independent initial tasks.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
-                "arguments": "{}",
-                "name": "list_products"
+                "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+                "name": "empty_cart"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_vqUpWe4iQZl0gnYq1G82uh",
               "index": 1,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{}",
+                "name": "get_supported_currencies"
+              },
+              "id": "tooluse_ncrHT2ChNFBZ684a7OgLAP",
+              "index": 2,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"category\": \"telescopes\"}",
+                "name": "get_ads"
+              },
+              "id": "tooluse_YhMwGt3r5CrksJP7h3mo4N",
+              "index": 3,
               "type": "function"
             }
           ]

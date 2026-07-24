@@ -6,8 +6,27 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "What currencies are supported by the Astronomy Shop?",
         "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{}",
+              "name": "get_supported_currencies"
+            },
+            "id": "tooluse_UZAz9p4lvbpQGn8RdfyyFe",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "[\"ZAR\", \"ISK\", \"ILS\", \"RON\", \"GBP\", \"BRL\", \"CZK\", \"AUD\", \"BGN\", \"JPY\", \"PHP\", \"HUF\", \"USD\", \"SGD\", \"IDR\", \"CHF\", \"TRY\", \"NZD\", \"THB\", \"DKK\", \"PLN\", \"NOK\", \"HRK\", \"HKD\", \"EUR\", \"RUB\", \"CAD\", \"INR\", \"SEK\", \"KRW\", \"CNY\", \"MXN\", \"MYR\"]",
+        "role": "tool",
+        "tool_call_id": "tooluse_UZAz9p4lvbpQGn8RdfyyFe"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +210,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "The Astronomy Shop supports the following 33 currencies:\n\n**Americas:** USD, CAD, MXN, BRL\n**Europe:** EUR, GBP, CHF, NOK, SEK, DKK, ISK, PLN, CZK, HUF, RON, BGN, HRK, RUB\n**Asia-Pacific:** JPY, CNY, KRW, HKD, SGD, INR, THB, MYR, IDR, PHP, AUD, NZD\n**Middle East & Africa:** ILS, TRY, ZAR\n\nLet me know if you'd like to shop using any specific currency!",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

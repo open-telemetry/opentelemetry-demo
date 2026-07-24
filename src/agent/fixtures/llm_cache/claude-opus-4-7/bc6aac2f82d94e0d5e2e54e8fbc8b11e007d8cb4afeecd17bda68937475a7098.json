@@ -6,8 +6,46 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Check my cart. If it's empty, add product 1YMWWN1N4O. If it already has items, empty it first, and then add product 1YMWWN1N4O. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
         "role": "user"
+      },
+      {
+        "content": "I'll check your cart first to see what's in it.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+              "name": "get_cart"
+            },
+            "id": "tooluse_GWHdsLB7XDKCFBPHUSlceK",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": []}",
+        "role": "tool",
+        "tool_call_id": "tooluse_GWHdsLB7XDKCFBPHUSlceK"
+      },
+      {
+        "content": "Your cart is empty, so I'll add the product directly.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"1YMWWN1N4O\"}",
+              "name": "add_to_cart"
+            },
+            "id": "tooluse_l4ayRVMYKFZoLhyai1xwSv",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 2}]}",
+        "role": "tool",
+        "tool_call_id": "tooluse_l4ayRVMYKFZoLhyai1xwSv"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +229,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Done! Here's a summary:\n\n- **Cart status before:** Empty \u2705\n- **Action taken:** Added product `1YMWWN1N4O`\n\n**Note:** The cart now shows some additional items that weren't there before according to the initial check (including `0PUK6V6EV0` and 2 units of `1YMWWN1N4O`). This may be due to a session/sync quirk on the backend. Let me know if you'd like me to empty the cart and re-add just the single item you wanted.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

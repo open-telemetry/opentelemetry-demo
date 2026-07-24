@@ -6,8 +6,27 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Show related products in the assembly category.",
         "role": "user"
+      },
+      {
+        "content": "I'll fetch the promotional ads for the assembly category for you.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"category\": \"assembly\"}",
+              "name": "get_ads"
+            },
+            "id": "tooluse_bgkiPbIut34AESFAAs9ykT",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "[{\"redirectUrl\": \"/product/9SIQT8TOJO\", \"text\": \"Optical Tube Assembly for sale. 10% off.\"}]",
+        "role": "tool",
+        "tool_call_id": "tooluse_bgkiPbIut34AESFAAs9ykT"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +210,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Here's a related product in the **assembly** category:\n\n- \ud83d\udd2d **Optical Tube Assembly** \u2014 currently **10% off!**\n  - Product link: `/product/9SIQT8TOJO`\n\nWould you like me to fetch more details about this product or add it to your cart?",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

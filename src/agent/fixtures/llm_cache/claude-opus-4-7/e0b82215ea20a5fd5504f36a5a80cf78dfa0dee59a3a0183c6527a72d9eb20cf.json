@@ -6,8 +6,97 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Start by emptying my cart to ensure it's blank. Then, immediately try to checkout. When it inevitably fails, read the error message, add a travel accessory (product ID 1YMWWN1N4O) to the cart, and try checking out again. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f, email larry_sergei@example.com, shipping address 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA, currency USD, credit card 4432-8015-6152-0454, CVV 123, expiration 01/2030.",
         "role": "user"
+      },
+      {
+        "content": "I'll start by emptying your cart and then immediately attempting checkout.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+              "name": "empty_cart"
+            },
+            "id": "tooluse_icKiTvXy20rU4bBLLerGZR",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"checkout_person\": {\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"userCurrency\": \"USD\", \"email\": \"larry_sergei@example.com\", \"address\": {\"streetAddress\": \"1600 Amphitheatre Parkway\", \"city\": \"Mountain View\", \"state\": \"CA\", \"country\": \"USA\", \"zipCode\": \"94043\"}, \"creditCard\": {\"creditCardNumber\": \"4432-8015-6152-0454\", \"creditCardCvv\": 123, \"creditCardExpirationYear\": 2030, \"creditCardExpirationMonth\": 1}}}",
+              "name": "checkout"
+            },
+            "id": "tooluse_17gmi9kmPLgdrzjEORPQyV",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"status\": \"success\", \"message\": \"Cart emptied for user 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+        "role": "tool",
+        "tool_call_id": "tooluse_icKiTvXy20rU4bBLLerGZR"
+      },
+      {
+        "content": "Checkout failed with HTTP 500 for user <unknown>: Internal Server Error. Note: the user's cart must contain at least one item before calling checkout; call add_to_cart first.",
+        "role": "tool",
+        "tool_call_id": "tooluse_17gmi9kmPLgdrzjEORPQyV"
+      },
+      {
+        "content": "As expected, checkout failed because the cart was empty. The error message says the cart must contain at least one item. Now I'll add the travel accessory and retry checkout.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"1YMWWN1N4O\"}",
+              "name": "add_to_cart"
+            },
+            "id": "tooluse_a0t0VqiZ8Uy9abbxiPAAsx",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "tooluse_a0t0VqiZ8Uy9abbxiPAAsx"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"checkout_person\": {\"address\": {\"city\": \"Mountain View\", \"country\": \"USA\", \"state\": \"CA\", \"streetAddress\": \"1600 Amphitheatre Parkway\", \"zipCode\": \"94043\"}, \"creditCard\": {\"creditCardCvv\": 123, \"creditCardExpirationMonth\": 1, \"creditCardExpirationYear\": 2030, \"creditCardNumber\": \"4432-8015-6152-0454\"}, \"email\": \"larry_sergei@example.com\", \"userCurrency\": \"USD\", \"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}}",
+              "name": "checkout"
+            },
+            "id": "tooluse_4TrLgF4D3WHQYymAwMBz8c",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "Checkout failed with HTTP 500 for user <unknown>: Internal Server Error. Note: the user's cart must contain at least one item before calling checkout; call add_to_cart first.",
+        "role": "tool",
+        "tool_call_id": "tooluse_4TrLgF4D3WHQYymAwMBz8c"
+      },
+      {
+        "content": "Here's a summary of what happened:\n\n1. \u2705 **Emptied cart** \u2013 Successfully cleared.\n2. \u274c **First checkout attempt** \u2013 Failed with HTTP 500: \"the user's cart must contain at least one item before calling checkout; call add_to_cart first.\"\n3. \u2705 **Added product `1YMWWN1N4O`** (travel accessory) to the cart.\n4. \u274c **Second checkout attempt** \u2013 Also failed with the same HTTP 500 error, even though the cart now has an item.\n\nThe second failure is unexpected. Let me verify the cart contents to diagnose:",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+              "name": "get_cart"
+            },
+            "id": "tooluse_LFnFWz1PaI7nupCqm1RaJU",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": []}",
+        "role": "tool",
+        "tool_call_id": "tooluse_LFnFWz1PaI7nupCqm1RaJU"
       }
     ],
     "model": "claude-opus-4-7",
@@ -196,17 +285,17 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Interesting \u2014 the cart appears empty when queried, even though the `add_to_cart` call reported success. It looks like the item didn't persist under your user ID (notice the returned `userId` was blank in both responses). This seems to be a backend issue where the cart isn't being associated with your user ID properly.\n\nLet me try adding the item again and immediately checking out:",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
-                "arguments": "{}",
-                "name": "list_products"
+                "arguments": "{\"product_id\": \"1YMWWN1N4O\", \"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"quantity\": 1}",
+                "name": "add_to_cart"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_GTc8LA1hRxu5Eb9mEGM6GT",
               "index": 1,
               "type": "function"
             }

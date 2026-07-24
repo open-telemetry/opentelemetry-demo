@@ -6,8 +6,27 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Add product 1YMWWN1N4O to my cart, then attempt checkout with an intentionally invalid expiration year of 1999 (already expired). When the payment is rejected, do NOT empty the cart. Instead, retry checkout with a valid expiration of 01/2030. Report both the exact error from attempt 1 and the success/failure of attempt 2. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f, email larry_sergei@example.com, shipping address 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA, currency USD, credit card 4432-8015-6152-0454, CVV 123.",
         "role": "user"
+      },
+      {
+        "content": "I'll help you with this. Let me start by adding the product to your cart, then attempt the first checkout with the invalid expiration year.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"1YMWWN1N4O\"}",
+              "name": "add_to_cart"
+            },
+            "id": "tooluse_fm0XrAMXDmMHmbTQE1qzst",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 4}, {\"productId\": \"9SIQT8TOJO\", \"quantity\": 2}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 2}, {\"productId\": \"OLJCESPC7Z\", \"quantity\": 1}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "tooluse_fm0XrAMXDmMHmbTQE1qzst"
       }
     ],
     "model": "claude-opus-4-7",
@@ -196,17 +215,17 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Product added. Now attempting checkout with the invalid expiration year 1999:",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
-                "arguments": "{}",
-                "name": "list_products"
+                "arguments": "{\"checkout_person\": {\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"userCurrency\": \"USD\", \"email\": \"larry_sergei@example.com\", \"address\": {\"streetAddress\": \"1600 Amphitheatre Parkway\", \"city\": \"Mountain View\", \"state\": \"CA\", \"country\": \"USA\", \"zipCode\": \"94043\"}, \"creditCard\": {\"creditCardNumber\": \"4432-8015-6152-0454\", \"creditCardCvv\": 123, \"creditCardExpirationYear\": 1999, \"creditCardExpirationMonth\": 1}}}",
+                "name": "checkout"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_N9xCa7x1jxbnyHoHb58o6Z",
               "index": 1,
               "type": "function"
             }

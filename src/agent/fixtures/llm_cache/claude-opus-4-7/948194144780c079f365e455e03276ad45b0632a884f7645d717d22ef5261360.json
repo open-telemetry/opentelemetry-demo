@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Suggest accessories that pair well with binoculars.",
         "role": "user"
       }
     ],
@@ -196,7 +196,7 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'll get recommendations related to binoculars for you.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
@@ -206,7 +206,7 @@
                 "arguments": "{}",
                 "name": "list_products"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_rFS7uMqHkt7tzL0Z9Jzo3w",
               "index": 1,
               "type": "function"
             }

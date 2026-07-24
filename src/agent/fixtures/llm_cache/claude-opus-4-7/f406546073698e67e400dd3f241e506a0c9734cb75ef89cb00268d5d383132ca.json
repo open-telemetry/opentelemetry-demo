@@ -6,8 +6,27 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Confirm my shipping details for this purchase. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f and my shipping address is 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA.",
         "role": "user"
+      },
+      {
+        "content": "I'll get your cart contents and then calculate the shipping quote for your address.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+              "name": "get_cart"
+            },
+            "id": "tooluse_1qLa3zsKsIo7noZu2s2HkV",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": []}",
+        "role": "tool",
+        "tool_call_id": "tooluse_1qLa3zsKsIo7noZu2s2HkV"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +210,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Your cart is currently **empty**, so I can't generate a shipping quote yet.\n\nHere are the shipping details I have on file for you:\n\n- **User ID:** 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\n- **Street Address:** 1600 Amphitheatre Parkway\n- **City:** Mountain View\n- **State:** CA\n- **Zip Code:** 94043\n- **Country:** USA\n\nWould you like to add items to your cart first? Once you do, I can calculate the shipping cost to this address.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

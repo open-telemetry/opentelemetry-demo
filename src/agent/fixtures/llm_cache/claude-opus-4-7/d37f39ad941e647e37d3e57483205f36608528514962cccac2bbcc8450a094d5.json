@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Get promotions for both 'telescopes' and 'travel' at the same time.",
         "role": "user"
       }
     ],
@@ -196,18 +196,27 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'll fetch both promotional ad categories in parallel for you.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
-                "arguments": "{}",
-                "name": "list_products"
+                "arguments": "{\"category\": \"telescopes\"}",
+                "name": "get_ads"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_Oez1JThTayHs1RPgt88BO1",
               "index": 1,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"category\": \"travel\"}",
+                "name": "get_ads"
+              },
+              "id": "tooluse_NKCJ3bf1UYA2eCXiKtjF11",
+              "index": 2,
               "type": "function"
             }
           ]

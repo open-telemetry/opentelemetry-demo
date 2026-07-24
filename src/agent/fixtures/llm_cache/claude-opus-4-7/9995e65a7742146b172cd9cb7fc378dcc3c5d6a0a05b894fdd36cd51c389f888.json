@@ -6,8 +6,27 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Estimate the shipping cost for one telescope (product ID 66VCHSJNUP) to 350 5th Ave, New York, NY 10001, USA in USD.",
         "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"items\": [{\"productId\": \"66VCHSJNUP\", \"quantity\": 1}], \"currency_code\": \"USD\", \"address\": {\"streetAddress\": \"350 5th Ave\", \"city\": \"New York\", \"state\": \"NY\", \"country\": \"USA\", \"zipCode\": \"10001\"}}",
+              "name": "get_shipping_quote"
+            },
+            "id": "tooluse_h4rPeQuSfeMn4319KZjSTM",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"currencyCode\": \"USD\", \"units\": 8, \"nanos\": 990000000}",
+        "role": "tool",
+        "tool_call_id": "tooluse_h4rPeQuSfeMn4319KZjSTM"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +210,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "The estimated shipping cost is **$8.99 USD** for one telescope (ID: 66VCHSJNUP) shipped to 350 5th Ave, New York, NY 10001, USA.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

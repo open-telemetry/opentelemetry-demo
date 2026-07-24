@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Switch the store currency to INR.",
         "role": "user"
       }
     ],
@@ -196,7 +196,7 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I can't directly switch the store currency for you\u2014that's typically a UI setting. However, let me check which currencies are supported to confirm INR is available.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
@@ -204,9 +204,9 @@
             {
               "function": {
                 "arguments": "{}",
-                "name": "list_products"
+                "name": "get_supported_currencies"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_ME9vvbF0d2ar1oTv3lGxvE",
               "index": 1,
               "type": "function"
             }

@@ -6,8 +6,46 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Check whether CAD, JPY, and GALACTIC_CREDITS are supported. If all three are supported, add product 66VCHSJNUP to the cart. If only 2 of 3 are supported, add product 1YMWWN1N4O. If only 1 is supported, add product HQTGWGPNH4. If none are supported, empty the cart. Report which branch you took and why. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
         "role": "user"
+      },
+      {
+        "content": "I'll check the supported currencies first.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{}",
+              "name": "get_supported_currencies"
+            },
+            "id": "tooluse_ib7zUQzPjxutjwOjAY7MaH",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "[\"ZAR\", \"ISK\", \"ILS\", \"RON\", \"GBP\", \"BRL\", \"CZK\", \"AUD\", \"BGN\", \"JPY\", \"PHP\", \"HUF\", \"USD\", \"SGD\", \"IDR\", \"CHF\", \"TRY\", \"NZD\", \"THB\", \"DKK\", \"PLN\", \"NOK\", \"HRK\", \"HKD\", \"EUR\", \"RUB\", \"CAD\", \"INR\", \"SEK\", \"KRW\", \"CNY\", \"MXN\", \"MYR\"]",
+        "role": "tool",
+        "tool_call_id": "tooluse_ib7zUQzPjxutjwOjAY7MaH"
+      },
+      {
+        "content": "CAD \u2705 supported, JPY \u2705 supported, GALACTIC_CREDITS \u274c not supported. That's 2 out of 3, so I'll add product 1YMWWN1N4O.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"1YMWWN1N4O\"}",
+              "name": "add_to_cart"
+            },
+            "id": "tooluse_6hxJTfd1f8XkVYVdQrFo9I",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 5}, {\"productId\": \"9SIQT8TOJO\", \"quantity\": 2}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 2}, {\"productId\": \"OLJCESPC7Z\", \"quantity\": 1}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "tooluse_6hxJTfd1f8XkVYVdQrFo9I"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +229,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "**Branch taken: 2-of-3 supported** \u2192 Added product **1YMWWN1N4O** to your cart.\n\n**Reasoning:**\n- CAD: \u2705 supported\n- JPY: \u2705 supported\n- GALACTIC_CREDITS: \u274c not supported (not in the shop's supported currency list)\n\nSince exactly 2 of the 3 currencies are supported, I followed the \"only 2 of 3\" branch and added product `1YMWWN1N4O`. The cart now contains that product (quantity increased to 5) along with your previously existing items.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

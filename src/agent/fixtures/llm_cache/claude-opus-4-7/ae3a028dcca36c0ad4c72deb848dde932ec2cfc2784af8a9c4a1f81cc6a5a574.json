@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Look at travel gear, fetch the best promotional ads available, and update delivery status for my user ID 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f (email larry_sergei@example.com).",
         "role": "user"
       }
     ],
@@ -196,18 +196,27 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'll help you with the travel gear and promotional ads. Let me fetch those in parallel.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
+                "arguments": "{\"category\": \"travel\"}",
+                "name": "get_ads"
+              },
+              "id": "tooluse_9kTzkpDp9XI7jZUwvH7xqu",
+              "index": 1,
+              "type": "function"
+            },
+            {
+              "function": {
                 "arguments": "{}",
                 "name": "list_products"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
+              "id": "tooluse_ixHYLPloYj3tJ9P79Imfg1",
+              "index": 2,
               "type": "function"
             }
           ]

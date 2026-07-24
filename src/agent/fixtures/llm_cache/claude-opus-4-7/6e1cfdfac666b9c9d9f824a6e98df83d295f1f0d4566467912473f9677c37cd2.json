@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "What is the total price of my cart? My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
         "role": "user"
       }
     ],
@@ -196,17 +196,17 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'll fetch your cart contents to calculate the total.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
-                "arguments": "{}",
-                "name": "list_products"
+                "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+                "name": "get_cart"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_wCsbChoINrl80KoYN5QEk2",
               "index": 1,
               "type": "function"
             }

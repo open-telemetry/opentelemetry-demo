@@ -6,8 +6,66 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Fetch ads for 'telescopes', 'travel', 'accessories', and 'books'. For each ad, extract the product_id from the redirect URL. Then call get_product on each ID. Return a table showing which ads point to products that (a) exist, (b) are in the claimed category, and (c) have a price consistent with the promo text. Flag any mismatches.",
         "role": "user"
+      },
+      {
+        "content": "I'll fetch ads for all four categories in parallel, then look up each referenced product.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"category\": \"telescopes\"}",
+              "name": "get_ads"
+            },
+            "id": "tooluse_rQhR0wlj3iwo6fQ1lgbSJS",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"category\": \"travel\"}",
+              "name": "get_ads"
+            },
+            "id": "tooluse_Nwoya1MML874x1A95IbK9v",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"category\": \"accessories\"}",
+              "name": "get_ads"
+            },
+            "id": "tooluse_pHc1VYVBQjFgPTZAkQ3C1q",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"category\": \"books\"}",
+              "name": "get_ads"
+            },
+            "id": "tooluse_ZBrCUPdaTBKOHNrTcl21f3",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "[{\"redirectUrl\": \"/product/66VCHSJNUP\", \"text\": \"Starsense Explorer Refractor Telescope for sale. 20% off.\"}]",
+        "role": "tool",
+        "tool_call_id": "tooluse_rQhR0wlj3iwo6fQ1lgbSJS"
+      },
+      {
+        "content": "[{\"redirectUrl\": \"/product/1YMWWN1N4O\", \"text\": \"Eclipsmart Travel Refractor Telescope for sale. Buy one, get second kit for free\"}]",
+        "role": "tool",
+        "tool_call_id": "tooluse_Nwoya1MML874x1A95IbK9v"
+      },
+      {
+        "content": "[{\"redirectUrl\": \"/product/0PUK6V6EV0\", \"text\": \"Solar System Color Imager for sale. 30% off.\"}, {\"redirectUrl\": \"/product/6E92ZMYYFZ\", \"text\": \"Solar Filter for sale. Buy two, get third one for free\"}, {\"redirectUrl\": \"/product/L9ECAV7KIM\", \"text\": \"Lens Cleaning Kit for sale. Buy one, get second one for free\"}]",
+        "role": "tool",
+        "tool_call_id": "tooluse_pHc1VYVBQjFgPTZAkQ3C1q"
+      },
+      {
+        "content": "[{\"redirectUrl\": \"/product/6E92ZMYYFZ\", \"text\": \"Solar Filter for sale. Buy two, get third one for free\"}, {\"redirectUrl\": \"/product/9SIQT8TOJO\", \"text\": \"Optical Tube Assembly for sale. 10% off.\"}]",
+        "role": "tool",
+        "tool_call_id": "tooluse_ZBrCUPdaTBKOHNrTcl21f3"
       }
     ],
     "model": "claude-opus-4-7",
@@ -196,18 +254,63 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Now let me fetch product details for each unique product ID.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
-                "arguments": "{}",
-                "name": "list_products"
+                "arguments": "{\"product_id\": \"66VCHSJNUP\"}",
+                "name": "get_product"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_7yb6J1zx69JcaTZNn1Lt0o",
               "index": 1,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"product_id\": \"1YMWWN1N4O\"}",
+                "name": "get_product"
+              },
+              "id": "tooluse_L1tsq9NS40hqWUENkrIh2X",
+              "index": 2,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"product_id\": \"0PUK6V6EV0\"}",
+                "name": "get_product"
+              },
+              "id": "tooluse_0CvfCgEiLynNFnjrOdHa4N",
+              "index": 3,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"product_id\": \"6E92ZMYYFZ\"}",
+                "name": "get_product"
+              },
+              "id": "tooluse_dKFAcvA7SD8txzAddPT2dU",
+              "index": 4,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"product_id\": \"L9ECAV7KIM\"}",
+                "name": "get_product"
+              },
+              "id": "tooluse_h04l9K06mFirGsLaM995bu",
+              "index": 5,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"product_id\": \"9SIQT8TOJO\"}",
+                "name": "get_product"
+              },
+              "id": "tooluse_4L3JrIvaPwvCxopX9kVqQT",
+              "index": 6,
               "type": "function"
             }
           ]

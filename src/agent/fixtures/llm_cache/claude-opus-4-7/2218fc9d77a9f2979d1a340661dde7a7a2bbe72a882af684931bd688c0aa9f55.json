@@ -6,8 +6,27 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "How much is shipping for one Roof Binocular (product ID 2ZYFJ3GM2N) to 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA in USD?",
         "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"items\": [{\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}], \"currency_code\": \"USD\", \"address\": {\"streetAddress\": \"1600 Amphitheatre Parkway\", \"city\": \"Mountain View\", \"state\": \"CA\", \"country\": \"USA\", \"zipCode\": \"94043\"}}",
+              "name": "get_shipping_quote"
+            },
+            "id": "tooluse_xpJvzpuO1jJopvXw6aZGcM",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"currencyCode\": \"USD\", \"units\": 8, \"nanos\": 990000000}",
+        "role": "tool",
+        "tool_call_id": "tooluse_xpJvzpuO1jJopvXw6aZGcM"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +210,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Shipping for one Roof Binocular to 1600 Amphitheatre Parkway, Mountain View, CA 94043 would be **$8.99 USD**.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

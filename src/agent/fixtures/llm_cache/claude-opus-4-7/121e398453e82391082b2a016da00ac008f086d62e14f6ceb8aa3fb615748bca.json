@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Get recommendations for a product ID that does not exist.",
         "role": "user"
       }
     ],
@@ -196,17 +196,17 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'll test getting recommendations for a non-existent product ID.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
-                "arguments": "{}",
-                "name": "list_products"
+                "arguments": "{\"product_id\": \"NONEXISTENT-999\"}",
+                "name": "get_recommendations"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_dQvPGTRK8v2xSRkZ8MTPUx",
               "index": 1,
               "type": "function"
             }

@@ -6,8 +6,59 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "I'm looking for travel gear. Show me what's running on the promo ads right now. If there's a specific product mentioned, get its details and add it to my cart. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
         "role": "user"
+      },
+      {
+        "content": "I'll fetch the travel promo ads first to see what's featured.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"category\": \"travel\"}",
+              "name": "get_ads"
+            },
+            "id": "tooluse_eH7HdAZwxvRqWPW6vqy50c",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "[{\"redirectUrl\": \"/product/1YMWWN1N4O\", \"text\": \"Eclipsmart Travel Refractor Telescope for sale. Buy one, get second kit for free\"}]",
+        "role": "tool",
+        "tool_call_id": "tooluse_eH7HdAZwxvRqWPW6vqy50c"
+      },
+      {
+        "content": "Found a promo! Let me get the product details and add it to your cart.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"1YMWWN1N4O\"}",
+              "name": "get_product"
+            },
+            "id": "tooluse_BY2Wan65MuTdctBLLZ766m",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"1YMWWN1N4O\"}",
+              "name": "add_to_cart"
+            },
+            "id": "tooluse_Se3bJRwI7o5TxYVCslIbbD",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"id\": \"1YMWWN1N4O\", \"name\": \"Eclipsmart Travel Refractor Telescope\", \"description\": \"Dedicated white-light solar scope for the observer on the go. The 50mm refracting solar scope uses Solar Safe, ISO compliant, full-aperture glass filter material to ensure the safest view of solar events.  The kit comes complete with everything you need, including the dedicated travel solar scope, a Solar Safe finderscope, tripod, a high quality 20mm (18x) Kellner eyepiece and a nylon backpack to carry everything in.  This Travel Solar Scope makes it easy to share the Sun as well as partial and total solar eclipses with the whole family and offers much higher magnifications than you would otherwise get using handheld solar viewers or binoculars.\", \"picture\": \"EclipsmartTravelRefractorTelescope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 129, \"nanos\": 950000000}, \"categories\": [\"telescopes\", \"travel\"]}",
+        "role": "tool",
+        "tool_call_id": "tooluse_BY2Wan65MuTdctBLLZ766m"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "tooluse_Se3bJRwI7o5TxYVCslIbbD"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +242,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Here's what's on the travel promo right now:\n\n**\ud83c\udf1f Promo Ad:** *\"Eclipsmart Travel Refractor Telescope for sale. Buy one, get second kit for free\"*\n\n### Product Details Added to Your Cart:\n- **Name:** Eclipsmart Travel Refractor Telescope\n- **Price:** $129.95 USD\n- **Categories:** Telescopes, Travel\n- **Description:** A dedicated white-light solar scope for observers on the go. The 50mm refracting solar scope uses Solar Safe, ISO-compliant, full-aperture glass filter material for the safest view of solar events. The kit includes:\n  - Dedicated travel solar scope\n  - Solar Safe finderscope\n  - Tripod\n  - 20mm (18x) Kellner eyepiece\n  - Nylon backpack for easy transport\n\n\u2705 Added to your cart! You now have 2 items in your cart (the Eclipsmart Travel Refractor and one other existing item). Let me know if you'd like to review your cart or check out.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

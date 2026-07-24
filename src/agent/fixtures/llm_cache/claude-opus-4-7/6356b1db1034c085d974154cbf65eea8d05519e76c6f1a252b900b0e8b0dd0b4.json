@@ -6,8 +6,27 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Get a shipping quote for 1 unit of product 1YMWWN1N4O but leave the zip code blank in the address object. Use street 1600 Amphitheatre Parkway, city Mountain View, state CA, country USA, and currency USD.",
         "role": "user"
+      },
+      {
+        "content": "I'll get that shipping quote for you with the zip code left blank.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 1}], \"currency_code\": \"USD\", \"address\": {\"streetAddress\": \"1600 Amphitheatre Parkway\", \"city\": \"Mountain View\", \"state\": \"CA\", \"country\": \"USA\", \"zipCode\": \"\"}}",
+              "name": "get_shipping_quote"
+            },
+            "id": "tooluse_jJKQom0Pf4xGIMqES7f1YM",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"currencyCode\": \"USD\", \"units\": 8, \"nanos\": 990000000}",
+        "role": "tool",
+        "tool_call_id": "tooluse_jJKQom0Pf4xGIMqES7f1YM"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +210,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "The shipping quote is **$8.99 USD** for 1 unit of product `1YMWWN1N4O` shipping to:\n\n- 1600 Amphitheatre Parkway, Mountain View, CA, USA (no zip code)\n\nNote: The quote was returned successfully even without a zip code, but for an actual checkout you'll likely need to provide a valid zip code.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

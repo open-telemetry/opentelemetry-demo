@@ -6,8 +6,40 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Get promotions for both 'telescopes' and 'travel' at the same time.",
         "role": "user"
+      },
+      {
+        "content": "I'll fetch both promotional ad categories in parallel for you.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"category\": \"telescopes\"}",
+              "name": "get_ads"
+            },
+            "id": "tooluse_Oez1JThTayHs1RPgt88BO1",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"category\": \"travel\"}",
+              "name": "get_ads"
+            },
+            "id": "tooluse_NKCJ3bf1UYA2eCXiKtjF11",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "[{\"redirectUrl\": \"/product/66VCHSJNUP\", \"text\": \"Starsense Explorer Refractor Telescope for sale. 20% off.\"}]",
+        "role": "tool",
+        "tool_call_id": "tooluse_Oez1JThTayHs1RPgt88BO1"
+      },
+      {
+        "content": "[{\"redirectUrl\": \"/product/1YMWWN1N4O\", \"text\": \"Eclipsmart Travel Refractor Telescope for sale. Buy one, get second kit for free\"}]",
+        "role": "tool",
+        "tool_call_id": "tooluse_NKCJ3bf1UYA2eCXiKtjF11"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +223,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Here are the current promotions:\n\n### \ud83d\udd2d Telescopes\n- **Starsense Explorer Refractor Telescope** \u2014 20% off\n  - Link: `/product/66VCHSJNUP`\n\n### \u2708\ufe0f Travel\n- **Eclipsmart Travel Refractor Telescope** \u2014 Buy one, get second kit for free\n  - Link: `/product/1YMWWN1N4O`\n\nLet me know if you'd like more details on either product or want to add one to your cart!",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

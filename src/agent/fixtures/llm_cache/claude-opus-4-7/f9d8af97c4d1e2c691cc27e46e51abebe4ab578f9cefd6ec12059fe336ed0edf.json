@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Email me the shipping confirmation once dispatched. My email is larry_sergei@example.com.",
         "role": "user"
       }
     ],
@@ -191,26 +191,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I don't have a tool to send emails or set up shipping notifications directly. Shipping confirmations are typically sent automatically by the store to the email address provided at checkout.\n\nIf you'd like, I can help you:\n- **Place an order** and use `larry_sergei@example.com` as the checkout email, so any confirmation emails (including shipping updates) go to that address.\n- **Check your cart** or **get a shipping quote** before checkout.\n\nLet me know how you'd like to proceed! If you want to check out, please provide:\n- Your user ID\n- Shipping address (street, city, state, country, zip)\n- Currency\n- Credit card details (number, CVV, expiration month/year)",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

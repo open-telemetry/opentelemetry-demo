@@ -6,8 +6,46 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Complete the payment for my cart in USD. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f, email larry_sergei@example.com, shipping address 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA, credit card 4432-8015-6152-0454, CVV 123, expiration 01/2030.",
         "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"checkout_person\": {\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"userCurrency\": \"USD\", \"email\": \"larry_sergei@example.com\", \"address\": {\"streetAddress\": \"1600 Amphitheatre Parkway\", \"city\": \"Mountain View\", \"state\": \"CA\", \"country\": \"USA\", \"zipCode\": \"94043\"}, \"creditCard\": {\"creditCardNumber\": \"4432-8015-6152-0454\", \"creditCardCvv\": 123, \"creditCardExpirationYear\": 2030, \"creditCardExpirationMonth\": 1}}}",
+              "name": "checkout"
+            },
+            "id": "tooluse_lBsLwtPUfbYdaE0nG3d9gw",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "Checkout failed with HTTP 500 for user <unknown>: Internal Server Error. Note: the user's cart must contain at least one item before calling checkout; call add_to_cart first.",
+        "role": "tool",
+        "tool_call_id": "tooluse_lBsLwtPUfbYdaE0nG3d9gw"
+      },
+      {
+        "content": "Your cart appears to be empty \u2014 checkout failed because there are no items in it. Let me confirm:",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+              "name": "get_cart"
+            },
+            "id": "tooluse_Cub317Eh72cCueVbTo0kHx",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": []}",
+        "role": "tool",
+        "tool_call_id": "tooluse_Cub317Eh72cCueVbTo0kHx"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +229,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Your cart is empty, so there's nothing to check out. Could you let me know which product(s) you'd like to add (product ID and quantity)? Once items are in the cart, I can complete the payment for you.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

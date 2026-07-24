@@ -6,8 +6,27 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Get a shipping quote to ship 2 units of product 1YMWWN1N4O to 1600 Amphitheatre Parkway, Mountain View, CA, 94043, USA in USD.",
         "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 2}], \"currency_code\": \"USD\", \"address\": {\"streetAddress\": \"1600 Amphitheatre Parkway\", \"city\": \"Mountain View\", \"state\": \"CA\", \"country\": \"USA\", \"zipCode\": \"94043\"}}",
+              "name": "get_shipping_quote"
+            },
+            "id": "tooluse_3WD59h8yrafQJyVXNkC6My",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"currencyCode\": \"USD\", \"units\": 17, \"nanos\": 980000000}",
+        "role": "tool",
+        "tool_call_id": "tooluse_3WD59h8yrafQJyVXNkC6My"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +210,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "The estimated shipping cost is **$17.98 USD** to ship 2 units of product `1YMWWN1N4O` to 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

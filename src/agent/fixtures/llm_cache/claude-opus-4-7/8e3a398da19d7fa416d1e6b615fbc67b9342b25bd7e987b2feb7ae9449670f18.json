@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Update me on the delivery status. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f and email is larry_sergei@example.com.",
         "role": "user"
       }
     ],
@@ -191,26 +191,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'd be happy to help, but I should let you know upfront: the tools I have available for the Astronomy Shop don't include an order tracking or delivery status lookup function. I can only:\n\n- Browse/list products and get product details\n- Manage your cart (view, add, empty)\n- Get shipping quotes\n- Process a checkout\n- Fetch recommendations, ads, and supported currencies\n\nTo check on an existing order's delivery status, you'd need to contact the shop's customer support directly, as that information isn't accessible through my available tools.\n\nIs there anything else I can help you with \u2014 like placing a new order, checking your cart, or browsing products?",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

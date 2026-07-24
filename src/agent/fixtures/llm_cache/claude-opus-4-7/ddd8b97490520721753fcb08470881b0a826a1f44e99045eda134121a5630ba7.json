@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "A customer says 'I want to buy the blue one for my dad's birthday next week, same as last time, and ship it express.' You have no prior order history, no color attributes in the catalog, and no express shipping option. Respond by listing exactly what information is missing and propose the minimum set of clarifying questions needed \u2014 do NOT make assumptions or fabricate data.",
         "role": "user"
       }
     ],
@@ -191,26 +191,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "# Missing Information\n\nTo process this request, I don't have enough information. Here's what's missing:\n\n1. **Product identity** \u2014 \"The blue one\" doesn't map to anything I can act on:\n   - No prior order history exists for this customer, so \"same as last time\" has no referent.\n   - The catalog does not include color as a product attribute, so \"blue\" cannot be resolved to a specific SKU.\n\n2. **Shipping method** \u2014 \"Express\" is not an available option. I can only provide a standard shipping quote for a given address.\n\n3. **Customer identity** \u2014 I need a `user_id` to look up a cart or place an order.\n\n4. **Checkout details** (needed before any purchase can be completed): shipping address, email, currency, and credit card info.\n\n---\n\n# Minimum Clarifying Questions\n\nI'd like to ask the customer just these to move forward:\n\n1. **Which product?** \"Could you tell me the product name or describe what it does? I can also list our available products if that helps.\"\n2. **Your account/user ID?** \"So I can access your cart and confirm any past activity.\"\n3. **Shipping address?** \"Express shipping isn't available, but I can quote our standard shipping to your address \u2014 what's the destination?\"\n\nOnce I have the product and user ID, I can pull it up, add it to the cart, and provide a shipping quote. Payment and full address details can be collected at checkout.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

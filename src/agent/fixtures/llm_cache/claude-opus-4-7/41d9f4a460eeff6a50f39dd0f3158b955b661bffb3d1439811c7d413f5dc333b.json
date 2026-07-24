@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Check for telescope ads. If you find any, buy the featured product. If there are no telescope ads, clear my cart and tell me you're disappointed. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f, email larry_sergei@example.com, shipping address 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA, currency USD, credit card 4432-8015-6152-0454, CVV 123, expiration 01/2030.",
         "role": "user"
       }
     ],
@@ -196,17 +196,17 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'll check for telescope ads first.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
-                "arguments": "{}",
-                "name": "list_products"
+                "arguments": "{\"category\": \"telescopes\"}",
+                "name": "get_ads"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_Aan6wF50Uri9eeYtsODrmk",
               "index": 1,
               "type": "function"
             }

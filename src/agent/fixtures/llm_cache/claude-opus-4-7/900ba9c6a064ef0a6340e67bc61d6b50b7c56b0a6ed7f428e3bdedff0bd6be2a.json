@@ -6,8 +6,27 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Add three units of the beginner astronomy book (product ID HQTGWGPNH4, The Comet Book) to my shopping cart. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
         "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"HQTGWGPNH4\", \"quantity\": 3}",
+              "name": "add_to_cart"
+            },
+            "id": "tooluse_bdrHxRCBAgJVuAKuIkBhPz",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"items\": [{\"productId\": \"66VCHSJNUP\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 3}, {\"productId\": \"HQTGWGPNH4\", \"quantity\": 3}]}",
+        "role": "tool",
+        "tool_call_id": "tooluse_bdrHxRCBAgJVuAKuIkBhPz"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +210,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Added 3 units of \"The Comet Book\" (HQTGWGPNH4) to your cart. Your cart now contains:\n\n- 66VCHSJNUP \u00d7 1\n- 1YMWWN1N4O \u00d7 3\n- HQTGWGPNH4 \u00d7 3 \u2705\n\nLet me know if you'd like to proceed to checkout or add anything else.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

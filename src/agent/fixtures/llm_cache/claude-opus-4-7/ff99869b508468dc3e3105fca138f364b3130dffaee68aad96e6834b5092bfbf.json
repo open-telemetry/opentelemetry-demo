@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "What ads do you have for telescopes? Also, can you list the products and see if they match the promotions?",
         "role": "user"
       }
     ],
@@ -196,18 +196,27 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'll fetch the telescope ads and product list in parallel for you.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
+                "arguments": "{\"category\": \"telescopes\"}",
+                "name": "get_ads"
+              },
+              "id": "tooluse_7lR5Q6suOs9klcizGNWslm",
+              "index": 1,
+              "type": "function"
+            },
+            {
+              "function": {
                 "arguments": "{}",
                 "name": "list_products"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
+              "id": "tooluse_Ai8Yuq0HgXdN96zh8LoVsI",
+              "index": 2,
               "type": "function"
             }
           ]

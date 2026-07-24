@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Notify me at larry_sergei@example.com when my travel gear order ships.",
         "role": "user"
       }
     ],
@@ -191,26 +191,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I appreciate you sharing that, but I should let you know that I don't have a tool to set up shipping notifications or manage email alerts for orders. The tools available to me are focused on browsing products, managing your cart, getting shipping quotes, and checking out.\n\nIf you'd like, I can help you with:\n- \ud83d\udecd\ufe0f Browsing travel-related products or ads\n- \ud83d\uded2 Adding items to your cart\n- \ud83d\udce6 Getting a shipping quote\n- \ud83d\udcb3 Checking out an order\n\nFor shipping notifications, you'd typically need to check with the shop's customer service or account settings directly. Is there anything else I can help you with?",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

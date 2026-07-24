@@ -6,8 +6,27 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Fetch the latest advertisements for the astronomy shop homepage.",
         "role": "user"
+      },
+      {
+        "content": "I'll fetch the latest advertisements for the astronomy shop homepage.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"category\": \"homepage\"}",
+              "name": "get_ads"
+            },
+            "id": "tooluse_o4RjB9sx1dmxxr9JJEeTCR",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "[{\"redirectUrl\": \"/product/L9ECAV7KIM\", \"text\": \"Lens Cleaning Kit for sale. Buy one, get second one for free\"}, {\"redirectUrl\": \"/product/66VCHSJNUP\", \"text\": \"Starsense Explorer Refractor Telescope for sale. 20% off.\"}]",
+        "role": "tool",
+        "tool_call_id": "tooluse_o4RjB9sx1dmxxr9JJEeTCR"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +210,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Here are the latest advertisements for the Astronomy Shop homepage:\n\n1. **Lens Cleaning Kit** \u2014 Buy one, get the second one free! \ud83e\uddf4\n   - Link: `/product/L9ECAV7KIM`\n\n2. **Starsense Explorer Refractor Telescope** \u2014 20% off! \ud83d\udd2d\n   - Link: `/product/66VCHSJNUP`\n\nLet me know if you'd like more details on either product or want to add one to your cart!",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

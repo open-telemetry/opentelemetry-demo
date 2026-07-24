@@ -6,8 +6,27 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Add a product to my cart using an obviously fake product ID 'INVALID_ID_999'. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
         "role": "user"
+      },
+      {
+        "content": "I'll attempt to add that product ID to your cart so we can see how the system responds.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"INVALID_ID_999\"}",
+              "name": "add_to_cart"
+            },
+            "id": "tooluse_sbgepp6gPvFfvUTn9BZsZM",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": -5}, {\"productId\": \"INVALID_ID_999\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "tooluse_sbgepp6gPvFfvUTn9BZsZM"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +210,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Interesting \u2014 the system accepted the invalid product ID without validation. Here's what happened:\n\n- **`INVALID_ID_999`** was added to your cart with quantity 1, even though it doesn't correspond to a real product.\n- The response also shows a pre-existing odd entry: product `1YMWWN1N4O` with quantity **-5** (a negative quantity, which shouldn't be possible).\n\nThis suggests the `add_to_cart` endpoint isn't validating product IDs against the catalog, nor sanitizing cart state. In a production system, both of these would typically be rejected.\n\nWould you like me to:\n1. **Empty the cart** to clean up the invalid/negative entries, or\n2. **Leave it as-is** for further testing?",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

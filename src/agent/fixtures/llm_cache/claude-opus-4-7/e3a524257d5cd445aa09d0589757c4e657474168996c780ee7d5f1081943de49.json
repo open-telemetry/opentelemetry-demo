@@ -6,8 +6,46 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Checkout my cart using a malformed email address 'not-an-email' and see if it catches the validation error. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f, shipping address 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA, currency USD, credit card 4432-8015-6152-0454, CVV 123, expiration 01/2030.",
         "role": "user"
+      },
+      {
+        "content": "I'll test the checkout with the malformed email to see how the system handles the validation.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"checkout_person\": {\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"userCurrency\": \"USD\", \"address\": {\"streetAddress\": \"1600 Amphitheatre Parkway\", \"city\": \"Mountain View\", \"state\": \"CA\", \"country\": \"USA\", \"zipCode\": \"94043\"}, \"email\": \"not-an-email\", \"creditCard\": {\"creditCardNumber\": \"4432-8015-6152-0454\", \"creditCardCvv\": 123, \"creditCardExpirationYear\": 2030, \"creditCardExpirationMonth\": 1}}}",
+              "name": "checkout"
+            },
+            "id": "tooluse_L1PTvdEGh3FUY93hsc9aom",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "Checkout failed with HTTP 500 for user <unknown>: Internal Server Error. Note: the user's cart must contain at least one item before calling checkout; call add_to_cart first.",
+        "role": "tool",
+        "tool_call_id": "tooluse_L1PTvdEGh3FUY93hsc9aom"
+      },
+      {
+        "content": "The checkout failed, but not due to email validation \u2014 it failed with an HTTP 500 because the cart is empty. Let me check your cart to confirm.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+              "name": "get_cart"
+            },
+            "id": "tooluse_Un81FrR0Qz7hVzRvbmwGqk",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": []}",
+        "role": "tool",
+        "tool_call_id": "tooluse_Un81FrR0Qz7hVzRvbmwGqk"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +229,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Confirmed \u2014 your cart is empty, which is why checkout failed with a generic 500 error rather than a proper email validation error.\n\n**Findings from this test:**\n- \u274c The system did **not** catch the malformed email `'not-an-email'` with a clear validation error.\n- Instead, it returned a generic HTTP 500 Internal Server Error because the cart was empty \u2014 the empty-cart check (or lack of one) triggered first.\n- Ideally, the API should validate input fields like email format up front and return a 400 Bad Request with a descriptive message, regardless of cart state.\n\nIf you'd like a cleaner test of the email validation specifically, add an item to the cart first and I can re-run the checkout with the malformed email. Want me to do that?",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

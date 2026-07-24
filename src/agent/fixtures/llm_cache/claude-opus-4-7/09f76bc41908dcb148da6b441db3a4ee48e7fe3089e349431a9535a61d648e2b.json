@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Add product 9SIQT8TOJO (qty 2), 66VCHSJNUP (qty 3), and 2ZYFJ3GM2N (qty 1) to my cart. Fetch each product's unit price. Compute the expected subtotal manually. Then call the cart/quote tool to get the server-reported subtotal. They MUST match to the cent \u2014 if they don't, report the discrepancy. Then get a shipping quote to 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA in USD, and compute the expected grand total. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
         "role": "user"
       }
     ],
@@ -196,18 +196,63 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'll help you with this. Let me start by adding items to the cart and fetching product details in parallel.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
-                "arguments": "{}",
-                "name": "list_products"
+                "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"9SIQT8TOJO\", \"quantity\": 2}",
+                "name": "add_to_cart"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_vS8nlOZ80IZpOEfzYDaF4c",
               "index": 1,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"66VCHSJNUP\", \"quantity\": 3}",
+                "name": "add_to_cart"
+              },
+              "id": "tooluse_FWDcANAtxRBRkkwBQa9mUz",
+              "index": 2,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"2ZYFJ3GM2N\", \"quantity\": 1}",
+                "name": "add_to_cart"
+              },
+              "id": "tooluse_flT1BTpRYQcugvF5ZCo8DI",
+              "index": 3,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"product_id\": \"9SIQT8TOJO\"}",
+                "name": "get_product"
+              },
+              "id": "tooluse_18iPuMZA0botlXsLHbcQdR",
+              "index": 4,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"product_id\": \"66VCHSJNUP\"}",
+                "name": "get_product"
+              },
+              "id": "tooluse_D8YAtDx2Eo68quEfvtLI2F",
+              "index": 5,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"product_id\": \"2ZYFJ3GM2N\"}",
+                "name": "get_product"
+              },
+              "id": "tooluse_o5k8EtWzZDwhV05a2mJXZ2",
+              "index": 6,
               "type": "function"
             }
           ]

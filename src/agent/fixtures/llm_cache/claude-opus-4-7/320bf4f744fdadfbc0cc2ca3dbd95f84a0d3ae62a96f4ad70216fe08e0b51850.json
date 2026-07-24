@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Browse binoculars, recommend the best option, and check if the price can be shown in JPY currency.",
         "role": "user"
       }
     ],
@@ -196,7 +196,7 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'll help you browse binoculars, recommend the best option, and check JPY currency support. Let me start by listing all products and checking supported currencies in parallel.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
@@ -206,8 +206,17 @@
                 "arguments": "{}",
                 "name": "list_products"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_8Z05CVC5ghFU3kcGj7w3ZL",
               "index": 1,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{}",
+                "name": "get_supported_currencies"
+              },
+              "id": "tooluse_8YmlSmT2s7WGNAvuCxBwZO",
+              "index": 2,
               "type": "function"
             }
           ]

@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Get the details for product ID 1YMWWN1N4O, but only return its exact price and nothing else.",
         "role": "user"
       }
     ],
@@ -196,18 +196,18 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
-                "arguments": "{}",
-                "name": "list_products"
+                "arguments": "{\"product_id\": \"1YMWWN1N4O\"}",
+                "name": "get_product"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
+              "id": "tooluse_oZ6yc2VKNUeH8AQDELVSx0",
+              "index": 0,
               "type": "function"
             }
           ]

@@ -6,8 +6,79 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Get shipping quotes for product 9SIQT8TOJO (1 unit) to five cities: Mountain View CA 94043 USA, New York NY 10001 USA, London SW1A 2AA UK, Tokyo 100-0001 Japan, and Sydney NSW 2000 Australia. Normalize every quote to USD. Return the cheapest and most expensive destinations, plus the percentage difference between them.",
         "role": "user"
+      },
+      {
+        "content": "I'll get shipping quotes for all five destinations in parallel, all in USD.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 1}], \"currency_code\": \"USD\", \"address\": {\"streetAddress\": \"1600 Amphitheatre Pkwy\", \"city\": \"Mountain View\", \"state\": \"CA\", \"country\": \"USA\", \"zipCode\": \"94043\"}}",
+              "name": "get_shipping_quote"
+            },
+            "id": "tooluse_3HEfZrlSO5ZrYpbQ3pMfrE",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 1}], \"currency_code\": \"USD\", \"address\": {\"streetAddress\": \"1 Main St\", \"city\": \"New York\", \"state\": \"NY\", \"country\": \"USA\", \"zipCode\": \"10001\"}}",
+              "name": "get_shipping_quote"
+            },
+            "id": "tooluse_j8C7GtLVckUGkwaJNL6aTu",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 1}], \"currency_code\": \"USD\", \"address\": {\"streetAddress\": \"10 Downing St\", \"city\": \"London\", \"state\": \"London\", \"country\": \"UK\", \"zipCode\": \"SW1A 2AA\"}}",
+              "name": "get_shipping_quote"
+            },
+            "id": "tooluse_cDwh33N5JD1pXE2t1O4LOH",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 1}], \"currency_code\": \"USD\", \"address\": {\"streetAddress\": \"1-1 Chiyoda\", \"city\": \"Tokyo\", \"state\": \"Tokyo\", \"country\": \"Japan\", \"zipCode\": \"100-0001\"}}",
+              "name": "get_shipping_quote"
+            },
+            "id": "tooluse_hiSBqMQwZan119VjQwsgxh",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 1}], \"currency_code\": \"USD\", \"address\": {\"streetAddress\": \"1 George St\", \"city\": \"Sydney\", \"state\": \"NSW\", \"country\": \"Australia\", \"zipCode\": \"2000\"}}",
+              "name": "get_shipping_quote"
+            },
+            "id": "tooluse_EShLxdrK6Sjt4L8dk0YXLa",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"currencyCode\": \"USD\", \"units\": 8, \"nanos\": 990000000}",
+        "role": "tool",
+        "tool_call_id": "tooluse_3HEfZrlSO5ZrYpbQ3pMfrE"
+      },
+      {
+        "content": "{\"currencyCode\": \"USD\", \"units\": 8, \"nanos\": 990000000}",
+        "role": "tool",
+        "tool_call_id": "tooluse_j8C7GtLVckUGkwaJNL6aTu"
+      },
+      {
+        "content": "{\"currencyCode\": \"USD\", \"units\": 8, \"nanos\": 990000000}",
+        "role": "tool",
+        "tool_call_id": "tooluse_cDwh33N5JD1pXE2t1O4LOH"
+      },
+      {
+        "content": "{\"currencyCode\": \"USD\", \"units\": 8, \"nanos\": 990000000}",
+        "role": "tool",
+        "tool_call_id": "tooluse_hiSBqMQwZan119VjQwsgxh"
+      },
+      {
+        "content": "{\"currencyCode\": \"USD\", \"units\": 8, \"nanos\": 990000000}",
+        "role": "tool",
+        "tool_call_id": "tooluse_EShLxdrK6Sjt4L8dk0YXLa"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +262,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "## Shipping Quotes for Product 9SIQT8TOJO (1 unit) \u2014 Normalized to USD\n\n| Destination | Shipping Cost (USD) |\n|---|---|\n| Mountain View, CA, USA | $8.99 |\n| New York, NY, USA | $8.99 |\n| London, UK | $8.99 |\n| Tokyo, Japan | $8.99 |\n| Sydney, Australia | $8.99 |\n\n### Analysis\n- **Cheapest destination(s):** All five \u2014 $8.99\n- **Most expensive destination(s):** All five \u2014 $8.99\n- **Percentage difference:** **0%**\n\nInterestingly, the Astronomy Shop's shipping API returns a flat rate of $8.99 regardless of destination for this item. There is no cost variation between domestic (US) and international (UK, Japan, Australia) shipping.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

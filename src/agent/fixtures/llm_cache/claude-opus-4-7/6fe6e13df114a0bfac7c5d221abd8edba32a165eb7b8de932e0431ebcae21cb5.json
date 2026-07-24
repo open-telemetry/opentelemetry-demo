@@ -6,8 +6,65 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Add product 1YMWWN1N4O to the cart, then use the empty_cart tool. After that, run get_cart to absolutely verify the cart is empty before doing anything else. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
         "role": "user"
+      },
+      {
+        "content": "I'll do these in sequence since each step depends on the previous one.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"1YMWWN1N4O\"}",
+              "name": "add_to_cart"
+            },
+            "id": "tooluse_dA2Y3TtPe90eW60EqMxx0n",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 3}]}",
+        "role": "tool",
+        "tool_call_id": "tooluse_dA2Y3TtPe90eW60EqMxx0n"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+              "name": "empty_cart"
+            },
+            "id": "tooluse_2BNBOKPFp5UY9Wun6fsuWF",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"status\": \"success\", \"message\": \"Cart emptied for user 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+        "role": "tool",
+        "tool_call_id": "tooluse_2BNBOKPFp5UY9Wun6fsuWF"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+              "name": "get_cart"
+            },
+            "id": "tooluse_RHDitH0ube2Ng9yVe0TJMs",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": []}",
+        "role": "tool",
+        "tool_call_id": "tooluse_RHDitH0ube2Ng9yVe0TJMs"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +248,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "All three steps completed successfully:\n\n1. \u2705 Added product `1YMWWN1N4O` to the cart\n2. \u2705 Emptied the cart\n3. \u2705 Verified the cart is now empty (`items: []`)\n\nYour cart is confirmed empty. Let me know what you'd like to do next!",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

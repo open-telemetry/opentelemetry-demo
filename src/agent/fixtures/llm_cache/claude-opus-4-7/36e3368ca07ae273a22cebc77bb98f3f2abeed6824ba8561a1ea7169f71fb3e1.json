@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Fetch the current ad for the 'travel' category. It promises 'Buy one, get second kit for free'. Add 2 units of the advertised product to my cart, then fetch the cart total. Compare the cart total against the single-unit price and tell me explicitly whether the promo discount was actually applied by the backend, with the math shown. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
         "role": "user"
       }
     ],
@@ -196,17 +196,17 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'll fetch the travel category ad first to identify the advertised product.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
-                "arguments": "{}",
-                "name": "list_products"
+                "arguments": "{\"category\": \"travel\"}",
+                "name": "get_ads"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_vH0njxkm6yrlz6OfhPQNCQ",
               "index": 1,
               "type": "function"
             }

@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Start with product HQTGWGPNH4. Get its top recommendation. Then get THAT product's top recommendation. Then get THAT product's top recommendation. Go 5 levels deep. Return the chain of product IDs and names. Detect and stop if you enter a cycle (i.e. revisit a product you've already seen).",
         "role": "user"
       }
     ],
@@ -196,18 +196,27 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'll traverse the recommendation chain 5 levels deep, starting from HQTGWGPNH4. Let me begin.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
-                "arguments": "{}",
-                "name": "list_products"
+                "arguments": "{\"product_id\": \"HQTGWGPNH4\"}",
+                "name": "get_product"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_hwdUrYPEyrtO7EDgzoONAq",
               "index": 1,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"product_id\": \"HQTGWGPNH4\"}",
+                "name": "get_recommendations"
+              },
+              "id": "tooluse_VzUmNFHzKoA6710gi8Rc05",
+              "index": 2,
               "type": "function"
             }
           ]

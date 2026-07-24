@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Send me the order confirmation email to larry_sergei@example.com for my most recent order.",
         "role": "user"
       }
     ],
@@ -191,26 +191,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'm not able to resend order confirmation emails \u2014 I don't have a tool for retrieving past orders or triggering confirmation emails after the fact. My available actions are limited to things like browsing products, managing your cart, getting shipping quotes, and checking out new orders.\n\nIf you'd like, I can help you:\n- Place a **new order** (which would generate a fresh confirmation email to that address), or\n- Look up products or recommendations\n\nFor retrieving a previous order's confirmation, you'd need to contact Astronomy Shop customer support directly.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

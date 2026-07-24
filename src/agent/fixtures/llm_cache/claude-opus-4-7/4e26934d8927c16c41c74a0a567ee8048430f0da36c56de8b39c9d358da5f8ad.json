@@ -6,8 +6,27 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Estimate shipping for 1 unit of product 1YMWWN1N4O to a completely fake country 'Null Island' (street 1 Equator Road, city Null, state NA, zip 00000) with currency set to USD.",
         "role": "user"
+      },
+      {
+        "content": "I'll get a shipping quote for that fictional address.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 1}], \"currency_code\": \"USD\", \"address\": {\"streetAddress\": \"1 Equator Road\", \"city\": \"Null\", \"state\": \"NA\", \"country\": \"Null Island\", \"zipCode\": \"00000\"}}",
+              "name": "get_shipping_quote"
+            },
+            "id": "tooluse_sdL42ZVdlDBqAXcZVswSRd",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"currencyCode\": \"USD\", \"units\": 8, \"nanos\": 990000000}",
+        "role": "tool",
+        "tool_call_id": "tooluse_sdL42ZVdlDBqAXcZVswSRd"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +210,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "The estimated shipping cost to \"Null Island\" (1 Equator Road, Null, NA, 00000) for 1 unit of product `1YMWWN1N4O` is **$8.99 USD**.\n\nInterestingly, the shipping service didn't validate the country and returned a quote anyway \u2014 so this is not a realistic figure, just what the API returned for the fake address.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

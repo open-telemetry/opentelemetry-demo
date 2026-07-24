@@ -6,8 +6,27 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Fetch ads for a category that doesn't exist, like 'quantum-drives', and tell me what the API returns.",
         "role": "user"
+      },
+      {
+        "content": "I'll fetch ads for the non-existent category 'quantum-drives' and report what the API returns.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"category\": \"quantum-drives\"}",
+              "name": "get_ads"
+            },
+            "id": "tooluse_F2KP6k3ZhJJf0SceFYfiLs",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "[{\"redirectUrl\": \"/product/9SIQT8TOJO\", \"text\": \"Optical Tube Assembly for sale. 10% off.\"}, {\"redirectUrl\": \"/product/1YMWWN1N4O\", \"text\": \"Eclipsmart Travel Refractor Telescope for sale. Buy one, get second kit for free\"}]",
+        "role": "tool",
+        "tool_call_id": "tooluse_F2KP6k3ZhJJf0SceFYfiLs"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +210,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Here's what the API returned for the non-existent category `quantum-drives`:\n\n```json\n[\n  {\n    \"redirectUrl\": \"/product/9SIQT8TOJO\",\n    \"text\": \"Optical Tube Assembly for sale. 10% off.\"\n  },\n  {\n    \"redirectUrl\": \"/product/1YMWWN1N4O\",\n    \"text\": \"Eclipsmart Travel Refractor Telescope for sale. Buy one, get second kit for free\"\n  }\n]\n```\n\n### Observations\n\nInstead of returning an error or an empty list, the API gracefully **falls back to generic/default ads**. Specifically, it returned two unrelated promotional ads:\n\n1. **Optical Tube Assembly** \u2013 10% off\n2. **Eclipsmart Travel Refractor Telescope** \u2013 Buy one, get second kit free\n\nThis suggests the ads service is designed to be resilient: when an unknown category is requested, it doesn't fail \u2014 it simply serves default/fallback advertisements (likely random or featured products) so the homepage always has something to display. This is a common pattern for ad-serving systems to avoid empty ad slots on the UI.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

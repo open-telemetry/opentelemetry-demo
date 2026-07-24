@@ -6,8 +6,72 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "I want to buy a telescope. Show me the details for product 1YMWWN1N4O, add 2 of them to my cart, check the cart contents, and give me a shipping quote to 10 Downing Street, London, Greater London, SW1A 2AA, United Kingdom in GBP. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
         "role": "user"
+      },
+      {
+        "content": "I'll help you with all of that. Let me run these in parallel where possible.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"1YMWWN1N4O\"}",
+              "name": "get_product"
+            },
+            "id": "tooluse_xl7nIjAzl2aw80MWZyOeiF",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"1YMWWN1N4O\", \"quantity\": 2}",
+              "name": "add_to_cart"
+            },
+            "id": "tooluse_PKZZMPUyTESxpbGoMdS0ZB",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 2}], \"currency_code\": \"GBP\", \"address\": {\"streetAddress\": \"10 Downing Street\", \"city\": \"London\", \"state\": \"Greater London\", \"country\": \"United Kingdom\", \"zipCode\": \"SW1A 2AA\"}}",
+              "name": "get_shipping_quote"
+            },
+            "id": "tooluse_SGgiAPt4jZ1pcIS9M5115c",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"id\": \"1YMWWN1N4O\", \"name\": \"Eclipsmart Travel Refractor Telescope\", \"description\": \"Dedicated white-light solar scope for the observer on the go. The 50mm refracting solar scope uses Solar Safe, ISO compliant, full-aperture glass filter material to ensure the safest view of solar events.  The kit comes complete with everything you need, including the dedicated travel solar scope, a Solar Safe finderscope, tripod, a high quality 20mm (18x) Kellner eyepiece and a nylon backpack to carry everything in.  This Travel Solar Scope makes it easy to share the Sun as well as partial and total solar eclipses with the whole family and offers much higher magnifications than you would otherwise get using handheld solar viewers or binoculars.\", \"picture\": \"EclipsmartTravelRefractorTelescope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 129, \"nanos\": 950000000}, \"categories\": [\"telescopes\", \"travel\"]}",
+        "role": "tool",
+        "tool_call_id": "tooluse_xl7nIjAzl2aw80MWZyOeiF"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 2}]}",
+        "role": "tool",
+        "tool_call_id": "tooluse_PKZZMPUyTESxpbGoMdS0ZB"
+      },
+      {
+        "content": "{\"currencyCode\": \"GBP\", \"units\": 13, \"nanos\": 673070322}",
+        "role": "tool",
+        "tool_call_id": "tooluse_SGgiAPt4jZ1pcIS9M5115c"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+              "name": "get_cart"
+            },
+            "id": "tooluse_CEMP72Gajfuoudt6CASxq7",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": []}",
+        "role": "tool",
+        "tool_call_id": "tooluse_CEMP72Gajfuoudt6CASxq7"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +255,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Here's a summary of everything:\n\n### \ud83d\udd2d Product Details: Eclipsmart Travel Refractor Telescope (ID: 1YMWWN1N4O)\n- **Price:** $129.95 USD\n- **Categories:** Telescopes, Travel\n- **Description:** A dedicated white-light solar scope for the observer on the go. The 50mm refracting solar scope uses Solar Safe, ISO-compliant, full-aperture glass filter material to ensure the safest view of solar events. The kit includes:\n  - Dedicated travel solar scope\n  - Solar Safe finderscope\n  - Tripod\n  - 20mm (18x) Kellner eyepiece\n  - Nylon backpack\n- Great for observing the Sun and partial/total solar eclipses with the family.\n\n### \ud83d\uded2 Cart\n- Added 2\u00d7 Eclipsmart Travel Refractor Telescope successfully.\n- Note: When I retrieved the cart, it came back empty \u2014 this may be a temporary sync issue on the backend. You may want to verify before checkout.\n\n### \ud83d\udce6 Shipping Quote to 10 Downing Street, London, SW1A 2AA, UK\n- **Estimated shipping cost:** \u00a313.67 GBP (for 2 units)\n\nWould you like to proceed to checkout?",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

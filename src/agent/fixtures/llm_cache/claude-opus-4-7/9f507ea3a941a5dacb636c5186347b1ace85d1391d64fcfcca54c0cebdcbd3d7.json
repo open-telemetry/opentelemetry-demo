@@ -6,8 +6,46 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Attempt to checkout with a missing street address. Take the error message, fix the address to '1600 Amphitheatre Parkway, Mountain View, CA 94043, USA', and retry the checkout. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f, email larry_sergei@example.com, currency USD, credit card 4432-8015-6152-0454, CVV 123, expiration 01/2030.",
         "role": "user"
+      },
+      {
+        "content": "I'll attempt the checkout first with a missing street address to see the error, then retry with the corrected address.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"checkout_person\": {\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"userCurrency\": \"USD\", \"address\": {\"streetAddress\": \"\", \"city\": \"Mountain View\", \"state\": \"CA\", \"country\": \"USA\", \"zipCode\": \"94043\"}, \"email\": \"larry_sergei@example.com\", \"creditCard\": {\"creditCardNumber\": \"4432-8015-6152-0454\", \"creditCardCvv\": 123, \"creditCardExpirationYear\": 2030, \"creditCardExpirationMonth\": 1}}}",
+              "name": "checkout"
+            },
+            "id": "tooluse_6iBJuFEgZmt9NO8Yj6kvqs",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "Checkout failed with HTTP 500 for user <unknown>: Internal Server Error. Note: the user's cart must contain at least one item before calling checkout; call add_to_cart first.",
+        "role": "tool",
+        "tool_call_id": "tooluse_6iBJuFEgZmt9NO8Yj6kvqs"
+      },
+      {
+        "content": "The initial checkout returned an error. Now, retrying with the corrected full address:",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"checkout_person\": {\"address\": {\"streetAddress\": \"1600 Amphitheatre Parkway\", \"city\": \"Mountain View\", \"state\": \"CA\", \"country\": \"USA\", \"zipCode\": \"94043\"}, \"creditCard\": {\"creditCardNumber\": \"4432-8015-6152-0454\", \"creditCardCvv\": 123, \"creditCardExpirationMonth\": 1, \"creditCardExpirationYear\": 2030}, \"email\": \"larry_sergei@example.com\", \"userCurrency\": \"USD\", \"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}}",
+              "name": "checkout"
+            },
+            "id": "tooluse_VTvxiD8dIUm3Ht7j5T9Zaj",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "Checkout failed with HTTP 500 for user <unknown>: Internal Server Error. Note: the user's cart must contain at least one item before calling checkout; call add_to_cart first.",
+        "role": "tool",
+        "tool_call_id": "tooluse_VTvxiD8dIUm3Ht7j5T9Zaj"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +229,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Here's a summary of what happened:\n\n## First Checkout Attempt (missing street address)\n- **Result**: \u274c Failed with HTTP 500 Internal Server Error\n- **Error note**: The cart must contain at least one item before checkout\n\n## Second Checkout Attempt (with fixed address: 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA)\n- **Result**: \u274c Also failed with HTTP 500 Internal Server Error\n- **Same error**: The cart is empty\n\n### \ud83d\uded2 Next Step Required\nBoth checkout attempts failed for the same underlying reason: **your cart is empty**. The address fix alone won't resolve the issue. Before I can complete a checkout, you'll need to add at least one item to your cart.\n\nWould you like me to:\n1. **List available products** so you can pick something to add to the cart, or\n2. **Add a specific product** (if you already know the product ID) and then retry the checkout?",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

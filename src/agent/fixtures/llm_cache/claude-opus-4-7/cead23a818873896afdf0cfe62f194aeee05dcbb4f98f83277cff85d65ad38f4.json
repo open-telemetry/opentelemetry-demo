@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Get a shipping quote for 1 unit of product 1YMWWN1N4O to the address 'Stra\u00dfe des 17. Juni 135, 10623 Berlin, Deutschland' in EUR. Then repeat with the address '\u6771\u4eac\u90fd\u5343\u4ee3\u7530\u533a\u5343\u4ee3\u75301-1, 100-8111, \u65e5\u672c' in JPY. Then try the address '123 \ud83d\ude80 Rocket Lane, \ud83d\udc7dville, Mars 00000, \ud83c\udf0c' in USD. Report raw responses for each.",
         "role": "user"
       }
     ],
@@ -196,18 +196,36 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'll get shipping quotes for all three addresses in parallel.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
-                "arguments": "{}",
-                "name": "list_products"
+                "arguments": "{\"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 1}], \"currency_code\": \"EUR\", \"address\": {\"streetAddress\": \"Stra\\u00dfe des 17. Juni 135\", \"city\": \"Berlin\", \"state\": \"Berlin\", \"country\": \"Deutschland\", \"zipCode\": \"10623\"}}",
+                "name": "get_shipping_quote"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_CwMYpJKU2OAKcSdgtd4yoh",
               "index": 1,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 1}], \"currency_code\": \"JPY\", \"address\": {\"streetAddress\": \"\\u6771\\u4eac\\u90fd\\u5343\\u4ee3\\u7530\\u533a\\u5343\\u4ee3\\u75301-1\", \"city\": \"\\u5343\\u4ee3\\u7530\\u533a\", \"state\": \"\\u6771\\u4eac\\u90fd\", \"country\": \"\\u65e5\\u672c\", \"zipCode\": \"100-8111\"}}",
+                "name": "get_shipping_quote"
+              },
+              "id": "tooluse_bDURtnsdXNjaqqyiVjvQKy",
+              "index": 2,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 1}], \"currency_code\": \"USD\", \"address\": {\"streetAddress\": \"123 \\ud83d\\ude80 Rocket Lane\", \"city\": \"\\ud83d\\udc7dville\", \"state\": \"Mars\", \"country\": \"\\ud83c\\udf0c\", \"zipCode\": \"00000\"}}",
+                "name": "get_shipping_quote"
+              },
+              "id": "tooluse_PUKCzjQiod3nqFp2J8986D",
+              "index": 3,
               "type": "function"
             }
           ]

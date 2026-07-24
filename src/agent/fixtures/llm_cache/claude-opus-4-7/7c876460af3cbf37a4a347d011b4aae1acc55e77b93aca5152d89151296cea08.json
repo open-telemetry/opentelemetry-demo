@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "What travel gear is frequently purchased together with the beginner telescope?",
         "role": "user"
       }
     ],
@@ -196,7 +196,7 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'll help you find that information. Let me first find the beginner telescope, then get its recommendations.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
@@ -206,7 +206,7 @@
                 "arguments": "{}",
                 "name": "list_products"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_CA21D0HS7sM4FpBY89CVlV",
               "index": 1,
               "type": "function"
             }

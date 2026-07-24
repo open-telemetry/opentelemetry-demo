@@ -6,8 +6,27 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Switch the store currency to INR.",
         "role": "user"
+      },
+      {
+        "content": "I can't directly switch the store currency for you\u2014that's typically a UI setting. However, let me check which currencies are supported to confirm INR is available.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{}",
+              "name": "get_supported_currencies"
+            },
+            "id": "tooluse_ME9vvbF0d2ar1oTv3lGxvE",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "[\"ZAR\", \"ISK\", \"ILS\", \"RON\", \"GBP\", \"BRL\", \"CZK\", \"AUD\", \"BGN\", \"JPY\", \"PHP\", \"HUF\", \"USD\", \"SGD\", \"IDR\", \"CHF\", \"TRY\", \"NZD\", \"THB\", \"DKK\", \"PLN\", \"NOK\", \"HRK\", \"HKD\", \"EUR\", \"RUB\", \"CAD\", \"INR\", \"SEK\", \"KRW\", \"CNY\", \"MXN\", \"MYR\"]",
+        "role": "tool",
+        "tool_call_id": "tooluse_ME9vvbF0d2ar1oTv3lGxvE"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +210,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "\u2705 INR (Indian Rupee) is supported by the Astronomy Shop.\n\nHowever, I don't have a tool to change the store's display currency directly\u2014that's a setting you'll need to toggle in the storefront UI (usually a currency selector in the header/navigation).\n\nWhat I *can* do with INR:\n- Fetch shipping quotes in INR\n- Process checkout in INR (`userCurrency: \"INR\"`)\n\nWould you like me to proceed with any of those?",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

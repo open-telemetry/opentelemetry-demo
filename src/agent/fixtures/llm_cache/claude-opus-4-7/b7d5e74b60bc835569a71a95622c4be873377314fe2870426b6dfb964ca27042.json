@@ -6,8 +6,46 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Attempt to call a tool that doesn't exist named 'apply_coupon_code' with coupon 'SPACE2026'. When it fails, fall back to just adding product 66VCHSJNUP to the cart at its list price and tell me no coupon system is available. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
         "role": "user"
+      },
+      {
+        "content": "I'll try to call the coupon tool first, then fall back as you requested.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"coupon_code\": \"SPACE2026\", \"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+              "name": "apply_coupon_code"
+            },
+            "id": "tooluse_pE3FKRxOBZjI9DgiUXYo7l",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "Error: apply_coupon_code is not a valid tool, try one of [add_to_cart, checkout, empty_cart, get_ads, get_cart, get_product, get_recommendations, get_shipping_quote, get_supported_currencies, list_products].",
+        "role": "tool",
+        "tool_call_id": "tooluse_pE3FKRxOBZjI9DgiUXYo7l"
+      },
+      {
+        "content": "As expected, the `apply_coupon_code` tool doesn't exist. Falling back to adding the product to your cart at list price.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"66VCHSJNUP\"}",
+              "name": "add_to_cart"
+            },
+            "id": "tooluse_jWQokAZwkFms34pQAmjL2E",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 2}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "tooluse_jWQokAZwkFms34pQAmjL2E"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +229,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Done. Summary:\n\n- \u274c **Coupon `SPACE2026` could not be applied** \u2014 no coupon system is available in this shop. There is no `apply_coupon_code` tool exposed, and none of the available tools (add_to_cart, checkout, get_cart, get_product, etc.) support discount codes.\n- \u2705 **Fallback completed**: Product `66VCHSJNUP` was added to your cart at its list price. Your cart now contains that item plus 2 of `9SIQT8TOJO` that were already there.\n\nLet me know if you'd like to proceed to checkout or adjust the cart.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

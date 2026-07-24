@@ -6,8 +6,53 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "I want to buy the Eclipsmart Travel Refractor Telescope model (product ID 1YMWWN1N4O). Find it, add two of them to my cart, get a shipping quote to 11501 Alterra Pkwy, Austin, TX 73301, USA, and then check out using USD. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f, email larry_sergei@example.com, credit card 4432-8015-6152-0454, CVV 123, expiration 01/2030.",
         "role": "user"
+      },
+      {
+        "content": "I'll help you with that. Let me start by getting the product details and adding it to your cart in parallel.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"1YMWWN1N4O\"}",
+              "name": "get_product"
+            },
+            "id": "tooluse_6jxqCi8zv3nk2ojlQvClBW",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"1YMWWN1N4O\", \"quantity\": 2}",
+              "name": "add_to_cart"
+            },
+            "id": "tooluse_EOGPTiMCV045XQbxD1sr3H",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 2}], \"currency_code\": \"USD\", \"address\": {\"streetAddress\": \"11501 Alterra Pkwy\", \"city\": \"Austin\", \"state\": \"TX\", \"country\": \"USA\", \"zipCode\": \"73301\"}}",
+              "name": "get_shipping_quote"
+            },
+            "id": "tooluse_i9j9Kpf04cGvthvwsd3n3J",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"id\": \"1YMWWN1N4O\", \"name\": \"Eclipsmart Travel Refractor Telescope\", \"description\": \"Dedicated white-light solar scope for the observer on the go. The 50mm refracting solar scope uses Solar Safe, ISO compliant, full-aperture glass filter material to ensure the safest view of solar events.  The kit comes complete with everything you need, including the dedicated travel solar scope, a Solar Safe finderscope, tripod, a high quality 20mm (18x) Kellner eyepiece and a nylon backpack to carry everything in.  This Travel Solar Scope makes it easy to share the Sun as well as partial and total solar eclipses with the whole family and offers much higher magnifications than you would otherwise get using handheld solar viewers or binoculars.\", \"picture\": \"EclipsmartTravelRefractorTelescope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 129, \"nanos\": 950000000}, \"categories\": [\"telescopes\", \"travel\"]}",
+        "role": "tool",
+        "tool_call_id": "tooluse_6jxqCi8zv3nk2ojlQvClBW"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 2}]}",
+        "role": "tool",
+        "tool_call_id": "tooluse_EOGPTiMCV045XQbxD1sr3H"
+      },
+      {
+        "content": "{\"currencyCode\": \"USD\", \"units\": 17, \"nanos\": 980000000}",
+        "role": "tool",
+        "tool_call_id": "tooluse_i9j9Kpf04cGvthvwsd3n3J"
       }
     ],
     "model": "claude-opus-4-7",
@@ -196,17 +241,17 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Product found and added. Shipping quote is $17.98. Now checking out:",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
-                "arguments": "{}",
-                "name": "list_products"
+                "arguments": "{\"checkout_person\": {\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"userCurrency\": \"USD\", \"email\": \"larry_sergei@example.com\", \"address\": {\"streetAddress\": \"11501 Alterra Pkwy\", \"city\": \"Austin\", \"state\": \"TX\", \"country\": \"USA\", \"zipCode\": \"73301\"}, \"creditCard\": {\"creditCardNumber\": \"4432-8015-6152-0454\", \"creditCardCvv\": 123, \"creditCardExpirationYear\": 2030, \"creditCardExpirationMonth\": 1}}}",
+                "name": "checkout"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_HZIH2RRYdCRUY0iCUMtypi",
               "index": 1,
               "type": "function"
             }

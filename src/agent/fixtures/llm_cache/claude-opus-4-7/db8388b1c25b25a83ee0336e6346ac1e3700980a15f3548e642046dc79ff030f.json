@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Get a shipping quote to ship 2 units of product 1YMWWN1N4O to 1600 Amphitheatre Parkway, Mountain View, CA, 94043, USA in USD.",
         "role": "user"
       }
     ],
@@ -196,18 +196,18 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
-                "arguments": "{}",
-                "name": "list_products"
+                "arguments": "{\"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 2}], \"currency_code\": \"USD\", \"address\": {\"streetAddress\": \"1600 Amphitheatre Parkway\", \"city\": \"Mountain View\", \"state\": \"CA\", \"country\": \"USA\", \"zipCode\": \"94043\"}}",
+                "name": "get_shipping_quote"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
+              "id": "tooluse_3WD59h8yrafQJyVXNkC6My",
+              "index": 0,
               "type": "function"
             }
           ]

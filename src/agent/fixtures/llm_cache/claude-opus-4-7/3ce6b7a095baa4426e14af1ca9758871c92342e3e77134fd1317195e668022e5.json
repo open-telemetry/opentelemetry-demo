@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Estimate the shipping cost for one telescope (product ID 66VCHSJNUP) to 350 5th Ave, New York, NY 10001, USA in USD.",
         "role": "user"
       }
     ],
@@ -196,18 +196,18 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
-                "arguments": "{}",
-                "name": "list_products"
+                "arguments": "{\"items\": [{\"productId\": \"66VCHSJNUP\", \"quantity\": 1}], \"currency_code\": \"USD\", \"address\": {\"streetAddress\": \"350 5th Ave\", \"city\": \"New York\", \"state\": \"NY\", \"country\": \"USA\", \"zipCode\": \"10001\"}}",
+                "name": "get_shipping_quote"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
+              "id": "tooluse_h4rPeQuSfeMn4319KZjSTM",
+              "index": 0,
               "type": "function"
             }
           ]

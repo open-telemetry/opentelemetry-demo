@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Check whether CAD, JPY, and GALACTIC_CREDITS are supported. If all three are supported, add product 66VCHSJNUP to the cart. If only 2 of 3 are supported, add product 1YMWWN1N4O. If only 1 is supported, add product HQTGWGPNH4. If none are supported, empty the cart. Report which branch you took and why. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
         "role": "user"
       }
     ],
@@ -196,7 +196,7 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'll check the supported currencies first.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
@@ -204,9 +204,9 @@
             {
               "function": {
                 "arguments": "{}",
-                "name": "list_products"
+                "name": "get_supported_currencies"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_ib7zUQzPjxutjwOjAY7MaH",
               "index": 1,
               "type": "function"
             }

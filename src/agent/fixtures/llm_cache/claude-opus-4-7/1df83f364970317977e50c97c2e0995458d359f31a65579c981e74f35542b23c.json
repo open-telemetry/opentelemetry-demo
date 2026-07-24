@@ -1,0 +1,278 @@
+{
+  "request": {
+    "messages": [
+      {
+        "content": "You are a helpful assistant. Be concise and accurate.",
+        "role": "system"
+      },
+      {
+        "content": "I have exactly $500 USD to spend. Find the combination of distinct products (each qty 1) whose total price is as close to $500 as possible without exceeding it. Show your reasoning, list the selected products with prices and running total, then add them to my cart. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
+        "role": "user"
+      },
+      {
+        "content": "I'll start by listing all available products to find the best combination.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{}",
+              "name": "list_products"
+            },
+            "id": "tooluse_ouawUMOHDrkpFSt6wgu0pK",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "[{\"id\": \"0PUK6V6EV0\", \"name\": \"Solar System Color Imager\", \"description\": \"You have your new telescope and have observed Saturn and Jupiter. Now you're ready to take the next step and start imaging them. But where do you begin? The NexImage 10 Solar System Imager is the perfect solution.\", \"picture\": \"SolarSystemColorImager.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 175, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\"]}, {\"id\": \"1YMWWN1N4O\", \"name\": \"Eclipsmart Travel Refractor Telescope\", \"description\": \"Dedicated white-light solar scope for the observer on the go. The 50mm refracting solar scope uses Solar Safe, ISO compliant, full-aperture glass filter material to ensure the safest view of solar events.  The kit comes complete with everything you need, including the dedicated travel solar scope, a Solar Safe finderscope, tripod, a high quality 20mm (18x) Kellner eyepiece and a nylon backpack to carry everything in.  This Travel Solar Scope makes it easy to share the Sun as well as partial and total solar eclipses with the whole family and offers much higher magnifications than you would otherwise get using handheld solar viewers or binoculars.\", \"picture\": \"EclipsmartTravelRefractorTelescope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 129, \"nanos\": 950000000}, \"categories\": [\"telescopes\", \"travel\"]}, {\"id\": \"2ZYFJ3GM2N\", \"name\": \"Roof Binoculars\", \"description\": \"This versatile, all-around binocular is a great choice for the trail, the stadium, the arena, or just about anywhere you want a close-up view of the action without sacrificing brightness or detail. It's an especially great companion for nature observation and bird watching, with ED glass that helps you spot the subtlest field markings and a close focus of just 6.5 feet.\", \"picture\": \"RoofBinoculars.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 209, \"nanos\": 950000000}, \"categories\": [\"binoculars\"]}, {\"id\": \"66VCHSJNUP\", \"name\": \"Starsense Explorer Refractor Telescope\", \"description\": \"The first telescope that uses your smartphone to analyze the night sky and calculate its position in real time. StarSense Explorer is ideal for beginners thanks to the app's user-friendly interface and detailed tutorials. It's like having your own personal tour guide of the night sky\", \"picture\": \"StarsenseExplorer.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 349, \"nanos\": 950000000}, \"categories\": [\"telescopes\"]}, {\"id\": \"6E92ZMYYFZ\", \"name\": \"Solar Filter\", \"description\": \"Enhance your viewing experience with EclipSmart Solar Filter for 8\\\" telescopes. With two Velcro straps and four self-adhesive Velcro pads for added safety, you can be assured that the solar filter cannot be accidentally knocked off and will provide Solar Safe, ISO compliant viewing.\", \"picture\": \"SolarFilter.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 69, \"nanos\": 950000000}, \"categories\": [\"accessories\", \"telescopes\"]}, {\"id\": \"9SIQT8TOJO\", \"name\": \"Optical Tube Assembly\", \"description\": \"Capturing impressive deep-sky astroimages is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2, the perfect companion to today's top DSLR or astronomical CCD cameras. This fast, wide-field f/2.2 system allows for shorter exposure times compared to traditional f/10 astroimaging, without sacrificing resolution. Because shorter sub-exposure times are possible, your equatorial mount won't need to accurately track over extended periods. The short focal length also lessens equatorial tracking demands. In many cases, autoguiding will not be required.\", \"picture\": \"OpticalTubeAssembly.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 3599, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\", \"assembly\"]}, {\"id\": \"HQTGWGPNH4\", \"name\": \"The Comet Book\", \"description\": \"A 16th-century treatise on comets, created anonymously in Flanders (now northern France) and now held at the Universit\u00e4tsbibliothek Kassel. Commonly known as The Comet Book (or Kometenbuch in German), its full title translates as \\\"Comets and their General and Particular Meanings, According to Ptolome\u00e9, Albumasar, Haly, Aliquind and other Astrologers\\\". The image is from https://publicdomainreview.org/collection/the-comet-book, made available by the Universit\u00e4tsbibliothek Kassel under a CC-BY SA 4.0 license (https://creativecommons.org/licenses/by-sa/4.0/)\", \"picture\": \"TheCometBook.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 0, \"nanos\": 990000000}, \"categories\": [\"books\"]}, {\"id\": \"L9ECAV7KIM\", \"name\": \"Lens Cleaning Kit\", \"description\": \"Wipe away dust, dirt, fingerprints and other particles on your lenses to see clearly with the Lens Cleaning Kit. This cleaning kit works on all glass and optical surfaces, including telescopes, binoculars, spotting scopes, monoculars, microscopes, and even your camera lenses, computer screens, and mobile devices.  The kit comes complete with a retractable lens brush to remove dust particles and dirt and two options to clean smudges and fingerprints off of your optics, pre-moistened lens wipes and a bottled lens cleaning fluid with soft cloth.\", \"picture\": \"LensCleaningKit.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 21, \"nanos\": 950000000}, \"categories\": [\"accessories\"]}, {\"id\": \"LS4PSXUNUM\", \"name\": \"Red Flashlight\", \"description\": \"This 3-in-1 device features a 3-mode red flashlight, a hand warmer, and a portable power bank for recharging your personal electronics on the go. Whether you use it to light the way at an astronomy star party, a night walk, or wildlife research, ThermoTorch 3 Astro Red's rugged, IPX4-rated design will withstand your everyday activities.\", \"picture\": \"RedFlashlight.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 57, \"nanos\": 80000000}, \"categories\": [\"accessories\", \"flashlights\"]}, {\"id\": \"OLJCESPC7Z\", \"name\": \"National Park Foundation Explorascope\", \"description\": \"The National Park Foundation's (NPF) Explorascope 60AZ is a manual alt-azimuth, refractor telescope perfect for celestial viewing on the go. The NPF Explorascope 60 can view the planets, moon, star clusters and brighter deep sky objects like the Orion Nebula and Andromeda Galaxy.\", \"picture\": \"NationalParkFoundationExplorascope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 101, \"nanos\": 960000000}, \"categories\": [\"telescopes\"]}]",
+        "role": "tool",
+        "tool_call_id": "tooluse_ouawUMOHDrkpFSt6wgu0pK"
+      }
+    ],
+    "model": "claude-opus-4-7",
+    "tools": [
+      {
+        "function": {
+          "description": "Add a product (product_id) to the shopping cart for a user (user_id).",
+          "name": "add_to_cart",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              },
+              "quantity": {
+                "default": 1,
+                "type": "integer"
+              },
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id",
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Checkout the user's cart and create an order.\nTakes request in the format {string user_id, string userCurrency, Address address, string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress, string city, string state, string country, string zipCode} and\nCreditCardInfo is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear, int32 creditCardExpirationMonth}",
+          "name": "checkout",
+          "parameters": {
+            "properties": {
+              "checkout_person": {}
+            },
+            "required": [
+              "checkout_person"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Empty the shopping cart for a user.",
+          "name": "empty_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Fetch promotional ads for Astronomy Shop homepage.\nEg : category: `telescopes` or `travel`",
+          "name": "get_ads",
+          "parameters": {
+            "properties": {
+              "category": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "category"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Retrieve the current contents of a user's cart.",
+          "name": "get_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get detailed information about a product using its ID.",
+          "name": "get_product",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get product recommendations for a user.",
+          "name": "get_recommendations",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get estimated shipping cost for a given address.\n`items`: list of {productId, quantity} (a single dict is also accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress, city, state, country, zipCode}.",
+          "name": "get_shipping_quote",
+          "parameters": {
+            "properties": {
+              "address": {},
+              "currency_code": {},
+              "items": {}
+            },
+            "required": [
+              "items",
+              "currency_code",
+              "address"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List supported currencies in Astronomy Shop.",
+          "name": "get_supported_currencies",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List all products available in the Astronomy Shop.",
+          "name": "list_products",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      }
+    ]
+  },
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "tool_calls",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "audio": null,
+          "content": "Let me analyze the prices and find the best combination not exceeding $500.\n\n**Available Products:**\n- 0PUK6V6EV0: Solar System Color Imager \u2014 $175.00\n- 1YMWWN1N4O: Eclipsmart Travel Refractor Telescope \u2014 $129.95\n- 2ZYFJ3GM2N: Roof Binoculars \u2014 $209.95\n- 66VCHSJNUP: Starsense Explorer Refractor Telescope \u2014 $349.95\n- 6E92ZMYYFZ: Solar Filter \u2014 $69.95\n- 9SIQT8TOJO: Optical Tube Assembly \u2014 $3,599.00 (too expensive)\n- HQTGWGPNH4: The Comet Book \u2014 $0.99\n- L9ECAV7KIM: Lens Cleaning Kit \u2014 $21.95\n- LS4PSXUNUM: Red Flashlight \u2014 $57.08\n- OLJCESPC7Z: National Park Foundation Explorascope \u2014 $101.96\n\n**Reasoning (subset-sum search, max \u2264 $500):**\n\nLet me try promising combinations:\n\n- Starsense ($349.95) + Eclipsmart ($129.95) = $479.90 \u2192 + Comet Book ($0.99) = $480.89\n- Starsense ($349.95) + Roof Binoculars ($209.95) = $559.90 \u274c exceeds\n- Roof Binoculars ($209.95) + Solar Imager ($175.00) + Explorascope ($101.96) = $486.91 \u2192 + Comet Book ($0.99) = **$487.90**\n- Roof Binoculars ($209.95) + Solar Imager ($175.00) + Eclipsmart ($129.95) = $514.90 \u274c\n- Starsense ($349.95) + Explorascope ($101.96) = $451.91 \u2192 + Solar Filter ($69.95) = $521.86 \u274c \u2192 + Red Flashlight ($57.08) = $508.99 \u274c \u2192 + Lens Kit ($21.95) = $473.86 \u2192 + Comet ($0.99) = $474.85\n- Roof Binoculars ($209.95) + Solar Imager ($175.00) + Eclipsmart ($129.95) = $514.90 \u274c\n- Solar Imager ($175.00) + Eclipsmart ($129.95) + Explorascope ($101.96) + Solar Filter ($69.95) = $476.86 \u2192 + Comet ($0.99) = $477.85 \u2192 + Lens Kit ($21.95) = $499.80 \u2705\u2705\n- Try adding Comet Book too: $499.80 + $0.99 = $500.79 \u274c exceeds\n\nLet me verify: **$175.00 + $129.95 + $101.96 + $69.95 + $21.95 = $498.81**... let me recompute:\n- 175.00 + 129.95 = 304.95\n- 304.95 + 101.96 = 406.91\n- 406.91 + 69.95 = 476.86\n- 476.86 + 21.95 = 498.81\n\nThen + Comet Book $0.99 = **$499.80** \u2705 (under $500 by $0.20!)\n\nCan we do better? Let me try:\n- Roof Binoculars ($209.95) + Solar Imager ($175.00) + Explorascope ($101.96) + Comet ($0.99) = $487.90 \u2192 + Lens Kit ($21.95) = $509.85 \u274c\n- Roof Binoculars ($209.95) + Solar Imager ($175.00) + Eclipsmart ($129.95) = $514.90 \u274c\n- Roof Binoculars ($209.95) + Starsense ($349.95) too much\n- Roof Binoculars ($209.95) + Eclipsmart ($129.95) + Explorascope ($101.96) + Solar Filter ($69.95) = $521.81 \u274c\n- Roof Binoculars ($209.95) + Eclipsmart ($129.95) + Explorascope ($101.96) + Lens Kit ($21.95) + Comet ($0.99) = $464.80 \u2192 + Red Flashlight ($57.08) = $521.88 \u274c\n- Roof Binoculars ($209.95) + Eclipsmart ($129.95) + Explorascope ($101.96) + Red Flashlight ($57.08) = $498.94 \u2192 + Comet ($0.99) = **$499.93** \u2705\u2705 (under by $0.07!)\n\nEven better! Let me verify:\n- 209.95 + 129.95 = 339.90\n- 339.90 + 101.96 = 441.86\n- 441.86 + 57.08 = 498.94\n- 498.94 + 0.99 = **499.93** \u2705\n\nCan we get closer to $500?\n- Roof Binoculars + Eclipsmart + Explorascope + Red Flashlight + Comet + Lens Kit = 499.93 + 21.95 = 521.88 \u274c\n- Try Roof Binoculars + Solar Imager + Explorascope + Solar Filter = 209.95+175+101.96+69.95 = 556.86 \u274c\n- Roof Binoculars + Solar Imager + Solar Filter + Lens Kit + Comet = 209.95+175+69.95+21.95+0.99 = 477.84 \u2192 + Red Flashlight = 534.92 \u274c\n- Roof + Solar Imager + Solar Filter + Red Flashlight + Comet = 209.95+175+69.95+57.08+0.99 = 512.97 \u274c\n- Roof + Solar Imager + Explorascope + Comet + Lens Kit = 209.95+175+101.96+0.99+21.95 = 509.85 \u274c\n- Roof + Solar Imager + Explorascope + Comet = 487.90 \u2192 next-smallest is Lens Kit $21.95 \u2192 509.85 \u274c; Red Flashlight \u2192 544.98 \u274c\n\n**$499.93 appears optimal** \u2014 only 7 cents under $500!\n\n**Final Selection (Running Total):**\n| # | Product | Price | Running Total |\n|---|---|---|---|\n| 1 | Roof Binoculars | $209.95 | $209.95 |\n| 2 | Eclipsmart Travel Refractor Telescope | $129.95 | $339.90 |\n| 3 | National Park Foundation Explorascope | $101.96 | $441.86 |\n| 4 | Red Flashlight | $57.08 | $498.94 |\n| 5 | The Comet Book | $0.99 | **$499.93** |\n\nAdding all 5 to your cart now:",
+          "function_call": null,
+          "refusal": null,
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"2ZYFJ3GM2N\", \"quantity\": 1}",
+                "name": "add_to_cart"
+              },
+              "id": "tooluse_9HNoFBwjBKnyam1SXxpILY",
+              "index": 1,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"1YMWWN1N4O\", \"quantity\": 1}",
+                "name": "add_to_cart"
+              },
+              "id": "tooluse_i8Z7fcddXa2IQsBSdwgWUW",
+              "index": 2,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"OLJCESPC7Z\", \"quantity\": 1}",
+                "name": "add_to_cart"
+              },
+              "id": "tooluse_hMfyD7RY9yCQiVMDSxDj4E",
+              "index": 3,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"LS4PSXUNUM\", \"quantity\": 1}",
+                "name": "add_to_cart"
+              },
+              "id": "tooluse_3IhvzKainuZ5snBSD541j9",
+              "index": 4,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"HQTGWGPNH4\", \"quantity\": 1}",
+                "name": "add_to_cart"
+              },
+              "id": "tooluse_zXiQx3BsbqmQwpB7GRQBFn",
+              "index": 5,
+              "type": "function"
+            }
+          ]
+        }
+      }
+    ],
+    "created": 0,
+    "id": "chatcmpl-fixture",
+    "model": "claude-opus-4-7",
+    "moderation": null,
+    "object": "chat.completion"
+  }
+}

@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "First, use user ID 'aaaaaaaa-1111-1111-1111-111111111111' to add 3 units of product 66VCHSJNUP. Then switch to user ID 'bbbbbbbb-2222-2222-2222-222222222222' and call get_cart. Bob's cart must NOT contain any of Alice's items. Finally, call get_cart for Alice again and verify her 3 units are still there. Report any cross-contamination.",
         "role": "user"
       }
     ],
@@ -196,17 +196,17 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'll execute these steps in sequence to test for cross-contamination between users.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
-                "arguments": "{}",
-                "name": "list_products"
+                "arguments": "{\"user_id\": \"aaaaaaaa-1111-1111-1111-111111111111\", \"product_id\": \"66VCHSJNUP\", \"quantity\": 3}",
+                "name": "add_to_cart"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_hUXTxR2HnFyPJusRAe6CaS",
               "index": 1,
               "type": "function"
             }

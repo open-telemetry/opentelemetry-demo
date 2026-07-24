@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Send updates about astronomy promotions to larry_sergei@example.com.",
         "role": "user"
       }
     ],
@@ -191,26 +191,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I can't send emails directly \u2014 I don't have a tool for sending emails or subscribing an address to a promotional mailing list. My available tools are limited to Astronomy Shop actions like browsing products, managing a cart, checking out, and fetching promotional ads.\n\nIf you'd like, I can:\n\n- **Fetch current promotional ads** for a category (e.g., telescopes, travel) so you can see what's on offer, or\n- **Look up products or recommendations** you might want to share.\n\nWould you like me to pull the latest promotional ads? If so, let me know a category (e.g., `telescopes`).",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

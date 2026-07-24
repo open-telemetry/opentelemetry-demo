@@ -6,8 +6,27 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "I'm looking for travel gear. Show me what's running on the promo ads right now. If there's a specific product mentioned, get its details and add it to my cart. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
         "role": "user"
+      },
+      {
+        "content": "I'll fetch the travel promo ads first to see what's featured.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"category\": \"travel\"}",
+              "name": "get_ads"
+            },
+            "id": "tooluse_eH7HdAZwxvRqWPW6vqy50c",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "[{\"redirectUrl\": \"/product/1YMWWN1N4O\", \"text\": \"Eclipsmart Travel Refractor Telescope for sale. Buy one, get second kit for free\"}]",
+        "role": "tool",
+        "tool_call_id": "tooluse_eH7HdAZwxvRqWPW6vqy50c"
       }
     ],
     "model": "claude-opus-4-7",
@@ -196,18 +215,27 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Found a promo! Let me get the product details and add it to your cart.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
-                "arguments": "{}",
-                "name": "list_products"
+                "arguments": "{\"product_id\": \"1YMWWN1N4O\"}",
+                "name": "get_product"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_BY2Wan65MuTdctBLLZ766m",
               "index": 1,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"1YMWWN1N4O\"}",
+                "name": "add_to_cart"
+              },
+              "id": "tooluse_Se3bJRwI7o5TxYVCslIbbD",
+              "index": 2,
               "type": "function"
             }
           ]

@@ -6,8 +6,27 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Add 9999 units of the beginner astronomy book (product ID HQTGWGPNH4, The Comet Book) to my cart to test inventory limits. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
         "role": "user"
+      },
+      {
+        "content": "I'll add 9999 units of The Comet Book to your cart to test the inventory limits.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"HQTGWGPNH4\", \"quantity\": 9999}",
+              "name": "add_to_cart"
+            },
+            "id": "tooluse_2oCIJm0AVRooXVozSQURvn",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"HQTGWGPNH4\", \"quantity\": 9999}]}",
+        "role": "tool",
+        "tool_call_id": "tooluse_2oCIJm0AVRooXVozSQURvn"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +210,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Done! I've added 9999 units of The Comet Book (HQTGWGPNH4) to your cart. The system accepted the request without an inventory limit error \u2014 it appears there's no hard cap enforced at the add-to-cart stage.\n\nWould you like me to:\n- Verify the cart contents with `get_cart`?\n- Attempt a checkout to see if inventory limits get enforced at that stage?\n- Empty the cart to reset?",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

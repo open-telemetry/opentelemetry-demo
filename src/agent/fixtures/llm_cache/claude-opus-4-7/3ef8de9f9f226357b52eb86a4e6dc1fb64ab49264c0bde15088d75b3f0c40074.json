@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Send the invoice for my recent purchase to larry_sergei@example.com. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
         "role": "user"
       }
     ],
@@ -191,26 +191,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'd like to help, but I need a bit more context before proceeding. A couple of clarifications:\n\n1. **Invoice resending isn't a capability I have.** The tools available to me cover browsing products, managing your cart, getting shipping quotes, and checking out \u2014 but there's no tool to look up past orders or resend invoices/receipts. You'd need to contact Astronomy Shop customer support for that.\n\n2. **If you meant to place a new order** and have the invoice/confirmation sent to larry_sergei@example.com, I'd be happy to help with that. I'd just need:\n   - The product(s) you want to purchase\n   - Shipping address (street, city, state, country, zip)\n   - Credit card info (number, CVV, expiration month/year)\n   - Preferred currency\n\nLet me know how you'd like to proceed!",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

@@ -6,8 +6,27 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Select express shipping for my order. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f and my shipping address is 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA.",
         "role": "user"
+      },
+      {
+        "content": "I'll get a shipping quote for your order. First, let me check what's in your cart to calculate the shipping.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+              "name": "get_cart"
+            },
+            "id": "tooluse_wgyjcJ4Vd850crXcY2tws9",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": []}",
+        "role": "tool",
+        "tool_call_id": "tooluse_wgyjcJ4Vd850crXcY2tws9"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +210,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Your cart is currently empty, so I can't get a shipping quote yet. Could you let me know which items you'd like to add to your cart? Once items are added, I can get an express shipping quote for delivery to:\n\n**1600 Amphitheatre Parkway, Mountain View, CA 94043, USA**\n\nAlso, a quick note: the shipping quote tool provides an estimated shipping cost but doesn't have a separate \"express\" option to select \u2014 it returns a single quote based on the items and address. If you'd like, I can still proceed once you tell me what to order.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

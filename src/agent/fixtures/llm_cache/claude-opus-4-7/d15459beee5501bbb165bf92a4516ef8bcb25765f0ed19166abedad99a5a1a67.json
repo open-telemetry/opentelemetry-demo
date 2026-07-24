@@ -6,8 +6,53 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "Get a shipping quote for 1 unit of product 1YMWWN1N4O to the address 'Stra\u00dfe des 17. Juni 135, 10623 Berlin, Deutschland' in EUR. Then repeat with the address '\u6771\u4eac\u90fd\u5343\u4ee3\u7530\u533a\u5343\u4ee3\u75301-1, 100-8111, \u65e5\u672c' in JPY. Then try the address '123 \ud83d\ude80 Rocket Lane, \ud83d\udc7dville, Mars 00000, \ud83c\udf0c' in USD. Report raw responses for each.",
         "role": "user"
+      },
+      {
+        "content": "I'll get shipping quotes for all three addresses in parallel.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 1}], \"currency_code\": \"EUR\", \"address\": {\"streetAddress\": \"Stra\u00dfe des 17. Juni 135\", \"city\": \"Berlin\", \"state\": \"Berlin\", \"country\": \"Deutschland\", \"zipCode\": \"10623\"}}",
+              "name": "get_shipping_quote"
+            },
+            "id": "tooluse_CwMYpJKU2OAKcSdgtd4yoh",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 1}], \"currency_code\": \"JPY\", \"address\": {\"streetAddress\": \"\u6771\u4eac\u90fd\u5343\u4ee3\u7530\u533a\u5343\u4ee3\u75301-1\", \"city\": \"\u5343\u4ee3\u7530\u533a\", \"state\": \"\u6771\u4eac\u90fd\", \"country\": \"\u65e5\u672c\", \"zipCode\": \"100-8111\"}}",
+              "name": "get_shipping_quote"
+            },
+            "id": "tooluse_bDURtnsdXNjaqqyiVjvQKy",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 1}], \"currency_code\": \"USD\", \"address\": {\"streetAddress\": \"123 \ud83d\ude80 Rocket Lane\", \"city\": \"\ud83d\udc7dville\", \"state\": \"Mars\", \"country\": \"\ud83c\udf0c\", \"zipCode\": \"00000\"}}",
+              "name": "get_shipping_quote"
+            },
+            "id": "tooluse_PUKCzjQiod3nqFp2J8986D",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"currencyCode\": \"EUR\", \"units\": 7, \"nanos\": 952233524}",
+        "role": "tool",
+        "tool_call_id": "tooluse_CwMYpJKU2OAKcSdgtd4yoh"
+      },
+      {
+        "content": "{\"currencyCode\": \"JPY\", \"units\": 1005, \"nanos\": 162317558}",
+        "role": "tool",
+        "tool_call_id": "tooluse_bDURtnsdXNjaqqyiVjvQKy"
+      },
+      {
+        "content": "{\"currencyCode\": \"USD\", \"units\": 8, \"nanos\": 990000000}",
+        "role": "tool",
+        "tool_call_id": "tooluse_PUKCzjQiod3nqFp2J8986D"
       }
     ],
     "model": "claude-opus-4-7",
@@ -191,26 +236,16 @@
   "response": {
     "choices": [
       {
-        "finish_reason": "tool_calls",
+        "finish_reason": "stop",
         "index": 0,
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "Here are the raw shipping quote responses for each address:\n\n### 1. Berlin, Deutschland (EUR)\n```json\n{\"currencyCode\": \"EUR\", \"units\": 7, \"nanos\": 952233524}\n```\n\u2248 **\u20ac7.95**\n\n### 2. \u6771\u4eac\u90fd\u5343\u4ee3\u7530\u533a, \u65e5\u672c (JPY)\n```json\n{\"currencyCode\": \"JPY\", \"units\": 1005, \"nanos\": 162317558}\n```\n\u2248 **\u00a51005.16**\n\n### 3. 123 \ud83d\ude80 Rocket Lane, \ud83d\udc7dville, Mars \ud83c\udf0c (USD)\n```json\n{\"currencyCode\": \"USD\", \"units\": 8, \"nanos\": 990000000}\n```\n\u2248 **$8.99**\n\n### Observations\n- All three requests succeeded \u2014 the shipping quote service accepted non-ASCII characters (German umlauts/\u00df, Japanese kanji, and even emoji) without any errors or encoding complaints.\n- Interestingly, the \"Mars\" address with emoji got a valid quote too, suggesting the endpoint does **not** validate whether the address is real or deliverable; it just returns a computed rate.\n- The USD amount ($8.99) is the base rate; the EUR (~\u20ac7.95) and JPY (~\u00a51005) values reflect currency conversion applied to that base.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
-          "tool_calls": [
-            {
-              "function": {
-                "arguments": "{}",
-                "name": "list_products"
-              },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
-              "index": 1,
-              "type": "function"
-            }
-          ]
+          "tool_calls": null
         }
       }
     ],

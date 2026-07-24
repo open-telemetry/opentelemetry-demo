@@ -6,7 +6,7 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "I need a complete pricing breakdown. Find the top 3 most expensive items in the catalog. Add one of each to my cart. Get a shipping quote to 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA in USD, then get the same shipping quote in EUR to Pariser Platz 1, Berlin, 10117, Germany. Do not check out, just present the two quotes side-by-side in a table format. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
         "role": "user"
       }
     ],
@@ -196,7 +196,7 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "I'll help you with that. Let me start by listing all products to find the top 3 most expensive.",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
@@ -206,7 +206,7 @@
                 "arguments": "{}",
                 "name": "list_products"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_K1z1sG1ECYLDPPFte2tvCA",
               "index": 1,
               "type": "function"
             }

@@ -6,8 +6,27 @@
         "role": "system"
       },
       {
-        "content": "Show all available products in the store.",
+        "content": "First, use user ID 'aaaaaaaa-1111-1111-1111-111111111111' to add 3 units of product 66VCHSJNUP. Then switch to user ID 'bbbbbbbb-2222-2222-2222-222222222222' and call get_cart. Bob's cart must NOT contain any of Alice's items. Finally, call get_cart for Alice again and verify her 3 units are still there. Report any cross-contamination.",
         "role": "user"
+      },
+      {
+        "content": "I'll execute these steps in sequence to test for cross-contamination between users.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"aaaaaaaa-1111-1111-1111-111111111111\", \"product_id\": \"66VCHSJNUP\", \"quantity\": 3}",
+              "name": "add_to_cart"
+            },
+            "id": "tooluse_hUXTxR2HnFyPJusRAe6CaS",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"aaaaaaaa-1111-1111-1111-111111111111\", \"items\": [{\"productId\": \"66VCHSJNUP\", \"quantity\": 3}]}",
+        "role": "tool",
+        "tool_call_id": "tooluse_hUXTxR2HnFyPJusRAe6CaS"
       }
     ],
     "model": "claude-opus-4-7",
@@ -196,17 +215,26 @@
         "logprobs": null,
         "message": {
           "audio": null,
-          "content": "I'll fetch the list of all available products for you.",
+          "content": "",
           "function_call": null,
           "refusal": null,
           "role": "assistant",
           "tool_calls": [
             {
               "function": {
-                "arguments": "{}",
-                "name": "list_products"
+                "arguments": "{\"user_id\": \"bbbbbbbb-2222-2222-2222-222222222222\"}",
+                "name": "get_cart"
               },
-              "id": "tooluse_GpA6sgJe9vXr46hy5sRikn",
+              "id": "tooluse_KR6LwQTGusOTETh1QA1lND",
+              "index": 0,
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"user_id\": \"aaaaaaaa-1111-1111-1111-111111111111\"}",
+                "name": "get_cart"
+              },
+              "id": "tooluse_G6p7yv70roU19CY1xOS6Oj",
               "index": 1,
               "type": "function"
             }
