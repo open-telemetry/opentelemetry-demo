@@ -7,19 +7,17 @@ import os
 
 import httpx
 from langchain_openai import ChatOpenAI
-from src.agents.patch_vcr import VCR
+from src.agents.llm_cache import CacheKey, LLMCacheMiss, get_cache
 
 
 class ChatLLM(ChatOpenAI):
     def __init__(self, **kwargs):
         model_name = os.getenv("LLM_MODEL", "default")
-        use_vcr = os.getenv("USE_VCR", "True").lower() == "true"
         llm_tls_verify = os.getenv("LLM_TLS_VERIFY", "True").lower() == "true"
-        cassette_name = ""
-        if use_vcr:
-            cassette_name = f"{model_name.replace('/', '_')}_cassette.yaml"
         if "http_async_client" not in kwargs:
-            kwargs["http_async_client"] = httpx.AsyncClient(verify=llm_tls_verify)
+            kwargs["http_async_client"] = httpx.AsyncClient(
+                verify=llm_tls_verify
+            )
         kwargs.setdefault("openai_api_base", os.getenv("LLM_BASE_URL"))
         kwargs.setdefault("model", model_name)
 
@@ -30,17 +28,69 @@ class ChatLLM(ChatOpenAI):
 
         super().__init__(**kwargs)
 
-        object.__setattr__(self, "_use_vcr", use_vcr)
-        object.__setattr__(self, "_cassette_name", cassette_name)
+        object.__setattr__(self, "_llm_cache", get_cache(model_name))
+
+    def _cache_context(self, messages, stop, kwargs):
+        """Return (cache, payload) or (None, None) when not cacheable.
+
+        Streaming, structured-output, and Responses API requests fall
+        through to the regular client.
+        """
+        cache = getattr(self, "_llm_cache", None)
+        if cache is None:
+            return None, None
+        payload = self._get_request_payload(messages, stop=stop, **kwargs)
+        if (
+            payload.get("stream")
+            or "response_format" in payload
+            or self._use_responses_api(payload)
+        ):
+            return None, None
+        return cache, payload
+
+    def _cached_result(self, cache, key):
+        cached = cache.lookup(key) if cache.mode != "record" else None
+        if cached is not None:
+            return self._create_chat_result(cached)
+        if cache.mode == "replay":
+            raise LLMCacheMiss(
+                "no cached LLM response matches this request; run with "
+                "LLM_CACHE_MODE=hybrid and a configured LLM to record one"
+            )
+        return None
 
     def _generate(self, messages, stop=None, run_manager=None, **kwargs):
-        if getattr(self, "_use_vcr", False):
-            with VCR.use_cassette(self._cassette_name):
-                return super()._generate(messages, stop, run_manager, **kwargs)
-        return super()._generate(messages, stop, run_manager, **kwargs)
+        cache, payload = self._cache_context(messages, stop, kwargs)
+        if cache is None:
+            return super()._generate(
+                messages, stop=stop, run_manager=run_manager, **kwargs
+            )
+        key = CacheKey(payload)
+        result = self._cached_result(cache, key)
+        if result is not None:
+            return result
+        response = self._response_dict(self.client.create(**payload))
+        cache.store(key, response)
+        return self._create_chat_result(response)
 
     async def _agenerate(self, messages, stop=None, run_manager=None, **kwargs):
-        if getattr(self, "_use_vcr", False):
-            with VCR.use_cassette(self._cassette_name):
-                return await super()._agenerate(messages, stop, run_manager, **kwargs)
-        return await super()._agenerate(messages, stop, run_manager, **kwargs)
+        cache, payload = self._cache_context(messages, stop, kwargs)
+        if cache is None:
+            return await super()._agenerate(
+                messages, stop=stop, run_manager=run_manager, **kwargs
+            )
+        key = CacheKey(payload)
+        result = self._cached_result(cache, key)
+        if result is not None:
+            return result
+        response = await cache.fetch(key, lambda: self._alive_call(payload))
+        return self._create_chat_result(response)
+
+    async def _alive_call(self, payload):
+        return self._response_dict(await self.async_client.create(**payload))
+
+    @staticmethod
+    def _response_dict(response):
+        if hasattr(response, "model_dump"):
+            return response.model_dump(mode="json")
+        return response

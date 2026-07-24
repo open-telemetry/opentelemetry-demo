@@ -1,0 +1,306 @@
+{
+  "request": {
+    "messages": [
+      {
+        "content": "You are a helpful assistant. Be concise and accurate.",
+        "role": "system"
+      },
+      {
+        "content": "Add product 9SIQT8TOJO (qty 2), 66VCHSJNUP (qty 3), and 2ZYFJ3GM2N (qty 1) to my cart. Fetch each product's unit price. Compute the expected subtotal manually. Then call the cart/quote tool to get the server-reported subtotal. They MUST match to the cent \u2014 if they don't, report the discrepancy. Then get a shipping quote to 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA in USD, and compute the expected grand total. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"9SIQT8TOJO\", \"quantity\": 2}",
+              "name": "add_to_cart"
+            },
+            "id": "call_KA4qoIbfDUsEqItRjcq47VQp",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"66VCHSJNUP\", \"quantity\": 3}",
+              "name": "add_to_cart"
+            },
+            "id": "call_v2lvYoQTssznmDqhy2xiz6eU",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"2ZYFJ3GM2N\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_ZnUub3MVl7yGPnKXdP99faUR",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"9SIQT8TOJO\"}",
+              "name": "get_product"
+            },
+            "id": "call_6uhLPAeBE4zJ8Tr3uEwS0c96",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"66VCHSJNUP\"}",
+              "name": "get_product"
+            },
+            "id": "call_1CXTgA38wpbCReD0wPHBWf2s",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"2ZYFJ3GM2N\"}",
+              "name": "get_product"
+            },
+            "id": "call_TVCHUxyJAikkLpX3zTJ2JUYR",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_KA4qoIbfDUsEqItRjcq47VQp"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_v2lvYoQTssznmDqhy2xiz6eU"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_ZnUub3MVl7yGPnKXdP99faUR"
+      },
+      {
+        "content": "{\"id\": \"9SIQT8TOJO\", \"name\": \"Optical Tube Assembly\", \"description\": \"Capturing impressive deep-sky astroimages is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2, the perfect companion to today's top DSLR or astronomical CCD cameras. This fast, wide-field f/2.2 system allows for shorter exposure times compared to traditional f/10 astroimaging, without sacrificing resolution. Because shorter sub-exposure times are possible, your equatorial mount won't need to accurately track over extended periods. The short focal length also lessens equatorial tracking demands. In many cases, autoguiding will not be required.\", \"picture\": \"OpticalTubeAssembly.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 3599, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\", \"assembly\"]}",
+        "role": "tool",
+        "tool_call_id": "call_6uhLPAeBE4zJ8Tr3uEwS0c96"
+      },
+      {
+        "content": "{\"id\": \"66VCHSJNUP\", \"name\": \"Starsense Explorer Refractor Telescope\", \"description\": \"The first telescope that uses your smartphone to analyze the night sky and calculate its position in real time. StarSense Explorer is ideal for beginners thanks to the app's user-friendly interface and detailed tutorials. It's like having your own personal tour guide of the night sky\", \"picture\": \"StarsenseExplorer.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 349, \"nanos\": 950000000}, \"categories\": [\"telescopes\"]}",
+        "role": "tool",
+        "tool_call_id": "call_1CXTgA38wpbCReD0wPHBWf2s"
+      },
+      {
+        "content": "{\"id\": \"2ZYFJ3GM2N\", \"name\": \"Roof Binoculars\", \"description\": \"This versatile, all-around binocular is a great choice for the trail, the stadium, the arena, or just about anywhere you want a close-up view of the action without sacrificing brightness or detail. It's an especially great companion for nature observation and bird watching, with ED glass that helps you spot the subtlest field markings and a close focus of just 6.5 feet.\", \"picture\": \"RoofBinoculars.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 209, \"nanos\": 950000000}, \"categories\": [\"binoculars\"]}",
+        "role": "tool",
+        "tool_call_id": "call_TVCHUxyJAikkLpX3zTJ2JUYR"
+      }
+    ],
+    "model": "azure/gpt-5.5",
+    "tools": [
+      {
+        "function": {
+          "description": "Add a product (product_id) to the shopping cart for a user (user_id).",
+          "name": "add_to_cart",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              },
+              "quantity": {
+                "default": 1,
+                "type": "integer"
+              },
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id",
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Checkout the user's cart and create an order.\nTakes request in the format {string user_id, string userCurrency, Address address, string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress, string city, string state, string country, string zipCode} and\nCreditCardInfo is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear, int32 creditCardExpirationMonth}",
+          "name": "checkout",
+          "parameters": {
+            "properties": {
+              "checkout_person": {}
+            },
+            "required": [
+              "checkout_person"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Empty the shopping cart for a user.",
+          "name": "empty_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Fetch promotional ads for Astronomy Shop homepage.\nEg : category: `telescopes` or `travel`",
+          "name": "get_ads",
+          "parameters": {
+            "properties": {
+              "category": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "category"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Retrieve the current contents of a user's cart.",
+          "name": "get_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get detailed information about a product using its ID.",
+          "name": "get_product",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get product recommendations for a user.",
+          "name": "get_recommendations",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get estimated shipping cost for a given address.\n`items`: list of {productId, quantity} (a single dict is also accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress, city, state, country, zipCode}.",
+          "name": "get_shipping_quote",
+          "parameters": {
+            "properties": {
+              "address": {},
+              "currency_code": {},
+              "items": {}
+            },
+            "required": [
+              "items",
+              "currency_code",
+              "address"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List supported currencies in Astronomy Shop.",
+          "name": "get_supported_currencies",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List all products available in the Astronomy Shop.",
+          "name": "list_products",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      }
+    ]
+  },
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "tool_calls",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "audio": null,
+          "content": null,
+          "function_call": null,
+          "refusal": null,
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"user_id\":\"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+                "name": "get_cart"
+              },
+              "id": "call_Jayl1KZiNZVIv0zsps9vMkw3",
+              "type": "function"
+            }
+          ]
+        }
+      }
+    ],
+    "created": 0,
+    "id": "chatcmpl-fixture",
+    "model": "azure/gpt-5.5",
+    "moderation": null,
+    "object": "chat.completion"
+  }
+}

@@ -1,0 +1,367 @@
+{
+  "request": {
+    "messages": [
+      {
+        "content": "You are a helpful assistant. Be concise and accurate.",
+        "role": "system"
+      },
+      {
+        "content": "Check ALL current ads across every category (accessories, telescopes, travel, binoculars, books, assembly, flashlights). For each advertised product, call get_product to retrieve the list price. Compute what the post-promo price SHOULD be based on the ad text (e.g. '50% off', '20% off', 'buy one get one free'). Return a table with product_id, list_price, promo_text, computed_discounted_price.",
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"category\": \"accessories\"}",
+              "name": "get_ads"
+            },
+            "id": "call_ehJNeOL6zIXvsuFdsBJTxVY0",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"category\": \"telescopes\"}",
+              "name": "get_ads"
+            },
+            "id": "call_lX9v5iw1CSIH5DIagLK4o80Y",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"category\": \"travel\"}",
+              "name": "get_ads"
+            },
+            "id": "call_Bgoe0jR4YGGnSl7ArDMwevuL",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"category\": \"binoculars\"}",
+              "name": "get_ads"
+            },
+            "id": "call_WXJAepPIEBfdOwgG3MFo6wyz",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"category\": \"books\"}",
+              "name": "get_ads"
+            },
+            "id": "call_nq2VUawa6nIfr2AljEAPFviA",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"category\": \"assembly\"}",
+              "name": "get_ads"
+            },
+            "id": "call_5iXeV0nwU1HB6z3C86bDzczJ",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"category\": \"flashlights\"}",
+              "name": "get_ads"
+            },
+            "id": "call_6llEue1TdGcgECYVQogLJM0I",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "[{\"redirectUrl\": \"/product/0PUK6V6EV0\", \"text\": \"Solar System Color Imager for sale. 30% off.\"}, {\"redirectUrl\": \"/product/6E92ZMYYFZ\", \"text\": \"Solar Filter for sale. Buy two, get third one for free\"}, {\"redirectUrl\": \"/product/L9ECAV7KIM\", \"text\": \"Lens Cleaning Kit for sale. Buy one, get second one for free\"}]",
+        "role": "tool",
+        "tool_call_id": "call_ehJNeOL6zIXvsuFdsBJTxVY0"
+      },
+      {
+        "content": "[{\"redirectUrl\": \"/product/66VCHSJNUP\", \"text\": \"Starsense Explorer Refractor Telescope for sale. 20% off.\"}]",
+        "role": "tool",
+        "tool_call_id": "call_lX9v5iw1CSIH5DIagLK4o80Y"
+      },
+      {
+        "content": "[{\"redirectUrl\": \"/product/1YMWWN1N4O\", \"text\": \"Eclipsmart Travel Refractor Telescope for sale. Buy one, get second kit for free\"}]",
+        "role": "tool",
+        "tool_call_id": "call_Bgoe0jR4YGGnSl7ArDMwevuL"
+      },
+      {
+        "content": "[{\"redirectUrl\": \"/product/2ZYFJ3GM2N\", \"text\": \"Roof Binoculars for sale. 50% off.\"}]",
+        "role": "tool",
+        "tool_call_id": "call_WXJAepPIEBfdOwgG3MFo6wyz"
+      },
+      {
+        "content": "[{\"redirectUrl\": \"/product/L9ECAV7KIM\", \"text\": \"Lens Cleaning Kit for sale. Buy one, get second one for free\"}, {\"redirectUrl\": \"/product/6E92ZMYYFZ\", \"text\": \"Solar Filter for sale. Buy two, get third one for free\"}]",
+        "role": "tool",
+        "tool_call_id": "call_nq2VUawa6nIfr2AljEAPFviA"
+      },
+      {
+        "content": "[{\"redirectUrl\": \"/product/9SIQT8TOJO\", \"text\": \"Optical Tube Assembly for sale. 10% off.\"}]",
+        "role": "tool",
+        "tool_call_id": "call_5iXeV0nwU1HB6z3C86bDzczJ"
+      },
+      {
+        "content": "[{\"redirectUrl\": \"/product/1YMWWN1N4O\", \"text\": \"Eclipsmart Travel Refractor Telescope for sale. Buy one, get second kit for free\"}, {\"redirectUrl\": \"/product/L9ECAV7KIM\", \"text\": \"Lens Cleaning Kit for sale. Buy one, get second one for free\"}]",
+        "role": "tool",
+        "tool_call_id": "call_6llEue1TdGcgECYVQogLJM0I"
+      }
+    ],
+    "model": "azure/gpt-5.5",
+    "tools": [
+      {
+        "function": {
+          "description": "Add a product (product_id) to the shopping cart for a user (user_id).",
+          "name": "add_to_cart",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              },
+              "quantity": {
+                "default": 1,
+                "type": "integer"
+              },
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id",
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Checkout the user's cart and create an order.\nTakes request in the format {string user_id, string userCurrency, Address address, string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress, string city, string state, string country, string zipCode} and\nCreditCardInfo is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear, int32 creditCardExpirationMonth}",
+          "name": "checkout",
+          "parameters": {
+            "properties": {
+              "checkout_person": {}
+            },
+            "required": [
+              "checkout_person"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Empty the shopping cart for a user.",
+          "name": "empty_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Fetch promotional ads for Astronomy Shop homepage.\nEg : category: `telescopes` or `travel`",
+          "name": "get_ads",
+          "parameters": {
+            "properties": {
+              "category": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "category"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Retrieve the current contents of a user's cart.",
+          "name": "get_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get detailed information about a product using its ID.",
+          "name": "get_product",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get product recommendations for a user.",
+          "name": "get_recommendations",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get estimated shipping cost for a given address.\n`items`: list of {productId, quantity} (a single dict is also accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress, city, state, country, zipCode}.",
+          "name": "get_shipping_quote",
+          "parameters": {
+            "properties": {
+              "address": {},
+              "currency_code": {},
+              "items": {}
+            },
+            "required": [
+              "items",
+              "currency_code",
+              "address"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List supported currencies in Astronomy Shop.",
+          "name": "get_supported_currencies",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List all products available in the Astronomy Shop.",
+          "name": "list_products",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      }
+    ]
+  },
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "tool_calls",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "audio": null,
+          "content": null,
+          "function_call": null,
+          "refusal": null,
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"product_id\": \"0PUK6V6EV0\"}",
+                "name": "get_product"
+              },
+              "id": "call_2MJJ7ljwYlZsBETW4qq6NXzX",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"product_id\": \"6E92ZMYYFZ\"}",
+                "name": "get_product"
+              },
+              "id": "call_Pxg8bADbpVcjb6mE5fsoKIbb",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"product_id\": \"L9ECAV7KIM\"}",
+                "name": "get_product"
+              },
+              "id": "call_uDVcvJ1YWUxwhoEuZUsQ08zF",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"product_id\": \"66VCHSJNUP\"}",
+                "name": "get_product"
+              },
+              "id": "call_Yw3nTrtwWqzyr8naqSMmUyCZ",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"product_id\": \"1YMWWN1N4O\"}",
+                "name": "get_product"
+              },
+              "id": "call_O4HZi8dD6xejB8nlKppD7VFQ",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"product_id\": \"2ZYFJ3GM2N\"}",
+                "name": "get_product"
+              },
+              "id": "call_mmrFOkSLXsPGTEVXo4cEjdLp",
+              "type": "function"
+            },
+            {
+              "function": {
+                "arguments": "{\"product_id\": \"9SIQT8TOJO\"}",
+                "name": "get_product"
+              },
+              "id": "call_gbohiCVxkyFvymvhJOnylBsU",
+              "type": "function"
+            }
+          ]
+        }
+      }
+    ],
+    "created": 0,
+    "id": "chatcmpl-fixture",
+    "model": "azure/gpt-5.5",
+    "moderation": null,
+    "object": "chat.completion"
+  }
+}

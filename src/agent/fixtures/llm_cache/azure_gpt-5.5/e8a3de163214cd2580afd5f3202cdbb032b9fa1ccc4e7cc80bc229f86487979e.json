@@ -1,0 +1,213 @@
+{
+  "request": {
+    "messages": [
+      {
+        "content": "You are a helpful assistant. Be concise and accurate.",
+        "role": "system"
+      },
+      {
+        "content": "A customer says 'I want to buy the blue one for my dad's birthday next week, same as last time, and ship it express.' You have no prior order history, no color attributes in the catalog, and no express shipping option. Respond by listing exactly what information is missing and propose the minimum set of clarifying questions needed \u2014 do NOT make assumptions or fabricate data.",
+        "role": "user"
+      }
+    ],
+    "model": "azure/gpt-5.5",
+    "tools": [
+      {
+        "function": {
+          "description": "Add a product (product_id) to the shopping cart for a user (user_id).",
+          "name": "add_to_cart",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              },
+              "quantity": {
+                "default": 1,
+                "type": "integer"
+              },
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id",
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Checkout the user's cart and create an order.\nTakes request in the format {string user_id, string userCurrency, Address address, string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress, string city, string state, string country, string zipCode} and\nCreditCardInfo is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear, int32 creditCardExpirationMonth}",
+          "name": "checkout",
+          "parameters": {
+            "properties": {
+              "checkout_person": {}
+            },
+            "required": [
+              "checkout_person"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Empty the shopping cart for a user.",
+          "name": "empty_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Fetch promotional ads for Astronomy Shop homepage.\nEg : category: `telescopes` or `travel`",
+          "name": "get_ads",
+          "parameters": {
+            "properties": {
+              "category": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "category"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Retrieve the current contents of a user's cart.",
+          "name": "get_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get detailed information about a product using its ID.",
+          "name": "get_product",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get product recommendations for a user.",
+          "name": "get_recommendations",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get estimated shipping cost for a given address.\n`items`: list of {productId, quantity} (a single dict is also accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress, city, state, country, zipCode}.",
+          "name": "get_shipping_quote",
+          "parameters": {
+            "properties": {
+              "address": {},
+              "currency_code": {},
+              "items": {}
+            },
+            "required": [
+              "items",
+              "currency_code",
+              "address"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List supported currencies in Astronomy Shop.",
+          "name": "get_supported_currencies",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List all products available in the Astronomy Shop.",
+          "name": "list_products",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      }
+    ]
+  },
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "audio": null,
+          "content": "Missing information:\n\n1. The exact product to buy \u2014 \u201cthe blue one\u201d cannot be identified because the catalog has no color attributes.\n2. The prior item/order \u2014 \u201csame as last time\u201d cannot be used because there is no prior order history available.\n3. Quantity.\n4. Shipping address.\n5. Desired delivery date or deadline, since \u201cnext week\u201d is not specific.\n6. Acceptable shipping method \u2014 express shipping is not available.\n7. Checkout details: email, currency, and payment information.\n\nMinimum clarifying questions:\n\n1. Which exact product would you like to buy? Please provide the product name or product ID.\n2. How many would you like to purchase?\n3. What shipping address should it be sent to?\n4. What is the latest acceptable delivery date?\n5. Express shipping is not available \u2014 would you like to proceed with the available shipping option instead?\n6. What email, currency, and payment details should be used for checkout?",
+          "function_call": null,
+          "refusal": null,
+          "role": "assistant",
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 0,
+    "id": "chatcmpl-fixture",
+    "model": "azure/gpt-5.5",
+    "moderation": null,
+    "object": "chat.completion"
+  }
+}

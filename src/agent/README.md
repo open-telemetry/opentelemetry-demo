@@ -71,7 +71,10 @@ through Docker Compose, `.env`, `.env.override`, or the local shell environment.
 | `LLM_MODEL` | `default` | Model name passed to the LLM client. |
 | `API_KEY` | unset | API key for the configured LLM provider. |
 | `LLM_TLS_VERIFY` | `True` | Enables TLS certificate verification for LLM HTTP calls. Set to `False` only for trusted development environments. |
-| `USE_VCR` | `False` | Enables replay/recording through VCR cassettes for LLM requests. |
+| `LLM_CACHE_MODE` | `hybrid` | `hybrid` serves cached LLM responses and records misses from the live LLM; `replay` never calls the live LLM and fails on a cache miss; `record` always calls the live LLM and stores the result; `off` disables caching. |
+| `LLM_CACHE_MATCH_THRESHOLD` | `0.85` | Minimum fuzzy-match similarity for serving a cached response when no exact match exists. `1.0` requires an exact match. |
+| `LLM_CACHE_DIR` | `fixtures/llm_cache` | Directory holding cached LLM interactions, one JSON file per request. |
+| `LLM_CACHE_MAX_ENTRIES` | `1000` | Upper bound on stored interactions per model before new recordings are skipped. |
 | `MCP_ENABLED` | `False` | Enables tool loading from the MCP service when set to `True`. |
 | `MCP_ENDPOINT` | `0.0.0.0` in code, `mcp` in Compose | Hostname for the MCP service. |
 | `MCP_PORT` | `8011` | Port for the MCP service. |
@@ -81,7 +84,8 @@ through Docker Compose, `.env`, `.env.override`, or the local shell environment.
 | `OTEL_SERVICE_NAME` | `AstronomyShopAgent` | Service name used in telemetry. |
 
 > Do not commit real API keys. Prefer local overrides or secret management for `API_KEY`.
-> Note that VCR file is created using `LLM_MODEL` and is case sensitive.
+> Note that the cache directory is derived from `LLM_MODEL` (with `/` replaced
+> by `_`) and is case sensitive.
 
 ## Docker Compose Configuration
 
@@ -204,14 +208,22 @@ If running through Docker Compose and the `8080` port is not published to the
 host, call it from another container or adjust Compose port publishing for local
  testing.
 
-## VCR Fixtures
+## LLM Response Cache
 
-The `fixtures/vcr_cassettes` directory is used when `USE_VCR=True`. Cassette
- names are derived from the configured model name by replacing `/` with `_` and
- appending `_cassette.yaml`.
+The agent caches LLM interactions under `fixtures/llm_cache/<model>/`, one
+JSON file per interaction named by the SHA-256 of its canonicalized request
+(`{"request": ..., "response": ...}`).
 
-This mode is useful for deterministic development and tests that should not
-call the live LLM API.
+In the default `hybrid` mode a request is served from the cache when an exact
+or fuzzy match exists, and otherwise sent to the configured LLM and recorded.
+Writes are atomic (temp file plus rename), so concurrent requests, multiple
+Uvicorn workers, and multiple agent replicas sharing the fixtures volume can
+all record safely. Identical concurrent requests are coalesced into a single
+live LLM call. Streaming, structured-output, and Responses API requests bypass
+the cache.
+
+`replay` mode serves only cached responses and is useful for deterministic
+development and demos that should not call a live LLM API.
 
 ## File Layout
 
@@ -223,13 +235,13 @@ src/agent/
 |-- requirements.in
 |-- run.py
 |-- fixtures/
-|   `-- vcr_cassettes/*_cassette.yaml
+|   `-- llm_cache/<model>/<sha256>.json
 `-- src/
     `-- agents/
         |-- agents.py       # FastAPI app and LangChain agent orchestration
-        |-- llm.py          # OpenAI-compatible LLM wrapper and VCR integration
-        |-- mcp_client.py   # MCP streamable HTTP client
-        `--patch_vcr.py    # VCR helper integration
+        |-- llm.py          # OpenAI-compatible LLM wrapper with caching
+        |-- llm_cache.py    # file-backed LLM response cache
+        `-- mcp_client.py   # MCP streamable HTTP client
 ```
 
 ## Troubleshooting

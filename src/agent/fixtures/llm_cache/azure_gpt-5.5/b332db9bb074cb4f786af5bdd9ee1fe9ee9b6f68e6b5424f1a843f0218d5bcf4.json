@@ -1,0 +1,852 @@
+{
+  "request": {
+    "messages": [
+      {
+        "content": "You are a helpful assistant. Be concise and accurate.",
+        "role": "system"
+      },
+      {
+        "content": "In a single turn, add 1 unit of every product in the catalog to my cart (all 10 products). Then run get_cart and verify every product is present with quantity 1. If any is missing, re-add it and verify again, up to 3 retries per product. Report per-product success/failure. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{}",
+              "name": "list_products"
+            },
+            "id": "call_amjBXDhu4SmOAHT458WfXyHJ",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "[{\"id\": \"0PUK6V6EV0\", \"name\": \"Solar System Color Imager\", \"description\": \"You have your new telescope and have observed Saturn and Jupiter. Now you're ready to take the next step and start imaging them. But where do you begin? The NexImage 10 Solar System Imager is the perfect solution.\", \"picture\": \"SolarSystemColorImager.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 175, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\"]}, {\"id\": \"1YMWWN1N4O\", \"name\": \"Eclipsmart Travel Refractor Telescope\", \"description\": \"Dedicated white-light solar scope for the observer on the go. The 50mm refracting solar scope uses Solar Safe, ISO compliant, full-aperture glass filter material to ensure the safest view of solar events.  The kit comes complete with everything you need, including the dedicated travel solar scope, a Solar Safe finderscope, tripod, a high quality 20mm (18x) Kellner eyepiece and a nylon backpack to carry everything in.  This Travel Solar Scope makes it easy to share the Sun as well as partial and total solar eclipses with the whole family and offers much higher magnifications than you would otherwise get using handheld solar viewers or binoculars.\", \"picture\": \"EclipsmartTravelRefractorTelescope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 129, \"nanos\": 950000000}, \"categories\": [\"telescopes\", \"travel\"]}, {\"id\": \"2ZYFJ3GM2N\", \"name\": \"Roof Binoculars\", \"description\": \"This versatile, all-around binocular is a great choice for the trail, the stadium, the arena, or just about anywhere you want a close-up view of the action without sacrificing brightness or detail. It's an especially great companion for nature observation and bird watching, with ED glass that helps you spot the subtlest field markings and a close focus of just 6.5 feet.\", \"picture\": \"RoofBinoculars.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 209, \"nanos\": 950000000}, \"categories\": [\"binoculars\"]}, {\"id\": \"66VCHSJNUP\", \"name\": \"Starsense Explorer Refractor Telescope\", \"description\": \"The first telescope that uses your smartphone to analyze the night sky and calculate its position in real time. StarSense Explorer is ideal for beginners thanks to the app's user-friendly interface and detailed tutorials. It's like having your own personal tour guide of the night sky\", \"picture\": \"StarsenseExplorer.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 349, \"nanos\": 950000000}, \"categories\": [\"telescopes\"]}, {\"id\": \"6E92ZMYYFZ\", \"name\": \"Solar Filter\", \"description\": \"Enhance your viewing experience with EclipSmart Solar Filter for 8\\\" telescopes. With two Velcro straps and four self-adhesive Velcro pads for added safety, you can be assured that the solar filter cannot be accidentally knocked off and will provide Solar Safe, ISO compliant viewing.\", \"picture\": \"SolarFilter.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 69, \"nanos\": 950000000}, \"categories\": [\"accessories\", \"telescopes\"]}, {\"id\": \"9SIQT8TOJO\", \"name\": \"Optical Tube Assembly\", \"description\": \"Capturing impressive deep-sky astroimages is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2, the perfect companion to today's top DSLR or astronomical CCD cameras. This fast, wide-field f/2.2 system allows for shorter exposure times compared to traditional f/10 astroimaging, without sacrificing resolution. Because shorter sub-exposure times are possible, your equatorial mount won't need to accurately track over extended periods. The short focal length also lessens equatorial tracking demands. In many cases, autoguiding will not be required.\", \"picture\": \"OpticalTubeAssembly.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 3599, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\", \"assembly\"]}, {\"id\": \"HQTGWGPNH4\", \"name\": \"The Comet Book\", \"description\": \"A 16th-century treatise on comets, created anonymously in Flanders (now northern France) and now held at the Universit\u00e4tsbibliothek Kassel. Commonly known as The Comet Book (or Kometenbuch in German), its full title translates as \\\"Comets and their General and Particular Meanings, According to Ptolome\u00e9, Albumasar, Haly, Aliquind and other Astrologers\\\". The image is from https://publicdomainreview.org/collection/the-comet-book, made available by the Universit\u00e4tsbibliothek Kassel under a CC-BY SA 4.0 license (https://creativecommons.org/licenses/by-sa/4.0/)\", \"picture\": \"TheCometBook.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 0, \"nanos\": 990000000}, \"categories\": [\"books\"]}, {\"id\": \"L9ECAV7KIM\", \"name\": \"Lens Cleaning Kit\", \"description\": \"Wipe away dust, dirt, fingerprints and other particles on your lenses to see clearly with the Lens Cleaning Kit. This cleaning kit works on all glass and optical surfaces, including telescopes, binoculars, spotting scopes, monoculars, microscopes, and even your camera lenses, computer screens, and mobile devices.  The kit comes complete with a retractable lens brush to remove dust particles and dirt and two options to clean smudges and fingerprints off of your optics, pre-moistened lens wipes and a bottled lens cleaning fluid with soft cloth.\", \"picture\": \"LensCleaningKit.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 21, \"nanos\": 950000000}, \"categories\": [\"accessories\"]}, {\"id\": \"LS4PSXUNUM\", \"name\": \"Red Flashlight\", \"description\": \"This 3-in-1 device features a 3-mode red flashlight, a hand warmer, and a portable power bank for recharging your personal electronics on the go. Whether you use it to light the way at an astronomy star party, a night walk, or wildlife research, ThermoTorch 3 Astro Red's rugged, IPX4-rated design will withstand your everyday activities.\", \"picture\": \"RedFlashlight.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 57, \"nanos\": 80000000}, \"categories\": [\"accessories\", \"flashlights\"]}, {\"id\": \"OLJCESPC7Z\", \"name\": \"National Park Foundation Explorascope\", \"description\": \"The National Park Foundation's (NPF) Explorascope 60AZ is a manual alt-azimuth, refractor telescope perfect for celestial viewing on the go. The NPF Explorascope 60 can view the planets, moon, star clusters and brighter deep sky objects like the Orion Nebula and Andromeda Galaxy.\", \"picture\": \"NationalParkFoundationExplorascope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 101, \"nanos\": 960000000}, \"categories\": [\"telescopes\"]}]",
+        "role": "tool",
+        "tool_call_id": "call_amjBXDhu4SmOAHT458WfXyHJ"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"0PUK6V6EV0\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_anoKqLsdzYIvoic8WZqg1WW8",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"1YMWWN1N4O\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_9EpohgvUE3S8zdjxyFku6qQB",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"2ZYFJ3GM2N\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_b5715nviuY3zQPXWp5cgn75Q",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"66VCHSJNUP\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_oPaa1bcpn5HrSuwQHz2BHOx4",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"6E92ZMYYFZ\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_9zkj9ctcMq0LHFlu9GM6rRRs",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"9SIQT8TOJO\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_V8j6pZ2138sKh0wM7ya57O4B",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"HQTGWGPNH4\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_zy0N1Z0xsgiNiup9CSiIIkLs",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"L9ECAV7KIM\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_0Lnflra9vcUYAmyqbKA9yqXt",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"LS4PSXUNUM\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_OLynvI7R53Pfag7ozVMOmox1",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"OLJCESPC7Z\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_PWdr6m5427GNHYJL2eBog2Y0",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 2}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 4}]}",
+        "role": "tool",
+        "tool_call_id": "call_anoKqLsdzYIvoic8WZqg1WW8"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 2}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 4}]}",
+        "role": "tool",
+        "tool_call_id": "call_9EpohgvUE3S8zdjxyFku6qQB"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 2}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 4}]}",
+        "role": "tool",
+        "tool_call_id": "call_b5715nviuY3zQPXWp5cgn75Q"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 2}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 4}]}",
+        "role": "tool",
+        "tool_call_id": "call_oPaa1bcpn5HrSuwQHz2BHOx4"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 2}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 4}]}",
+        "role": "tool",
+        "tool_call_id": "call_9zkj9ctcMq0LHFlu9GM6rRRs"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 2}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 4}]}",
+        "role": "tool",
+        "tool_call_id": "call_V8j6pZ2138sKh0wM7ya57O4B"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 2}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 4}]}",
+        "role": "tool",
+        "tool_call_id": "call_zy0N1Z0xsgiNiup9CSiIIkLs"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 2}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 4}]}",
+        "role": "tool",
+        "tool_call_id": "call_0Lnflra9vcUYAmyqbKA9yqXt"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 2}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 4}]}",
+        "role": "tool",
+        "tool_call_id": "call_OLynvI7R53Pfag7ozVMOmox1"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 2}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 4}]}",
+        "role": "tool",
+        "tool_call_id": "call_PWdr6m5427GNHYJL2eBog2Y0"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+              "name": "get_cart"
+            },
+            "id": "call_y2ic9fsmEFIS5teO0IRQtST9",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": []}",
+        "role": "tool",
+        "tool_call_id": "call_y2ic9fsmEFIS5teO0IRQtST9"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"0PUK6V6EV0\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_r0aEVuGZxAYGadxaYvSVWBAv",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"1YMWWN1N4O\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_gPNAQAiFLeL7YEIo7nTMJy4U",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"2ZYFJ3GM2N\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_AdeH9DKN7YAx8pzvbePTPvic",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"66VCHSJNUP\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_rgjc7kQiXh0SUhfSP9jFtKLL",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"6E92ZMYYFZ\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_02ja5q1jex4LuWD1JVHDwNEr",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"9SIQT8TOJO\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_kzfkM0Pooc6Cd8grR1xx5X61",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"HQTGWGPNH4\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_qjwaaF7x7k5oEv71aXar3Pj2",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"L9ECAV7KIM\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_LShOVRbBaqg0hJaRhiaD4pM2",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"LS4PSXUNUM\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_kEW1ODV8IY4CzKzrekizoUQf",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"OLJCESPC7Z\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_wLfFeTmX60cp7d4vfvW3Lvvq",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 3}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 4}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_r0aEVuGZxAYGadxaYvSVWBAv"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 3}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 4}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"LS4PSXUNUM\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_gPNAQAiFLeL7YEIo7nTMJy4U"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 3}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 4}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_AdeH9DKN7YAx8pzvbePTPvic"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 3}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 4}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_rgjc7kQiXh0SUhfSP9jFtKLL"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 3}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 4}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_02ja5q1jex4LuWD1JVHDwNEr"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 3}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 4}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_kzfkM0Pooc6Cd8grR1xx5X61"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 3}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 4}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"LS4PSXUNUM\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_qjwaaF7x7k5oEv71aXar3Pj2"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 3}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 4}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_LShOVRbBaqg0hJaRhiaD4pM2"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 3}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 4}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"LS4PSXUNUM\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_kEW1ODV8IY4CzKzrekizoUQf"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 3}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 4}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_wLfFeTmX60cp7d4vfvW3Lvvq"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+              "name": "get_cart"
+            },
+            "id": "call_MtDKZ3PctTI6VYvgzIU1Hd9J",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": []}",
+        "role": "tool",
+        "tool_call_id": "call_MtDKZ3PctTI6VYvgzIU1Hd9J"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"0PUK6V6EV0\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_pETorQxGWdZFMlWIwYRxGnht",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"1YMWWN1N4O\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_3aNVdPuuwCK7Tcq76nL6n35E",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"2ZYFJ3GM2N\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_7WGGO6MvyD2GghHm3vosMNbx",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"66VCHSJNUP\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_z84rfSkwix7sRdKYocpiQ9id",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"6E92ZMYYFZ\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_PuA7RAquIVwviNcAimfwA7xH",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"9SIQT8TOJO\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_6IhPfaPo7rwhpiQN2UB0qMd9",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"HQTGWGPNH4\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_ctm9GeqfMA34XjyWghVYJC2m",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"L9ECAV7KIM\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_cMDgBO2gCsS7jWP0aeHfRyo3",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"LS4PSXUNUM\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_aC3Sl223XPuH2BHblerXVsbY",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"OLJCESPC7Z\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_CkIS4Ol1rNx1uUwgFA1reFnu",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 3}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 5}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"LS4PSXUNUM\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_pETorQxGWdZFMlWIwYRxGnht"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 3}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 5}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"LS4PSXUNUM\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_3aNVdPuuwCK7Tcq76nL6n35E"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 3}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 5}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"LS4PSXUNUM\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_7WGGO6MvyD2GghHm3vosMNbx"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 3}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 5}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"LS4PSXUNUM\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_z84rfSkwix7sRdKYocpiQ9id"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 3}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 5}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"LS4PSXUNUM\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_PuA7RAquIVwviNcAimfwA7xH"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 3}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 5}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"LS4PSXUNUM\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_6IhPfaPo7rwhpiQN2UB0qMd9"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 3}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 5}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"LS4PSXUNUM\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_ctm9GeqfMA34XjyWghVYJC2m"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 3}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 5}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"LS4PSXUNUM\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_cMDgBO2gCsS7jWP0aeHfRyo3"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 3}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 5}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"LS4PSXUNUM\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_aC3Sl223XPuH2BHblerXVsbY"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 3}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 5}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"LS4PSXUNUM\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_CkIS4Ol1rNx1uUwgFA1reFnu"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+              "name": "get_cart"
+            },
+            "id": "call_9e3NvDUE9X7YuUYcerbLO6ww",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": []}",
+        "role": "tool",
+        "tool_call_id": "call_9e3NvDUE9X7YuUYcerbLO6ww"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"0PUK6V6EV0\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_I5Gv2gqzIi16i2F8c8Z7neCn",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"1YMWWN1N4O\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_QURMA8GB15fc64PVmDMZayOc",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"2ZYFJ3GM2N\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_c2qR5kDD1mZltI3rpYUm5YbP",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"66VCHSJNUP\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_zV76VxWK5re8lSLOSrxxDEuE",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"6E92ZMYYFZ\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_RrSsvD6OSRSQvH47pBjBtVt9",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"9SIQT8TOJO\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_525DMkQPFB6zbResPxeX7ksy",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"HQTGWGPNH4\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_fCHknaYeOWQUEd7x9mbL99C7",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"L9ECAV7KIM\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_NuFggGjy1GJng7WgBUUqxazz",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"LS4PSXUNUM\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_VX74PYyFFLF5D5PDV0Xv1D19",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"OLJCESPC7Z\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_8pjojldAiZXprLuFEMFnvISy",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 4}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 5}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"LS4PSXUNUM\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_I5Gv2gqzIi16i2F8c8Z7neCn"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 4}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 5}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"LS4PSXUNUM\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_QURMA8GB15fc64PVmDMZayOc"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 4}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 5}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"LS4PSXUNUM\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_c2qR5kDD1mZltI3rpYUm5YbP"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 4}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 5}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"LS4PSXUNUM\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_zV76VxWK5re8lSLOSrxxDEuE"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 4}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 5}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"LS4PSXUNUM\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_RrSsvD6OSRSQvH47pBjBtVt9"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 4}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 5}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"LS4PSXUNUM\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_525DMkQPFB6zbResPxeX7ksy"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 4}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 5}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"LS4PSXUNUM\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_fCHknaYeOWQUEd7x9mbL99C7"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 4}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 5}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"LS4PSXUNUM\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_NuFggGjy1GJng7WgBUUqxazz"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 4}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 5}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"LS4PSXUNUM\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_VX74PYyFFLF5D5PDV0Xv1D19"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"9SIQT8TOJO\", \"quantity\": 4}, {\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"2ZYFJ3GM2N\", \"quantity\": 1}, {\"productId\": \"1YMWWN1N4O\", \"quantity\": 5}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 1}, {\"productId\": \"LS4PSXUNUM\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_8pjojldAiZXprLuFEMFnvISy"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+              "name": "get_cart"
+            },
+            "id": "call_pWVfEEK3HgPtEN1d6crTm0yJ",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": []}",
+        "role": "tool",
+        "tool_call_id": "call_pWVfEEK3HgPtEN1d6crTm0yJ"
+      }
+    ],
+    "model": "azure/gpt-5.5",
+    "tools": [
+      {
+        "function": {
+          "description": "Add a product (product_id) to the shopping cart for a user (user_id).",
+          "name": "add_to_cart",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              },
+              "quantity": {
+                "default": 1,
+                "type": "integer"
+              },
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id",
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Checkout the user's cart and create an order.\nTakes request in the format {string user_id, string userCurrency, Address address, string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress, string city, string state, string country, string zipCode} and\nCreditCardInfo is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear, int32 creditCardExpirationMonth}",
+          "name": "checkout",
+          "parameters": {
+            "properties": {
+              "checkout_person": {}
+            },
+            "required": [
+              "checkout_person"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Empty the shopping cart for a user.",
+          "name": "empty_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Fetch promotional ads for Astronomy Shop homepage.\nEg : category: `telescopes` or `travel`",
+          "name": "get_ads",
+          "parameters": {
+            "properties": {
+              "category": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "category"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Retrieve the current contents of a user's cart.",
+          "name": "get_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get detailed information about a product using its ID.",
+          "name": "get_product",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get product recommendations for a user.",
+          "name": "get_recommendations",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get estimated shipping cost for a given address.\n`items`: list of {productId, quantity} (a single dict is also accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress, city, state, country, zipCode}.",
+          "name": "get_shipping_quote",
+          "parameters": {
+            "properties": {
+              "address": {},
+              "currency_code": {},
+              "items": {}
+            },
+            "required": [
+              "items",
+              "currency_code",
+              "address"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List supported currencies in Astronomy Shop.",
+          "name": "get_supported_currencies",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List all products available in the Astronomy Shop.",
+          "name": "list_products",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      }
+    ]
+  },
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "audio": null,
+          "content": "I attempted to add all 10 catalog products to cart for user ID `3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f`, then verified with `get_cart`.\n\nVerification results: `get_cart` returned an empty cart every time, including after 3 retry rounds. Therefore, I could not verify any product as present with quantity 1.\n\n| Product ID | Product Name | Status |\n|---|---|---|\n| `0PUK6V6EV0` | Solar System Color Imager | Failed \u2014 not verified in cart after 3 retries |\n| `1YMWWN1N4O` | Eclipsmart Travel Refractor Telescope | Failed \u2014 not verified in cart after 3 retries |\n| `2ZYFJ3GM2N` | Roof Binoculars | Failed \u2014 not verified in cart after 3 retries |\n| `66VCHSJNUP` | Starsense Explorer Refractor Telescope | Failed \u2014 not verified in cart after 3 retries |\n| `6E92ZMYYFZ` | Solar Filter | Failed \u2014 not verified in cart after 3 retries |\n| `9SIQT8TOJO` | Optical Tube Assembly | Failed \u2014 not verified in cart after 3 retries |\n| `HQTGWGPNH4` | The Comet Book | Failed \u2014 not verified in cart after 3 retries |\n| `L9ECAV7KIM` | Lens Cleaning Kit | Failed \u2014 not verified in cart after 3 retries |\n| `LS4PSXUNUM` | Red Flashlight | Failed \u2014 not verified in cart after 3 retries |\n| `OLJCESPC7Z` | National Park Foundation Explorascope | Failed \u2014 not verified in cart after 3 retries |\n\nFinal verified cart for your user ID: empty.",
+          "function_call": null,
+          "refusal": null,
+          "role": "assistant",
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 0,
+    "id": "chatcmpl-fixture",
+    "model": "azure/gpt-5.5",
+    "moderation": null,
+    "object": "chat.completion"
+  }
+}

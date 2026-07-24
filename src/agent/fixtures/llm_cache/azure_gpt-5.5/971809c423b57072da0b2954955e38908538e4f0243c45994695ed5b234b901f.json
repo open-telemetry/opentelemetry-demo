@@ -1,0 +1,258 @@
+{
+  "request": {
+    "messages": [
+      {
+        "content": "You are a helpful assistant. Be concise and accurate.",
+        "role": "system"
+      },
+      {
+        "content": "Get a shipping quote for 1 unit of product 1YMWWN1N4O to the address 'Stra\u00dfe des 17. Juni 135, 10623 Berlin, Deutschland' in EUR. Then repeat with the address '\u6771\u4eac\u90fd\u5343\u4ee3\u7530\u533a\u5343\u4ee3\u75301-1, 100-8111, \u65e5\u672c' in JPY. Then try the address '123 \ud83d\ude80 Rocket Lane, \ud83d\udc7dville, Mars 00000, \ud83c\udf0c' in USD. Report raw responses for each.",
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 1}], \"currency_code\": \"EUR\", \"address\": {\"streetAddress\": \"Stra\u00dfe des 17. Juni 135\", \"city\": \"Berlin\", \"state\": \"Berlin\", \"country\": \"Deutschland\", \"zipCode\": \"10623\"}}",
+              "name": "get_shipping_quote"
+            },
+            "id": "call_6tApEwHL0jqrhwRwGmPWpm3M",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 1}], \"currency_code\": \"JPY\", \"address\": {\"streetAddress\": \"\u5343\u4ee3\u75301-1\", \"city\": \"\u5343\u4ee3\u7530\u533a\", \"state\": \"\u6771\u4eac\u90fd\", \"country\": \"\u65e5\u672c\", \"zipCode\": \"100-8111\"}}",
+              "name": "get_shipping_quote"
+            },
+            "id": "call_iUGUJgs13SBJtZE0aIyWMeQs",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 1}], \"currency_code\": \"USD\", \"address\": {\"streetAddress\": \"123 \ud83d\ude80 Rocket Lane\", \"city\": \"\ud83d\udc7dville\", \"state\": \"Mars\", \"country\": \"\ud83c\udf0c\", \"zipCode\": \"00000\"}}",
+              "name": "get_shipping_quote"
+            },
+            "id": "call_7trJv3OkrEWWHdPglZ7i4aYU",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"currencyCode\": \"EUR\", \"units\": 7, \"nanos\": 952233524}",
+        "role": "tool",
+        "tool_call_id": "call_6tApEwHL0jqrhwRwGmPWpm3M"
+      },
+      {
+        "content": "{\"currencyCode\": \"JPY\", \"units\": 1005, \"nanos\": 162317558}",
+        "role": "tool",
+        "tool_call_id": "call_iUGUJgs13SBJtZE0aIyWMeQs"
+      },
+      {
+        "content": "{\"currencyCode\": \"USD\", \"units\": 8, \"nanos\": 990000000}",
+        "role": "tool",
+        "tool_call_id": "call_7trJv3OkrEWWHdPglZ7i4aYU"
+      }
+    ],
+    "model": "azure/gpt-5.5",
+    "tools": [
+      {
+        "function": {
+          "description": "Add a product (product_id) to the shopping cart for a user (user_id).",
+          "name": "add_to_cart",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              },
+              "quantity": {
+                "default": 1,
+                "type": "integer"
+              },
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id",
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Checkout the user's cart and create an order.\nTakes request in the format {string user_id, string userCurrency, Address address, string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress, string city, string state, string country, string zipCode} and\nCreditCardInfo is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear, int32 creditCardExpirationMonth}",
+          "name": "checkout",
+          "parameters": {
+            "properties": {
+              "checkout_person": {}
+            },
+            "required": [
+              "checkout_person"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Empty the shopping cart for a user.",
+          "name": "empty_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Fetch promotional ads for Astronomy Shop homepage.\nEg : category: `telescopes` or `travel`",
+          "name": "get_ads",
+          "parameters": {
+            "properties": {
+              "category": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "category"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Retrieve the current contents of a user's cart.",
+          "name": "get_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get detailed information about a product using its ID.",
+          "name": "get_product",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get product recommendations for a user.",
+          "name": "get_recommendations",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get estimated shipping cost for a given address.\n`items`: list of {productId, quantity} (a single dict is also accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress, city, state, country, zipCode}.",
+          "name": "get_shipping_quote",
+          "parameters": {
+            "properties": {
+              "address": {},
+              "currency_code": {},
+              "items": {}
+            },
+            "required": [
+              "items",
+              "currency_code",
+              "address"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List supported currencies in Astronomy Shop.",
+          "name": "get_supported_currencies",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List all products available in the Astronomy Shop.",
+          "name": "list_products",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      }
+    ]
+  },
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "audio": null,
+          "content": "Raw responses:\n\n1. Germany / EUR:\n```json\n{\"currencyCode\":\"EUR\",\"units\":7,\"nanos\":952233524}\n```\n\n2. Japan / JPY:\n```json\n{\"currencyCode\":\"JPY\",\"units\":1005,\"nanos\":162317558}\n```\n\n3. Mars / USD:\n```json\n{\"currencyCode\":\"USD\",\"units\":8,\"nanos\":990000000}\n```",
+          "function_call": null,
+          "refusal": null,
+          "role": "assistant",
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 0,
+    "id": "chatcmpl-fixture",
+    "model": "azure/gpt-5.5",
+    "moderation": null,
+    "object": "chat.completion"
+  }
+}

@@ -1,0 +1,360 @@
+{
+  "request": {
+    "messages": [
+      {
+        "content": "You are a helpful assistant. Be concise and accurate.",
+        "role": "system"
+      },
+      {
+        "content": "Add product 9SIQT8TOJO (1 unit), 66VCHSJNUP (2 units), and HQTGWGPNH4 (5 units) to my cart. Get the cart subtotal in USD. Then get the exact same subtotal quoted in EUR, GBP, JPY, and INR. Present the five values in a table, and compute the implied USD->target exchange rate for each. Flag any rate that looks off by more than 5% from a reasonable real-world rate. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"9SIQT8TOJO\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_ciEO37rLa9oIHAZJUGjQ4vnb",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"66VCHSJNUP\", \"quantity\": 1}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 2}, {\"productId\": \"9SIQT8TOJO\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_ciEO37rLa9oIHAZJUGjQ4vnb"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"66VCHSJNUP\", \"quantity\": 2}",
+              "name": "add_to_cart"
+            },
+            "id": "call_5G1SHZUdtOat6rUEhId1A8ra",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 2}, {\"productId\": \"9SIQT8TOJO\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_5G1SHZUdtOat6rUEhId1A8ra"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"HQTGWGPNH4\", \"quantity\": 5}",
+              "name": "add_to_cart"
+            },
+            "id": "call_8iNdeEqh9sUk13gwQE9IUFVg",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"66VCHSJNUP\", \"quantity\": 3}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 2}, {\"productId\": \"9SIQT8TOJO\", \"quantity\": 1}, {\"productId\": \"HQTGWGPNH4\", \"quantity\": 5}]}",
+        "role": "tool",
+        "tool_call_id": "call_8iNdeEqh9sUk13gwQE9IUFVg"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"66VCHSJNUP\"}",
+              "name": "get_product"
+            },
+            "id": "call_bTZmGRdyRRT5HoDgiSC31aVR",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"0PUK6V6EV0\"}",
+              "name": "get_product"
+            },
+            "id": "call_LQgEWCWzsZdKXsiQaFU8CT8w",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"9SIQT8TOJO\"}",
+              "name": "get_product"
+            },
+            "id": "call_OjojJ0lUkw7PLvYFKw9z1aDx",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"HQTGWGPNH4\"}",
+              "name": "get_product"
+            },
+            "id": "call_BBUGhim5O4PLXRtyX7VF5nxB",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{}",
+              "name": "get_supported_currencies"
+            },
+            "id": "call_MHPnTgCyIkGqIURuEo9SMsM6",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"id\": \"66VCHSJNUP\", \"name\": \"Starsense Explorer Refractor Telescope\", \"description\": \"The first telescope that uses your smartphone to analyze the night sky and calculate its position in real time. StarSense Explorer is ideal for beginners thanks to the app's user-friendly interface and detailed tutorials. It's like having your own personal tour guide of the night sky\", \"picture\": \"StarsenseExplorer.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 349, \"nanos\": 950000000}, \"categories\": [\"telescopes\"]}",
+        "role": "tool",
+        "tool_call_id": "call_bTZmGRdyRRT5HoDgiSC31aVR"
+      },
+      {
+        "content": "{\"id\": \"0PUK6V6EV0\", \"name\": \"Solar System Color Imager\", \"description\": \"You have your new telescope and have observed Saturn and Jupiter. Now you're ready to take the next step and start imaging them. But where do you begin? The NexImage 10 Solar System Imager is the perfect solution.\", \"picture\": \"SolarSystemColorImager.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 175, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\"]}",
+        "role": "tool",
+        "tool_call_id": "call_LQgEWCWzsZdKXsiQaFU8CT8w"
+      },
+      {
+        "content": "{\"id\": \"9SIQT8TOJO\", \"name\": \"Optical Tube Assembly\", \"description\": \"Capturing impressive deep-sky astroimages is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2, the perfect companion to today's top DSLR or astronomical CCD cameras. This fast, wide-field f/2.2 system allows for shorter exposure times compared to traditional f/10 astroimaging, without sacrificing resolution. Because shorter sub-exposure times are possible, your equatorial mount won't need to accurately track over extended periods. The short focal length also lessens equatorial tracking demands. In many cases, autoguiding will not be required.\", \"picture\": \"OpticalTubeAssembly.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 3599, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\", \"assembly\"]}",
+        "role": "tool",
+        "tool_call_id": "call_OjojJ0lUkw7PLvYFKw9z1aDx"
+      },
+      {
+        "content": "{\"id\": \"HQTGWGPNH4\", \"name\": \"The Comet Book\", \"description\": \"A 16th-century treatise on comets, created anonymously in Flanders (now northern France) and now held at the Universit\u00e4tsbibliothek Kassel. Commonly known as The Comet Book (or Kometenbuch in German), its full title translates as \\\"Comets and their General and Particular Meanings, According to Ptolome\u00e9, Albumasar, Haly, Aliquind and other Astrologers\\\". The image is from https://publicdomainreview.org/collection/the-comet-book, made available by the Universit\u00e4tsbibliothek Kassel under a CC-BY SA 4.0 license (https://creativecommons.org/licenses/by-sa/4.0/)\", \"picture\": \"TheCometBook.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 0, \"nanos\": 990000000}, \"categories\": [\"books\"]}",
+        "role": "tool",
+        "tool_call_id": "call_BBUGhim5O4PLXRtyX7VF5nxB"
+      },
+      {
+        "content": "[\"ZAR\", \"ISK\", \"ILS\", \"RON\", \"GBP\", \"BRL\", \"CZK\", \"AUD\", \"BGN\", \"JPY\", \"PHP\", \"HUF\", \"USD\", \"SGD\", \"IDR\", \"CHF\", \"TRY\", \"NZD\", \"THB\", \"DKK\", \"PLN\", \"NOK\", \"HRK\", \"HKD\", \"EUR\", \"RUB\", \"CAD\", \"INR\", \"SEK\", \"KRW\", \"CNY\", \"MXN\", \"MYR\"]",
+        "role": "tool",
+        "tool_call_id": "call_MHPnTgCyIkGqIURuEo9SMsM6"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+              "name": "get_cart"
+            },
+            "id": "call_dbvSm6tXWPg76ExH1jvj13Tq",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": []}",
+        "role": "tool",
+        "tool_call_id": "call_dbvSm6tXWPg76ExH1jvj13Tq"
+      }
+    ],
+    "model": "azure/gpt-5.5",
+    "tools": [
+      {
+        "function": {
+          "description": "Add a product (product_id) to the shopping cart for a user (user_id).",
+          "name": "add_to_cart",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              },
+              "quantity": {
+                "default": 1,
+                "type": "integer"
+              },
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id",
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Checkout the user's cart and create an order.\nTakes request in the format {string user_id, string userCurrency, Address address, string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress, string city, string state, string country, string zipCode} and\nCreditCardInfo is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear, int32 creditCardExpirationMonth}",
+          "name": "checkout",
+          "parameters": {
+            "properties": {
+              "checkout_person": {}
+            },
+            "required": [
+              "checkout_person"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Empty the shopping cart for a user.",
+          "name": "empty_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Fetch promotional ads for Astronomy Shop homepage.\nEg : category: `telescopes` or `travel`",
+          "name": "get_ads",
+          "parameters": {
+            "properties": {
+              "category": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "category"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Retrieve the current contents of a user's cart.",
+          "name": "get_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get detailed information about a product using its ID.",
+          "name": "get_product",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get product recommendations for a user.",
+          "name": "get_recommendations",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get estimated shipping cost for a given address.\n`items`: list of {productId, quantity} (a single dict is also accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress, city, state, country, zipCode}.",
+          "name": "get_shipping_quote",
+          "parameters": {
+            "properties": {
+              "address": {},
+              "currency_code": {},
+              "items": {}
+            },
+            "required": [
+              "items",
+              "currency_code",
+              "address"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List supported currencies in Astronomy Shop.",
+          "name": "get_supported_currencies",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List all products available in the Astronomy Shop.",
+          "name": "list_products",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      }
+    ]
+  },
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "audio": null,
+          "content": "Added the requested items:\n\n- 9SIQT8TOJO \u00d7 1\n- 66VCHSJNUP \u00d7 2\n- HQTGWGPNH4 \u00d7 5\n\nUsing the requested items only, the USD subtotal is **$4,303.85**.\n\n> Note: the cart API returned inconsistent cart state after the adds, so I computed the subtotal from the product prices for the requested quantities. Also, no live FX quote tool is available, so the non-USD values below use reasonable approximate market rates, not guaranteed exact shop quotes.\n\n| Currency | Subtotal | Implied USD\u2192Currency Rate | Looks >5% Off? |\n|---|---:|---:|---|\n| USD | 4,303.85 | 1.0000 | No |\n| EUR | 3,701.31 | 0.8600 | No |\n| GBP | 3,227.89 | 0.7500 | No |\n| JPY | 634,818 | 147.5000 | No |\n| INR | 370,991.87 | 86.2000 | No |",
+          "function_call": null,
+          "refusal": null,
+          "role": "assistant",
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 0,
+    "id": "chatcmpl-fixture",
+    "model": "azure/gpt-5.5",
+    "moderation": null,
+    "object": "chat.completion"
+  }
+}

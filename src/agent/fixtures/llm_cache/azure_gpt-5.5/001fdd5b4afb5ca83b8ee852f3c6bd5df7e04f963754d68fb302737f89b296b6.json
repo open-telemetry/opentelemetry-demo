@@ -1,0 +1,254 @@
+{
+  "request": {
+    "messages": [
+      {
+        "content": "You are a helpful assistant. Be concise and accurate.",
+        "role": "system"
+      },
+      {
+        "content": "Add a travel accessory (product ID 1YMWWN1N4O) to my cart, change my mind and empty the cart, then fetch recommendations for astronomy books (product ID HQTGWGPNH4, The Comet Book) instead. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"1YMWWN1N4O\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_l4gILyWq2NL5WVJLoAn6CwL0",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"HQTGWGPNH4\"}",
+              "name": "get_recommendations"
+            },
+            "id": "call_2odsIQAL7vjv3fRL8npef0sh",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 5}, {\"productId\": \"HQTGWGPNH4\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_l4gILyWq2NL5WVJLoAn6CwL0"
+      },
+      {
+        "content": "[{\"id\": \"0PUK6V6EV0\", \"name\": \"Solar System Color Imager\", \"description\": \"You have your new telescope and have observed Saturn and Jupiter. Now you're ready to take the next step and start imaging them. But where do you begin? The NexImage 10 Solar System Imager is the perfect solution.\", \"picture\": \"SolarSystemColorImager.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 175, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\"]}, {\"id\": \"2ZYFJ3GM2N\", \"name\": \"Roof Binoculars\", \"description\": \"This versatile, all-around binocular is a great choice for the trail, the stadium, the arena, or just about anywhere you want a close-up view of the action without sacrificing brightness or detail. It's an especially great companion for nature observation and bird watching, with ED glass that helps you spot the subtlest field markings and a close focus of just 6.5 feet.\", \"picture\": \"RoofBinoculars.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 209, \"nanos\": 950000000}, \"categories\": [\"binoculars\"]}, {\"id\": \"L9ECAV7KIM\", \"name\": \"Lens Cleaning Kit\", \"description\": \"Wipe away dust, dirt, fingerprints and other particles on your lenses to see clearly with the Lens Cleaning Kit. This cleaning kit works on all glass and optical surfaces, including telescopes, binoculars, spotting scopes, monoculars, microscopes, and even your camera lenses, computer screens, and mobile devices.  The kit comes complete with a retractable lens brush to remove dust particles and dirt and two options to clean smudges and fingerprints off of your optics, pre-moistened lens wipes and a bottled lens cleaning fluid with soft cloth.\", \"picture\": \"LensCleaningKit.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 21, \"nanos\": 950000000}, \"categories\": [\"accessories\"]}, {\"id\": \"66VCHSJNUP\", \"name\": \"Starsense Explorer Refractor Telescope\", \"description\": \"The first telescope that uses your smartphone to analyze the night sky and calculate its position in real time. StarSense Explorer is ideal for beginners thanks to the app's user-friendly interface and detailed tutorials. It's like having your own personal tour guide of the night sky\", \"picture\": \"StarsenseExplorer.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 349, \"nanos\": 950000000}, \"categories\": [\"telescopes\"]}]",
+        "role": "tool",
+        "tool_call_id": "call_2odsIQAL7vjv3fRL8npef0sh"
+      }
+    ],
+    "model": "azure/gpt-5.5",
+    "tools": [
+      {
+        "function": {
+          "description": "Add a product (product_id) to the shopping cart for a user (user_id).",
+          "name": "add_to_cart",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              },
+              "quantity": {
+                "default": 1,
+                "type": "integer"
+              },
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id",
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Checkout the user's cart and create an order.\nTakes request in the format {string user_id, string userCurrency, Address address, string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress, string city, string state, string country, string zipCode} and\nCreditCardInfo is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear, int32 creditCardExpirationMonth}",
+          "name": "checkout",
+          "parameters": {
+            "properties": {
+              "checkout_person": {}
+            },
+            "required": [
+              "checkout_person"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Empty the shopping cart for a user.",
+          "name": "empty_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Fetch promotional ads for Astronomy Shop homepage.\nEg : category: `telescopes` or `travel`",
+          "name": "get_ads",
+          "parameters": {
+            "properties": {
+              "category": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "category"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Retrieve the current contents of a user's cart.",
+          "name": "get_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get detailed information about a product using its ID.",
+          "name": "get_product",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get product recommendations for a user.",
+          "name": "get_recommendations",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get estimated shipping cost for a given address.\n`items`: list of {productId, quantity} (a single dict is also accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress, city, state, country, zipCode}.",
+          "name": "get_shipping_quote",
+          "parameters": {
+            "properties": {
+              "address": {},
+              "currency_code": {},
+              "items": {}
+            },
+            "required": [
+              "items",
+              "currency_code",
+              "address"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List supported currencies in Astronomy Shop.",
+          "name": "get_supported_currencies",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List all products available in the Astronomy Shop.",
+          "name": "list_products",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      }
+    ]
+  },
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "tool_calls",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "audio": null,
+          "content": null,
+          "function_call": null,
+          "refusal": null,
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"user_id\":\"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+                "name": "empty_cart"
+              },
+              "id": "call_aL9G6sr0lfowS7eUzSqyOzUI",
+              "type": "function"
+            }
+          ]
+        }
+      }
+    ],
+    "created": 0,
+    "id": "chatcmpl-fixture",
+    "model": "azure/gpt-5.5",
+    "moderation": null,
+    "object": "chat.completion"
+  }
+}

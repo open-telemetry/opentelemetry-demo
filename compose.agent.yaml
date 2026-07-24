@@ -40,8 +40,8 @@ services:
       - LLM_MODEL
       - LLM_TLS_VERIFY
       - API_KEY
-      - USE_VCR
-      - VCR_MATCH_THRESHOLD
+      - LLM_CACHE_MODE
+      - LLM_CACHE_MATCH_THRESHOLD
       - OPENAI_API_KEY=${API_KEY}
       - APPLICATION_ENDPOINT
       - OTEL_EXPORTER_OTLP_INSECURE=true
@@ -127,4 +127,15 @@ services:
   frontend-proxy:
     depends_on:
       chatbot:
+        condition: service_started
+
+  # Patch the load generator (defined in compose.yaml) so its k6 script can
+  # send agentic traffic directly to the agent's /prompt endpoint.
+  load-generator:
+    environment:
+      - AGENT_ENDPOINT
+      - AGENT_PORT
+      - AGENT_PROMPT_TIMEOUT
+    depends_on:
+      agent:
         condition: service_started

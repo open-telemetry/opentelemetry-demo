@@ -1,0 +1,241 @@
+{
+  "request": {
+    "messages": [
+      {
+        "content": "You are a helpful assistant. Be concise and accurate.",
+        "role": "system"
+      },
+      {
+        "content": "Fetch product recommendations based on product ID 1YMWWN1N4O, add the first recommended item to my cart, and checkout. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f, email larry_sergei@example.com, shipping address 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA, currency USD, credit card 4432-8015-6152-0454, CVV 123, expiration 01/2030.",
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"1YMWWN1N4O\"}",
+              "name": "get_recommendations"
+            },
+            "id": "call_KDpaJGPZgPEvEvmaYXcomaRb",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "[{\"id\": \"HQTGWGPNH4\", \"name\": \"The Comet Book\", \"description\": \"A 16th-century treatise on comets, created anonymously in Flanders (now northern France) and now held at the Universit\u00e4tsbibliothek Kassel. Commonly known as The Comet Book (or Kometenbuch in German), its full title translates as \\\"Comets and their General and Particular Meanings, According to Ptolome\u00e9, Albumasar, Haly, Aliquind and other Astrologers\\\". The image is from https://publicdomainreview.org/collection/the-comet-book, made available by the Universit\u00e4tsbibliothek Kassel under a CC-BY SA 4.0 license (https://creativecommons.org/licenses/by-sa/4.0/)\", \"picture\": \"TheCometBook.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 0, \"nanos\": 990000000}, \"categories\": [\"books\"]}, {\"id\": \"9SIQT8TOJO\", \"name\": \"Optical Tube Assembly\", \"description\": \"Capturing impressive deep-sky astroimages is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2, the perfect companion to today's top DSLR or astronomical CCD cameras. This fast, wide-field f/2.2 system allows for shorter exposure times compared to traditional f/10 astroimaging, without sacrificing resolution. Because shorter sub-exposure times are possible, your equatorial mount won't need to accurately track over extended periods. The short focal length also lessens equatorial tracking demands. In many cases, autoguiding will not be required.\", \"picture\": \"OpticalTubeAssembly.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 3599, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\", \"assembly\"]}, {\"id\": \"LS4PSXUNUM\", \"name\": \"Red Flashlight\", \"description\": \"This 3-in-1 device features a 3-mode red flashlight, a hand warmer, and a portable power bank for recharging your personal electronics on the go. Whether you use it to light the way at an astronomy star party, a night walk, or wildlife research, ThermoTorch 3 Astro Red's rugged, IPX4-rated design will withstand your everyday activities.\", \"picture\": \"RedFlashlight.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 57, \"nanos\": 80000000}, \"categories\": [\"accessories\", \"flashlights\"]}, {\"id\": \"0PUK6V6EV0\", \"name\": \"Solar System Color Imager\", \"description\": \"You have your new telescope and have observed Saturn and Jupiter. Now you're ready to take the next step and start imaging them. But where do you begin? The NexImage 10 Solar System Imager is the perfect solution.\", \"picture\": \"SolarSystemColorImager.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 175, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\"]}]",
+        "role": "tool",
+        "tool_call_id": "call_KDpaJGPZgPEvEvmaYXcomaRb"
+      }
+    ],
+    "model": "azure/gpt-5.5",
+    "tools": [
+      {
+        "function": {
+          "description": "Add a product (product_id) to the shopping cart for a user (user_id).",
+          "name": "add_to_cart",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              },
+              "quantity": {
+                "default": 1,
+                "type": "integer"
+              },
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id",
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Checkout the user's cart and create an order.\nTakes request in the format {string user_id, string userCurrency, Address address, string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress, string city, string state, string country, string zipCode} and\nCreditCardInfo is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear, int32 creditCardExpirationMonth}",
+          "name": "checkout",
+          "parameters": {
+            "properties": {
+              "checkout_person": {}
+            },
+            "required": [
+              "checkout_person"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Empty the shopping cart for a user.",
+          "name": "empty_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Fetch promotional ads for Astronomy Shop homepage.\nEg : category: `telescopes` or `travel`",
+          "name": "get_ads",
+          "parameters": {
+            "properties": {
+              "category": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "category"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Retrieve the current contents of a user's cart.",
+          "name": "get_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get detailed information about a product using its ID.",
+          "name": "get_product",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get product recommendations for a user.",
+          "name": "get_recommendations",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get estimated shipping cost for a given address.\n`items`: list of {productId, quantity} (a single dict is also accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress, city, state, country, zipCode}.",
+          "name": "get_shipping_quote",
+          "parameters": {
+            "properties": {
+              "address": {},
+              "currency_code": {},
+              "items": {}
+            },
+            "required": [
+              "items",
+              "currency_code",
+              "address"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List supported currencies in Astronomy Shop.",
+          "name": "get_supported_currencies",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List all products available in the Astronomy Shop.",
+          "name": "list_products",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      }
+    ]
+  },
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "tool_calls",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "audio": null,
+          "content": null,
+          "function_call": null,
+          "refusal": null,
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"user_id\":\"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\",\"product_id\":\"HQTGWGPNH4\",\"quantity\":1}",
+                "name": "add_to_cart"
+              },
+              "id": "call_2St90fv5QdbEad6sOtRr0LLD",
+              "type": "function"
+            }
+          ]
+        }
+      }
+    ],
+    "created": 0,
+    "id": "chatcmpl-fixture",
+    "model": "azure/gpt-5.5",
+    "moderation": null,
+    "object": "chat.completion"
+  }
+}

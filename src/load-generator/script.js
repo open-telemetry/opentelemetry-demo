@@ -10,6 +10,9 @@ const BASE_URL = __ENV.K6_TARGET_URL || 'http://frontend-proxy:8080'
 const FLAGD_HOST = __ENV.FLAGD_HOST || 'flagd'
 const FLAGD_OFREP_PORT = __ENV.FLAGD_OFREP_PORT || '8016'
 
+const AGENT_URL = `http://${__ENV.AGENT_ENDPOINT || 'agent'}:${__ENV.AGENT_PORT || '8010'}/prompt`
+const AGENT_PROMPT_TIMEOUT = __ENV.AGENT_PROMPT_TIMEOUT || '120s'
+
 // The HTTP scenario's VU count is read from LOAD_GENERATOR_VUS rather than
 // k6's own K6_VUS, since a K6_VUS env var makes k6 discard this script's
 // scenarios config entirely in favor of an implicit single scenario (see
@@ -52,6 +55,29 @@ const categories = ['binoculars', 'telescopes', 'accessories', 'assembly', 'trav
 
 const people = JSON.parse(open('./people.json'))
 
+// Flatten prompts.json into a single flat pool of { text, class } entries,
+// tagging each prompt with its class. Every prompt is an independent
+// pool entry. Disabled classes are filtered out per
+// iteration via the loadGeneratorDisabledPromptClasses flag.
+const agenticPromptPool = (function buildPromptPool() {
+    const raw = JSON.parse(open('./prompts.json'))
+    const pool = []
+    for (const [group, value] of Object.entries(raw)) {
+        if (group === 'atomic') {
+            for (const [service, prompts] of Object.entries(value)) {
+                for (const text of prompts) {
+                    pool.push({ text, class: service })
+                }
+            }
+        } else if (Array.isArray(value)) {
+            for (const text of value) {
+                pool.push({ text, class: group })
+            }
+        }
+    }
+    return pool
+})()
+
 const tracer = new Tracer()
 
 // ---- helpers ----------------------------------------------------------------
@@ -90,6 +116,62 @@ function getFlagdValue(flagName) {
     span.log(`Feature flag ${flagName} evaluated to ${value}`)
     span.end()
     return value
+}
+
+// Reads a fractional (float) flag such as loadGeneratorNativeFraction, clamped
+// to [0, 1]. Unlike getFlagdValue's `|| 0`, this falls back to `fallback`
+// (default 1.0) on any error or non-numeric value.
+function getFlagdFraction(flagName, fallback) {
+    if (fallback === undefined) fallback = 1.0
+    const span = tracer.startSpan('feature_flag.evaluate', { 'feature_flag.key': flagName })
+    let value = fallback
+    try {
+        const res = http.post(
+            `http://${FLAGD_HOST}:${FLAGD_OFREP_PORT}/ofrep/v1/evaluate/flags/${flagName}`,
+            JSON.stringify({}),
+            { headers: otelHeaders(span.traceParent(), { 'Content-Type': 'application/json' }), tags: { flagd: 'true' } }
+        )
+        if (res.status === 200) {
+            const parsed = JSON.parse(res.body).value
+            if (typeof parsed === 'number' && !isNaN(parsed)) {
+                value = Math.min(1, Math.max(0, parsed))
+            }
+        }
+    } catch (e) {
+        // keep fallback
+    }
+    span.log(`Feature flag ${flagName} evaluated to ${value}`)
+    span.end()
+    return value
+}
+
+// Reads a comma-separated string flag (e.g. loadGeneratorDisabledPromptClasses)
+// into a Set of trimmed, non-empty tokens. Falls back to an empty set (nothing
+// disabled) on any error.
+function getFlagdStringSet(flagName) {
+    const span = tracer.startSpan('feature_flag.evaluate', { 'feature_flag.key': flagName })
+    const disabled = new Set()
+    try {
+        const res = http.post(
+            `http://${FLAGD_HOST}:${FLAGD_OFREP_PORT}/ofrep/v1/evaluate/flags/${flagName}`,
+            JSON.stringify({}),
+            { headers: otelHeaders(span.traceParent(), { 'Content-Type': 'application/json' }), tags: { flagd: 'true' } }
+        )
+        if (res.status === 200) {
+            const parsed = JSON.parse(res.body).value
+            if (typeof parsed === 'string') {
+                for (const tok of parsed.split(',')) {
+                    const t = tok.trim()
+                    if (t) disabled.add(t)
+                }
+            }
+        }
+    } catch (e) {
+        // keep empty set
+    }
+    span.log(`Feature flag ${flagName} evaluated to [${Array.from(disabled).join(', ')}]`)
+    span.end()
+    return disabled
 }
 
 // Merges OTel headers (baggage + traceparent) with any extra headers provided.
@@ -229,6 +311,32 @@ function floodHome() {
     span.end()
 }
 
+// ---- agentic task -----------------------------------------------------------
+
+// Picks a prompt uniformly at random from the pool, excluding any whose class
+// is in `disabledClasses`, and POSTs it to the agent's /prompt endpoint.
+function agenticPrompt(disabledClasses) {
+    const candidates = disabledClasses && disabledClasses.size > 0
+        ? agenticPromptPool.filter((p) => !disabledClasses.has(p.class))
+        : agenticPromptPool
+
+    if (candidates.length === 0) return false
+
+    const prompt = randomChoice(candidates)
+    const span = tracer.startSpan('user_agentic_prompt', { 'agentic.prompt.class': prompt.class })
+    span.log(`User sending agentic prompt (class=${prompt.class}) to agent`)
+    http.post(
+        AGENT_URL,
+        JSON.stringify({ message: prompt.text, history: [] }),
+        {
+            headers: otelHeaders(span.traceParent(), { 'Content-Type': 'application/json' }),
+            timeout: AGENT_PROMPT_TIMEOUT,
+        }
+    )
+    span.end()
+    return true
+}
+
 // ---- weighted task selection ------------------------------------------------
 // Task weights: index(1) browse(10) recs(3) ads(3) cart(3) add(2)
 // checkout(1) checkout_multi(1) flood(5) = 29
@@ -265,7 +373,18 @@ export function httpScenario() {
         onStart()
     }
 
-    selectTask()()
+    // Split each iteration between native REST traffic and agentic traffic.
+    // loadGeneratorNativeFraction is the probability of running a native task;
+    // the remainder runs an agentic prompt against the agent.
+    const nativeFraction = getFlagdFraction('loadGeneratorNativeFraction', 1.0)
+    let ranAgentic = false
+    if (cryptoRandom() >= nativeFraction) {
+        const disabledClasses = getFlagdStringSet('loadGeneratorDisabledPromptClasses')
+        ranAgentic = agenticPrompt(disabledClasses)
+    }
+    if (!ranAgentic) {
+        selectTask()()
+    }
 
     sleep(cryptoRandom() * 9 + 1)  // mirrors Locust between(1, 10)
 }

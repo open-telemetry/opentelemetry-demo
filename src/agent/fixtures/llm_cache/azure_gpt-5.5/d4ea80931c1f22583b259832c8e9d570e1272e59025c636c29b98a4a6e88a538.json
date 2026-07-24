@@ -1,0 +1,279 @@
+{
+  "request": {
+    "messages": [
+      {
+        "content": "You are a helpful assistant. Be concise and accurate.",
+        "role": "system"
+      },
+      {
+        "content": "I want to buy the Eclipsmart Travel Refractor Telescope model (product ID 1YMWWN1N4O). Find it, add two of them to my cart, get a shipping quote to 11501 Alterra Pkwy, Austin, TX 73301, USA, and then check out using USD. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f, email larry_sergei@example.com, credit card 4432-8015-6152-0454, CVV 123, expiration 01/2030.",
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"1YMWWN1N4O\"}",
+              "name": "get_product"
+            },
+            "id": "call_D125X55VhUAT9MC00xP1UARq",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"id\": \"1YMWWN1N4O\", \"name\": \"Eclipsmart Travel Refractor Telescope\", \"description\": \"Dedicated white-light solar scope for the observer on the go. The 50mm refracting solar scope uses Solar Safe, ISO compliant, full-aperture glass filter material to ensure the safest view of solar events.  The kit comes complete with everything you need, including the dedicated travel solar scope, a Solar Safe finderscope, tripod, a high quality 20mm (18x) Kellner eyepiece and a nylon backpack to carry everything in.  This Travel Solar Scope makes it easy to share the Sun as well as partial and total solar eclipses with the whole family and offers much higher magnifications than you would otherwise get using handheld solar viewers or binoculars.\", \"picture\": \"EclipsmartTravelRefractorTelescope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 129, \"nanos\": 950000000}, \"categories\": [\"telescopes\", \"travel\"]}",
+        "role": "tool",
+        "tool_call_id": "call_D125X55VhUAT9MC00xP1UARq"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"1YMWWN1N4O\", \"quantity\": 2}",
+              "name": "add_to_cart"
+            },
+            "id": "call_MNwnJekinZDxAUEk5aai9nm3",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 2}]}",
+        "role": "tool",
+        "tool_call_id": "call_MNwnJekinZDxAUEk5aai9nm3"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"items\": [{\"productId\": \"1YMWWN1N4O\", \"quantity\": 2}], \"currency_code\": \"USD\", \"address\": {\"streetAddress\": \"11501 Alterra Pkwy\", \"city\": \"Austin\", \"state\": \"TX\", \"country\": \"USA\", \"zipCode\": \"73301\"}}",
+              "name": "get_shipping_quote"
+            },
+            "id": "call_2OJyAOoyGImNu5BClbiUom3T",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"currencyCode\": \"USD\", \"units\": 17, \"nanos\": 980000000}",
+        "role": "tool",
+        "tool_call_id": "call_2OJyAOoyGImNu5BClbiUom3T"
+      }
+    ],
+    "model": "azure/gpt-5.5",
+    "tools": [
+      {
+        "function": {
+          "description": "Add a product (product_id) to the shopping cart for a user (user_id).",
+          "name": "add_to_cart",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              },
+              "quantity": {
+                "default": 1,
+                "type": "integer"
+              },
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id",
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Checkout the user's cart and create an order.\nTakes request in the format {string user_id, string userCurrency, Address address, string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress, string city, string state, string country, string zipCode} and\nCreditCardInfo is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear, int32 creditCardExpirationMonth}",
+          "name": "checkout",
+          "parameters": {
+            "properties": {
+              "checkout_person": {}
+            },
+            "required": [
+              "checkout_person"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Empty the shopping cart for a user.",
+          "name": "empty_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Fetch promotional ads for Astronomy Shop homepage.\nEg : category: `telescopes` or `travel`",
+          "name": "get_ads",
+          "parameters": {
+            "properties": {
+              "category": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "category"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Retrieve the current contents of a user's cart.",
+          "name": "get_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get detailed information about a product using its ID.",
+          "name": "get_product",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get product recommendations for a user.",
+          "name": "get_recommendations",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get estimated shipping cost for a given address.\n`items`: list of {productId, quantity} (a single dict is also accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress, city, state, country, zipCode}.",
+          "name": "get_shipping_quote",
+          "parameters": {
+            "properties": {
+              "address": {},
+              "currency_code": {},
+              "items": {}
+            },
+            "required": [
+              "items",
+              "currency_code",
+              "address"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List supported currencies in Astronomy Shop.",
+          "name": "get_supported_currencies",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List all products available in the Astronomy Shop.",
+          "name": "list_products",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      }
+    ]
+  },
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "tool_calls",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "audio": null,
+          "content": null,
+          "function_call": null,
+          "refusal": null,
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"checkout_person\":{\"user_id\":\"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\",\"userCurrency\":\"USD\",\"address\":{\"streetAddress\":\"11501 Alterra Pkwy\",\"city\":\"Austin\",\"state\":\"TX\",\"country\":\"USA\",\"zipCode\":\"73301\"},\"email\":\"larry_sergei@example.com\",\"creditCard\":{\"creditCardNumber\":\"4432801561520454\",\"creditCardCvv\":123,\"creditCardExpirationYear\":2030,\"creditCardExpirationMonth\":1}}}",
+                "name": "checkout"
+              },
+              "id": "call_QUqJwElh8kT5dxhp24Lu62Fm",
+              "type": "function"
+            }
+          ]
+        }
+      }
+    ],
+    "created": 0,
+    "id": "chatcmpl-fixture",
+    "model": "azure/gpt-5.5",
+    "moderation": null,
+    "object": "chat.completion"
+  }
+}

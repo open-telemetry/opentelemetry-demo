@@ -1,0 +1,445 @@
+{
+  "request": {
+    "messages": [
+      {
+        "content": "You are a helpful assistant. Be concise and accurate.",
+        "role": "system"
+      },
+      {
+        "content": "I want to do a full simulation. Empty my cart. Check the supported currencies to ensure CAD is available. Look up the ads for 'telescopes'. Find the product ID of the advertised telescope. Add 1 of those to my cart. Then, get recommendations for that telescope and add 2 units of the first recommended item to my cart. After that, verify my cart contents. Get a shipping quote for this entire cart to 100 Queens Quay E, Toronto, ON, Canada M5V 2H1 in CAD. Finally, execute the checkout using email test@example.com and a test credit card 4432-8015-6152-0454, CVV 123, expiration 01/2030. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+              "name": "empty_cart"
+            },
+            "id": "call_w3AXiFQBHaucRBc68Y2YkUqG",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{}",
+              "name": "get_supported_currencies"
+            },
+            "id": "call_Gv4QRzgXyh54HQ56Ddvg7kKd",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"category\": \"telescopes\"}",
+              "name": "get_ads"
+            },
+            "id": "call_TVCjl2CA6ASsnUEJfGUo2v1x",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"status\": \"success\", \"message\": \"Cart emptied for user 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+        "role": "tool",
+        "tool_call_id": "call_w3AXiFQBHaucRBc68Y2YkUqG"
+      },
+      {
+        "content": "[\"ZAR\", \"ISK\", \"ILS\", \"RON\", \"GBP\", \"BRL\", \"CZK\", \"AUD\", \"BGN\", \"JPY\", \"PHP\", \"HUF\", \"USD\", \"SGD\", \"IDR\", \"CHF\", \"TRY\", \"NZD\", \"THB\", \"DKK\", \"PLN\", \"NOK\", \"HRK\", \"HKD\", \"EUR\", \"RUB\", \"CAD\", \"INR\", \"SEK\", \"KRW\", \"CNY\", \"MXN\", \"MYR\"]",
+        "role": "tool",
+        "tool_call_id": "call_Gv4QRzgXyh54HQ56Ddvg7kKd"
+      },
+      {
+        "content": "[{\"redirectUrl\": \"/product/66VCHSJNUP\", \"text\": \"Starsense Explorer Refractor Telescope for sale. 20% off.\"}]",
+        "role": "tool",
+        "tool_call_id": "call_TVCjl2CA6ASsnUEJfGUo2v1x"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"66VCHSJNUP\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_Ugh0QRjS90zmyK9w44tzloTa",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"66VCHSJNUP\"}",
+              "name": "get_recommendations"
+            },
+            "id": "call_142BAw37QpJXyywU05lrPpnt",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"66VCHSJNUP\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_Ugh0QRjS90zmyK9w44tzloTa"
+      },
+      {
+        "content": "[{\"id\": \"0PUK6V6EV0\", \"name\": \"Solar System Color Imager\", \"description\": \"You have your new telescope and have observed Saturn and Jupiter. Now you're ready to take the next step and start imaging them. But where do you begin? The NexImage 10 Solar System Imager is the perfect solution.\", \"picture\": \"SolarSystemColorImager.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 175, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\"]}, {\"id\": \"9SIQT8TOJO\", \"name\": \"Optical Tube Assembly\", \"description\": \"Capturing impressive deep-sky astroimages is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2, the perfect companion to today's top DSLR or astronomical CCD cameras. This fast, wide-field f/2.2 system allows for shorter exposure times compared to traditional f/10 astroimaging, without sacrificing resolution. Because shorter sub-exposure times are possible, your equatorial mount won't need to accurately track over extended periods. The short focal length also lessens equatorial tracking demands. In many cases, autoguiding will not be required.\", \"picture\": \"OpticalTubeAssembly.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 3599, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\", \"assembly\"]}, {\"id\": \"L9ECAV7KIM\", \"name\": \"Lens Cleaning Kit\", \"description\": \"Wipe away dust, dirt, fingerprints and other particles on your lenses to see clearly with the Lens Cleaning Kit. This cleaning kit works on all glass and optical surfaces, including telescopes, binoculars, spotting scopes, monoculars, microscopes, and even your camera lenses, computer screens, and mobile devices.  The kit comes complete with a retractable lens brush to remove dust particles and dirt and two options to clean smudges and fingerprints off of your optics, pre-moistened lens wipes and a bottled lens cleaning fluid with soft cloth.\", \"picture\": \"LensCleaningKit.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 21, \"nanos\": 950000000}, \"categories\": [\"accessories\"]}, {\"id\": \"6E92ZMYYFZ\", \"name\": \"Solar Filter\", \"description\": \"Enhance your viewing experience with EclipSmart Solar Filter for 8\\\" telescopes. With two Velcro straps and four self-adhesive Velcro pads for added safety, you can be assured that the solar filter cannot be accidentally knocked off and will provide Solar Safe, ISO compliant viewing.\", \"picture\": \"SolarFilter.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 69, \"nanos\": 950000000}, \"categories\": [\"accessories\", \"telescopes\"]}]",
+        "role": "tool",
+        "tool_call_id": "call_142BAw37QpJXyywU05lrPpnt"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"0PUK6V6EV0\", \"quantity\": 2}",
+              "name": "add_to_cart"
+            },
+            "id": "call_EXMqy7sR4cIoNtAgxejdtt5m",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"66VCHSJNUP\", \"quantity\": 1}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 2}]}",
+        "role": "tool",
+        "tool_call_id": "call_EXMqy7sR4cIoNtAgxejdtt5m"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+              "name": "get_cart"
+            },
+            "id": "call_B5lFVOgHydLHuNl2kCqo7ePS",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": []}",
+        "role": "tool",
+        "tool_call_id": "call_B5lFVOgHydLHuNl2kCqo7ePS"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"\"}",
+              "name": "get_cart"
+            },
+            "id": "call_7Q770bJGivbmeQDqyZ9QXkrH",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": []}",
+        "role": "tool",
+        "tool_call_id": "call_7Q770bJGivbmeQDqyZ9QXkrH"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"66VCHSJNUP\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_axJ6QvPmlkhv9bjs2ipNFjJ1",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\", \"product_id\": \"0PUK6V6EV0\", \"quantity\": 2}",
+              "name": "add_to_cart"
+            },
+            "id": "call_9Lw2GBmBzVmrdYdVl9EIWiyX",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"66VCHSJNUP\", \"quantity\": 1}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 4}]}",
+        "role": "tool",
+        "tool_call_id": "call_axJ6QvPmlkhv9bjs2ipNFjJ1"
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"66VCHSJNUP\", \"quantity\": 1}, {\"productId\": \"0PUK6V6EV0\", \"quantity\": 4}]}",
+        "role": "tool",
+        "tool_call_id": "call_9Lw2GBmBzVmrdYdVl9EIWiyX"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+              "name": "empty_cart"
+            },
+            "id": "call_8gnZfFABXpV77iwnWM4MBpIe",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"status\": \"success\", \"message\": \"Cart emptied for user 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f\"}",
+        "role": "tool",
+        "tool_call_id": "call_8gnZfFABXpV77iwnWM4MBpIe"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"\"}",
+              "name": "empty_cart"
+            },
+            "id": "call_ufJa4jhruLKlBNAwYADTPYBP",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"status\": \"success\", \"message\": \"Cart emptied for user \"}",
+        "role": "tool",
+        "tool_call_id": "call_ufJa4jhruLKlBNAwYADTPYBP"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"user_id\": \"\", \"product_id\": \"66VCHSJNUP\", \"quantity\": 1}",
+              "name": "add_to_cart"
+            },
+            "id": "call_YuYfpjRZB2h1UYjJOcnmGRZF",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"userId\": \"\", \"items\": [{\"productId\": \"66VCHSJNUP\", \"quantity\": 1}]}",
+        "role": "tool",
+        "tool_call_id": "call_YuYfpjRZB2h1UYjJOcnmGRZF"
+      }
+    ],
+    "model": "azure/gpt-5.5",
+    "tools": [
+      {
+        "function": {
+          "description": "Add a product (product_id) to the shopping cart for a user (user_id).",
+          "name": "add_to_cart",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              },
+              "quantity": {
+                "default": 1,
+                "type": "integer"
+              },
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id",
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Checkout the user's cart and create an order.\nTakes request in the format {string user_id, string userCurrency, Address address, string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress, string city, string state, string country, string zipCode} and\nCreditCardInfo is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear, int32 creditCardExpirationMonth}",
+          "name": "checkout",
+          "parameters": {
+            "properties": {
+              "checkout_person": {}
+            },
+            "required": [
+              "checkout_person"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Empty the shopping cart for a user.",
+          "name": "empty_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Fetch promotional ads for Astronomy Shop homepage.\nEg : category: `telescopes` or `travel`",
+          "name": "get_ads",
+          "parameters": {
+            "properties": {
+              "category": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "category"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Retrieve the current contents of a user's cart.",
+          "name": "get_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get detailed information about a product using its ID.",
+          "name": "get_product",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get product recommendations for a user.",
+          "name": "get_recommendations",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get estimated shipping cost for a given address.\n`items`: list of {productId, quantity} (a single dict is also accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress, city, state, country, zipCode}.",
+          "name": "get_shipping_quote",
+          "parameters": {
+            "properties": {
+              "address": {},
+              "currency_code": {},
+              "items": {}
+            },
+            "required": [
+              "items",
+              "currency_code",
+              "address"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List supported currencies in Astronomy Shop.",
+          "name": "get_supported_currencies",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List all products available in the Astronomy Shop.",
+          "name": "list_products",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      }
+    ]
+  },
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "tool_calls",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "audio": null,
+          "content": null,
+          "function_call": null,
+          "refusal": null,
+          "role": "assistant",
+          "tool_calls": [
+            {
+              "function": {
+                "arguments": "{\"user_id\":\"\",\"product_id\":\"0PUK6V6EV0\",\"quantity\":2}",
+                "name": "add_to_cart"
+              },
+              "id": "call_0jSNgx7xRkj4VsHJiP3zcxBO",
+              "type": "function"
+            }
+          ]
+        }
+      }
+    ],
+    "created": 0,
+    "id": "chatcmpl-fixture",
+    "model": "azure/gpt-5.5",
+    "moderation": null,
+    "object": "chat.completion"
+  }
+}

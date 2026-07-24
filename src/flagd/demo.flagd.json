@@ -93,6 +93,30 @@
         "on": 100
       }
     },
+    "loadGeneratorDisabledPromptClasses": {
+      "defaultVariant": "none",
+      "description": "Comma-separated agentic prompt classes the load generator should skip. Empty = every prompt class enabled, each prompt weighted equally.",
+      "state": "ENABLED",
+      "variants": {
+        "atomic-only": "multi-category,complex-scenarios",
+        "no-complex": "complex-scenarios",
+        "no-complex-multi": "complex-scenarios,multi-category",
+        "none": "",
+        "safe-only": "complex-scenarios,payment,checkout,fraud-detection"
+      }
+    },
+    "loadGeneratorNativeFraction": {
+      "defaultVariant": "all",
+      "description": "Fraction of load-generator HTTP-scenario iterations that run native REST traffic (1.0 = 100% native). The remainder (1 - value) run agentic traffic",
+      "state": "ENABLED",
+      "variants": {
+        "all": 1.0,
+        "half": 0.5,
+        "mostly": 0.75,
+        "none": 0.0,
+        "quarter": 0.25
+      }
+    },
     "loadGeneratorTraffic": {
       "defaultVariant": "on",
       "description": "Enable synthetic traffic from the load generator. Turn off to pause all load-generator scenarios.",

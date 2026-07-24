@@ -64,3 +64,36 @@ that most Kubernetes clusters don't grant by default. When enabled, Chromium's
 executable path and launch args come from the `K6_BROWSER_EXECUTABLE_PATH` and
 `K6_BROWSER_ARGS` env vars (comma-separated, no `--` prefix) rather than the
 scenario's own `browser` options field, which k6 ignores for these.
+
+## Agentic load
+
+When the agent layer (`compose.agent.yaml`) is running, the HTTP scenario can
+divert a share of its iterations to *agentic* traffic: instead of a native REST
+call, the iteration POSTs a natural-language prompt to the agent's `/prompt`
+endpoint (`http://${AGENT_ENDPOINT}:${AGENT_PORT}/prompt`). The agent is
+OTel-instrumented, so the injected `traceparent` stitches k6 -> agent ->
+MCP -> backend services into a single trace.
+Prompts are read from [`prompts.json`](./prompts.json).
+
+Two feature flags control this, both read live on every iteration (like
+`loadGeneratorTraffic`), so changes take effect with **no restart**:
+
+* `loadGeneratorNativeFraction` - the fraction of HTTP-scenario iterations that
+  run native REST traffic, from `1.0` (100% native, the default) down to `0.0`
+  (100% agentic). The agentic share is `1 - value`; e.g. `0.6` yields ~60%
+  native and ~40% agentic iterations. On a flagd read error the script falls
+  back to `1.0` (all-native) so an outage can't accidentally overload the agent.
+* `loadGeneratorDisabledPromptClasses` - a comma-separated list of prompt
+  classes to skip when choosing an agentic prompt. Empty (the default) enables
+  every class. Classes are the atomic service names (`accounting`, `ad`,
+  `cart`, `checkout`, `currency`, `email`, `fraud-detection`, `payment`,
+  `product-catalog`, `quote`, `recommendation`, `shipping`) plus
+  `multi-category` and `complex-scenarios`. If the list disables every class,
+  the iteration falls back to native traffic.
+
+## Note
+
+* **Fraction of iterations, not throughput.** An agentic call includes an LLM
+  round-trip and takes seconds, while a native call takes milliseconds. So at
+  `0.5` roughly half the *iterations* are agentic, but they consume far more
+  than half the wall-clock time.

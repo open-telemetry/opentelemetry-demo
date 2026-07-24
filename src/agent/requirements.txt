@@ -2267,7 +2267,6 @@ pyyaml==6.0.3 \
     #   fastmcp-slim
     #   jsonschema-path
     #   langchain-core
-    #   vcrpy
 referencing==0.37.0 \
     --hash=sha256:381329a9f99628c9069361716891d34ad94af76e461dcb0335825aecc7692231 \
     --hash=sha256:44aefc3142c5b842538163acb373e24cce6632bd54bdb01b21ad5863489f50d8
@@ -2771,10 +2770,6 @@ uvicorn==0.49.0 \
     # via
     #   fastmcp-slim
     #   mcp
-vcrpy==8.3.0 \
-    --hash=sha256:46d64e77e8d95e5c76c7d9a94ff05d8b38b2ae4e1d4869eb0235024b6fcb5212 \
-    --hash=sha256:bd66e6143746778157f00e2a922527a8d96b2fdc350be8988a45a29c843815b9
-    # via -r requirements.in
 watchfiles==1.2.0 \
     --hash=sha256:01859b11fd9fbca670f4d5da00fbac282cfea9bd67a2125d8b2833a3b5617ea9 \
     --hash=sha256:01ea8d66f0693b9b60a6541c8d10263091ca9a9060d242f3c1f3143f9aad2c98 \
@@ -3057,7 +3052,6 @@ wrapt==2.2.2 \
     #   opentelemetry-instrumentation-sqlalchemy
     #   opentelemetry-instrumentation-threading
     #   opentelemetry-instrumentation-urllib3
-    #   vcrpy
 xxhash==3.8.0 \
     --hash=sha256:02ed856a765cb6e006168595d9455ac8c3c4d60cc04cd47a158a1ac677d68f0f \
     --hash=sha256:04faeb2290c0596b25f8509dbabe8b821461f04eb9097b74cc8b486d571087fd \

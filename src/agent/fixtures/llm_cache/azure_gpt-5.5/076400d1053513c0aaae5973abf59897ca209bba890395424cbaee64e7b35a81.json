@@ -1,0 +1,621 @@
+{
+  "request": {
+    "messages": [
+      {
+        "content": "You are a helpful assistant. Be concise and accurate.",
+        "role": "system"
+      },
+      {
+        "content": "List all products. For each product, call get_recommendations. For each recommendation returned, call get_product to fetch its details. Build a nested JSON object of product -> recommendations -> recommendation-details. If total tool calls exceed 30, stop early and report how far you got.",
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{}",
+              "name": "list_products"
+            },
+            "id": "call_E92qNAEwG6Gv7MvpKWzb8dQC",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "[{\"id\": \"0PUK6V6EV0\", \"name\": \"Solar System Color Imager\", \"description\": \"You have your new telescope and have observed Saturn and Jupiter. Now you're ready to take the next step and start imaging them. But where do you begin? The NexImage 10 Solar System Imager is the perfect solution.\", \"picture\": \"SolarSystemColorImager.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 175, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\"]}, {\"id\": \"1YMWWN1N4O\", \"name\": \"Eclipsmart Travel Refractor Telescope\", \"description\": \"Dedicated white-light solar scope for the observer on the go. The 50mm refracting solar scope uses Solar Safe, ISO compliant, full-aperture glass filter material to ensure the safest view of solar events.  The kit comes complete with everything you need, including the dedicated travel solar scope, a Solar Safe finderscope, tripod, a high quality 20mm (18x) Kellner eyepiece and a nylon backpack to carry everything in.  This Travel Solar Scope makes it easy to share the Sun as well as partial and total solar eclipses with the whole family and offers much higher magnifications than you would otherwise get using handheld solar viewers or binoculars.\", \"picture\": \"EclipsmartTravelRefractorTelescope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 129, \"nanos\": 950000000}, \"categories\": [\"telescopes\", \"travel\"]}, {\"id\": \"2ZYFJ3GM2N\", \"name\": \"Roof Binoculars\", \"description\": \"This versatile, all-around binocular is a great choice for the trail, the stadium, the arena, or just about anywhere you want a close-up view of the action without sacrificing brightness or detail. It's an especially great companion for nature observation and bird watching, with ED glass that helps you spot the subtlest field markings and a close focus of just 6.5 feet.\", \"picture\": \"RoofBinoculars.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 209, \"nanos\": 950000000}, \"categories\": [\"binoculars\"]}, {\"id\": \"66VCHSJNUP\", \"name\": \"Starsense Explorer Refractor Telescope\", \"description\": \"The first telescope that uses your smartphone to analyze the night sky and calculate its position in real time. StarSense Explorer is ideal for beginners thanks to the app's user-friendly interface and detailed tutorials. It's like having your own personal tour guide of the night sky\", \"picture\": \"StarsenseExplorer.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 349, \"nanos\": 950000000}, \"categories\": [\"telescopes\"]}, {\"id\": \"6E92ZMYYFZ\", \"name\": \"Solar Filter\", \"description\": \"Enhance your viewing experience with EclipSmart Solar Filter for 8\\\" telescopes. With two Velcro straps and four self-adhesive Velcro pads for added safety, you can be assured that the solar filter cannot be accidentally knocked off and will provide Solar Safe, ISO compliant viewing.\", \"picture\": \"SolarFilter.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 69, \"nanos\": 950000000}, \"categories\": [\"accessories\", \"telescopes\"]}, {\"id\": \"9SIQT8TOJO\", \"name\": \"Optical Tube Assembly\", \"description\": \"Capturing impressive deep-sky astroimages is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2, the perfect companion to today's top DSLR or astronomical CCD cameras. This fast, wide-field f/2.2 system allows for shorter exposure times compared to traditional f/10 astroimaging, without sacrificing resolution. Because shorter sub-exposure times are possible, your equatorial mount won't need to accurately track over extended periods. The short focal length also lessens equatorial tracking demands. In many cases, autoguiding will not be required.\", \"picture\": \"OpticalTubeAssembly.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 3599, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\", \"assembly\"]}, {\"id\": \"HQTGWGPNH4\", \"name\": \"The Comet Book\", \"description\": \"A 16th-century treatise on comets, created anonymously in Flanders (now northern France) and now held at the Universit\u00e4tsbibliothek Kassel. Commonly known as The Comet Book (or Kometenbuch in German), its full title translates as \\\"Comets and their General and Particular Meanings, According to Ptolome\u00e9, Albumasar, Haly, Aliquind and other Astrologers\\\". The image is from https://publicdomainreview.org/collection/the-comet-book, made available by the Universit\u00e4tsbibliothek Kassel under a CC-BY SA 4.0 license (https://creativecommons.org/licenses/by-sa/4.0/)\", \"picture\": \"TheCometBook.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 0, \"nanos\": 990000000}, \"categories\": [\"books\"]}, {\"id\": \"L9ECAV7KIM\", \"name\": \"Lens Cleaning Kit\", \"description\": \"Wipe away dust, dirt, fingerprints and other particles on your lenses to see clearly with the Lens Cleaning Kit. This cleaning kit works on all glass and optical surfaces, including telescopes, binoculars, spotting scopes, monoculars, microscopes, and even your camera lenses, computer screens, and mobile devices.  The kit comes complete with a retractable lens brush to remove dust particles and dirt and two options to clean smudges and fingerprints off of your optics, pre-moistened lens wipes and a bottled lens cleaning fluid with soft cloth.\", \"picture\": \"LensCleaningKit.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 21, \"nanos\": 950000000}, \"categories\": [\"accessories\"]}, {\"id\": \"LS4PSXUNUM\", \"name\": \"Red Flashlight\", \"description\": \"This 3-in-1 device features a 3-mode red flashlight, a hand warmer, and a portable power bank for recharging your personal electronics on the go. Whether you use it to light the way at an astronomy star party, a night walk, or wildlife research, ThermoTorch 3 Astro Red's rugged, IPX4-rated design will withstand your everyday activities.\", \"picture\": \"RedFlashlight.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 57, \"nanos\": 80000000}, \"categories\": [\"accessories\", \"flashlights\"]}, {\"id\": \"OLJCESPC7Z\", \"name\": \"National Park Foundation Explorascope\", \"description\": \"The National Park Foundation's (NPF) Explorascope 60AZ is a manual alt-azimuth, refractor telescope perfect for celestial viewing on the go. The NPF Explorascope 60 can view the planets, moon, star clusters and brighter deep sky objects like the Orion Nebula and Andromeda Galaxy.\", \"picture\": \"NationalParkFoundationExplorascope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 101, \"nanos\": 960000000}, \"categories\": [\"telescopes\"]}]",
+        "role": "tool",
+        "tool_call_id": "call_E92qNAEwG6Gv7MvpKWzb8dQC"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"0PUK6V6EV0\"}",
+              "name": "get_recommendations"
+            },
+            "id": "call_85QWwkSM9uzizt0AOyZ6CYMM",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"1YMWWN1N4O\"}",
+              "name": "get_recommendations"
+            },
+            "id": "call_R7GWWINOjA1suq5KEEB3JueM",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"2ZYFJ3GM2N\"}",
+              "name": "get_recommendations"
+            },
+            "id": "call_m1TzdUu75QtFLf0eA64X9YWS",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"66VCHSJNUP\"}",
+              "name": "get_recommendations"
+            },
+            "id": "call_6W6EAztCpcmYJ1aVJkw6FIEB",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"6E92ZMYYFZ\"}",
+              "name": "get_recommendations"
+            },
+            "id": "call_oM6ZNvkpTEHHPvee4jcUBiTG",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"9SIQT8TOJO\"}",
+              "name": "get_recommendations"
+            },
+            "id": "call_bPNOmRUVPgYjatKwFKtG92J9",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"HQTGWGPNH4\"}",
+              "name": "get_recommendations"
+            },
+            "id": "call_5E4aILHtavowSahbsFYN9Wgr",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"L9ECAV7KIM\"}",
+              "name": "get_recommendations"
+            },
+            "id": "call_Erigjz6zNZ2T8sn6kPItv0ct",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"LS4PSXUNUM\"}",
+              "name": "get_recommendations"
+            },
+            "id": "call_X2xZcW7WVEY2rMnVIeHdLrIz",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"OLJCESPC7Z\"}",
+              "name": "get_recommendations"
+            },
+            "id": "call_Xc4UpWgPrRdhQ0nR6oVW9Uri",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "[{\"id\": \"OLJCESPC7Z\", \"name\": \"National Park Foundation Explorascope\", \"description\": \"The National Park Foundation's (NPF) Explorascope 60AZ is a manual alt-azimuth, refractor telescope perfect for celestial viewing on the go. The NPF Explorascope 60 can view the planets, moon, star clusters and brighter deep sky objects like the Orion Nebula and Andromeda Galaxy.\", \"picture\": \"NationalParkFoundationExplorascope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 101, \"nanos\": 960000000}, \"categories\": [\"telescopes\"]}, {\"id\": \"9SIQT8TOJO\", \"name\": \"Optical Tube Assembly\", \"description\": \"Capturing impressive deep-sky astroimages is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2, the perfect companion to today's top DSLR or astronomical CCD cameras. This fast, wide-field f/2.2 system allows for shorter exposure times compared to traditional f/10 astroimaging, without sacrificing resolution. Because shorter sub-exposure times are possible, your equatorial mount won't need to accurately track over extended periods. The short focal length also lessens equatorial tracking demands. In many cases, autoguiding will not be required.\", \"picture\": \"OpticalTubeAssembly.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 3599, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\", \"assembly\"]}, {\"id\": \"HQTGWGPNH4\", \"name\": \"The Comet Book\", \"description\": \"A 16th-century treatise on comets, created anonymously in Flanders (now northern France) and now held at the Universit\u00e4tsbibliothek Kassel. Commonly known as The Comet Book (or Kometenbuch in German), its full title translates as \\\"Comets and their General and Particular Meanings, According to Ptolome\u00e9, Albumasar, Haly, Aliquind and other Astrologers\\\". The image is from https://publicdomainreview.org/collection/the-comet-book, made available by the Universit\u00e4tsbibliothek Kassel under a CC-BY SA 4.0 license (https://creativecommons.org/licenses/by-sa/4.0/)\", \"picture\": \"TheCometBook.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 0, \"nanos\": 990000000}, \"categories\": [\"books\"]}, {\"id\": \"L9ECAV7KIM\", \"name\": \"Lens Cleaning Kit\", \"description\": \"Wipe away dust, dirt, fingerprints and other particles on your lenses to see clearly with the Lens Cleaning Kit. This cleaning kit works on all glass and optical surfaces, including telescopes, binoculars, spotting scopes, monoculars, microscopes, and even your camera lenses, computer screens, and mobile devices.  The kit comes complete with a retractable lens brush to remove dust particles and dirt and two options to clean smudges and fingerprints off of your optics, pre-moistened lens wipes and a bottled lens cleaning fluid with soft cloth.\", \"picture\": \"LensCleaningKit.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 21, \"nanos\": 950000000}, \"categories\": [\"accessories\"]}]",
+        "role": "tool",
+        "tool_call_id": "call_85QWwkSM9uzizt0AOyZ6CYMM"
+      },
+      {
+        "content": "[{\"id\": \"6E92ZMYYFZ\", \"name\": \"Solar Filter\", \"description\": \"Enhance your viewing experience with EclipSmart Solar Filter for 8\\\" telescopes. With two Velcro straps and four self-adhesive Velcro pads for added safety, you can be assured that the solar filter cannot be accidentally knocked off and will provide Solar Safe, ISO compliant viewing.\", \"picture\": \"SolarFilter.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 69, \"nanos\": 950000000}, \"categories\": [\"accessories\", \"telescopes\"]}, {\"id\": \"9SIQT8TOJO\", \"name\": \"Optical Tube Assembly\", \"description\": \"Capturing impressive deep-sky astroimages is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2, the perfect companion to today's top DSLR or astronomical CCD cameras. This fast, wide-field f/2.2 system allows for shorter exposure times compared to traditional f/10 astroimaging, without sacrificing resolution. Because shorter sub-exposure times are possible, your equatorial mount won't need to accurately track over extended periods. The short focal length also lessens equatorial tracking demands. In many cases, autoguiding will not be required.\", \"picture\": \"OpticalTubeAssembly.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 3599, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\", \"assembly\"]}, {\"id\": \"L9ECAV7KIM\", \"name\": \"Lens Cleaning Kit\", \"description\": \"Wipe away dust, dirt, fingerprints and other particles on your lenses to see clearly with the Lens Cleaning Kit. This cleaning kit works on all glass and optical surfaces, including telescopes, binoculars, spotting scopes, monoculars, microscopes, and even your camera lenses, computer screens, and mobile devices.  The kit comes complete with a retractable lens brush to remove dust particles and dirt and two options to clean smudges and fingerprints off of your optics, pre-moistened lens wipes and a bottled lens cleaning fluid with soft cloth.\", \"picture\": \"LensCleaningKit.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 21, \"nanos\": 950000000}, \"categories\": [\"accessories\"]}, {\"id\": \"OLJCESPC7Z\", \"name\": \"National Park Foundation Explorascope\", \"description\": \"The National Park Foundation's (NPF) Explorascope 60AZ is a manual alt-azimuth, refractor telescope perfect for celestial viewing on the go. The NPF Explorascope 60 can view the planets, moon, star clusters and brighter deep sky objects like the Orion Nebula and Andromeda Galaxy.\", \"picture\": \"NationalParkFoundationExplorascope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 101, \"nanos\": 960000000}, \"categories\": [\"telescopes\"]}]",
+        "role": "tool",
+        "tool_call_id": "call_R7GWWINOjA1suq5KEEB3JueM"
+      },
+      {
+        "content": "[{\"id\": \"OLJCESPC7Z\", \"name\": \"National Park Foundation Explorascope\", \"description\": \"The National Park Foundation's (NPF) Explorascope 60AZ is a manual alt-azimuth, refractor telescope perfect for celestial viewing on the go. The NPF Explorascope 60 can view the planets, moon, star clusters and brighter deep sky objects like the Orion Nebula and Andromeda Galaxy.\", \"picture\": \"NationalParkFoundationExplorascope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 101, \"nanos\": 960000000}, \"categories\": [\"telescopes\"]}, {\"id\": \"LS4PSXUNUM\", \"name\": \"Red Flashlight\", \"description\": \"This 3-in-1 device features a 3-mode red flashlight, a hand warmer, and a portable power bank for recharging your personal electronics on the go. Whether you use it to light the way at an astronomy star party, a night walk, or wildlife research, ThermoTorch 3 Astro Red's rugged, IPX4-rated design will withstand your everyday activities.\", \"picture\": \"RedFlashlight.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 57, \"nanos\": 80000000}, \"categories\": [\"accessories\", \"flashlights\"]}, {\"id\": \"9SIQT8TOJO\", \"name\": \"Optical Tube Assembly\", \"description\": \"Capturing impressive deep-sky astroimages is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2, the perfect companion to today's top DSLR or astronomical CCD cameras. This fast, wide-field f/2.2 system allows for shorter exposure times compared to traditional f/10 astroimaging, without sacrificing resolution. Because shorter sub-exposure times are possible, your equatorial mount won't need to accurately track over extended periods. The short focal length also lessens equatorial tracking demands. In many cases, autoguiding will not be required.\", \"picture\": \"OpticalTubeAssembly.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 3599, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\", \"assembly\"]}, {\"id\": \"L9ECAV7KIM\", \"name\": \"Lens Cleaning Kit\", \"description\": \"Wipe away dust, dirt, fingerprints and other particles on your lenses to see clearly with the Lens Cleaning Kit. This cleaning kit works on all glass and optical surfaces, including telescopes, binoculars, spotting scopes, monoculars, microscopes, and even your camera lenses, computer screens, and mobile devices.  The kit comes complete with a retractable lens brush to remove dust particles and dirt and two options to clean smudges and fingerprints off of your optics, pre-moistened lens wipes and a bottled lens cleaning fluid with soft cloth.\", \"picture\": \"LensCleaningKit.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 21, \"nanos\": 950000000}, \"categories\": [\"accessories\"]}]",
+        "role": "tool",
+        "tool_call_id": "call_m1TzdUu75QtFLf0eA64X9YWS"
+      },
+      {
+        "content": "[{\"id\": \"OLJCESPC7Z\", \"name\": \"National Park Foundation Explorascope\", \"description\": \"The National Park Foundation's (NPF) Explorascope 60AZ is a manual alt-azimuth, refractor telescope perfect for celestial viewing on the go. The NPF Explorascope 60 can view the planets, moon, star clusters and brighter deep sky objects like the Orion Nebula and Andromeda Galaxy.\", \"picture\": \"NationalParkFoundationExplorascope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 101, \"nanos\": 960000000}, \"categories\": [\"telescopes\"]}, {\"id\": \"6E92ZMYYFZ\", \"name\": \"Solar Filter\", \"description\": \"Enhance your viewing experience with EclipSmart Solar Filter for 8\\\" telescopes. With two Velcro straps and four self-adhesive Velcro pads for added safety, you can be assured that the solar filter cannot be accidentally knocked off and will provide Solar Safe, ISO compliant viewing.\", \"picture\": \"SolarFilter.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 69, \"nanos\": 950000000}, \"categories\": [\"accessories\", \"telescopes\"]}, {\"id\": \"LS4PSXUNUM\", \"name\": \"Red Flashlight\", \"description\": \"This 3-in-1 device features a 3-mode red flashlight, a hand warmer, and a portable power bank for recharging your personal electronics on the go. Whether you use it to light the way at an astronomy star party, a night walk, or wildlife research, ThermoTorch 3 Astro Red's rugged, IPX4-rated design will withstand your everyday activities.\", \"picture\": \"RedFlashlight.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 57, \"nanos\": 80000000}, \"categories\": [\"accessories\", \"flashlights\"]}, {\"id\": \"9SIQT8TOJO\", \"name\": \"Optical Tube Assembly\", \"description\": \"Capturing impressive deep-sky astroimages is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2, the perfect companion to today's top DSLR or astronomical CCD cameras. This fast, wide-field f/2.2 system allows for shorter exposure times compared to traditional f/10 astroimaging, without sacrificing resolution. Because shorter sub-exposure times are possible, your equatorial mount won't need to accurately track over extended periods. The short focal length also lessens equatorial tracking demands. In many cases, autoguiding will not be required.\", \"picture\": \"OpticalTubeAssembly.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 3599, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\", \"assembly\"]}]",
+        "role": "tool",
+        "tool_call_id": "call_6W6EAztCpcmYJ1aVJkw6FIEB"
+      },
+      {
+        "content": "[{\"id\": \"9SIQT8TOJO\", \"name\": \"Optical Tube Assembly\", \"description\": \"Capturing impressive deep-sky astroimages is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2, the perfect companion to today's top DSLR or astronomical CCD cameras. This fast, wide-field f/2.2 system allows for shorter exposure times compared to traditional f/10 astroimaging, without sacrificing resolution. Because shorter sub-exposure times are possible, your equatorial mount won't need to accurately track over extended periods. The short focal length also lessens equatorial tracking demands. In many cases, autoguiding will not be required.\", \"picture\": \"OpticalTubeAssembly.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 3599, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\", \"assembly\"]}, {\"id\": \"LS4PSXUNUM\", \"name\": \"Red Flashlight\", \"description\": \"This 3-in-1 device features a 3-mode red flashlight, a hand warmer, and a portable power bank for recharging your personal electronics on the go. Whether you use it to light the way at an astronomy star party, a night walk, or wildlife research, ThermoTorch 3 Astro Red's rugged, IPX4-rated design will withstand your everyday activities.\", \"picture\": \"RedFlashlight.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 57, \"nanos\": 80000000}, \"categories\": [\"accessories\", \"flashlights\"]}, {\"id\": \"OLJCESPC7Z\", \"name\": \"National Park Foundation Explorascope\", \"description\": \"The National Park Foundation's (NPF) Explorascope 60AZ is a manual alt-azimuth, refractor telescope perfect for celestial viewing on the go. The NPF Explorascope 60 can view the planets, moon, star clusters and brighter deep sky objects like the Orion Nebula and Andromeda Galaxy.\", \"picture\": \"NationalParkFoundationExplorascope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 101, \"nanos\": 960000000}, \"categories\": [\"telescopes\"]}, {\"id\": \"0PUK6V6EV0\", \"name\": \"Solar System Color Imager\", \"description\": \"You have your new telescope and have observed Saturn and Jupiter. Now you're ready to take the next step and start imaging them. But where do you begin? The NexImage 10 Solar System Imager is the perfect solution.\", \"picture\": \"SolarSystemColorImager.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 175, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\"]}]",
+        "role": "tool",
+        "tool_call_id": "call_oM6ZNvkpTEHHPvee4jcUBiTG"
+      },
+      {
+        "content": "[{\"id\": \"OLJCESPC7Z\", \"name\": \"National Park Foundation Explorascope\", \"description\": \"The National Park Foundation's (NPF) Explorascope 60AZ is a manual alt-azimuth, refractor telescope perfect for celestial viewing on the go. The NPF Explorascope 60 can view the planets, moon, star clusters and brighter deep sky objects like the Orion Nebula and Andromeda Galaxy.\", \"picture\": \"NationalParkFoundationExplorascope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 101, \"nanos\": 960000000}, \"categories\": [\"telescopes\"]}, {\"id\": \"HQTGWGPNH4\", \"name\": \"The Comet Book\", \"description\": \"A 16th-century treatise on comets, created anonymously in Flanders (now northern France) and now held at the Universit\u00e4tsbibliothek Kassel. Commonly known as The Comet Book (or Kometenbuch in German), its full title translates as \\\"Comets and their General and Particular Meanings, According to Ptolome\u00e9, Albumasar, Haly, Aliquind and other Astrologers\\\". The image is from https://publicdomainreview.org/collection/the-comet-book, made available by the Universit\u00e4tsbibliothek Kassel under a CC-BY SA 4.0 license (https://creativecommons.org/licenses/by-sa/4.0/)\", \"picture\": \"TheCometBook.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 0, \"nanos\": 990000000}, \"categories\": [\"books\"]}, {\"id\": \"6E92ZMYYFZ\", \"name\": \"Solar Filter\", \"description\": \"Enhance your viewing experience with EclipSmart Solar Filter for 8\\\" telescopes. With two Velcro straps and four self-adhesive Velcro pads for added safety, you can be assured that the solar filter cannot be accidentally knocked off and will provide Solar Safe, ISO compliant viewing.\", \"picture\": \"SolarFilter.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 69, \"nanos\": 950000000}, \"categories\": [\"accessories\", \"telescopes\"]}, {\"id\": \"LS4PSXUNUM\", \"name\": \"Red Flashlight\", \"description\": \"This 3-in-1 device features a 3-mode red flashlight, a hand warmer, and a portable power bank for recharging your personal electronics on the go. Whether you use it to light the way at an astronomy star party, a night walk, or wildlife research, ThermoTorch 3 Astro Red's rugged, IPX4-rated design will withstand your everyday activities.\", \"picture\": \"RedFlashlight.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 57, \"nanos\": 80000000}, \"categories\": [\"accessories\", \"flashlights\"]}]",
+        "role": "tool",
+        "tool_call_id": "call_bPNOmRUVPgYjatKwFKtG92J9"
+      },
+      {
+        "content": "[{\"id\": \"L9ECAV7KIM\", \"name\": \"Lens Cleaning Kit\", \"description\": \"Wipe away dust, dirt, fingerprints and other particles on your lenses to see clearly with the Lens Cleaning Kit. This cleaning kit works on all glass and optical surfaces, including telescopes, binoculars, spotting scopes, monoculars, microscopes, and even your camera lenses, computer screens, and mobile devices.  The kit comes complete with a retractable lens brush to remove dust particles and dirt and two options to clean smudges and fingerprints off of your optics, pre-moistened lens wipes and a bottled lens cleaning fluid with soft cloth.\", \"picture\": \"LensCleaningKit.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 21, \"nanos\": 950000000}, \"categories\": [\"accessories\"]}, {\"id\": \"1YMWWN1N4O\", \"name\": \"Eclipsmart Travel Refractor Telescope\", \"description\": \"Dedicated white-light solar scope for the observer on the go. The 50mm refracting solar scope uses Solar Safe, ISO compliant, full-aperture glass filter material to ensure the safest view of solar events.  The kit comes complete with everything you need, including the dedicated travel solar scope, a Solar Safe finderscope, tripod, a high quality 20mm (18x) Kellner eyepiece and a nylon backpack to carry everything in.  This Travel Solar Scope makes it easy to share the Sun as well as partial and total solar eclipses with the whole family and offers much higher magnifications than you would otherwise get using handheld solar viewers or binoculars.\", \"picture\": \"EclipsmartTravelRefractorTelescope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 129, \"nanos\": 950000000}, \"categories\": [\"telescopes\", \"travel\"]}, {\"id\": \"LS4PSXUNUM\", \"name\": \"Red Flashlight\", \"description\": \"This 3-in-1 device features a 3-mode red flashlight, a hand warmer, and a portable power bank for recharging your personal electronics on the go. Whether you use it to light the way at an astronomy star party, a night walk, or wildlife research, ThermoTorch 3 Astro Red's rugged, IPX4-rated design will withstand your everyday activities.\", \"picture\": \"RedFlashlight.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 57, \"nanos\": 80000000}, \"categories\": [\"accessories\", \"flashlights\"]}, {\"id\": \"2ZYFJ3GM2N\", \"name\": \"Roof Binoculars\", \"description\": \"This versatile, all-around binocular is a great choice for the trail, the stadium, the arena, or just about anywhere you want a close-up view of the action without sacrificing brightness or detail. It's an especially great companion for nature observation and bird watching, with ED glass that helps you spot the subtlest field markings and a close focus of just 6.5 feet.\", \"picture\": \"RoofBinoculars.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 209, \"nanos\": 950000000}, \"categories\": [\"binoculars\"]}]",
+        "role": "tool",
+        "tool_call_id": "call_5E4aILHtavowSahbsFYN9Wgr"
+      },
+      {
+        "content": "[{\"id\": \"HQTGWGPNH4\", \"name\": \"The Comet Book\", \"description\": \"A 16th-century treatise on comets, created anonymously in Flanders (now northern France) and now held at the Universit\u00e4tsbibliothek Kassel. Commonly known as The Comet Book (or Kometenbuch in German), its full title translates as \\\"Comets and their General and Particular Meanings, According to Ptolome\u00e9, Albumasar, Haly, Aliquind and other Astrologers\\\". The image is from https://publicdomainreview.org/collection/the-comet-book, made available by the Universit\u00e4tsbibliothek Kassel under a CC-BY SA 4.0 license (https://creativecommons.org/licenses/by-sa/4.0/)\", \"picture\": \"TheCometBook.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 0, \"nanos\": 990000000}, \"categories\": [\"books\"]}, {\"id\": \"6E92ZMYYFZ\", \"name\": \"Solar Filter\", \"description\": \"Enhance your viewing experience with EclipSmart Solar Filter for 8\\\" telescopes. With two Velcro straps and four self-adhesive Velcro pads for added safety, you can be assured that the solar filter cannot be accidentally knocked off and will provide Solar Safe, ISO compliant viewing.\", \"picture\": \"SolarFilter.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 69, \"nanos\": 950000000}, \"categories\": [\"accessories\", \"telescopes\"]}, {\"id\": \"0PUK6V6EV0\", \"name\": \"Solar System Color Imager\", \"description\": \"You have your new telescope and have observed Saturn and Jupiter. Now you're ready to take the next step and start imaging them. But where do you begin? The NexImage 10 Solar System Imager is the perfect solution.\", \"picture\": \"SolarSystemColorImager.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 175, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\"]}, {\"id\": \"1YMWWN1N4O\", \"name\": \"Eclipsmart Travel Refractor Telescope\", \"description\": \"Dedicated white-light solar scope for the observer on the go. The 50mm refracting solar scope uses Solar Safe, ISO compliant, full-aperture glass filter material to ensure the safest view of solar events.  The kit comes complete with everything you need, including the dedicated travel solar scope, a Solar Safe finderscope, tripod, a high quality 20mm (18x) Kellner eyepiece and a nylon backpack to carry everything in.  This Travel Solar Scope makes it easy to share the Sun as well as partial and total solar eclipses with the whole family and offers much higher magnifications than you would otherwise get using handheld solar viewers or binoculars.\", \"picture\": \"EclipsmartTravelRefractorTelescope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 129, \"nanos\": 950000000}, \"categories\": [\"telescopes\", \"travel\"]}]",
+        "role": "tool",
+        "tool_call_id": "call_Erigjz6zNZ2T8sn6kPItv0ct"
+      },
+      {
+        "content": "[{\"id\": \"OLJCESPC7Z\", \"name\": \"National Park Foundation Explorascope\", \"description\": \"The National Park Foundation's (NPF) Explorascope 60AZ is a manual alt-azimuth, refractor telescope perfect for celestial viewing on the go. The NPF Explorascope 60 can view the planets, moon, star clusters and brighter deep sky objects like the Orion Nebula and Andromeda Galaxy.\", \"picture\": \"NationalParkFoundationExplorascope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 101, \"nanos\": 960000000}, \"categories\": [\"telescopes\"]}, {\"id\": \"9SIQT8TOJO\", \"name\": \"Optical Tube Assembly\", \"description\": \"Capturing impressive deep-sky astroimages is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2, the perfect companion to today's top DSLR or astronomical CCD cameras. This fast, wide-field f/2.2 system allows for shorter exposure times compared to traditional f/10 astroimaging, without sacrificing resolution. Because shorter sub-exposure times are possible, your equatorial mount won't need to accurately track over extended periods. The short focal length also lessens equatorial tracking demands. In many cases, autoguiding will not be required.\", \"picture\": \"OpticalTubeAssembly.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 3599, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\", \"assembly\"]}, {\"id\": \"2ZYFJ3GM2N\", \"name\": \"Roof Binoculars\", \"description\": \"This versatile, all-around binocular is a great choice for the trail, the stadium, the arena, or just about anywhere you want a close-up view of the action without sacrificing brightness or detail. It's an especially great companion for nature observation and bird watching, with ED glass that helps you spot the subtlest field markings and a close focus of just 6.5 feet.\", \"picture\": \"RoofBinoculars.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 209, \"nanos\": 950000000}, \"categories\": [\"binoculars\"]}, {\"id\": \"L9ECAV7KIM\", \"name\": \"Lens Cleaning Kit\", \"description\": \"Wipe away dust, dirt, fingerprints and other particles on your lenses to see clearly with the Lens Cleaning Kit. This cleaning kit works on all glass and optical surfaces, including telescopes, binoculars, spotting scopes, monoculars, microscopes, and even your camera lenses, computer screens, and mobile devices.  The kit comes complete with a retractable lens brush to remove dust particles and dirt and two options to clean smudges and fingerprints off of your optics, pre-moistened lens wipes and a bottled lens cleaning fluid with soft cloth.\", \"picture\": \"LensCleaningKit.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 21, \"nanos\": 950000000}, \"categories\": [\"accessories\"]}]",
+        "role": "tool",
+        "tool_call_id": "call_X2xZcW7WVEY2rMnVIeHdLrIz"
+      },
+      {
+        "content": "[{\"id\": \"9SIQT8TOJO\", \"name\": \"Optical Tube Assembly\", \"description\": \"Capturing impressive deep-sky astroimages is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2, the perfect companion to today's top DSLR or astronomical CCD cameras. This fast, wide-field f/2.2 system allows for shorter exposure times compared to traditional f/10 astroimaging, without sacrificing resolution. Because shorter sub-exposure times are possible, your equatorial mount won't need to accurately track over extended periods. The short focal length also lessens equatorial tracking demands. In many cases, autoguiding will not be required.\", \"picture\": \"OpticalTubeAssembly.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 3599, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\", \"assembly\"]}, {\"id\": \"0PUK6V6EV0\", \"name\": \"Solar System Color Imager\", \"description\": \"You have your new telescope and have observed Saturn and Jupiter. Now you're ready to take the next step and start imaging them. But where do you begin? The NexImage 10 Solar System Imager is the perfect solution.\", \"picture\": \"SolarSystemColorImager.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 175, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\"]}, {\"id\": \"L9ECAV7KIM\", \"name\": \"Lens Cleaning Kit\", \"description\": \"Wipe away dust, dirt, fingerprints and other particles on your lenses to see clearly with the Lens Cleaning Kit. This cleaning kit works on all glass and optical surfaces, including telescopes, binoculars, spotting scopes, monoculars, microscopes, and even your camera lenses, computer screens, and mobile devices.  The kit comes complete with a retractable lens brush to remove dust particles and dirt and two options to clean smudges and fingerprints off of your optics, pre-moistened lens wipes and a bottled lens cleaning fluid with soft cloth.\", \"picture\": \"LensCleaningKit.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 21, \"nanos\": 950000000}, \"categories\": [\"accessories\"]}, {\"id\": \"1YMWWN1N4O\", \"name\": \"Eclipsmart Travel Refractor Telescope\", \"description\": \"Dedicated white-light solar scope for the observer on the go. The 50mm refracting solar scope uses Solar Safe, ISO compliant, full-aperture glass filter material to ensure the safest view of solar events.  The kit comes complete with everything you need, including the dedicated travel solar scope, a Solar Safe finderscope, tripod, a high quality 20mm (18x) Kellner eyepiece and a nylon backpack to carry everything in.  This Travel Solar Scope makes it easy to share the Sun as well as partial and total solar eclipses with the whole family and offers much higher magnifications than you would otherwise get using handheld solar viewers or binoculars.\", \"picture\": \"EclipsmartTravelRefractorTelescope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 129, \"nanos\": 950000000}, \"categories\": [\"telescopes\", \"travel\"]}]",
+        "role": "tool",
+        "tool_call_id": "call_Xc4UpWgPrRdhQ0nR6oVW9Uri"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"OLJCESPC7Z\"}",
+              "name": "get_product"
+            },
+            "id": "call_2XWiYK4nlFb2gyv05dd3izBZ",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"9SIQT8TOJO\"}",
+              "name": "get_product"
+            },
+            "id": "call_iMaj0zDMtzycikqRVF6ncMjR",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"HQTGWGPNH4\"}",
+              "name": "get_product"
+            },
+            "id": "call_BL4bkx97l8WAJNZcRiK8O2Sn",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"L9ECAV7KIM\"}",
+              "name": "get_product"
+            },
+            "id": "call_CD3EVCi9FF5CysNqz2mJ3nqp",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"6E92ZMYYFZ\"}",
+              "name": "get_product"
+            },
+            "id": "call_4Up2cKH92QqkX0a84M3GVBFF",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"9SIQT8TOJO\"}",
+              "name": "get_product"
+            },
+            "id": "call_yEDCw56dWsoWtU6kIJqCx5jn",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"L9ECAV7KIM\"}",
+              "name": "get_product"
+            },
+            "id": "call_XRarbYzFL7KlvL0n9C00AVoH",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"OLJCESPC7Z\"}",
+              "name": "get_product"
+            },
+            "id": "call_ck6miSnijHdP83iP2EhXJBq3",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"OLJCESPC7Z\"}",
+              "name": "get_product"
+            },
+            "id": "call_ycBOjSJgR58AB4I142J9OnUn",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"LS4PSXUNUM\"}",
+              "name": "get_product"
+            },
+            "id": "call_OJtMllyFwspu5K2Dq2NiQisN",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"9SIQT8TOJO\"}",
+              "name": "get_product"
+            },
+            "id": "call_lJ2d3YwUp4F4hcTB2BpxXBuc",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"L9ECAV7KIM\"}",
+              "name": "get_product"
+            },
+            "id": "call_zpdcl4Eu0EaRIrvo51HLmh5m",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"OLJCESPC7Z\"}",
+              "name": "get_product"
+            },
+            "id": "call_teM0GNEaUIqmjWuUR9WcoopZ",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"6E92ZMYYFZ\"}",
+              "name": "get_product"
+            },
+            "id": "call_USTyUVr25M6sWFGUFvQymBd0",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"LS4PSXUNUM\"}",
+              "name": "get_product"
+            },
+            "id": "call_nuqCrz3vFHJBQbluAmO394kc",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"9SIQT8TOJO\"}",
+              "name": "get_product"
+            },
+            "id": "call_v3mnRotCdSGxOgdWuIOC4UC9",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"9SIQT8TOJO\"}",
+              "name": "get_product"
+            },
+            "id": "call_fX5gzFhglIai7UtS0D3y8q7g",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"LS4PSXUNUM\"}",
+              "name": "get_product"
+            },
+            "id": "call_u79g0lP3kmZHeImLpotUTYd5",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"OLJCESPC7Z\"}",
+              "name": "get_product"
+            },
+            "id": "call_hR8D27S2Yc2rmGzr8bndRzzq",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"id\": \"OLJCESPC7Z\", \"name\": \"National Park Foundation Explorascope\", \"description\": \"The National Park Foundation's (NPF) Explorascope 60AZ is a manual alt-azimuth, refractor telescope perfect for celestial viewing on the go. The NPF Explorascope 60 can view the planets, moon, star clusters and brighter deep sky objects like the Orion Nebula and Andromeda Galaxy.\", \"picture\": \"NationalParkFoundationExplorascope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 101, \"nanos\": 960000000}, \"categories\": [\"telescopes\"]}",
+        "role": "tool",
+        "tool_call_id": "call_2XWiYK4nlFb2gyv05dd3izBZ"
+      },
+      {
+        "content": "{\"id\": \"9SIQT8TOJO\", \"name\": \"Optical Tube Assembly\", \"description\": \"Capturing impressive deep-sky astroimages is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2, the perfect companion to today's top DSLR or astronomical CCD cameras. This fast, wide-field f/2.2 system allows for shorter exposure times compared to traditional f/10 astroimaging, without sacrificing resolution. Because shorter sub-exposure times are possible, your equatorial mount won't need to accurately track over extended periods. The short focal length also lessens equatorial tracking demands. In many cases, autoguiding will not be required.\", \"picture\": \"OpticalTubeAssembly.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 3599, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\", \"assembly\"]}",
+        "role": "tool",
+        "tool_call_id": "call_iMaj0zDMtzycikqRVF6ncMjR"
+      },
+      {
+        "content": "{\"id\": \"HQTGWGPNH4\", \"name\": \"The Comet Book\", \"description\": \"A 16th-century treatise on comets, created anonymously in Flanders (now northern France) and now held at the Universit\u00e4tsbibliothek Kassel. Commonly known as The Comet Book (or Kometenbuch in German), its full title translates as \\\"Comets and their General and Particular Meanings, According to Ptolome\u00e9, Albumasar, Haly, Aliquind and other Astrologers\\\". The image is from https://publicdomainreview.org/collection/the-comet-book, made available by the Universit\u00e4tsbibliothek Kassel under a CC-BY SA 4.0 license (https://creativecommons.org/licenses/by-sa/4.0/)\", \"picture\": \"TheCometBook.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 0, \"nanos\": 990000000}, \"categories\": [\"books\"]}",
+        "role": "tool",
+        "tool_call_id": "call_BL4bkx97l8WAJNZcRiK8O2Sn"
+      },
+      {
+        "content": "{\"id\": \"L9ECAV7KIM\", \"name\": \"Lens Cleaning Kit\", \"description\": \"Wipe away dust, dirt, fingerprints and other particles on your lenses to see clearly with the Lens Cleaning Kit. This cleaning kit works on all glass and optical surfaces, including telescopes, binoculars, spotting scopes, monoculars, microscopes, and even your camera lenses, computer screens, and mobile devices.  The kit comes complete with a retractable lens brush to remove dust particles and dirt and two options to clean smudges and fingerprints off of your optics, pre-moistened lens wipes and a bottled lens cleaning fluid with soft cloth.\", \"picture\": \"LensCleaningKit.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 21, \"nanos\": 950000000}, \"categories\": [\"accessories\"]}",
+        "role": "tool",
+        "tool_call_id": "call_CD3EVCi9FF5CysNqz2mJ3nqp"
+      },
+      {
+        "content": "{\"id\": \"6E92ZMYYFZ\", \"name\": \"Solar Filter\", \"description\": \"Enhance your viewing experience with EclipSmart Solar Filter for 8\\\" telescopes. With two Velcro straps and four self-adhesive Velcro pads for added safety, you can be assured that the solar filter cannot be accidentally knocked off and will provide Solar Safe, ISO compliant viewing.\", \"picture\": \"SolarFilter.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 69, \"nanos\": 950000000}, \"categories\": [\"accessories\", \"telescopes\"]}",
+        "role": "tool",
+        "tool_call_id": "call_4Up2cKH92QqkX0a84M3GVBFF"
+      },
+      {
+        "content": "{\"id\": \"9SIQT8TOJO\", \"name\": \"Optical Tube Assembly\", \"description\": \"Capturing impressive deep-sky astroimages is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2, the perfect companion to today's top DSLR or astronomical CCD cameras. This fast, wide-field f/2.2 system allows for shorter exposure times compared to traditional f/10 astroimaging, without sacrificing resolution. Because shorter sub-exposure times are possible, your equatorial mount won't need to accurately track over extended periods. The short focal length also lessens equatorial tracking demands. In many cases, autoguiding will not be required.\", \"picture\": \"OpticalTubeAssembly.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 3599, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\", \"assembly\"]}",
+        "role": "tool",
+        "tool_call_id": "call_yEDCw56dWsoWtU6kIJqCx5jn"
+      },
+      {
+        "content": "{\"id\": \"L9ECAV7KIM\", \"name\": \"Lens Cleaning Kit\", \"description\": \"Wipe away dust, dirt, fingerprints and other particles on your lenses to see clearly with the Lens Cleaning Kit. This cleaning kit works on all glass and optical surfaces, including telescopes, binoculars, spotting scopes, monoculars, microscopes, and even your camera lenses, computer screens, and mobile devices.  The kit comes complete with a retractable lens brush to remove dust particles and dirt and two options to clean smudges and fingerprints off of your optics, pre-moistened lens wipes and a bottled lens cleaning fluid with soft cloth.\", \"picture\": \"LensCleaningKit.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 21, \"nanos\": 950000000}, \"categories\": [\"accessories\"]}",
+        "role": "tool",
+        "tool_call_id": "call_XRarbYzFL7KlvL0n9C00AVoH"
+      },
+      {
+        "content": "{\"id\": \"OLJCESPC7Z\", \"name\": \"National Park Foundation Explorascope\", \"description\": \"The National Park Foundation's (NPF) Explorascope 60AZ is a manual alt-azimuth, refractor telescope perfect for celestial viewing on the go. The NPF Explorascope 60 can view the planets, moon, star clusters and brighter deep sky objects like the Orion Nebula and Andromeda Galaxy.\", \"picture\": \"NationalParkFoundationExplorascope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 101, \"nanos\": 960000000}, \"categories\": [\"telescopes\"]}",
+        "role": "tool",
+        "tool_call_id": "call_ck6miSnijHdP83iP2EhXJBq3"
+      },
+      {
+        "content": "{\"id\": \"OLJCESPC7Z\", \"name\": \"National Park Foundation Explorascope\", \"description\": \"The National Park Foundation's (NPF) Explorascope 60AZ is a manual alt-azimuth, refractor telescope perfect for celestial viewing on the go. The NPF Explorascope 60 can view the planets, moon, star clusters and brighter deep sky objects like the Orion Nebula and Andromeda Galaxy.\", \"picture\": \"NationalParkFoundationExplorascope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 101, \"nanos\": 960000000}, \"categories\": [\"telescopes\"]}",
+        "role": "tool",
+        "tool_call_id": "call_ycBOjSJgR58AB4I142J9OnUn"
+      },
+      {
+        "content": "{\"id\": \"LS4PSXUNUM\", \"name\": \"Red Flashlight\", \"description\": \"This 3-in-1 device features a 3-mode red flashlight, a hand warmer, and a portable power bank for recharging your personal electronics on the go. Whether you use it to light the way at an astronomy star party, a night walk, or wildlife research, ThermoTorch 3 Astro Red's rugged, IPX4-rated design will withstand your everyday activities.\", \"picture\": \"RedFlashlight.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 57, \"nanos\": 80000000}, \"categories\": [\"accessories\", \"flashlights\"]}",
+        "role": "tool",
+        "tool_call_id": "call_OJtMllyFwspu5K2Dq2NiQisN"
+      },
+      {
+        "content": "{\"id\": \"9SIQT8TOJO\", \"name\": \"Optical Tube Assembly\", \"description\": \"Capturing impressive deep-sky astroimages is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2, the perfect companion to today's top DSLR or astronomical CCD cameras. This fast, wide-field f/2.2 system allows for shorter exposure times compared to traditional f/10 astroimaging, without sacrificing resolution. Because shorter sub-exposure times are possible, your equatorial mount won't need to accurately track over extended periods. The short focal length also lessens equatorial tracking demands. In many cases, autoguiding will not be required.\", \"picture\": \"OpticalTubeAssembly.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 3599, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\", \"assembly\"]}",
+        "role": "tool",
+        "tool_call_id": "call_lJ2d3YwUp4F4hcTB2BpxXBuc"
+      },
+      {
+        "content": "{\"id\": \"L9ECAV7KIM\", \"name\": \"Lens Cleaning Kit\", \"description\": \"Wipe away dust, dirt, fingerprints and other particles on your lenses to see clearly with the Lens Cleaning Kit. This cleaning kit works on all glass and optical surfaces, including telescopes, binoculars, spotting scopes, monoculars, microscopes, and even your camera lenses, computer screens, and mobile devices.  The kit comes complete with a retractable lens brush to remove dust particles and dirt and two options to clean smudges and fingerprints off of your optics, pre-moistened lens wipes and a bottled lens cleaning fluid with soft cloth.\", \"picture\": \"LensCleaningKit.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 21, \"nanos\": 950000000}, \"categories\": [\"accessories\"]}",
+        "role": "tool",
+        "tool_call_id": "call_zpdcl4Eu0EaRIrvo51HLmh5m"
+      },
+      {
+        "content": "{\"id\": \"OLJCESPC7Z\", \"name\": \"National Park Foundation Explorascope\", \"description\": \"The National Park Foundation's (NPF) Explorascope 60AZ is a manual alt-azimuth, refractor telescope perfect for celestial viewing on the go. The NPF Explorascope 60 can view the planets, moon, star clusters and brighter deep sky objects like the Orion Nebula and Andromeda Galaxy.\", \"picture\": \"NationalParkFoundationExplorascope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 101, \"nanos\": 960000000}, \"categories\": [\"telescopes\"]}",
+        "role": "tool",
+        "tool_call_id": "call_teM0GNEaUIqmjWuUR9WcoopZ"
+      },
+      {
+        "content": "{\"id\": \"6E92ZMYYFZ\", \"name\": \"Solar Filter\", \"description\": \"Enhance your viewing experience with EclipSmart Solar Filter for 8\\\" telescopes. With two Velcro straps and four self-adhesive Velcro pads for added safety, you can be assured that the solar filter cannot be accidentally knocked off and will provide Solar Safe, ISO compliant viewing.\", \"picture\": \"SolarFilter.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 69, \"nanos\": 950000000}, \"categories\": [\"accessories\", \"telescopes\"]}",
+        "role": "tool",
+        "tool_call_id": "call_USTyUVr25M6sWFGUFvQymBd0"
+      },
+      {
+        "content": "{\"id\": \"LS4PSXUNUM\", \"name\": \"Red Flashlight\", \"description\": \"This 3-in-1 device features a 3-mode red flashlight, a hand warmer, and a portable power bank for recharging your personal electronics on the go. Whether you use it to light the way at an astronomy star party, a night walk, or wildlife research, ThermoTorch 3 Astro Red's rugged, IPX4-rated design will withstand your everyday activities.\", \"picture\": \"RedFlashlight.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 57, \"nanos\": 80000000}, \"categories\": [\"accessories\", \"flashlights\"]}",
+        "role": "tool",
+        "tool_call_id": "call_nuqCrz3vFHJBQbluAmO394kc"
+      },
+      {
+        "content": "{\"id\": \"9SIQT8TOJO\", \"name\": \"Optical Tube Assembly\", \"description\": \"Capturing impressive deep-sky astroimages is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2, the perfect companion to today's top DSLR or astronomical CCD cameras. This fast, wide-field f/2.2 system allows for shorter exposure times compared to traditional f/10 astroimaging, without sacrificing resolution. Because shorter sub-exposure times are possible, your equatorial mount won't need to accurately track over extended periods. The short focal length also lessens equatorial tracking demands. In many cases, autoguiding will not be required.\", \"picture\": \"OpticalTubeAssembly.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 3599, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\", \"assembly\"]}",
+        "role": "tool",
+        "tool_call_id": "call_v3mnRotCdSGxOgdWuIOC4UC9"
+      },
+      {
+        "content": "{\"id\": \"9SIQT8TOJO\", \"name\": \"Optical Tube Assembly\", \"description\": \"Capturing impressive deep-sky astroimages is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2, the perfect companion to today's top DSLR or astronomical CCD cameras. This fast, wide-field f/2.2 system allows for shorter exposure times compared to traditional f/10 astroimaging, without sacrificing resolution. Because shorter sub-exposure times are possible, your equatorial mount won't need to accurately track over extended periods. The short focal length also lessens equatorial tracking demands. In many cases, autoguiding will not be required.\", \"picture\": \"OpticalTubeAssembly.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 3599, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\", \"assembly\"]}",
+        "role": "tool",
+        "tool_call_id": "call_fX5gzFhglIai7UtS0D3y8q7g"
+      },
+      {
+        "content": "{\"id\": \"LS4PSXUNUM\", \"name\": \"Red Flashlight\", \"description\": \"This 3-in-1 device features a 3-mode red flashlight, a hand warmer, and a portable power bank for recharging your personal electronics on the go. Whether you use it to light the way at an astronomy star party, a night walk, or wildlife research, ThermoTorch 3 Astro Red's rugged, IPX4-rated design will withstand your everyday activities.\", \"picture\": \"RedFlashlight.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 57, \"nanos\": 80000000}, \"categories\": [\"accessories\", \"flashlights\"]}",
+        "role": "tool",
+        "tool_call_id": "call_u79g0lP3kmZHeImLpotUTYd5"
+      },
+      {
+        "content": "{\"id\": \"OLJCESPC7Z\", \"name\": \"National Park Foundation Explorascope\", \"description\": \"The National Park Foundation's (NPF) Explorascope 60AZ is a manual alt-azimuth, refractor telescope perfect for celestial viewing on the go. The NPF Explorascope 60 can view the planets, moon, star clusters and brighter deep sky objects like the Orion Nebula and Andromeda Galaxy.\", \"picture\": \"NationalParkFoundationExplorascope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 101, \"nanos\": 960000000}, \"categories\": [\"telescopes\"]}",
+        "role": "tool",
+        "tool_call_id": "call_hR8D27S2Yc2rmGzr8bndRzzq"
+      }
+    ],
+    "model": "azure/gpt-5.5",
+    "tools": [
+      {
+        "function": {
+          "description": "Add a product (product_id) to the shopping cart for a user (user_id).",
+          "name": "add_to_cart",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              },
+              "quantity": {
+                "default": 1,
+                "type": "integer"
+              },
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id",
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Checkout the user's cart and create an order.\nTakes request in the format {string user_id, string userCurrency, Address address, string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress, string city, string state, string country, string zipCode} and\nCreditCardInfo is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear, int32 creditCardExpirationMonth}",
+          "name": "checkout",
+          "parameters": {
+            "properties": {
+              "checkout_person": {}
+            },
+            "required": [
+              "checkout_person"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Empty the shopping cart for a user.",
+          "name": "empty_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Fetch promotional ads for Astronomy Shop homepage.\nEg : category: `telescopes` or `travel`",
+          "name": "get_ads",
+          "parameters": {
+            "properties": {
+              "category": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "category"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Retrieve the current contents of a user's cart.",
+          "name": "get_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get detailed information about a product using its ID.",
+          "name": "get_product",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get product recommendations for a user.",
+          "name": "get_recommendations",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get estimated shipping cost for a given address.\n`items`: list of {productId, quantity} (a single dict is also accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress, city, state, country, zipCode}.",
+          "name": "get_shipping_quote",
+          "parameters": {
+            "properties": {
+              "address": {},
+              "currency_code": {},
+              "items": {}
+            },
+            "required": [
+              "items",
+              "currency_code",
+              "address"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List supported currencies in Astronomy Shop.",
+          "name": "get_supported_currencies",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List all products available in the Astronomy Shop.",
+          "name": "list_products",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      }
+    ]
+  },
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "audio": null,
+          "content": "Stopped early to avoid exceeding 30 total tool calls.\n\nProgress:\n- Tool calls made: 30\n  - `list_products`: 1\n  - `get_recommendations`: 10 / 10 products\n  - `get_product`: 19 / 40 recommendation entries\n- Completed recommendation-details for first 4 products.\n- Partially completed 5th product: 3 / 4 recommendation details fetched.\n- Remaining products have recommendations known but recommendation details were not fetched via `get_product`.\n\n```json\n{\n  \"status\": \"stopped_early\",\n  \"toolCallsMade\": 30,\n  \"progress\": {\n    \"productsListed\": 10,\n    \"recommendationsFetchedForProducts\": 10,\n    \"recommendationDetailsFetched\": 19,\n    \"totalRecommendationDetailsNeeded\": 40\n  },\n  \"products\": {\n    \"0PUK6V6EV0\": {\n      \"name\": \"Solar System Color Imager\",\n      \"recommendations\": {\n        \"OLJCESPC7Z\": {\n          \"id\": \"OLJCESPC7Z\",\n          \"name\": \"National Park Foundation Explorascope\",\n          \"description\": \"The National Park Foundation's (NPF) Explorascope 60AZ is a manual alt-azimuth, refractor telescope perfect for celestial viewing on the go. The NPF Explorascope 60 can view the planets, moon, star clusters and brighter deep sky objects like the Orion Nebula and Andromeda Galaxy.\",\n          \"picture\": \"NationalParkFoundationExplorascope.jpg\",\n          \"priceUsd\": {\n            \"currencyCode\": \"USD\",\n            \"units\": 101,\n            \"nanos\": 960000000\n          },\n          \"categories\": [\"telescopes\"]\n        },\n        \"9SIQT8TOJO\": {\n          \"id\": \"9SIQT8TOJO\",\n          \"name\": \"Optical Tube Assembly\",\n          \"description\": \"Capturing impressive deep-sky astroimages is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2, the perfect companion to today's top DSLR or astronomical CCD cameras. This fast, wide-field f/2.2 system allows for shorter exposure times compared to traditional f/10 astroimaging, without sacrificing resolution. Because shorter sub-exposure times are possible, your equatorial mount won't need to accurately track over extended periods. The short focal length also lessens equatorial tracking demands. In many cases, autoguiding will not be required.\",\n          \"picture\": \"OpticalTubeAssembly.jpg\",\n          \"priceUsd\": {\n            \"currencyCode\": \"USD\",\n            \"units\": 3599,\n            \"nanos\": 0\n          },\n          \"categories\": [\"accessories\", \"telescopes\", \"assembly\"]\n        },\n        \"HQTGWGPNH4\": {\n          \"id\": \"HQTGWGPNH4\",\n          \"name\": \"The Comet Book\",\n          \"description\": \"A 16th-century treatise on comets, created anonymously in Flanders (now northern France) and now held at the Universit\u00e4tsbibliothek Kassel.\",\n          \"picture\": \"TheCometBook.jpg\",\n          \"priceUsd\": {\n            \"currencyCode\": \"USD\",\n            \"units\": 0,\n            \"nanos\": 990000000\n          },\n          \"categories\": [\"books\"]\n        },\n        \"L9ECAV7KIM\": {\n          \"id\": \"L9ECAV7KIM\",\n          \"name\": \"Lens Cleaning Kit\",\n          \"description\": \"Wipe away dust, dirt, fingerprints and other particles on your lenses to see clearly with the Lens Cleaning Kit.\",\n          \"picture\": \"LensCleaningKit.jpg\",\n          \"priceUsd\": {\n            \"currencyCode\": \"USD\",\n            \"units\": 21,\n            \"nanos\": 950000000\n          },\n          \"categories\": [\"accessories\"]\n        }\n      }\n    },\n    \"1YMWWN1N4O\": {\n      \"name\": \"Eclipsmart Travel Refractor Telescope\",\n      \"recommendations\": {\n        \"6E92ZMYYFZ\": {\n          \"id\": \"6E92ZMYYFZ\",\n          \"name\": \"Solar Filter\",\n          \"description\": \"Enhance your viewing experience with EclipSmart Solar Filter for 8\\\" telescopes.\",\n          \"picture\": \"SolarFilter.jpg\",\n          \"priceUsd\": {\n            \"currencyCode\": \"USD\",\n            \"units\": 69,\n            \"nanos\": 950000000\n          },\n          \"categories\": [\"accessories\", \"telescopes\"]\n        },\n        \"9SIQT8TOJO\": {\n          \"id\": \"9SIQT8TOJO\",\n          \"name\": \"Optical Tube Assembly\",\n          \"description\": \"Capturing impressive deep-sky astroimages is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2.\",\n          \"picture\": \"OpticalTubeAssembly.jpg\",\n          \"priceUsd\": {\n            \"currencyCode\": \"USD\",\n            \"units\": 3599,\n            \"nanos\": 0\n          },\n          \"categories\": [\"accessories\", \"telescopes\", \"assembly\"]\n        },\n        \"L9ECAV7KIM\": {\n          \"id\": \"L9ECAV7KIM\",\n          \"name\": \"Lens Cleaning Kit\",\n          \"description\": \"Wipe away dust, dirt, fingerprints and other particles on your lenses to see clearly with the Lens Cleaning Kit.\",\n          \"picture\": \"LensCleaningKit.jpg\",\n          \"priceUsd\": {\n            \"currencyCode\": \"USD\",\n            \"units\": 21,\n            \"nanos\": 950000000\n          },\n          \"categories\": [\"accessories\"]\n        },\n        \"OLJCESPC7Z\": {\n          \"id\": \"OLJCESPC7Z\",\n          \"name\": \"National Park Foundation Explorascope\",\n          \"description\": \"The National Park Foundation's Explorascope 60AZ is a manual alt-azimuth, refractor telescope.\",\n          \"picture\": \"NationalParkFoundationExplorascope.jpg\",\n          \"priceUsd\": {\n            \"currencyCode\": \"USD\",\n            \"units\": 101,\n            \"nanos\": 960000000\n          },\n          \"categories\": [\"telescopes\"]\n        }\n      }\n    },\n    \"2ZYFJ3GM2N\": {\n      \"name\": \"Roof Binoculars\",\n      \"recommendations\": {\n        \"OLJCESPC7Z\": {\n          \"id\": \"OLJCESPC7Z\",\n          \"name\": \"National Park Foundation Explorascope\",\n          \"picture\": \"NationalParkFoundationExplorascope.jpg\",\n          \"priceUsd\": {\n            \"currencyCode\": \"USD\",\n            \"units\": 101,\n            \"nanos\": 960000000\n          },\n          \"categories\": [\"telescopes\"]\n        },\n        \"LS4PSXUNUM\": {\n          \"id\": \"LS4PSXUNUM\",\n          \"name\": \"Red Flashlight\",\n          \"picture\": \"RedFlashlight.jpg\",\n          \"priceUsd\": {\n            \"currencyCode\": \"USD\",\n            \"units\": 57,\n            \"nanos\": 80000000\n          },\n          \"categories\": [\"accessories\", \"flashlights\"]\n        },\n        \"9SIQT8TOJO\": {\n          \"id\": \"9SIQT8TOJO\",\n          \"name\": \"Optical Tube Assembly\",\n          \"picture\": \"OpticalTubeAssembly.jpg\",\n          \"priceUsd\": {\n            \"currencyCode\": \"USD\",\n            \"units\": 3599,\n            \"nanos\": 0\n          },\n          \"categories\": [\"accessories\", \"telescopes\", \"assembly\"]\n        },\n        \"L9ECAV7KIM\": {\n          \"id\": \"L9ECAV7KIM\",\n          \"name\": \"Lens Cleaning Kit\",\n          \"picture\": \"LensCleaningKit.jpg\",\n          \"priceUsd\": {\n            \"currencyCode\": \"USD\",\n            \"units\": 21,\n            \"nanos\": 950000000\n          },\n          \"categories\": [\"accessories\"]\n        }\n      }\n    },\n    \"66VCHSJNUP\": {\n      \"name\": \"Starsense Explorer Refractor Telescope\",\n      \"recommendations\": {\n        \"OLJCESPC7Z\": {\n          \"id\": \"OLJCESPC7Z\",\n          \"name\": \"National Park Foundation Explorascope\",\n          \"picture\": \"NationalParkFoundationExplorascope.jpg\",\n          \"priceUsd\": {\n            \"currencyCode\": \"USD\",\n            \"units\": 101,\n            \"nanos\": 960000000\n          },\n          \"categories\": [\"telescopes\"]\n        },\n        \"6E92ZMYYFZ\": {\n          \"id\": \"6E92ZMYYFZ\",\n          \"name\": \"Solar Filter\",\n          \"picture\": \"SolarFilter.jpg\",\n          \"priceUsd\": {\n            \"currencyCode\": \"USD\",\n            \"units\": 69,\n            \"nanos\": 950000000\n          },\n          \"categories\": [\"accessories\", \"telescopes\"]\n        },\n        \"LS4PSXUNUM\": {\n          \"id\": \"LS4PSXUNUM\",\n          \"name\": \"Red Flashlight\",\n          \"picture\": \"RedFlashlight.jpg\",\n          \"priceUsd\": {\n            \"currencyCode\": \"USD\",\n            \"units\": 57,\n            \"nanos\": 80000000\n          },\n          \"categories\": [\"accessories\", \"flashlights\"]\n        },\n        \"9SIQT8TOJO\": {\n          \"id\": \"9SIQT8TOJO\",\n          \"name\": \"Optical Tube Assembly\",\n          \"picture\": \"OpticalTubeAssembly.jpg\",\n          \"priceUsd\": {\n            \"currencyCode\": \"USD\",\n            \"units\": 3599,\n            \"nanos\": 0\n          },\n          \"categories\": [\"accessories\", \"telescopes\", \"assembly\"]\n        }\n      }\n    },\n    \"6E92ZMYYFZ\": {\n      \"name\": \"Solar Filter\",\n      \"recommendations\": {\n        \"9SIQT8TOJO\": {\n          \"id\": \"9SIQT8TOJO\",\n          \"name\": \"Optical Tube Assembly\",\n          \"picture\": \"OpticalTubeAssembly.jpg\",\n          \"priceUsd\": {\n            \"currencyCode\": \"USD\",\n            \"units\": 3599,\n            \"nanos\": 0\n          },\n          \"categories\": [\"accessories\", \"telescopes\", \"assembly\"]\n        },\n        \"LS4PSXUNUM\": {\n          \"id\": \"LS4PSXUNUM\",\n          \"name\": \"Red Flashlight\",\n          \"picture\": \"RedFlashlight.jpg\",\n          \"priceUsd\": {\n            \"currencyCode\": \"USD\",\n            \"units\": 57,\n            \"nanos\": 80000000\n          },\n          \"categories\": [\"accessories\", \"flashlights\"]\n        },\n        \"OLJCESPC7Z\": {\n          \"id\": \"OLJCESPC7Z\",\n          \"name\": \"National Park Foundation Explorascope\",\n          \"picture\": \"NationalParkFoundationExplorascope.jpg\",\n          \"priceUsd\": {\n            \"currencyCode\": \"USD\",\n            \"units\": 101,\n            \"nanos\": 960000000\n          },\n          \"categories\": [\"telescopes\"]\n        },\n        \"0PUK6V6EV0\": {\n          \"status\": \"not_fetched_due_to_tool_call_limit\"\n        }\n      }\n    },\n    \"9SIQT8TOJO\": {\n      \"name\": \"Optical Tube Assembly\",\n      \"recommendations\": {\n        \"status\": \"not_fetched_due_to_tool_call_limit\"\n      }\n    },\n    \"HQTGWGPNH4\": {\n      \"name\": \"The Comet Book\",\n      \"recommendations\": {\n        \"status\": \"not_fetched_due_to_tool_call_limit\"\n      }\n    },\n    \"L9ECAV7KIM\": {\n      \"name\": \"Lens Cleaning Kit\",\n      \"recommendations\": {\n        \"status\": \"not_fetched_due_to_tool_call_limit\"\n      }\n    },\n    \"LS4PSXUNUM\": {\n      \"name\": \"Red Flashlight\",\n      \"recommendations\": {\n        \"status\": \"not_fetched_due_to_tool_call_limit\"\n      }\n    },\n    \"OLJCESPC7Z\": {\n      \"name\": \"National Park Foundation Explorascope\",\n      \"recommendations\": {\n        \"status\": \"not_fetched_due_to_tool_call_limit\"\n      }\n    }\n  }\n}\n```",
+          "function_call": null,
+          "refusal": null,
+          "role": "assistant",
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 0,
+    "id": "chatcmpl-fixture",
+    "model": "azure/gpt-5.5",
+    "moderation": null,
+    "object": "chat.completion"
+  }
+}

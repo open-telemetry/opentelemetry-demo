@@ -29,6 +29,7 @@ COPY --from=builder /build/k6 /usr/bin/k6
 WORKDIR /home/k6
 COPY ./src/load-generator/script.js .
 COPY ./src/load-generator/people.json .
+COPY ./src/load-generator/prompts.json .
 COPY --chmod=755 ./src/load-generator/entrypoint.sh .
 
 # entrypoint.sh wraps k6 to support flagd-driven VU restarts

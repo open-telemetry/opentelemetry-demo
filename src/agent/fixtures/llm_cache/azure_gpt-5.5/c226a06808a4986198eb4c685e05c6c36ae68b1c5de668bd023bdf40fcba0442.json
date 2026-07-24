@@ -1,0 +1,342 @@
+{
+  "request": {
+    "messages": [
+      {
+        "content": "You are a helpful assistant. Be concise and accurate.",
+        "role": "system"
+      },
+      {
+        "content": "Fetch ads for 'telescopes', 'travel', 'accessories', and 'books'. For each ad, extract the product_id from the redirect URL. Then call get_product on each ID. Return a table showing which ads point to products that (a) exist, (b) are in the claimed category, and (c) have a price consistent with the promo text. Flag any mismatches.",
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"category\": \"telescopes\"}",
+              "name": "get_ads"
+            },
+            "id": "call_oJFgMIn7WNovOxXJCp49ecIW",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"category\": \"travel\"}",
+              "name": "get_ads"
+            },
+            "id": "call_3cuIZk1HDDHmWjNTwKXhORBh",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"category\": \"accessories\"}",
+              "name": "get_ads"
+            },
+            "id": "call_aFmi6tlFcn0vgw2SAQE7pCkr",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"category\": \"books\"}",
+              "name": "get_ads"
+            },
+            "id": "call_I6BbOP6nkgnt7MPsMP2OYTED",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "[{\"redirectUrl\": \"/product/66VCHSJNUP\", \"text\": \"Starsense Explorer Refractor Telescope for sale. 20% off.\"}]",
+        "role": "tool",
+        "tool_call_id": "call_oJFgMIn7WNovOxXJCp49ecIW"
+      },
+      {
+        "content": "[{\"redirectUrl\": \"/product/1YMWWN1N4O\", \"text\": \"Eclipsmart Travel Refractor Telescope for sale. Buy one, get second kit for free\"}]",
+        "role": "tool",
+        "tool_call_id": "call_3cuIZk1HDDHmWjNTwKXhORBh"
+      },
+      {
+        "content": "[{\"redirectUrl\": \"/product/0PUK6V6EV0\", \"text\": \"Solar System Color Imager for sale. 30% off.\"}, {\"redirectUrl\": \"/product/6E92ZMYYFZ\", \"text\": \"Solar Filter for sale. Buy two, get third one for free\"}, {\"redirectUrl\": \"/product/L9ECAV7KIM\", \"text\": \"Lens Cleaning Kit for sale. Buy one, get second one for free\"}]",
+        "role": "tool",
+        "tool_call_id": "call_aFmi6tlFcn0vgw2SAQE7pCkr"
+      },
+      {
+        "content": "[{\"redirectUrl\": \"/product/1YMWWN1N4O\", \"text\": \"Eclipsmart Travel Refractor Telescope for sale. Buy one, get second kit for free\"}, {\"redirectUrl\": \"/product/L9ECAV7KIM\", \"text\": \"Lens Cleaning Kit for sale. Buy one, get second one for free\"}]",
+        "role": "tool",
+        "tool_call_id": "call_I6BbOP6nkgnt7MPsMP2OYTED"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"66VCHSJNUP\"}",
+              "name": "get_product"
+            },
+            "id": "call_jwA4MavmYaLbmnBFservwoJW",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"1YMWWN1N4O\"}",
+              "name": "get_product"
+            },
+            "id": "call_hoqDNIQfnjnLaKi6c4HD5NkB",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"0PUK6V6EV0\"}",
+              "name": "get_product"
+            },
+            "id": "call_qDFGjEbGYF3MimO2F6SJ5Ql1",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"6E92ZMYYFZ\"}",
+              "name": "get_product"
+            },
+            "id": "call_o7e54PNAA9a28zmnTrzYvo0O",
+            "type": "function"
+          },
+          {
+            "function": {
+              "arguments": "{\"product_id\": \"L9ECAV7KIM\"}",
+              "name": "get_product"
+            },
+            "id": "call_30XfmGEiKCx5G6Wl40HPECFl",
+            "type": "function"
+          }
+        ]
+      },
+      {
+        "content": "{\"id\": \"66VCHSJNUP\", \"name\": \"Starsense Explorer Refractor Telescope\", \"description\": \"The first telescope that uses your smartphone to analyze the night sky and calculate its position in real time. StarSense Explorer is ideal for beginners thanks to the app's user-friendly interface and detailed tutorials. It's like having your own personal tour guide of the night sky\", \"picture\": \"StarsenseExplorer.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 349, \"nanos\": 950000000}, \"categories\": [\"telescopes\"]}",
+        "role": "tool",
+        "tool_call_id": "call_jwA4MavmYaLbmnBFservwoJW"
+      },
+      {
+        "content": "{\"id\": \"1YMWWN1N4O\", \"name\": \"Eclipsmart Travel Refractor Telescope\", \"description\": \"Dedicated white-light solar scope for the observer on the go. The 50mm refracting solar scope uses Solar Safe, ISO compliant, full-aperture glass filter material to ensure the safest view of solar events.  The kit comes complete with everything you need, including the dedicated travel solar scope, a Solar Safe finderscope, tripod, a high quality 20mm (18x) Kellner eyepiece and a nylon backpack to carry everything in.  This Travel Solar Scope makes it easy to share the Sun as well as partial and total solar eclipses with the whole family and offers much higher magnifications than you would otherwise get using handheld solar viewers or binoculars.\", \"picture\": \"EclipsmartTravelRefractorTelescope.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 129, \"nanos\": 950000000}, \"categories\": [\"telescopes\", \"travel\"]}",
+        "role": "tool",
+        "tool_call_id": "call_hoqDNIQfnjnLaKi6c4HD5NkB"
+      },
+      {
+        "content": "{\"id\": \"0PUK6V6EV0\", \"name\": \"Solar System Color Imager\", \"description\": \"You have your new telescope and have observed Saturn and Jupiter. Now you're ready to take the next step and start imaging them. But where do you begin? The NexImage 10 Solar System Imager is the perfect solution.\", \"picture\": \"SolarSystemColorImager.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 175, \"nanos\": 0}, \"categories\": [\"accessories\", \"telescopes\"]}",
+        "role": "tool",
+        "tool_call_id": "call_qDFGjEbGYF3MimO2F6SJ5Ql1"
+      },
+      {
+        "content": "{\"id\": \"6E92ZMYYFZ\", \"name\": \"Solar Filter\", \"description\": \"Enhance your viewing experience with EclipSmart Solar Filter for 8\\\" telescopes. With two Velcro straps and four self-adhesive Velcro pads for added safety, you can be assured that the solar filter cannot be accidentally knocked off and will provide Solar Safe, ISO compliant viewing.\", \"picture\": \"SolarFilter.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 69, \"nanos\": 950000000}, \"categories\": [\"accessories\", \"telescopes\"]}",
+        "role": "tool",
+        "tool_call_id": "call_o7e54PNAA9a28zmnTrzYvo0O"
+      },
+      {
+        "content": "{\"id\": \"L9ECAV7KIM\", \"name\": \"Lens Cleaning Kit\", \"description\": \"Wipe away dust, dirt, fingerprints and other particles on your lenses to see clearly with the Lens Cleaning Kit. This cleaning kit works on all glass and optical surfaces, including telescopes, binoculars, spotting scopes, monoculars, microscopes, and even your camera lenses, computer screens, and mobile devices.  The kit comes complete with a retractable lens brush to remove dust particles and dirt and two options to clean smudges and fingerprints off of your optics, pre-moistened lens wipes and a bottled lens cleaning fluid with soft cloth.\", \"picture\": \"LensCleaningKit.jpg\", \"priceUsd\": {\"currencyCode\": \"USD\", \"units\": 21, \"nanos\": 950000000}, \"categories\": [\"accessories\"]}",
+        "role": "tool",
+        "tool_call_id": "call_30XfmGEiKCx5G6Wl40HPECFl"
+      }
+    ],
+    "model": "azure/gpt-5.5",
+    "tools": [
+      {
+        "function": {
+          "description": "Add a product (product_id) to the shopping cart for a user (user_id).",
+          "name": "add_to_cart",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              },
+              "quantity": {
+                "default": 1,
+                "type": "integer"
+              },
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id",
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Checkout the user's cart and create an order.\nTakes request in the format {string user_id, string userCurrency, Address address, string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress, string city, string state, string country, string zipCode} and\nCreditCardInfo is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear, int32 creditCardExpirationMonth}",
+          "name": "checkout",
+          "parameters": {
+            "properties": {
+              "checkout_person": {}
+            },
+            "required": [
+              "checkout_person"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Empty the shopping cart for a user.",
+          "name": "empty_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Fetch promotional ads for Astronomy Shop homepage.\nEg : category: `telescopes` or `travel`",
+          "name": "get_ads",
+          "parameters": {
+            "properties": {
+              "category": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "category"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Retrieve the current contents of a user's cart.",
+          "name": "get_cart",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get detailed information about a product using its ID.",
+          "name": "get_product",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get product recommendations for a user.",
+          "name": "get_recommendations",
+          "parameters": {
+            "properties": {
+              "product_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "Get estimated shipping cost for a given address.\n`items`: list of {productId, quantity} (a single dict is also accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress, city, state, country, zipCode}.",
+          "name": "get_shipping_quote",
+          "parameters": {
+            "properties": {
+              "address": {},
+              "currency_code": {},
+              "items": {}
+            },
+            "required": [
+              "items",
+              "currency_code",
+              "address"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List supported currencies in Astronomy Shop.",
+          "name": "get_supported_currencies",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      },
+      {
+        "function": {
+          "description": "List all products available in the Astronomy Shop.",
+          "name": "list_products",
+          "parameters": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "function"
+      }
+    ]
+  },
+  "response": {
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "index": 0,
+        "logprobs": null,
+        "message": {
+          "audio": null,
+          "content": "| Claimed ad category | Ad text | Extracted product_id | Product exists? | Product name | Product categories | In claimed category? | Product price | Price consistent with promo text? | Mismatch flags |\n|---|---|---:|---|---|---|---|---:|---|---|\n| telescopes | \u201cStarsense Explorer Refractor Telescope for sale. 20% off.\u201d | `66VCHSJNUP` | Yes | Starsense Explorer Refractor Telescope | `telescopes` | Yes | $349.95 | Not directly verifiable: product record shows base price only, no discount/original price | None detected |\n| travel | \u201cEclipsmart Travel Refractor Telescope for sale. Buy one, get second kit for free\u201d | `1YMWWN1N4O` | Yes | Eclipsmart Travel Refractor Telescope | `telescopes`, `travel` | Yes | $129.95 | Plausible; BOGO promo is not reflected in unit price, so cannot fully verify | None detected |\n| accessories | \u201cSolar System Color Imager for sale. 30% off.\u201d | `0PUK6V6EV0` | Yes | Solar System Color Imager | `accessories`, `telescopes` | Yes | $175.00 | Not directly verifiable: product record shows base price only, no discount/original price | None detected |\n| accessories | \u201cSolar Filter for sale. Buy two, get third one for free\u201d | `6E92ZMYYFZ` | Yes | Solar Filter | `accessories`, `telescopes` | Yes | $69.95 | Plausible; multi-buy promo is not reflected in unit price, so cannot fully verify | None detected |\n| accessories | \u201cLens Cleaning Kit for sale. Buy one, get second one for free\u201d | `L9ECAV7KIM` | Yes | Lens Cleaning Kit | `accessories` | Yes | $21.95 | Plausible; BOGO promo is not reflected in unit price, so cannot fully verify | None detected |\n| books | \u201cEclipsmart Travel Refractor Telescope for sale. Buy one, get second kit for free\u201d | `1YMWWN1N4O` | Yes | Eclipsmart Travel Refractor Telescope | `telescopes`, `travel` | **No** | $129.95 | Plausible; BOGO promo is not reflected in unit price, so cannot fully verify | **Category mismatch: ad shown under books, product is not in books** |\n| books | \u201cLens Cleaning Kit for sale. Buy one, get second one for free\u201d | `L9ECAV7KIM` | Yes | Lens Cleaning Kit | `accessories` | **No** | $21.95 | Plausible; BOGO promo is not reflected in unit price, so cannot fully verify | **Category mismatch: ad shown under books, product is not in books** |\n\nSummary: all referenced products exist. The only clear mismatches are the two `books` ads, which point to non-book products. Promo-price consistency cannot be fully verified because product records expose only current unit price, not promo/original pricing or bundle rules.",
+          "function_call": null,
+          "refusal": null,
+          "role": "assistant",
+          "tool_calls": null
+        }
+      }
+    ],
+    "created": 0,
+    "id": "chatcmpl-fixture",
+    "model": "azure/gpt-5.5",
+    "moderation": null,
+    "object": "chat.completion"
+  }
+}
