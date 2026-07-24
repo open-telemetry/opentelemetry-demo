@@ -7,6 +7,10 @@ the release.
 
 ## Unreleased
 
+* [react-native-app] Catch errors from `placeOrder` in the Cart screen and
+  show an error toast so payment failures are visible to the user instead of
+  being silently dropped
+  ([#3760](https://github.com/open-telemetry/opentelemetry-demo/issues/3760))
 * [react-native-app] Render missing `City` and `State` input fields in `CheckoutForm`
   ([#3754](https://github.com/open-telemetry/opentelemetry-demo/issues/3754))
 * [react-native-app] Fix `ProductCard` price calculation where `nanos` was
