@@ -21,8 +21,8 @@ services:
           memory: 1200M
     restart: unless-stopped
     ports:
-      - "${JAEGER_UI_PORT}"
-      - "${JAEGER_GRPC_PORT}"
+      - "${JAEGER_UI_PORT}:${JAEGER_UI_PORT}"
+      - "${JAEGER_GRPC_PORT}:${JAEGER_GRPC_PORT}"
     environment:
       - JAEGER_HOST
       - JAEGER_GRPC_PORT
@@ -54,7 +54,7 @@ services:
       - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./src/grafana/provisioning/:/etc/grafana/provisioning/
     ports:
-      - "${GRAFANA_PORT}"
+      - "${GRAFANA_PORT}:${GRAFANA_PORT}"
     logging:
       driver: "json-file"
       options:
@@ -122,7 +122,7 @@ services:
         soft: 65536
         hard: 65536
     ports:
-      - "9200"
+      - "${OPENSEARCH_PORT}:${OPENSEARCH_PORT}"
     healthcheck:
       test: curl -s http://localhost:9200/_cluster/health | grep -E '"status":"(green|yellow)"'
       start_period: 10s

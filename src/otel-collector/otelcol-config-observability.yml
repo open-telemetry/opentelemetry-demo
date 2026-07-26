@@ -67,7 +67,28 @@ service:
     traces:
       exporters: [debug, otlp_grpc/jaeger, span_metrics]
     metrics:
-      exporters: [debug, otlp_http/prometheus]
+      receivers:
+        [
+          docker_stats,
+          http_check/frontend-proxy,
+          host_metrics,
+          nginx,
+          otlp,
+          redis,
+          postgresql,
+          prometheus/ad,
+          span_metrics
+        ]
+      processors:
+        [
+          resourcedetection,
+          memory_limiter
+        ]
+      exporters:
+        [
+          debug,
+          otlp_http/prometheus
+        ]
     logs:
       exporters: [debug, opensearch]
     profiles:
