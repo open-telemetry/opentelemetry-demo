@@ -36,6 +36,6 @@
     "@opentelemetry/core": "2.10.0",
     "@opentelemetry/resources": "2.10.0",
     "@opentelemetry/sdk-metrics": "2.10.0",
-    "@opentelemetry/sdk-trace-base": "2.9.0"
+    "@opentelemetry/sdk-trace-base": "2.10.0"
   }
 }
