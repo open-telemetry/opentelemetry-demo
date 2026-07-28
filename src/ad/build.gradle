@@ -7,7 +7,7 @@ plugins {
     id 'com.github.sherter.google-java-format' version '0.9'
     id 'idea'
     id 'application'
-    id 'com.github.ben-manes.versions' version '0.54.0'
+    id 'com.github.ben-manes.versions' version '0.56.0'
 }
 
 repositories {
@@ -20,8 +20,8 @@ group = "ad"
 version = "0.1.0-SNAPSHOT"
 
 def opentelemetryVersion = "1.64.0"
-def opentelemetryInstrumentationVersion = "2.29.0"
-def grpcVersion = "1.82.2"
+def opentelemetryInstrumentationVersion = "2.30.0"
+def grpcVersion = "1.83.0"
 def jacksonVersion = "2.22.1"
 def protocVersion = "4.35.1"
 def prometheusMetricsVersion = "1.8.0"
