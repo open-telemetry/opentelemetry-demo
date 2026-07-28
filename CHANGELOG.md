@@ -7,6 +7,13 @@ the release.
 
 ## Unreleased
 
+* [frontend, react-native-app] Check `response.ok` in the shared `request()`
+  fetch wrapper before treating the body as a success payload. `fetch()` only
+  rejects on network-level failures, so a 4xx/5xx response with a JSON error
+  body (e.g. `{"message": "..."}`) was parsed and returned as if the call had
+  succeeded, letting callers like `placeOrder` proceed down the success path
+  even though the request failed server-side
+  ([#3782](https://github.com/open-telemetry/opentelemetry-demo/issues/3782))
 * [react-native-app] Render missing `City` and `State` input fields in `CheckoutForm`
   ([#3754](https://github.com/open-telemetry/opentelemetry-demo/issues/3754))
 * [react-native-app] Fix `ProductCard` price calculation where `nanos` was
