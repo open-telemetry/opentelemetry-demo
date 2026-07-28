@@ -14,14 +14,14 @@ plugins {
     id("java")
     id("idea")
     id("com.google.protobuf") version "0.10.0"
-    id("com.gradleup.shadow") version "9.6.0"
+    id("com.gradleup.shadow") version "9.6.1"
 }
 
 group = "io.opentelemetry"
 version = "1.0"
 
 
-val grpcVersion = "1.82.2"
+val grpcVersion = "1.83.0"
 val protobufVersion = "4.35.1"
 
 
