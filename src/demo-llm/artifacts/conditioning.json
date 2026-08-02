@@ -1,0 +1,19 @@
+{
+  "system_prompts": {
+    "0": "You are a helpful assistant. Be concise and accurate."
+  },
+  "tool_sets": [
+    [
+      "add_to_cart",
+      "checkout",
+      "empty_cart",
+      "get_ads",
+      "get_cart",
+      "get_product",
+      "get_recommendations",
+      "get_shipping_quote",
+      "get_supported_currencies",
+      "list_products"
+    ]
+  ]
+}

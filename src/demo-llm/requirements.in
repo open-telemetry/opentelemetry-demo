@@ -1,0 +1,9 @@
+torch==2.10.0
+fastapi==0.140.7
+uvicorn==0.41.0
+pydantic==2.13.4
+opentelemetry-api==1.43.0
+opentelemetry-sdk==1.43.0
+opentelemetry-semantic-conventions==0.64b0
+opentelemetry-exporter-otlp-proto-grpc==1.43.0
+opentelemetry-instrumentation-fastapi==0.64b0

@@ -12,6 +12,39 @@
 
 
 services:
+  # Demo LLM
+  demo-llm:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-demo-llm
+    container_name: demo-llm
+    build:
+      context: ./
+      dockerfile: ${DEMO_LLM_DOCKERFILE}
+    deploy:
+      resources:
+        limits:
+          memory: 1500M
+    restart: unless-stopped
+    ports:
+      - "${DEMO_LLM_PORT}"
+    environment:
+      - DEMO_LLM_PORT
+      - DEMO_LLM_MODEL_NAME
+      - DEMO_LLM_DEVICE
+      - DEMO_LLM_THREADS
+      - DEMO_LLM_MAX_RETRIES
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
+      - OTEL_EXPORTER_OTLP_INSECURE=true
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
+      - OTEL_SERVICE_NAME=demo-llm
+    depends_on:
+      otel-collector:
+        condition: service_started
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
   # Agent
   agent:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-agent
@@ -26,8 +59,6 @@ services:
     restart: unless-stopped
     ports:
       - "${AGENT_PORT}"
-    volumes:
-      - ./src/agent/fixtures:/app/fixtures
     environment:
       - TRACELOOP_BASE_URL
       - GRAPH_RECURSION_LIMIT
@@ -40,8 +71,9 @@ services:
       - LLM_MODEL
       - LLM_TLS_VERIFY
       - API_KEY
-      - USE_VCR
-      - VCR_MATCH_THRESHOLD
+      - DEMO_LLM_ENDPOINT
+      - DEMO_LLM_PORT
+      - DEMO_LLM_MODEL_NAME
       - OPENAI_API_KEY=${API_KEY}
       - APPLICATION_ENDPOINT
       - OTEL_EXPORTER_OTLP_INSECURE=true
@@ -53,6 +85,8 @@ services:
       product-catalog:
         condition: service_started
       mcp:
+        condition: service_started
+      demo-llm:
         condition: service_started
     logging:
       driver: "json-file"
