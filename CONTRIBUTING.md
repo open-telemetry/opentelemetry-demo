@@ -48,7 +48,7 @@ through your first contribution.
 
 Your OpenTelemetry buddy is your resource to talk to directly on all aspects of
 contributing to OpenTelemetry: providing context, reviewing PRs, and helping
-those get merged. Buddies will not be available 24/7, but is committed to
+those get merged. Buddies will not be available 24/7, but are committed to
 responding during their normal contribution hours.
 
 ## Setting Up Your Development Environment
