@@ -14,8 +14,8 @@ internal static class OpAmpClientSetup
     private static readonly HashSet<string> IdentifyingKeys = new()
     {
         "service.name",
-        "service.version",
         "service.instance.id",
+        "service.namespace",
     };
 
     public static async Task<OpAmpClient> StartAsync(string endpoint, Resource resource)
