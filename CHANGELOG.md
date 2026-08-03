@@ -7,10 +7,8 @@ the release.
 
 ## Unreleased
 
-* [cart] Report status to the demo's OpAMP server using the
-  `OpenTelemetry.OpAmp.Client`, demonstrating OpAMP as a control plane for an
-  SDK-instrumented application alongside the Collector. Enabled only when
-  running with the observability stack.
+* [cart] Report health to the demo's OpAMP server when running with the
+  observability stack.
   ([#3656](https://github.com/open-telemetry/opentelemetry-demo/pull/3656))
 * [react-native-app] Render missing `City` and `State` input fields in `CheckoutForm`
   ([#3754](https://github.com/open-telemetry/opentelemetry-demo/issues/3754))
