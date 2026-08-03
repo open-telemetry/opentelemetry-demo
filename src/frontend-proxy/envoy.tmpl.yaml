@@ -36,16 +36,8 @@ static_resources:
                       domains:
                         - "*"
                       routes:
-                        - match: { path: "/loadgen" }
-                          redirect: { path_redirect: "/loadgen/" }
-                        - match: { prefix: "/loadgen/" }
-                          route: { cluster: loadgen, prefix_rewrite: "/" }
                         - match: { prefix: "/otlp-http/" }
-                          route:
-                            {
-                              cluster: opentelemetry_collector_http,
-                              prefix_rewrite: "/",
-                            }
+                          route: { cluster: opentelemetry_collector_http, prefix_rewrite: "/" }
                         - match: { path: "/jaeger" }
                           redirect: { path_redirect: "/jaeger/" }
                         - match: { prefix: "/jaeger/" }
@@ -61,18 +53,11 @@ static_resources:
                         - match: { path: "/telemetry" }
                           redirect: { path_redirect: "/telemetry/" }
                         - match: { prefix: "/telemetry/" }
-                          route:
-                            { cluster: telemetry-docs, prefix_rewrite: "/" }
+                          route: { cluster: telemetry-docs, prefix_rewrite: "/" }
                         - match: { prefix: "/images/" }
-                          route:
-                            { cluster: image-provider, prefix_rewrite: "/" }
+                          route: { cluster: image-provider, prefix_rewrite: "/" }
                         - match: { prefix: "/flagservice/" }
-                          route:
-                            {
-                              cluster: flagservice,
-                              prefix_rewrite: "/",
-                              timeout: 0s,
-                            }
+                          route: { cluster: flagservice, prefix_rewrite: "/", timeout: 0s }
                         - match: { prefix: "/feature" }
                           route:
                             cluster: flagd-ui
@@ -248,19 +233,6 @@ static_resources:
                     socket_address:
                       address: ${FLAGD_UI_HOST}
                       port_value: ${FLAGD_UI_PORT}
-    - name: loadgen
-      type: STRICT_DNS
-      lb_policy: ROUND_ROBIN
-      typed_dns_resolver_config: *dns_resolver
-      load_assignment:
-        cluster_name: loadgen
-        endpoints:
-          - lb_endpoints:
-              - endpoint:
-                  address:
-                    socket_address:
-                      address: ${LOCUST_WEB_HOST}
-                      port_value: ${LOCUST_WEB_PORT}
     - name: grafana
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN

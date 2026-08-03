@@ -34,6 +34,30 @@ Examples of valid comments:
   that issue in a comment right before the workaround. If no issue exists yet,
   ask the user to raise one before adding the comment.
 
+## Telemetry conventions
+
+The demo's custom attributes and metrics are defined in `telemetry-schema/`,
+which is an OpenTelemetry Weaver registry. Attributes are grouped by business
+domain under `attributes/`, metrics by service under `metrics/`, and each
+service declares the telemetry it emits under `services/`.
+
+When adding or changing instrumentation:
+
+* Reuse an existing attribute from `telemetry-schema/attributes/` whenever one
+  already describes what you are recording.
+* Prefer an upstream semantic convention attribute over a demo specific one
+  when semconv already defines it. For example, use `user.id` rather than
+  defining a demo attribute for the same value.
+* Define any genuinely new attribute or metric in the registry before using it
+  in code, so that the schema stays the single source of truth.
+* Use the `demo.` prefix for demo specific attributes. Do not use `app.`, it is
+  reserved for client side instrumentations.
+
+The `Weaver check` CI job runs `weaver registry check` against the registry, so
+a definition that is invalid or missing from the schema fails the build. The
+generated documentation is served by the `telemetry-docs` service, see
+`src/telemetry-docs/README.md`.
+
 ## Developer environment
 
 Make sure to follow CONTRIBUTING.md on any contributions.

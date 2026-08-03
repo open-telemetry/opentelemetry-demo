@@ -8,7 +8,7 @@ networks:
 
 services:
   otel-ebpf-profiler:
-    image: otel/opentelemetry-collector-ebpf-profiler:0.151.0
+    image: ${COLLECTOR_EBPF_PROFILER_IMAGE}
     container_name: otel-ebpf-profiler
     command:
       - --config=/etc/ebpf-profiler-config.yaml
@@ -29,7 +29,7 @@ services:
       - otel-collector
 
   firepit:
-    image: ghcr.io/florianl/firepit:v0.1.0
+    image: ${FIREPIT_IMAGE}
     container_name: firepit
     ports:
       - "${FIREPIT_PORT}"

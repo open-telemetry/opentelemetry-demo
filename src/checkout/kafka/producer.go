@@ -5,14 +5,22 @@ package kafka
 import (
 	"fmt"
 	"log/slog"
+	"os"
 
 	"github.com/IBM/sarama"
 )
 
 var (
-	Topic           = "orders"
+	Topic           = getTopic()
 	ProtocolVersion = sarama.V3_0_0_0
 )
+
+func getTopic() string {
+	if topic := os.Getenv("KAFKA_TOPIC"); topic != "" {
+		return topic
+	}
+	return "orders"
+}
 
 type saramaLogger struct {
 	logger *slog.Logger
