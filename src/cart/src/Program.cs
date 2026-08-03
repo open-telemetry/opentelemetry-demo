@@ -15,6 +15,7 @@ using cart.healthcheck;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
@@ -100,6 +101,8 @@ var app = builder.Build();
 
 OpAmpClient opAmpClient = null;
 var opampEndpoint = builder.Configuration["OPAMP_SERVER_ENDPOINT"];
+var opampSkipTlsCertificateVerification =
+    builder.Configuration.GetValue<bool>("OPAMP_SERVER_TLS_INSECURE_SKIP_VERIFY");
 if (!string.IsNullOrEmpty(opampEndpoint))
 {
     var opAmpLogger = app.Services.GetRequiredService<ILogger<Program>>();
@@ -107,7 +110,10 @@ if (!string.IsNullOrEmpty(opampEndpoint))
     {
         var opAmpResourceBuilder = ResourceBuilder.CreateDefault();
         appResourceBuilder(opAmpResourceBuilder);
-        opAmpClient = await OpAmpClientSetup.StartAsync(opampEndpoint, opAmpResourceBuilder.Build());
+        opAmpClient = await OpAmpClientSetup.StartAsync(
+            opampEndpoint,
+            opAmpResourceBuilder.Build(),
+            opampSkipTlsCertificateVerification);
     }
     catch (Exception ex)
     {
@@ -134,5 +140,3 @@ if (opAmpClient != null)
     await opAmpClient.StopAsync();
     opAmpClient.Dispose();
 }
-
-

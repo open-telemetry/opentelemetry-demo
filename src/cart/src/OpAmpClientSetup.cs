@@ -18,7 +18,10 @@ internal static class OpAmpClientSetup
         "service.namespace",
     };
 
-    public static async Task<OpAmpClient> StartAsync(string endpoint, Resource resource)
+    public static async Task<OpAmpClient> StartAsync(
+        string endpoint,
+        Resource resource,
+        bool skipTlsCertificateVerification)
     {
         var client = new OpAmpClient(opts =>
         {
@@ -43,15 +46,16 @@ internal static class OpAmpClientSetup
                 }
             }
 
-            // The demo's OpAMP server uses a self-signed certificate, so skip
-            // certificate validation for the demo's wss:// connection.
-            opts.ClientWebSocketFactory = () =>
+            if (skipTlsCertificateVerification)
             {
-                var socket = new ClientWebSocket();
-                socket.Options.RemoteCertificateValidationCallback =
-                    (sender, certificate, chain, sslPolicyErrors) => true;
-                return socket;
-            };
+                opts.ClientWebSocketFactory = () =>
+                {
+                    var socket = new ClientWebSocket();
+                    socket.Options.RemoteCertificateValidationCallback =
+                        static (_, _, _, _) => true;
+                    return socket;
+                };
+            }
         });
 
         await client.StartAsync();
