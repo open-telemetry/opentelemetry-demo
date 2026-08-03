@@ -87,6 +87,7 @@ Wednesday at 8:30 AM PST and anyone is welcome.
 
 - [Cyrille Le Clerc](https://github.com/cyrille-leclerc), Datadog
 - [Juliano Costa](https://github.com/julianocosta89), Datadog
+- [Shenoy Pratik](https://github.com/ps48), AWS OpenSearch
 
 For more information about the maintainer role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).
 
@@ -94,7 +95,6 @@ For more information about the maintainer role, see the [community repository](h
 
 - [D&#xF3;nal O'Sullivan](https://github.com/osullivandonal), Elastic
 - [Piotr Kie&#x142;kowicz](https://github.com/Kielek), Splunk
-- [Shenoy Pratik](https://github.com/ps48), AWS OpenSearch
 
 For more information about the approver role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver).
 
