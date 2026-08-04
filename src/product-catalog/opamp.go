@@ -24,8 +24,13 @@ var opampIdentifyingKeys = map[string]bool{
 	"service.namespace":   true,
 }
 
+const (
+	opampServerEndpointEnv              = "OPAMP_SERVER_ENDPOINT"
+	opampServerTLSInsecureSkipVerifyEnv = "OPAMP_SERVER_TLS_INSECURE_SKIP_VERIFY"
+)
+
 func startOpAmpClient(ctx context.Context) (client.OpAMPClient, error) {
-	endpoint := os.Getenv("OPAMP_SERVER_ENDPOINT")
+	endpoint := os.Getenv(opampServerEndpointEnv)
 	if endpoint == "" {
 		return nil, nil
 	}
@@ -81,10 +86,10 @@ func startOpAmpClient(ctx context.Context) (client.OpAMPClient, error) {
 		Capabilities:   protobufs.AgentCapabilities_AgentCapabilities_ReportsHealth,
 	}
 
-	skipTLSCertificateVerificationEnv := os.Getenv("OPAMP_SERVER_TLS_INSECURE_SKIP_VERIFY")
+	skipTLSCertificateVerificationEnv := os.Getenv(opampServerTLSInsecureSkipVerifyEnv)
 	skipTLSCertificateVerification, err := strconv.ParseBool(skipTLSCertificateVerificationEnv)
 	if err != nil && skipTLSCertificateVerificationEnv != "" {
-		return nil, fmt.Errorf("failed to parse OPAMP_SERVER_TLS_INSECURE_SKIP_VERIFY: %w", err)
+		return nil, fmt.Errorf("failed to parse %s: %w", opampServerTLSInsecureSkipVerifyEnv, err)
 	}
 	if skipTLSCertificateVerification {
 		// The demo's OpAMP server uses a self-signed certificate for wss://.
