@@ -149,7 +149,7 @@ public class ValkeyCartStore : ICartStore
             }
             else
             {
-                cart = Oteldemo.Cart.Parser.ParseFrom(value);
+                cart = Oteldemo.Cart.Parser.ParseFrom((byte[])value);
                 var existingItem = cart.Items.SingleOrDefault(i => i.ProductId == productId);
                 if (existingItem == null)
                 {
@@ -209,7 +209,7 @@ public class ValkeyCartStore : ICartStore
 
             if (!value.IsNull)
             {
-                return Oteldemo.Cart.Parser.ParseFrom(value);
+                return Oteldemo.Cart.Parser.ParseFrom((byte[])value);
             }
 
             // We decided to return empty cart in cases when user wasn't in the cache before
