@@ -2,7 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     CFPropertyList (3.0.8)
-    activesupport (7.2.3.1)
+    activesupport (7.2.3.2)
       base64
       benchmark (>= 0.3)
       bigdecimal
@@ -76,7 +76,7 @@ GEM
       mutex_m
     i18n (1.15.2)
       concurrent-ruby (~> 1.0)
-    json (2.21.1)
+    json (2.21.2)
     logger (1.7.0)
     minitest (5.27.0)
     molinillo (0.8.0)
