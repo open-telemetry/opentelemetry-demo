@@ -16,6 +16,7 @@ metrics:
     instrument: counter
     unit: "{transaction}"
     stability: stable
+    requirement_level: recommended
     annotations:
       service: payment
     attributes:
