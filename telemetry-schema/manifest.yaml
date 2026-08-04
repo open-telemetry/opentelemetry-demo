@@ -4,7 +4,7 @@
 id: otel-demo
 name: OpenTelemetry Demo Telemetry Schema
 semconv_version: 1.40.0
-schema_url: https://opentelemetry.io/schemas/otel-demo/1.40.0
+schema_url: https://opentelemetry.io/schemas/otel-demo/3.0.0
 schema_base_url: https://opentelemetry.io/schemas
 short_description: OpenTelemetry Demo Application Telemetry Schema
 description: |
