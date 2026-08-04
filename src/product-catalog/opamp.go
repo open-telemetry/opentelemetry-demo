@@ -6,19 +6,22 @@ import (
 	"context"
 	"crypto/rand"
 	"crypto/tls"
+	"encoding/hex"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/open-telemetry/opamp-go/client"
 	"github.com/open-telemetry/opamp-go/client/types"
 	"github.com/open-telemetry/opamp-go/protobufs"
+	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/sdk/resource"
 )
 
 var opampIdentifyingKeys = map[string]bool{
 	"service.name":        true,
-	"service.version":     true,
 	"service.instance.id": true,
+	"service.namespace":   true,
 }
 
 func startOpAmpClient(ctx context.Context) (client.OpAMPClient, error) {
@@ -27,11 +30,17 @@ func startOpAmpClient(ctx context.Context) (client.OpAMPClient, error) {
 		return nil, nil
 	}
 
+	var instanceUID types.InstanceUid
+	if _, err := rand.Read(instanceUID[:]); err != nil {
+		return nil, fmt.Errorf("failed to generate instance uid: %w", err)
+	}
+
 	res, err := resource.New(ctx,
 		resource.WithFromEnv(),
 		resource.WithTelemetrySDK(),
 		resource.WithHost(),
 		resource.WithContainer(),
+		resource.WithAttributes(attribute.String("service.instance.id", hex.EncodeToString(instanceUID[:]))),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to build resource: %w", err)
@@ -66,19 +75,23 @@ func startOpAmpClient(ctx context.Context) (client.OpAMPClient, error) {
 		return nil, fmt.Errorf("failed to set health: %w", err)
 	}
 
-	var instanceUID types.InstanceUid
-	if _, err := rand.Read(instanceUID[:]); err != nil {
-		return nil, fmt.Errorf("failed to generate instance uid: %w", err)
-	}
-
-	err = opampClient.Start(ctx, types.StartSettings{
+	startSettings := types.StartSettings{
 		OpAMPServerURL: endpoint,
 		InstanceUid:    instanceUID,
-		// The demo's OpAMP server uses a self-signed certificate, so skip
-		// certificate validation for the demo's wss:// connection.
-		TLSConfig:    &tls.Config{InsecureSkipVerify: true},
-		Capabilities: protobufs.AgentCapabilities_AgentCapabilities_ReportsHealth,
-	})
+		Capabilities:   protobufs.AgentCapabilities_AgentCapabilities_ReportsHealth,
+	}
+
+	skipTLSCertificateVerificationEnv := os.Getenv("OPAMP_SERVER_TLS_INSECURE_SKIP_VERIFY")
+	skipTLSCertificateVerification, err := strconv.ParseBool(skipTLSCertificateVerificationEnv)
+	if err != nil && skipTLSCertificateVerificationEnv != "" {
+		return nil, fmt.Errorf("failed to parse OPAMP_SERVER_TLS_INSECURE_SKIP_VERIFY: %w", err)
+	}
+	if skipTLSCertificateVerification {
+		// The demo's OpAMP server uses a self-signed certificate for wss://.
+		startSettings.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+	}
+
+	err = opampClient.Start(ctx, startSettings)
 	if err != nil {
 		return nil, fmt.Errorf("failed to start OpAMP client: %w", err)
 	}
