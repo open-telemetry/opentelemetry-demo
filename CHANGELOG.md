@@ -9,6 +9,20 @@ time, `make chlog-update VERSION=x.x.x` folds those fragments into a new
 version section directly below the marker and deletes them.
 
 <!-- next version -->
+## Unreleased
+
+* [react-native-app] Fix `SessionGateway.setSessionValue` to await `getSession()`,
+  preventing stored session corruption and loss of `userId`
+  ([#3765](https://github.com/open-telemetry/opentelemetry-demo/issues/3765))
+* [cart] Report health to the demo's OpAMP server when running with the
+  observability stack.
+  ([#3656](https://github.com/open-telemetry/opentelemetry-demo/pull/3656))
+* [cart, product-catalog] Report health from SDK-instrumented services to the
+  demo's OpAMP server when running with the observability stack.
+  ([#3656](https://github.com/open-telemetry/opentelemetry-demo/pull/3656),
+  [#3807](https://github.com/open-telemetry/opentelemetry-demo/pull/3807))
+* [react-native-app] Render missing `City` and `State` input fields in `CheckoutForm`
+  ([#3754](https://github.com/open-telemetry/opentelemetry-demo/issues/3754))
 
 ## 3.0.0
 
@@ -84,11 +98,6 @@ version section directly below the marker and deletes them.
   no runtime file writes of their own; other services write files at
   startup and need dedicated tmpfs mounts before they can be switched over
   ([#1731](https://github.com/open-telemetry/opentelemetry-demo/issues/1731))
-* [product-catalog] Report status to the demo's OpAMP server using the
-  `opamp-go` client, demonstrating OpAMP as a control plane for an
-  SDK-instrumented application alongside the Collector. Enabled only when
-  running with the observability stack.
-  ([#3807](https://github.com/open-telemetry/opentelemetry-demo/pull/3807))
 * [llm] Increase `llm` service memory limit from 50M to 100M to prevent a
   startup restart loop caused by the container exceeding its memory limit
   ([#2944](https://github.com/open-telemetry/opentelemetry-demo/issues/2944))
