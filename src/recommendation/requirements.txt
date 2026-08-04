@@ -303,9 +303,9 @@ openfeature-hooks-opentelemetry==0.3.1 \
     --hash=sha256:6d399244a6f5408f474ae2b0233257e30d8a041d635f71c2727c033dbfe1fe92 \
     --hash=sha256:ef4cddec8d328a9b6b738494de3aed623a9917d3b83b2e6b0377e4d2a21d3b22
     # via -r requirements.in
-openfeature-provider-flagd==0.5.1 \
-    --hash=sha256:07c2be3c38436c7894aa953cb2f1f3000a3c5a0b589ffe054dcd1031a58e051f \
-    --hash=sha256:0b2a4fbf0a0da3f9bcfc1f694069e58619e2ca0a44c2a9a1dde7c80e9928d473
+openfeature-provider-flagd==0.5.2 \
+    --hash=sha256:6c10288afcca00a5889df475ddc03c09be53ba6d8f8060f1ba23e38fbc557054 \
+    --hash=sha256:c87ad5e4481a56c3233c9419abc4a4c36ec3523e5345720f43b8b8ea4a7f927b
     # via -r requirements.in
 openfeature-sdk==0.9.0 \
     --hash=sha256:511fd66fe66807e95ea5a18074b559bc18657fe8294be0de4668201e297e98ad \
