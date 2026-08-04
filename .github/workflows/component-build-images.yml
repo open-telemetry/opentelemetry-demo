@@ -138,6 +138,10 @@ jobs:
             tag_suffix: opamp-server
             context: ./
             setup-qemu: true
+          - file: ./src/otel-collector/Dockerfile
+            tag_suffix: otel-collector
+            context: ./
+            setup-qemu: true
           - file: ./src/mcp/Dockerfile
             tag_suffix: mcp
             context: ./
@@ -256,6 +260,33 @@ jobs:
           fi
 
           FILES_CHANGED=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- "$DOCKERFILE_DIR")
+
+          ENV_KEYS=""
+          case "${DOCKERFILE}" in
+            ./src/ad/Dockerfile|./src/fraud-detection/Dockerfile|./src/kafka/Dockerfile)
+              ENV_KEYS="OTEL_JAVA_AGENT_VERSION"
+              ;;
+            ./src/currency/Dockerfile)
+              ENV_KEYS="OPENTELEMETRY_CPP_VERSION"
+              ;;
+            ./src/opamp-server/Dockerfile)
+              ENV_KEYS="OPAMP_GO_REF"
+              ;;
+            ./src/otel-collector/Dockerfile)
+              ENV_KEYS="COLLECTOR_CONTRIB_IMAGE OPAMP_SUPERVISOR_IMAGE"
+              ;;
+          esac
+
+          if [ -n "$ENV_KEYS" ] && git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- .env | grep -q '^.env$'; then
+            for key in $ENV_KEYS; do
+              if git diff -U0 "$BASE_SHA" "$HEAD_SHA" -- .env | grep -qE "^[+-]${key}="; then
+                FILES_CHANGED="${FILES_CHANGED}
+.env:${key}"
+                break
+              fi
+            done
+          fi
+
           if [ -z "$FILES_CHANGED" ]; then
             echo "No changes in ${DOCKERFILE_DIR}, skipping build for ${DOCKERFILE}."
             echo "skip=true" >> "$GITHUB_OUTPUT"
@@ -300,6 +331,8 @@ jobs:
             OTEL_JAVA_AGENT_VERSION=${{ env.OTEL_JAVA_AGENT_VERSION }}
             OPENTELEMETRY_CPP_VERSION=${{ env.OPENTELEMETRY_CPP_VERSION }}
             OPAMP_GO_REF=${{ env.OPAMP_GO_REF }}
+            COLLECTOR_CONTRIB_IMAGE=${{ env.COLLECTOR_CONTRIB_IMAGE }}
+            OPAMP_SUPERVISOR_IMAGE=${{ env.OPAMP_SUPERVISOR_IMAGE }}
           tags: |
             ${{ inputs.dockerhub_repo }}:${{ inputs.version }}-${{matrix.file_tag.tag_suffix }}
             ${{ inputs.dockerhub_repo }}:latest-${{matrix.file_tag.tag_suffix }}

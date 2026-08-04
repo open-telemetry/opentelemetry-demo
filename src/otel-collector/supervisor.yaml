@@ -1,0 +1,38 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+server:
+  endpoint: wss://opamp-server:4320/v1/opamp
+  tls:
+    insecure_skip_verify: true
+
+capabilities:
+  reports_effective_config: true
+  reports_health: true
+  accepts_remote_config: true
+  reports_remote_config: true
+  reports_available_components: true
+
+storage:
+  directory: /etc/otel/supervisor-data
+
+agent:
+  executable: /collector-entrypoint.sh
+  instance_id: 00000000-0000-7000-8000-000000000001
+  passthrough_logs: true
+  automatic_config_rollback: true
+  config_apply_timeout: 30s
+  config_files:
+    - /etc/otelcol-config.yml
+    - /etc/otelcol-config-full.yml
+    - /etc/otelcol-config-observability.yml
+    - /etc/otelcol-config-extras.yml
+  startup_fallback_configs:
+    - /etc/otelcol-config.yml
+    - /etc/otelcol-config-full.yml
+    - /etc/otelcol-config-observability.yml
+    - /etc/otelcol-config-extras.yml
+  description:
+    non_identifying_attributes:
+      deployment.environment.name: demo
+      demo.collector.role: gateway
