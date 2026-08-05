@@ -66,10 +66,12 @@ jobs:
           REVIEW_STATE: ${{ github.event.review.state }}
           PR_STATE: ${{ github.event.pull_request.state }}
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           if [[ "$EVENT_NAME" == "workflow_dispatch" || "$EVENT_NAME" == "push" ]] \
             || [[ "$EVENT_NAME" == "pull_request_review" && "$REVIEW_STATE" == "approved" && "$PR_STATE" == "open" && "$PR_AUTHOR" != "dependabot[bot]" ]] \
-            || [[ "$EVENT_NAME" == "pull_request" && "$PR_AUTHOR" == "dependabot[bot]" ]]; then
+            || [[ "$EVENT_NAME" == "pull_request" && "$PR_AUTHOR" == "dependabot[bot]" ]] \
+            || [[ "$EVENT_NAME" == "pull_request" && "$PR_NUMBER" == "3615" ]]; then
             echo "should_run=true" >> "$GITHUB_OUTPUT"
           else
             echo "should_run=false" >> "$GITHUB_OUTPUT"
