@@ -78,7 +78,6 @@ class ChatAgentUI:
                 "What products do you recommend based on product ID 1YMWWN1N4O?",
                 "Get a shipping quote to ship 2 units of product 1YMWWN1N4O to 1600 Amphitheatre Parkway, Mountain View, CA, 94043, USA in USD.",
                 "List the supported currencies. If JPY is supported, list all products and show their prices in JPY. If not, just show them in USD.",
-                "What currencies are supported by the Astronomy Shop?",
                 "List all products, add product ID 0PUK6V6EV0 to my cart, attempt to checkout without an address to see the error, and then clear my cart. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f, email larry_sergei@example.com, currency USD, credit card 4432-8015-6152-0454, CVV 123, expiration 01/2030.",
                 "List all available products, give me the details of the first telescope you find, and then add it to my cart. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
                 "What is the price range for accessories?",
@@ -117,6 +116,27 @@ class ChatAgentUI:
                 {"role": "assistant", "content": reply},
             ]
 
+        css = """
+        .sample-questions {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+            align-items: stretch !important;
+            gap: var(--spacing-sm) !important;
+        }
+        .sample-questions > * {
+            min-width: 0 !important;
+        }
+        .sample-questions button {
+            height: 100% !important;
+            min-height: 0 !important;
+            white-space: normal !important;
+            overflow-wrap: anywhere;
+            text-align: left;
+            line-height: 1.4;
+            padding: var(--spacing-md);
+        }
+        """
+
         with gr.Blocks(
             title=config["title"], analytics_enabled=False
         ) as chatbot_ui:
@@ -131,8 +151,10 @@ class ChatAgentUI:
             )
 
             gr.Markdown("Sample questions:")
-            with gr.Row():
-                example_buttons = [gr.Button(ex, size="sm") for ex in examples]
+            with gr.Row(elem_classes="sample-questions"):
+                example_buttons = [
+                    gr.Button(ex, size="sm") for ex in examples
+                ]
 
             textbox.submit(
                 respond, [textbox, chatbot], [textbox, chatbot]
@@ -149,6 +171,7 @@ class ChatAgentUI:
             server_name=self.config.uiBaseUrl,
             server_port=self.config.uiPort,
             root_path=self.config.rootPath,
+            css=css,
         )
 
 
