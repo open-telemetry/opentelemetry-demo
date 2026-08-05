@@ -20,6 +20,32 @@ The application can be run with the rest of the demo using the documented
 
 Now you can visit `localhost:4000` from your browser.
 
+## Scheduler
+
+The `Scheduler` tab automates failure scenarios, so that an incident appears and
+resolves on its own while the demo is left running. This is useful when
+presenting a backend that shows issues at a "recent" point in time.
+
+Each interval the scheduler activates at most one randomly picked flag. It
+chooses a hold duration between the configured minimum and maximum, then chooses
+an offset so that the whole activation fits inside the interval. When the hold
+expires the flag is set back to `off`.
+
+The following can be configured:
+
+* **Interval** — how often an activation happens.
+* **Minimum and maximum duration** — bounds on how long a flag stays active. A
+  random value in between is picked each time. The maximum has to fit within the
+  interval.
+* **Flags** — which flags may be picked. A flag is offered when it has an `off`
+  variant to return to and at least one other variant to switch to. That leaves
+  out `loadGeneratorVUs`, which is a tuning knob rather than a failure scenario,
+  and `loadGeneratorTraffic`, whose resting state is `on`.
+* **Seed** — makes the sequence of picks reproducible. When left empty a seed is
+  generated and reported back, so a run can be repeated later.
+
+Stopping the scheduler reverts a flag that is still being held active.
+
 ## Programmatic use through the API
 
 This service exposes a REST API to ease its usage in a programmatic way for

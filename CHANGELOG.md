@@ -10,6 +10,12 @@ the release.
 * [react-native-app] Fix `SessionGateway.setSessionValue` to await `getSession()`,
   preventing stored session corruption and loss of `userId`
   ([#3765](https://github.com/open-telemetry/opentelemetry-demo/issues/3765))
+* [flagd-ui] Add a scheduler that periodically activates a randomly picked
+  feature flag for a random duration, so failure scenarios appear and disappear
+  on their own without external tooling. Configurable interval, minimum and
+  maximum hold duration, flag selection, and an optional seed for reproducible
+  patterns
+  ([#2375](https://github.com/open-telemetry/opentelemetry-demo/issues/2375))
 * [cart] Report health to the demo's OpAMP server when running with the
   observability stack.
   ([#3656](https://github.com/open-telemetry/opentelemetry-demo/pull/3656))
