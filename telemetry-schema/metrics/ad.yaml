@@ -8,6 +8,7 @@ metrics:
     instrument: counter
     unit: "{ad_request}"
     stability: stable
+    requirement_level: recommended
     annotations:
       service: ad
     attributes:

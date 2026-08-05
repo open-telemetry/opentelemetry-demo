@@ -10,6 +10,9 @@ the release.
 * [react-native-app] Fix `SessionGateway.setSessionValue` to await `getSession()`,
   preventing stored session corruption and loss of `userId`
   ([#3765](https://github.com/open-telemetry/opentelemetry-demo/issues/3765))
+* [cart] Report health to the demo's OpAMP server when running with the
+  observability stack.
+  ([#3656](https://github.com/open-telemetry/opentelemetry-demo/pull/3656))
 * [react-native-app] Render missing `City` and `State` input fields in `CheckoutForm`
   ([#3754](https://github.com/open-telemetry/opentelemetry-demo/issues/3754))
 * [react-native-app] Fix `ProductCard` price calculation where `nanos` was
