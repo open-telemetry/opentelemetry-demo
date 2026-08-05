@@ -56,6 +56,9 @@ class ChatAgentUI:
             "title": "Astronomy Shop agent",
             "description": "Ask me about the astronomy shop application, I will ask for more information if needed.",
             "examples": [
+                "Show all available products in the store.",
+                "What currencies are supported by the Astronomy Shop?",
+                "What current promotions are available on binoculars?",
                 "Add product 9SIQT8TOJO (1 unit), 66VCHSJNUP (2 units), and HQTGWGPNH4 (5 units) to my cart. Get the cart subtotal in USD. Then get the exact same subtotal quoted in EUR, GBP, JPY, and INR. Present the five values in a table, and compute the implied USD->target exchange rate for each. Flag any rate that looks off by more than 5% from a reasonable real-world rate. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f.",
                 "I want to buy the Eclipsmart Travel Refractor Telescope model (product ID 1YMWWN1N4O). Find it, add two of them to my cart, get a shipping quote to 11501 Alterra Pkwy, Austin, TX 73301, USA, and then check out using USD. My user ID is 3f8a2e10-49fe-4b2b-9c7e-0a1b2c3d4e5f, email larry_sergei@example.com, credit card 4432-8015-6152-0454, CVV 123, expiration 01/2030.",
                 "Browse binoculars, recommend the best option, and check if the price can be shown in JPY currency.",
