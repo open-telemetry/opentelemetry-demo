@@ -8,6 +8,7 @@ metrics:
     instrument: histogram
     unit: "s"
     stability: stable
+    requirement_level: recommended
     note: Histogram measuring the latency of cart add item operations with custom bucket boundaries from 5ms to 10s
     annotations:
       service: cart
@@ -17,6 +18,7 @@ metrics:
     instrument: histogram
     unit: "s"
     stability: stable
+    requirement_level: recommended
     note: Histogram measuring the latency of cart retrieval operations with custom bucket boundaries from 5ms to 10s
     annotations:
       service: cart

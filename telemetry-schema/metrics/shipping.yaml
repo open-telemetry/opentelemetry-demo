@@ -8,6 +8,7 @@ metrics:
     instrument: counter
     unit: "{item}"
     stability: stable
+    requirement_level: recommended
     note: Counts the number of items being shipped
     annotations:
       service: shipping
