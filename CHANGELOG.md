@@ -7,8 +7,14 @@ the release.
 
 ## Unreleased
 
+* [cart] Report health to the demo's OpAMP server when running with the
+  observability stack.
+  ([#3656](https://github.com/open-telemetry/opentelemetry-demo/pull/3656))
 * [react-native-app] Render missing `City` and `State` input fields in `CheckoutForm`
   ([#3754](https://github.com/open-telemetry/opentelemetry-demo/issues/3754))
+
+## 3.0.0
+
 * [react-native-app] Fix `ProductCard` price calculation where `nanos` was
   divided by `100_000_000` (1e8) instead of `1_000_000_000` (1e9), inflating
   the displayed price
