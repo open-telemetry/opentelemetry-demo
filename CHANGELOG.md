@@ -15,7 +15,7 @@ the release.
   ([#3656](https://github.com/open-telemetry/opentelemetry-demo/pull/3656))
 * [chatbot] Report health to the demo's OpAMP server when running with the
   agentic and observability stacks.
-  ([#XXXX](https://github.com/open-telemetry/opentelemetry-demo/pull/XXXX))
+  ([#3808](https://github.com/open-telemetry/opentelemetry-demo/pull/3808))
 * [react-native-app] Render missing `City` and `State` input fields in `CheckoutForm`
   ([#3754](https://github.com/open-telemetry/opentelemetry-demo/issues/3754))
 
