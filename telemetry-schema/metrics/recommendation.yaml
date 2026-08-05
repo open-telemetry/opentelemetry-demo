@@ -16,6 +16,7 @@ metrics:
     instrument: counter
     unit: "{recommendation}"
     stability: stable
+    requirement_level: recommended
     annotations:
       service: recommendation
     attributes:
