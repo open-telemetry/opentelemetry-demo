@@ -7,6 +7,13 @@ the release.
 
 ## Unreleased
 
+* [frontend, react-native-app] Check `response.ok` in the shared `request()`
+  fetch wrapper before treating the body as a success payload. `fetch()` only
+  rejects on network-level failures, so a 4xx/5xx response with a JSON error
+  body (e.g. `{"message": "..."}`) was parsed and returned as if the call had
+  succeeded, letting callers like `placeOrder` proceed down the success path
+  even though the request failed server-side
+  ([#3782](https://github.com/open-telemetry/opentelemetry-demo/issues/3782))
 * [cart] Report health to the demo's OpAMP server when running with the
   observability stack.
   ([#3656](https://github.com/open-telemetry/opentelemetry-demo/pull/3656))
