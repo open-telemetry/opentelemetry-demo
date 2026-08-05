@@ -3,14 +3,14 @@
 
 defmodule FlagdUi.Scheduler do
   @moduledoc """
-  Scheduler module. This module runs a GenServer that periodically activates a
-  randomly picked feature flag for a random amount of time, so that failure
+  Scheduler module. This module runs a GenServer that periodically activates
+  randomly picked feature flags for a random amount of time, so that failure
   scenarios appear and disappear on their own without external tooling.
 
-  Each interval activates at most one flag. A hold duration is picked between
-  the configured minimum and maximum, then an offset is picked so that the whole
-  activation fits inside the interval. Providing a seed makes the sequence of
-  picks reproducible across runs.
+  Each interval activates up to `:concurrency` distinct flags. Every activation
+  gets its own hold duration picked between the configured minimum and maximum,
+  and its own offset, so that the whole activation fits inside the interval.
+  Providing a seed makes the sequence of picks reproducible across runs.
 
   A flag is picked first and one of its selected variants second, so a flag with
   many variants is no more likely to be chosen than a flag with one.
@@ -33,6 +33,7 @@ defmodule FlagdUi.Scheduler do
     interval_ms: 15 * 60 * 1000,
     min_duration_ms: 60 * 1000,
     max_duration_ms: 3 * 60 * 1000,
+    concurrency: 1,
     seed: nil,
     flags: :all
   }
@@ -57,6 +58,7 @@ defmodule FlagdUi.Scheduler do
 
   `:flags` is either `:all` or a map of flag name to the list of variants that
   may be activated, so that a flag can take part with only some of its variants.
+  `:concurrency` is how many distinct flags may be activated per interval.
   Returns `{:error, reason}` when the configuration is not usable.
   """
   def start_schedule(server \\ Scheduler, config),
@@ -107,9 +109,8 @@ defmodule FlagdUi.Scheduler do
        rand: nil,
        seed_used: nil,
        interval_count: 0,
-       next_trigger_at: nil,
-       next_up: nil,
-       active: nil,
+       next_up: [],
+       active: %{},
        history: [],
        timers: %{}
      }}
@@ -129,7 +130,7 @@ defmodule FlagdUi.Scheduler do
         new_state =
           state
           |> cancel_timers()
-          |> clear_active()
+          |> revert_all()
           |> Map.merge(%{
             config: config,
             running: true,
@@ -157,13 +158,8 @@ defmodule FlagdUi.Scheduler do
     new_state =
       state
       |> cancel_timers()
-      |> clear_active()
-      |> Map.merge(%{
-        running: false,
-        epoch: state.epoch + 1,
-        next_trigger_at: nil,
-        next_up: nil
-      })
+      |> revert_all()
+      |> Map.merge(%{running: false, epoch: state.epoch + 1, next_up: []})
 
     Logger.info("Flag scheduler stopped")
 
@@ -186,10 +182,13 @@ defmodule FlagdUi.Scheduler do
         {:trigger, epoch, flag, variant, duration_ms},
         %{running: true, epoch: epoch} = state
       ) do
-    # A hold that fills the whole interval expires as the next one begins, and
-    # the two timers can be processed in either order, so retire any activation
-    # still on the books before taking over.
-    state = state |> cancel_timer(:revert) |> clear_active()
+    # The same flag can be picked again while a previous hold is still running,
+    # so retire that activation before this one takes the flag over.
+    state =
+      state
+      |> drop_timer({:trigger, flag})
+      |> cancel_timer({:revert, flag})
+      |> finish_activation(flag)
 
     GenServer.cast(state.storage, {:write, flag, variant})
 
@@ -197,21 +196,19 @@ defmodule FlagdUi.Scheduler do
 
     revert_timer = Process.send_after(self(), {:revert, epoch, flag}, duration_ms)
 
+    activation = %{
+      flag: flag,
+      variant: variant,
+      duration_ms: duration_ms,
+      started_at: DateTime.utc_now(),
+      until: System.monotonic_time(:millisecond) + duration_ms
+    }
+
     new_state =
       state
-      |> drop_timer(:trigger)
-      |> put_timer(:revert, revert_timer)
-      |> Map.merge(%{
-        next_trigger_at: nil,
-        next_up: nil,
-        active: %{
-          flag: flag,
-          variant: variant,
-          duration_ms: duration_ms,
-          started_at: DateTime.utc_now(),
-          until: System.monotonic_time(:millisecond) + duration_ms
-        }
-      })
+      |> put_timer({:revert, flag}, revert_timer)
+      |> Map.update!(:active, &Map.put(&1, flag, activation))
+      |> Map.update!(:next_up, fn pending -> Enum.reject(pending, &(&1.flag == flag)) end)
 
     broadcast(new_state)
 
@@ -220,7 +217,11 @@ defmodule FlagdUi.Scheduler do
 
   @impl true
   def handle_info({:revert, epoch, flag}, %{running: true, epoch: epoch} = state) do
-    new_state = state |> drop_timer(:revert) |> revert_flag(flag) |> finish_activation(flag)
+    new_state =
+      state
+      |> drop_timer({:revert, flag})
+      |> revert_flag(flag)
+      |> finish_activation(flag)
 
     broadcast(new_state)
 
@@ -232,7 +233,7 @@ defmodule FlagdUi.Scheduler do
 
   @impl true
   def terminate(_reason, state) do
-    clear_active(state)
+    revert_all(state)
 
     :ok
   end
@@ -245,31 +246,65 @@ defmodule FlagdUi.Scheduler do
       |> put_timer(:interval, interval_timer)
       |> Map.update!(:interval_count, &(&1 + 1))
 
-    case eligible_flags(state) do
-      [] ->
-        Logger.warning("Flag scheduler has no eligible flags selected, skipping interval")
+    flags = eligible_flags(state)
+    wanted = min(config.concurrency, length(flags))
 
-        %{state | next_trigger_at: nil, next_up: nil}
+    if wanted == 0 do
+      Logger.warning("Flag scheduler has no eligible flags selected, skipping interval")
 
-      flags ->
-        {duration_ms, rand} =
-          random_in_range(config.min_duration_ms, config.max_duration_ms, state.rand)
+      %{state | next_up: []}
+    else
+      log_shortfall(config.concurrency, wanted)
 
-        {offset_ms, rand} = random_in_range(0, config.interval_ms - duration_ms, rand)
-        {{flag, variants}, rand} = random_element(flags, rand)
-        {variant, rand} = random_element(variants, rand)
+      {plans, rand} = plan_activations(flags, wanted, config, state.rand)
 
-        trigger_timer =
-          Process.send_after(self(), {:trigger, epoch, flag, variant, duration_ms}, offset_ms)
-
-        state
-        |> put_timer(:trigger, trigger_timer)
-        |> Map.merge(%{
-          rand: rand,
-          next_trigger_at: System.monotonic_time(:millisecond) + offset_ms,
-          next_up: %{flag: flag, variant: variant, duration_ms: duration_ms}
-        })
+      Enum.reduce(plans, %{state | rand: rand, next_up: []}, &schedule_activation(&2, &1, epoch))
     end
+  end
+
+  defp log_shortfall(wanted, available) when wanted > available,
+    do:
+      Logger.warning(
+        "Flag scheduler was asked for #{wanted} concurrent flags but only #{available} are selected"
+      )
+
+  defp log_shortfall(_wanted, _available), do: :ok
+
+  defp schedule_activation(state, plan, epoch) do
+    %{flag: flag, variant: variant, duration_ms: duration_ms, offset_ms: offset_ms} = plan
+
+    timer =
+      Process.send_after(self(), {:trigger, epoch, flag, variant, duration_ms}, offset_ms)
+
+    pending = %{
+      flag: flag,
+      variant: variant,
+      duration_ms: duration_ms,
+      at: System.monotonic_time(:millisecond) + offset_ms
+    }
+
+    state
+    |> put_timer({:trigger, flag}, timer)
+    |> Map.update!(:next_up, &(&1 ++ [pending]))
+  end
+
+  defp plan_activations(_flags, 0, _config, rand), do: {[], rand}
+  defp plan_activations([], _wanted, _config, rand), do: {[], rand}
+
+  defp plan_activations(flags, wanted, config, rand) do
+    {{flag, variants} = picked, rand} = random_element(flags, rand)
+
+    {duration_ms, rand} =
+      random_in_range(config.min_duration_ms, config.max_duration_ms, rand)
+
+    {offset_ms, rand} = random_in_range(0, config.interval_ms - duration_ms, rand)
+    {variant, rand} = random_element(variants, rand)
+
+    plan = %{flag: flag, variant: variant, duration_ms: duration_ms, offset_ms: offset_ms}
+
+    {rest, rand} = plan_activations(List.delete(flags, picked), wanted - 1, config, rand)
+
+    {[plan | rest], rand}
   end
 
   defp eligible_flags(%{storage: storage, config: %{flags: selection}}) do
@@ -290,10 +325,12 @@ defmodule FlagdUi.Scheduler do
     end
   end
 
-  defp clear_active(%{active: nil} = state), do: state
-
-  defp clear_active(%{active: active} = state) do
-    state |> revert_flag(active.flag) |> finish_activation(active.flag)
+  defp revert_all(state) do
+    state.active
+    |> Map.keys()
+    |> Enum.reduce(state, fn flag, acc ->
+      acc |> revert_flag(flag) |> finish_activation(flag)
+    end)
   end
 
   defp revert_flag(%{storage: storage} = state, flag) do
@@ -304,11 +341,19 @@ defmodule FlagdUi.Scheduler do
     state
   end
 
-  defp finish_activation(%{active: %{flag: flag} = active} = state, flag) do
-    %{state | active: nil, history: Enum.take([active | state.history], @history_limit)}
-  end
+  defp finish_activation(state, flag) do
+    case Map.pop(state.active, flag) do
+      {nil, _active} ->
+        state
 
-  defp finish_activation(state, _flag), do: state
+      {activation, active} ->
+        %{
+          state
+          | active: active,
+            history: Enum.take([activation | state.history], @history_limit)
+        }
+    end
+  end
 
   defp validate(config) do
     cond do
@@ -323,6 +368,9 @@ defmodule FlagdUi.Scheduler do
 
       config.max_duration_ms > config.interval_ms ->
         {:error, "Maximum duration must fit within the interval"}
+
+      config.concurrency < 1 ->
+        {:error, "At least one flag has to be activated per interval"}
 
       config.flags != :all and selected_variant_count(config.flags) == 0 ->
         {:error, "Select at least one flag variant to schedule"}
@@ -359,7 +407,7 @@ defmodule FlagdUi.Scheduler do
 
   defp random_in_range(min, _max, rand), do: {min, rand}
 
-  defp put_timer(state, key, ref), do: put_in(state, [:timers, key], ref)
+  defp put_timer(state, key, ref), do: Map.update!(state, :timers, &Map.put(&1, key, ref))
 
   defp drop_timer(state, key), do: Map.update!(state, :timers, &Map.delete(&1, key))
 
@@ -385,17 +433,21 @@ defmodule FlagdUi.Scheduler do
   defp variant_names(_), do: []
 
   defp public_state(state) do
-    Map.take(state, [
+    state
+    |> Map.take([
       :config,
       :running,
       :seed_used,
       :interval_count,
-      :next_trigger_at,
       :next_up,
-      :active,
       :history
     ])
+    |> Map.put(:active, state.active |> Map.values() |> Enum.sort_by(& &1.flag))
+    |> Map.put(:next_trigger_at, next_trigger_at(state.next_up))
   end
+
+  defp next_trigger_at([]), do: nil
+  defp next_trigger_at(pending), do: pending |> Enum.map(& &1.at) |> Enum.min()
 
   defp broadcast(state) do
     Phoenix.PubSub.broadcast(FlagdUi.PubSub, @topic, {:scheduler_state, public_state(state)})

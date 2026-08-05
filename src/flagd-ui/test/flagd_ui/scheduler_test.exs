@@ -150,7 +150,7 @@ defmodule FlagdUi.SchedulerTest do
 
       assert :ok = Scheduler.start_schedule(scheduler, immediate_config())
 
-      assert_receive {:scheduler_state, %{active: %{flag: flag, variant: variant}}}, 2000
+      assert_receive {:scheduler_state, %{active: [%{flag: flag, variant: variant}]}}, 2000
 
       assert flag in Enum.map(
                Storage |> GenServer.call(:read) |> Scheduler.schedulable_flags(),
@@ -169,7 +169,7 @@ defmodule FlagdUi.SchedulerTest do
 
       assert :ok = Scheduler.start_schedule(scheduler, config)
 
-      assert_receive {:scheduler_state, %{active: %{flag: flag}}}, 5000
+      assert_receive {:scheduler_state, %{active: [%{flag: flag}]}}, 5000
 
       assert eventually(fn -> variant_of(flag) == "off" end, 2000)
       assert Enum.any?(Scheduler.state(scheduler).history, &(&1.flag == flag))
@@ -182,21 +182,23 @@ defmodule FlagdUi.SchedulerTest do
       # interval boundary, which previously left the earlier flag switched on.
       assert :ok = Scheduler.start_schedule(scheduler, immediate_config(%{seed: 99}))
 
-      assert_receive {:scheduler_state, %{active: %{flag: _}}}, 2000
+      assert_receive {:scheduler_state, %{active: [%{flag: _}]}}, 2000
 
       Process.sleep(3500)
 
       assert :ok = Scheduler.stop_schedule(scheduler)
 
-      config = GenServer.call(Storage, :read)
+      state = Scheduler.state(scheduler)
+      touched = state.history |> Enum.map(& &1.flag) |> Enum.uniq()
 
-      left_on =
-        config
-        |> Scheduler.schedulable_flags()
-        |> Enum.map(fn {name, _variants} -> name end)
-        |> Enum.filter(&(get_in(config, ["flags", &1, "defaultVariant"]) != "off"))
+      # More than one activation means an interval boundary was crossed, which is
+      # where the stranded flag used to appear.
+      assert length(touched) > 1
+      assert state.active == []
 
-      assert left_on == []
+      for flag <- touched do
+        assert eventually(fn -> variant_of(flag) == "off" end)
+      end
     end
 
     test "stopping reverts a flag that is still active" do
@@ -212,14 +214,14 @@ defmodule FlagdUi.SchedulerTest do
                  })
                )
 
-      assert_receive {:scheduler_state, %{active: %{flag: flag}}}, 2000
+      assert_receive {:scheduler_state, %{active: [%{flag: flag}]}}, 2000
 
       assert :ok = Scheduler.stop_schedule(scheduler)
 
       state = Scheduler.state(scheduler)
 
       refute state.running
-      assert state.active == nil
+      assert state.active == []
       assert eventually(fn -> variant_of(flag) == "off" end)
     end
 
@@ -230,7 +232,7 @@ defmodule FlagdUi.SchedulerTest do
 
       assert :ok = Scheduler.start_schedule(scheduler, config)
 
-      assert_receive {:scheduler_state, %{active: %{flag: "adHighCpu", variant: "on"}}}, 2000
+      assert_receive {:scheduler_state, %{active: [%{flag: "adHighCpu", variant: "on"}]}}, 2000
     end
 
     test "restricts activations to the selected variants of a flag" do
@@ -241,7 +243,7 @@ defmodule FlagdUi.SchedulerTest do
       assert :ok = Scheduler.start_schedule(scheduler, config)
 
       for _ <- 1..4 do
-        assert_receive {:scheduler_state, %{active: %{flag: "cartFailure", variant: variant}}},
+        assert_receive {:scheduler_state, %{active: [%{flag: "cartFailure", variant: variant}]}},
                        2000
 
         assert variant in ["10%", "25%"]
@@ -255,21 +257,97 @@ defmodule FlagdUi.SchedulerTest do
 
       assert :ok = Scheduler.start_schedule(scheduler, config)
 
-      assert_receive {:scheduler_state, %{active: %{flag: "adFailure", variant: "on"}}}, 2000
+      assert_receive {:scheduler_state, %{active: [%{flag: "adFailure", variant: "on"}]}}, 2000
     end
 
     test "the same seed picks the same flag and variant" do
       first = start_scheduler(SeedSchedulerA)
 
       assert :ok = Scheduler.start_schedule(first, immediate_config(%{seed: 1234}))
-      assert_receive {:scheduler_state, %{active: %{flag: flag, variant: variant}}}, 2000
+      assert_receive {:scheduler_state, %{active: [%{flag: flag, variant: variant}]}}, 2000
       assert :ok = Scheduler.stop_schedule(first)
 
       second = start_scheduler(SeedSchedulerB)
 
       assert :ok = Scheduler.start_schedule(second, immediate_config(%{seed: 1234}))
-      assert_receive {:scheduler_state, %{active: %{flag: ^flag, variant: ^variant}}}, 2000
+      assert_receive {:scheduler_state, %{active: [%{flag: ^flag, variant: ^variant}]}}, 2000
       assert :ok = Scheduler.stop_schedule(second)
+    end
+
+    # A hold as long as the interval keeps every activation in place for the
+    # whole test, so concurrent holds can be observed without racing a revert.
+    defp held_config(overrides) do
+      immediate_config(
+        Map.merge(
+          %{interval_ms: 60_000, min_duration_ms: 60_000, max_duration_ms: 60_000},
+          overrides
+        )
+      )
+    end
+
+    test "holds several distinct flags active at once" do
+      scheduler = start_scheduler(ConcurrentScheduler)
+
+      assert :ok = Scheduler.start_schedule(scheduler, held_config(%{concurrency: 3}))
+
+      assert_receive {:scheduler_state, %{active: [_, _, _] = active}}, 2000
+
+      flags = Enum.map(active, & &1.flag)
+
+      assert length(Enum.uniq(flags)) == 3
+
+      for flag <- flags do
+        assert eventually(fn -> variant_of(flag) != "off" end)
+      end
+    end
+
+    test "never activates the same flag twice within an interval" do
+      scheduler = start_scheduler(DistinctScheduler)
+
+      assert :ok = Scheduler.start_schedule(scheduler, held_config(%{concurrency: 5}))
+
+      state = Scheduler.state(scheduler)
+      flags = Enum.map(state.next_up, & &1.flag) ++ Enum.map(state.active, & &1.flag)
+
+      assert length(flags) == 5
+      assert length(Enum.uniq(flags)) == 5
+    end
+
+    test "asks for more concurrency than there are flags and settles for what exists" do
+      scheduler = start_scheduler(OverAskScheduler)
+
+      config = held_config(%{concurrency: 99, flags: %{"adFailure" => ["on"]}})
+
+      assert :ok = Scheduler.start_schedule(scheduler, config)
+
+      assert_receive {:scheduler_state, %{active: [%{flag: "adFailure"}]}}, 2000
+    end
+
+    test "reverts every concurrently held flag when stopped" do
+      scheduler = start_scheduler(ConcurrentStopScheduler)
+
+      assert :ok = Scheduler.start_schedule(scheduler, held_config(%{concurrency: 4}))
+
+      assert_receive {:scheduler_state, %{active: [_, _, _, _] = active}}, 2000
+
+      flags = Enum.map(active, & &1.flag)
+
+      assert :ok = Scheduler.stop_schedule(scheduler)
+
+      assert Scheduler.state(scheduler).active == []
+
+      for flag <- flags do
+        assert eventually(fn -> variant_of(flag) == "off" end)
+      end
+    end
+
+    test "rejects a concurrency below one" do
+      scheduler = start_scheduler(BadConcurrencyScheduler)
+
+      assert {:error, message} =
+               Scheduler.start_schedule(scheduler, immediate_config(%{concurrency: 0}))
+
+      assert message =~ "At least one flag has to be activated"
     end
 
     test "reports the seed it used when none was given" do

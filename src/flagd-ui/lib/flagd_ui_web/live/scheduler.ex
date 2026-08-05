@@ -48,7 +48,7 @@ defmodule FlagdUiWeb.Scheduler do
                 {if @scheduler.running, do: "Scheduler running", else: "Scheduler stopped"}
               </p>
               <p class="text-sm">
-                Activates one randomly picked flag per interval, then turns it back off.
+                Activates randomly picked flags each interval, then turns them back off.
               </p>
             </div>
             <span class={[
@@ -70,20 +70,21 @@ defmodule FlagdUiWeb.Scheduler do
               <dd>{@scheduler.seed_used}</dd>
             </div>
             <div>
-              <dt class="font-medium text-gray-400">Currently active</dt>
+              <dt class="font-medium text-gray-400">
+                Currently active ({length(@scheduler.active)} of {@scheduler.config.concurrency})
+              </dt>
               <dd>
-                <%= if @scheduler.active do %>
-                  <span class="text-warning">
-                    {@scheduler.active.flag} = {@scheduler.active.variant}
-                  </span>
-                  <span class="text-gray-400">
-                    ({format_ms(@scheduler.active.until - @now)} left)
-                  </span>
-                <% else %>
-                  <span class="text-gray-400">
-                    nothing &mdash; next in {next_trigger_label(@scheduler, @now)}
-                  </span>
-                <% end %>
+                <ul :if={@scheduler.active != []}>
+                  <li :for={activation <- @scheduler.active}>
+                    <span class="text-warning">{activation.flag} = {activation.variant}</span>
+                    <span class="text-gray-400">
+                      ({format_ms(activation.until - @now)} left)
+                    </span>
+                  </li>
+                </ul>
+                <span :if={@scheduler.active == []} class="text-gray-400">
+                  nothing &mdash; next in {next_trigger_label(@scheduler, @now)}
+                </span>
               </dd>
             </div>
           </dl>
@@ -116,6 +117,14 @@ defmodule FlagdUiWeb.Scheduler do
                 label="Maximum duration (seconds)"
                 value={@form["max_duration_seconds"]}
                 min="1"
+              />
+              <CoreComponents.input
+                name="concurrency"
+                type="number"
+                label="Flags at once (per interval)"
+                value={@form["concurrency"]}
+                min="1"
+                max={max(length(@available), 1)}
               />
               <CoreComponents.input
                 name="seed"
@@ -344,6 +353,7 @@ defmodule FlagdUiWeb.Scheduler do
       "interval_seconds" => div(config.interval_ms, 1000),
       "min_duration_seconds" => div(config.min_duration_ms, 1000),
       "max_duration_seconds" => div(config.max_duration_ms, 1000),
+      "concurrency" => config.concurrency,
       "seed" => config.seed,
       "variants" => selected
     }
@@ -360,7 +370,10 @@ defmodule FlagdUiWeb.Scheduler do
   defp merge_params(form, params) do
     form
     |> Map.merge(
-      Map.take(params, ~w(interval_seconds min_duration_seconds max_duration_seconds seed))
+      Map.take(
+        params,
+        ~w(interval_seconds min_duration_seconds max_duration_seconds concurrency seed)
+      )
     )
     |> put_selection(Map.get(params, "variants", %{}))
   end
@@ -369,28 +382,41 @@ defmodule FlagdUiWeb.Scheduler do
     with {:ok, interval} <- parse_seconds(form["interval_seconds"], "Interval"),
          {:ok, min_duration} <- parse_seconds(form["min_duration_seconds"], "Minimum duration"),
          {:ok, max_duration} <- parse_seconds(form["max_duration_seconds"], "Maximum duration"),
+         {:ok, concurrency} <- parse_count(form["concurrency"], "Flags at once"),
          {:ok, seed} <- parse_seed(form["seed"]) do
       {:ok,
        %{
          interval_ms: interval * 1000,
          min_duration_ms: min_duration * 1000,
          max_duration_ms: max_duration * 1000,
+         concurrency: concurrency,
          seed: seed,
          flags: selection(form)
        }}
     end
   end
 
-  defp parse_seconds(value, label) when is_integer(value), do: parse_seconds("#{value}", label)
+  defp parse_seconds(value, label),
+    do:
+      parse_positive_integer(
+        value,
+        "#{label} must be a whole number of seconds greater than zero"
+      )
 
-  defp parse_seconds(value, label) when is_binary(value) do
+  defp parse_count(value, label),
+    do: parse_positive_integer(value, "#{label} must be a whole number greater than zero")
+
+  defp parse_positive_integer(value, message) when is_integer(value),
+    do: parse_positive_integer("#{value}", message)
+
+  defp parse_positive_integer(value, message) when is_binary(value) do
     case Integer.parse(String.trim(value)) do
-      {seconds, ""} when seconds > 0 -> {:ok, seconds}
-      _ -> {:error, "#{label} must be a whole number of seconds greater than zero"}
+      {parsed, ""} when parsed > 0 -> {:ok, parsed}
+      _ -> {:error, message}
     end
   end
 
-  defp parse_seconds(_value, label), do: {:error, "#{label} is required"}
+  defp parse_positive_integer(_value, message), do: {:error, message}
 
   defp parse_seed(nil), do: {:ok, nil}
   defp parse_seed(value) when is_integer(value), do: {:ok, value}
