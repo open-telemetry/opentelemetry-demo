@@ -163,22 +163,46 @@ defmodule FlagdUiWeb.Scheduler do
               </p>
 
               <div class="max-h-96 overflow-y-auto">
-                <label
+                <div
                   :for={{name, variants} <- @available}
-                  class="flex items-start gap-3 border-b border-gray-700 py-2 last:border-b-0"
+                  class="border-b border-gray-700 py-2 last:border-b-0"
                 >
-                  <input
-                    type="checkbox"
-                    name="flags[]"
-                    value={name}
-                    checked={name in @form["flags"]}
-                    class="mt-1"
-                  />
-                  <span class="text-sm">
-                    <span class="font-medium">{name}</span>
-                    <span class="block text-xs text-gray-400">{Enum.join(variants, ", ")}</span>
-                  </span>
-                </label>
+                  <%= case variants do %>
+                    <% [single] -> %>
+                      <label class="flex items-center gap-3 text-sm">
+                        <input
+                          type="checkbox"
+                          name={"variants[#{name}][]"}
+                          value={single}
+                          checked={selected?(@form, name, single)}
+                        />
+                        <span class="font-medium">{name}</span>
+                      </label>
+                    <% _ -> %>
+                      <div class="mb-1 flex items-center justify-between">
+                        <span class="text-sm font-medium">{name}</span>
+                        <button
+                          type="button"
+                          class="text-xs text-blue-400 hover:text-blue-300"
+                          phx-click="toggle_flag"
+                          phx-value-flag={name}
+                        >
+                          toggle all
+                        </button>
+                      </div>
+                      <div class="flex flex-wrap gap-x-4 gap-y-1 pl-1">
+                        <label :for={variant <- variants} class="flex items-center gap-2 text-xs">
+                          <input
+                            type="checkbox"
+                            name={"variants[#{name}][]"}
+                            value={variant}
+                            checked={selected?(@form, name, variant)}
+                          />
+                          <span class="text-gray-300">{variant}</span>
+                        </label>
+                      </div>
+                  <% end %>
+                </div>
               </div>
             </div>
           </div>
@@ -237,13 +261,28 @@ defmodule FlagdUiWeb.Scheduler do
   end
 
   def handle_event("select_all", _, socket) do
-    names = Enum.map(socket.assigns.available, fn {name, _} -> name end)
-
-    {:noreply, assign(socket, form: Map.put(socket.assigns.form, "flags", names))}
+    {:noreply,
+     assign(socket,
+       form: put_selection(socket.assigns.form, all_variants(socket.assigns.available))
+     )}
   end
 
   def handle_event("select_none", _, socket),
-    do: {:noreply, assign(socket, form: Map.put(socket.assigns.form, "flags", []))}
+    do: {:noreply, assign(socket, form: put_selection(socket.assigns.form, %{}))}
+
+  def handle_event("toggle_flag", %{"flag" => flag}, socket) do
+    %{available: available, form: form} = socket.assigns
+
+    variants = Enum.find_value(available, [], fn {name, variants} -> name == flag && variants end)
+
+    chosen =
+      case Map.get(selection(form), flag, []) do
+        [] -> variants
+        _any -> []
+      end
+
+    {:noreply, assign(socket, form: put_selection(form, Map.put(selection(form), flag, chosen)))}
+  end
 
   def handle_event("start", params, socket) do
     form = merge_params(socket.assigns.form, params)
@@ -297,7 +336,7 @@ defmodule FlagdUiWeb.Scheduler do
 
     selected =
       case config.flags do
-        :all -> Enum.map(available, fn {name, _} -> name end)
+        :all -> all_variants(available)
         flags -> flags
       end
 
@@ -306,16 +345,24 @@ defmodule FlagdUiWeb.Scheduler do
       "min_duration_seconds" => div(config.min_duration_ms, 1000),
       "max_duration_seconds" => div(config.max_duration_ms, 1000),
       "seed" => config.seed,
-      "flags" => selected
+      "variants" => selected
     }
   end
+
+  defp all_variants(available), do: Map.new(available)
+
+  defp selection(form), do: Map.get(form, "variants", %{})
+
+  defp put_selection(form, selection), do: Map.put(form, "variants", selection)
+
+  defp selected?(form, flag, variant), do: variant in Map.get(selection(form), flag, [])
 
   defp merge_params(form, params) do
     form
     |> Map.merge(
       Map.take(params, ~w(interval_seconds min_duration_seconds max_duration_seconds seed))
     )
-    |> Map.put("flags", Map.get(params, "flags", []))
+    |> put_selection(Map.get(params, "variants", %{}))
   end
 
   defp build_config(form) do
@@ -329,7 +376,7 @@ defmodule FlagdUiWeb.Scheduler do
          min_duration_ms: min_duration * 1000,
          max_duration_ms: max_duration * 1000,
          seed: seed,
-         flags: form["flags"]
+         flags: selection(form)
        }}
     end
   end

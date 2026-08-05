@@ -119,9 +119,16 @@ defmodule FlagdUi.SchedulerTest do
 
     test "rejects an empty flag selection", %{scheduler: scheduler} do
       assert {:error, message} =
-               Scheduler.start_schedule(scheduler, immediate_config(%{flags: []}))
+               Scheduler.start_schedule(scheduler, immediate_config(%{flags: %{}}))
 
-      assert message =~ "at least one flag"
+      assert message =~ "at least one flag variant"
+    end
+
+    test "rejects a selection where every flag has no variants", %{scheduler: scheduler} do
+      config = immediate_config(%{flags: %{"adFailure" => [], "cartFailure" => []}})
+
+      assert {:error, message} = Scheduler.start_schedule(scheduler, config)
+      assert message =~ "at least one flag variant"
     end
 
     test "leaves the scheduler stopped after a rejected configuration", %{scheduler: scheduler} do
@@ -219,9 +226,36 @@ defmodule FlagdUi.SchedulerTest do
     test "restricts activations to the selected flags" do
       scheduler = start_scheduler(SelectionScheduler)
 
-      assert :ok = Scheduler.start_schedule(scheduler, immediate_config(%{flags: ["adHighCpu"]}))
+      config = immediate_config(%{flags: %{"adHighCpu" => ["on"]}})
+
+      assert :ok = Scheduler.start_schedule(scheduler, config)
 
       assert_receive {:scheduler_state, %{active: %{flag: "adHighCpu", variant: "on"}}}, 2000
+    end
+
+    test "restricts activations to the selected variants of a flag" do
+      scheduler = start_scheduler(VariantSelectionScheduler)
+
+      config = immediate_config(%{flags: %{"cartFailure" => ["10%", "25%"]}})
+
+      assert :ok = Scheduler.start_schedule(scheduler, config)
+
+      for _ <- 1..4 do
+        assert_receive {:scheduler_state, %{active: %{flag: "cartFailure", variant: variant}}},
+                       2000
+
+        assert variant in ["10%", "25%"]
+      end
+    end
+
+    test "ignores selected variants a flag no longer offers" do
+      scheduler = start_scheduler(StaleVariantScheduler)
+
+      config = immediate_config(%{flags: %{"adFailure" => ["on"], "cartFailure" => ["200%"]}})
+
+      assert :ok = Scheduler.start_schedule(scheduler, config)
+
+      assert_receive {:scheduler_state, %{active: %{flag: "adFailure", variant: "on"}}}, 2000
     end
 
     test "the same seed picks the same flag and variant" do

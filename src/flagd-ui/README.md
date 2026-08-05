@@ -37,10 +37,16 @@ The following can be configured:
 * **Minimum and maximum duration** — bounds on how long a flag stays active. A
   random value in between is picked each time. The maximum has to fit within the
   interval.
-* **Flags** — which flags may be picked. A flag is offered when it has an `off`
-  variant to return to and at least one other variant to switch to. That leaves
-  out `loadGeneratorVUs`, which is a tuning knob rather than a failure scenario,
-  and `loadGeneratorTraffic`, whose resting state is `on`.
+* **Flags** — which flag variants may be picked, chosen one variant at a time. A
+  flag with graded variants can take part with only some of them, so
+  `cartFailure` can be scheduled at `10%` and `25%` while `100%` is left out.
+  A flag is offered when it has an `off` variant to return to and at least one
+  other variant to switch to. That leaves out `loadGeneratorVUs`, which is a
+  tuning knob rather than a failure scenario, and `loadGeneratorTraffic`, whose
+  resting state is `on`.
+
+  A flag is picked first and one of its selected variants second, so a flag with
+  many variants is no more likely to be chosen than a flag with one.
 * **Seed** — makes the sequence of picks reproducible. When left empty a seed is
   generated and reported back, so a run can be repeated later.
 

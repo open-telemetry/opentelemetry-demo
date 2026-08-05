@@ -116,6 +116,46 @@ defmodule FlagdUiWeb.SchedulerTest do
       )
       |> render_submit()
 
-    assert html =~ "at least one flag"
+    assert html =~ "at least one flag variant"
+  end
+
+  test "offers a checkbox per variant for a flag with several variants", %{conn: conn} do
+    {:ok, _view, html} = live(conn, ~p"/scheduler")
+
+    for variant <- ~w(10% 25% 50% 75% 90% 100%) do
+      assert html =~ ~s(name="variants[cartFailure][]" value="#{variant}")
+    end
+
+    assert html =~ ~s(name="variants[adFailure][]" value="on")
+  end
+
+  test "scheduling only the gentle percentages keeps the harsh ones out", %{conn: conn} do
+    {:ok, view, _html} = live(conn, ~p"/scheduler")
+
+    view |> element("button", "None") |> render_click()
+
+    view
+    |> form("form", %{
+      "interval_seconds" => "600",
+      "min_duration_seconds" => "600",
+      "max_duration_seconds" => "600",
+      "seed" => "3",
+      "variants" => %{"cartFailure" => ["10%", "25%"]}
+    })
+    |> render_submit()
+
+    assert FlagdUi.Scheduler.state().config.flags == %{"cartFailure" => ["10%", "25%"]}
+  end
+
+  test "toggling a flag clears and restores all of its variants", %{conn: conn} do
+    {:ok, view, _html} = live(conn, ~p"/scheduler")
+
+    html = view |> element("button[phx-value-flag='cartFailure']") |> render_click()
+
+    refute html =~ ~s(name="variants[cartFailure][]" value="10%" checked)
+
+    html = view |> element("button[phx-value-flag='cartFailure']") |> render_click()
+
+    assert html =~ ~s(name="variants[cartFailure][]" value="10%" checked)
   end
 end

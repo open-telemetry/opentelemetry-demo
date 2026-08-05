@@ -11,6 +11,9 @@ defmodule FlagdUi.Scheduler do
   the configured minimum and maximum, then an offset is picked so that the whole
   activation fits inside the interval. Providing a seed makes the sequence of
   picks reproducible across runs.
+
+  A flag is picked first and one of its selected variants second, so a flag with
+  many variants is no more likely to be chosen than a flag with one.
   """
 
   use GenServer
@@ -51,6 +54,9 @@ defmodule FlagdUi.Scheduler do
 
   @doc """
   Starts scheduling with the given configuration, replacing any run in progress.
+
+  `:flags` is either `:all` or a map of flag name to the list of variants that
+  may be activated, so that a flag can take part with only some of its variants.
   Returns `{:error, reason}` when the configuration is not usable.
   """
   def start_schedule(server \\ Scheduler, config),
@@ -266,11 +272,22 @@ defmodule FlagdUi.Scheduler do
     end
   end
 
-  defp eligible_flags(%{storage: storage, config: %{flags: selected}}) do
+  defp eligible_flags(%{storage: storage, config: %{flags: selection}}) do
     storage
     |> GenServer.call(:read)
     |> schedulable_flags()
-    |> Enum.filter(fn {name, _variants} -> selected == :all or name in selected end)
+    |> Enum.flat_map(fn {name, variants} -> select_variants(selection, name, variants) end)
+  end
+
+  defp select_variants(:all, name, variants), do: [{name, variants}]
+
+  defp select_variants(selection, name, variants) when is_map(selection) do
+    chosen = Map.get(selection, name, [])
+
+    case Enum.filter(variants, &(&1 in chosen)) do
+      [] -> []
+      allowed -> [{name, allowed}]
+    end
   end
 
   defp clear_active(%{active: nil} = state), do: state
@@ -307,13 +324,18 @@ defmodule FlagdUi.Scheduler do
       config.max_duration_ms > config.interval_ms ->
         {:error, "Maximum duration must fit within the interval"}
 
-      config.flags != :all and config.flags == [] ->
-        {:error, "Select at least one flag to schedule"}
+      config.flags != :all and selected_variant_count(config.flags) == 0 ->
+        {:error, "Select at least one flag variant to schedule"}
 
       true ->
         :ok
     end
   end
+
+  defp selected_variant_count(selection) when is_map(selection),
+    do: selection |> Map.values() |> Enum.map(&length/1) |> Enum.sum()
+
+  defp selected_variant_count(_selection), do: 0
 
   defp seed_rand(nil) do
     seed = :erlang.unique_integer([:positive])
