@@ -22,7 +22,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1500M
+          memory: 1024M
     restart: unless-stopped
     ports:
       - "${DEMO_LLM_PORT}"
@@ -55,7 +55,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M
+          memory: 300M
     restart: unless-stopped
     ports:
       - "${AGENT_PORT}"
@@ -104,7 +104,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M
+          memory: 200M
     restart: unless-stopped
     ports:
       - "${MCP_PORT}"
@@ -135,7 +135,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M
+          memory: 200M
     restart: unless-stopped
     ports:
       - "${CHATBOT_PORT}"
