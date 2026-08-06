@@ -48,6 +48,9 @@ def main():
         raise SystemExit("Weaver live-check report did not contain any spans")
     if not registry_attributes:
         raise SystemExit("Weaver live-check did not observe any registry attributes")
+    # Weaver itself is report-only in this smoke workflow. Keep a small hard gate here
+    # so the job cannot pass with an empty or weak report caused by broken traffic,
+    # Collector forwarding, or metric export timing.
     missing_metrics = EXPECTED_METRICS - registry_metrics.keys()
     if missing_metrics:
         raise SystemExit(

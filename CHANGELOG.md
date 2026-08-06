@@ -68,9 +68,8 @@ the release.
   build, so the description ended up with no bottom margin; replaced with
   `mb-4` to match the flag name above it
   ([#3715](https://github.com/open-telemetry/opentelemetry-demo/issues/3715))
-* [testing] Add an optional Weaver live-check smoke workflow for validating
-* [testing] Add a Weaver live-check workflow for validating
-  emitted demo telemetry against the demo telemetry schema.
+* [testing] Add a report-only Weaver live-check smoke workflow for validating
+  emitted demo trace and metric telemetry against the demo telemetry schema.
 * [flagd-ui] Navigate between the `Basic` and `Advanced` tabs with LiveView
   navigation instead of plain links. The plain links triggered a full page
   reload, which tore down the LiveView WebSocket and produced a trace
@@ -111,8 +110,6 @@ the release.
 * [shipping] Migrate OTLP exporters (traces, metrics, logs) from gRPC to
   http/protobuf
   ([#3619](https://github.com/open-telemetry/opentelemetry-demo/pull/3619))
-* [testing] Add an optional Weaver live-check smoke workflow for validating
-  emitted demo trace telemetry against the demo telemetry schema.
 * [accounting] Run the Kafka consumer as a hosted background service so process
   shutdown can stop the consumer cleanly
   ([#3608](https://github.com/open-telemetry/opentelemetry-demo/pull/3608))
