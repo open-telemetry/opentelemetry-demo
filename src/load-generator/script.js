@@ -29,7 +29,7 @@ export const options = {
             browser: {
                 executor: 'constant-vus',
                 exec: 'browserScenario',
-                vus: 1,
+                vus: parseInt(__ENV.BROWSER_GENERATOR_VUS || '1'),
                 duration: __ENV.K6_DURATION || '9999h',
                 options: {
                     browser: {
