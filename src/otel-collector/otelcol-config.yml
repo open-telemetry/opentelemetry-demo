@@ -237,16 +237,41 @@ processors:
           # SANITIZE ALL SPAN NAMES TO PREVENT CARDINALITY EXPLOSION
           - set_semconv_span_name("1.37.0", "original_span_name")
 
-  # Demo: redact sensitive payment/user attributes before export -
-  # delete, hash, and partial-regex-mask patterns.
+  # Demo: redact sensitive attributes before export. Collector-side redaction is
+  # a fallback -- prefer not collecting sensitive data in the first place. Shows
+  # three OTTL patterns: delete a key, hash a value into a semconv attribute,
+  # and partial-mask with a regex. Each statement is guarded so it no-ops (no
+  # error log) on spans that lack the attribute.
   transform/redact_sensitive_data:
     error_mode: ignore
     trace_statements:
       - context: span
         statements:
-          - delete_key(attributes, "demo.payment.fake_card_cvv")
-          - set(attributes["demo.user.fake_email"], SHA256(attributes["demo.user.fake_email"]))
-          - replace_pattern(attributes["demo.payment.fake_card_number"], "^\\d{4}-\\d{4}-\\d{4}-", "****-****-****-")
+          - delete_key(attributes, "demo.payment.card_cvv") where attributes["demo.payment.card_cvv"] != nil
+          - set(attributes["user.hash"], SHA256(attributes["user.email"])) where attributes["user.email"] != nil
+          - delete_key(attributes, "user.email") where attributes["user.email"] != nil
+          # Keep only the last four digits, e.g. 4432-8015-6152-0454 -> ****-****-****-0454
+          - replace_pattern(attributes["demo.payment.card_number"], "^\\d{4}-\\d{4}-\\d{4}-", "****-****-****-") where attributes["demo.payment.card_number"] != nil
+
+  # Demo (alternative): the redaction processor is a purpose-built, fail-closed
+  # alternative to the transform statements above. It is left commented out
+  # because it is fail-closed -- with allow_all_keys=false it drops every
+  # attribute not listed in allowed_keys, which would strip attributes across
+  # this shared gateway pipeline. To try it, uncomment, set REDACTION_HMAC_KEY,
+  # and add `redaction` to the traces pipeline processors below.
+  # redaction:
+  #   # allow_all_keys=true keeps all keys and only redacts values matching
+  #   # blocked_values, so it is safe to run in a shared pipeline.
+  #   allow_all_keys: true
+  #   # Hash values that look like a credit card number (13-16 digits with
+  #   # optional dashes or spaces) instead of exporting them in the clear.
+  #   blocked_values:
+  #     - "\\d{4}[- ]?\\d{4}[- ]?\\d{4}[- ]?\\d{1,4}"
+  #   hash_function: hmac-sha256
+  #   hmac_key: ${env:REDACTION_HMAC_KEY}
+  #   # summary=debug adds audit attributes redaction.redacted.keys and
+  #   # redaction.redacted.count describing what was redacted.
+  #   summary: debug
 
 connectors:
   span_metrics:

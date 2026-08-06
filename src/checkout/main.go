@@ -308,9 +308,9 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 	span.SetAttributes(
 		attribute.String("user.id", req.UserId),
 		attribute.String("demo.user_context.selected_currency", req.UserCurrency),
-		attribute.String("demo.user.fake_email", req.Email),
-		attribute.String("demo.payment.fake_card_number", req.CreditCard.CreditCardNumber),
-		attribute.Int("demo.payment.fake_card_cvv", int(req.CreditCard.CreditCardCvv)),
+		attribute.String("user.email", req.GetEmail()),
+		attribute.String("demo.payment.card_number", req.GetCreditCard().GetCreditCardNumber()),
+		attribute.Int("demo.payment.card_cvv", int(req.GetCreditCard().GetCreditCardCvv())),
 	)
 
 	if baggage.FromContext(ctx).Member("synthetic_request").Value() == "true" {

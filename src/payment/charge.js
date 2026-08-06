@@ -65,8 +65,8 @@ module.exports.charge = async request => {
       'demo.payment.card_type': cardType,
       'demo.payment.card_valid': valid,
       'demo.user_context.loyalty_level': loyalty_level,
-      'demo.payment.fake_card_number': number,
-      'demo.payment.fake_card_cvv': cvv
+      'demo.payment.card_number': number,
+      'demo.payment.card_cvv': cvv
     });
 
     if (!valid) {
