@@ -92,6 +92,34 @@ const CheckoutForm = ({ onSubmit }: IProps) => {
         rules={{ required: true }}
         render={({ field: { onChange, onBlur, value } }) => (
           <Field
+            label="City"
+            placeholder="City"
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+          />
+        )}
+        name="city"
+      />
+      <Controller
+        control={control}
+        rules={{ required: true }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <Field
+            label="State"
+            placeholder="State"
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+          />
+        )}
+        name="state"
+      />
+      <Controller
+        control={control}
+        rules={{ required: true }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <Field
             label="Country"
             placeholder="Country"
             onBlur={onBlur}

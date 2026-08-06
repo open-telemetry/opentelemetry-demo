@@ -28,7 +28,7 @@ internal class DBContext : DbContext
 
 internal class Consumer : BackgroundService
 {
-    private const string TopicName = "orders";
+    private static readonly string TopicName = Environment.GetEnvironmentVariable("KAFKA_TOPIC") ?? "orders";
 
     private readonly ILogger _logger;
     private readonly IConsumer<string, byte[]> _consumer;

@@ -24,6 +24,7 @@ services:
     restart: unless-stopped
     environment:
       - KAFKA_ADDR
+      - KAFKA_TOPIC
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
@@ -61,6 +62,7 @@ services:
       - FLAGD_HOST
       - FLAGD_PORT
       - KAFKA_ADDR
+      - KAFKA_TOPIC
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_INSTRUMENTATION_KAFKA_EXPERIMENTAL_SPAN_ATTRIBUTES=true
@@ -125,6 +127,7 @@ services:
   checkout:
     environment:
       - KAFKA_ADDR
+      - KAFKA_TOPIC
     depends_on:
       kafka:
         condition: service_healthy

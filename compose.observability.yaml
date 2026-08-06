@@ -32,6 +32,7 @@ services:
       - MEMORY_MAX_TRACES=25000
     volumes:
       - ./src/jaeger/config.yml:/etc/jaeger/config.yml
+      - ./src/jaeger/ui-config.json:/etc/jaeger/ui-config.json
     logging:
       driver: "json-file"
       options:
@@ -198,5 +199,13 @@ services:
         condition: service_started
       opensearch:
         condition: service_healthy
+      opamp-server:
+        condition: service_healthy
+
+  cart:
+    environment:
+      - OPAMP_SERVER_ENDPOINT=wss://${OPAMP_SERVER_HOST}:4320/v1/opamp
+      - OPAMP_SERVER_TLS_INSECURE_SKIP_VERIFY=true
+    depends_on:
       opamp-server:
         condition: service_healthy

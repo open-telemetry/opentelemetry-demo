@@ -11,6 +11,89 @@ the release.
   mask sensitive attributes with the transform processor, plus a documented
   redaction-processor fallback
   ([#PR](https://github.com/open-telemetry/opentelemetry-demo/pull/PR))
+* [react-native-app] Fix `SessionGateway.setSessionValue` to await `getSession()`,
+  preventing stored session corruption and loss of `userId`
+  ([#3765](https://github.com/open-telemetry/opentelemetry-demo/issues/3765))
+* [cart] Report health to the demo's OpAMP server when running with the
+  observability stack.
+  ([#3656](https://github.com/open-telemetry/opentelemetry-demo/pull/3656))
+* [react-native-app] Render missing `City` and `State` input fields in `CheckoutForm`
+  ([#3754](https://github.com/open-telemetry/opentelemetry-demo/issues/3754))
+
+## 3.0.0
+
+* [react-native-app] Fix `ProductCard` price calculation where `nanos` was
+  divided by `100_000_000` (1e8) instead of `1_000_000_000` (1e9), inflating
+  the displayed price
+  ([#3751](https://github.com/open-telemetry/opentelemetry-demo/issues/3751))
+* [agentic] Move agent, chatbot and mcp to OTLP http exporter
+  ([#3745](https://github.com/open-telemetry/opentelemetry-demo/pull/3745))
+* [payment] Fix `demo.payment.amount` telemetry attribute throwing a TypeError
+  at runtime. `Money.units` is an `int64` proto field decoded by
+  `@grpc/proto-loader` as a `Long` object, not a JS number. Adding a `Long` to
+  a float still returns a `Long`, which has no `.toFixed()` method. Wrap
+  `amount.units` in `Number()` before the arithmetic so `.toFixed(2)` works
+  correctly
+  ([#3747](https://github.com/open-telemetry/opentelemetry-demo/issues/3747))
+* [currency] Guard the `VERSION` environment variable lookup against `nullptr`:
+  constructing a `std::string` directly from `std::getenv("VERSION")` crashes
+  when the variable is unset, so fall back to `"unknown"` instead
+  ([#3743](https://github.com/open-telemetry/opentelemetry-demo/pull/3743))
+* [checkout] Fix `demo.shipping.amount` and `demo.order.amount` telemetry
+  always dropping the cents. `Money.nanos` is billionths of a unit, so
+  dividing by `1_000_000_000` is integer division of a value that never
+  reaches that divisor, always producing `0`; divide by `10_000_000` instead
+  to get the cents component
+  ([#3742](https://github.com/open-telemetry/opentelemetry-demo/issues/3742))
+* [react-native-app] Use `getUniqueIdSync()` instead of `getDeviceId()` to
+  populate the `device.id` resource attribute. `getDeviceId()` returns the
+  hardware/model identifier (e.g. `iPhone13,4`), which is the same for every
+  physical unit of that model, so `device.id` was identical across different
+  devices instead of uniquely identifying each one
+  ([#3722](https://github.com/open-telemetry/opentelemetry-demo/issues/3722))
+* [currency] Fix `IPV6_ENABLED` check comparing a `const char*` pointer
+  against a string literal instead of the string's contents, so the check
+  was always false and the service could never bind to `[::]`
+  ([#3735](https://github.com/open-telemetry/opentelemetry-demo/issues/3735))
+* [kafka] Add `KAFKA_TOPIC` environment variable to configure the Kafka topic
+  name used by `checkout`, `accounting`, and `fraud-detection`, defaulting to
+  `orders` to preserve existing behavior
+* [grafana] Add service, EventName, and severity filters to the "Events by Name"
+  dashboard.
+* [flagd-ui] Fix invalid `-4` Tailwind class on the flag description text in
+  the dashboard. `-4` has no matching utility and is dropped during the
+  build, so the description ended up with no bottom margin; replaced with
+  `mb-4` to match the flag name above it
+  ([#3715](https://github.com/open-telemetry/opentelemetry-demo/issues/3715))
+* [flagd-ui] Navigate between the `Basic` and `Advanced` tabs with LiveView
+  navigation instead of plain links. The plain links triggered a full page
+  reload, which tore down the LiveView WebSocket and produced a trace
+  containing a span with a `connection termination` error
+  ([#2588](https://github.com/open-telemetry/opentelemetry-demo/issues/2588))
+* [docs] Document the `telemetry-schema` Weaver registry in `AGENTS.md`, so
+  that new instrumentation reuses existing attributes and defines new ones in
+  the schema
+  ([#3248](https://github.com/open-telemetry/opentelemetry-demo/issues/3248))
+* [grafana] Add an "Events by Name" dashboard that shows Event volume by
+  OpenTelemetry `EventName` (top events and volume over time). A log record
+  with an `EventName` is an OpenTelemetry Event.
+  ([#3691](https://github.com/open-telemetry/opentelemetry-demo/pull/3691))
+* [frontend] Add custom `404` and `500` error pages. Without them, `_app.tsx`'s
+  custom `getInitialProps` disables Next.js's automatic static optimization
+  for the built-in error pages too, so a server-side error crashes with
+  `Cannot find module for page: /500` instead of showing an error page
+  ([#2144](https://github.com/open-telemetry/opentelemetry-demo/issues/2144))
+* [opamp-server] Bump `OPAMP_GO_REF` to pick up example-server UI improvements
+  from `opamp-go` (improved agent list, agent uptime on the agent page, and
+  startup logging of the OpAMP/admin UI addresses).
+  ([#3685](https://github.com/open-telemetry/opentelemetry-demo/pull/3685))
+* [compose] Run `checkout`, `product-catalog`, and `shipping` with a
+  read-only root filesystem (`read_only: true` plus a `/tmp` tmpfs mount),
+  for container platforms that prohibit writable root filesystems. Limited
+  to these three services for now since they're the ones verified to have
+  no runtime file writes of their own; other services write files at
+  startup and need dedicated tmpfs mounts before they can be switched over
+  ([#1731](https://github.com/open-telemetry/opentelemetry-demo/issues/1731))
 * [llm] Increase `llm` service memory limit from 50M to 100M to prevent a
   startup restart loop caused by the container exceeding its memory limit
   ([#2944](https://github.com/open-telemetry/opentelemetry-demo/issues/2944))
@@ -262,6 +345,18 @@ the release.
   ([#3521](https://github.com/open-telemetry/opentelemetry-demo/pull/3521))
 * [cart,accounting] Use source-generated logging with EventName
   ([#3559](https://github.com/open-telemetry/opentelemetry-demo/pull/3559))
+* [load-generator] Replace Locust with k6, using a custom `xk6-otel`
+  extension for OTel trace/log/metric correlation and k6's built-in browser
+  module for browser-driven traffic
+  ([#3564](https://github.com/open-telemetry/opentelemetry-demo/pull/3564))
+* [load-generator] Add a `loadGeneratorTraffic` feature flag that pauses
+  all synthetic traffic when turned off, resuming when toggled back on
+  ([#3564](https://github.com/open-telemetry/opentelemetry-demo/pull/3564))
+* [load-generator] Add a `loadGeneratorVUs` feature flag to control HTTP
+  scenario concurrency. k6 v2 can't resize a running test's VU pool, so an
+  entrypoint.sh wrapper restarts k6 with the new VU count whenever the flag
+  changes
+  ([#3564](https://github.com/open-telemetry/opentelemetry-demo/pull/3564))
 * [opamp] Add an OpAMP server and configure the Collector to report status,
   version, attributes, and effective configuration through the OpAMP extension
   ([#3566](https://github.com/open-telemetry/opentelemetry-demo/pull/3566))
@@ -336,7 +431,7 @@ the release.
   convert OpenLLMetry/Traceloop instrumentation telemetry (from the agent
   service) into official GenAI semantic conventions (`gen_ai.*` attributes).
   Bump collector-contrib to v0.155.0 which includes the processor
-  ([#3526](https://github.com/open-telemetry/opentelemetry-demo/issues/3526))
+  ([#3604](https://github.com/open-telemetry/opentelemetry-demo/pull/3604))
 * [load-generator] Fix `synthetic_request` (and `session.id`) baggage being
   discarded before reaching any backend service, due to the baggage-bearing
   context being attached inside a span's `with` block so that the span's exit
@@ -359,6 +454,10 @@ the release.
   ([#3633](https://github.com/open-telemetry/opentelemetry-demo/pull/3633))
 * [profiles] Add resource attributes to profiles
   ([#3659](https://github.com/open-telemetry/opentelemetry-demo/pull/3659))
+* [flagd] Fix OTel exporter config
+  ([#3667](https://github.com/open-telemetry/opentelemetry-demo/pull/3667))
+* [jaeger] Enable OTel semantics in Jaeger UI
+  ([#3694](https://github.com/open-telemetry/opentelemetry-demo/pull/3694))
 
 ## 2.2.0
 

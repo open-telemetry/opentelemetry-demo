@@ -19,6 +19,10 @@ receivers:
           allowed_origins:
             - "http://*"
             - "https://*"
+          allowed_headers:
+            - "content-type"
+            - "traceparent"
+            - "baggage"
   http_check/frontend-proxy:
     targets:
       - endpoint: http://${env:FRONTEND_PROXY_ADDR}

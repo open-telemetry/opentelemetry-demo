@@ -1,14 +1,145 @@
 {
   "$schema": "https://flagd.dev/schema/v0/flags.json",
   "flags": {
-    "productCatalogFailure": {
-      "description": "Fail product catalog service on a specific product",
+    "adFailure": {
+      "defaultVariant": "off",
+      "description": "Fail ad service",
       "state": "ENABLED",
       "variants": {
-        "on": true,
-        "off": false
-      },
+        "off": false,
+        "on": true
+      }
+    },
+    "adHighCpu": {
       "defaultVariant": "off",
+      "description": "Triggers high cpu load in the ad service",
+      "state": "ENABLED",
+      "variants": {
+        "off": false,
+        "on": true
+      }
+    },
+    "adManualGc": {
+      "defaultVariant": "off",
+      "description": "Triggers full manual garbage collections in the ad service",
+      "state": "ENABLED",
+      "variants": {
+        "off": false,
+        "on": true
+      }
+    },
+    "cartFailure": {
+      "defaultVariant": "off",
+      "description": "Fail cart service n% of the time",
+      "state": "ENABLED",
+      "variants": {
+        "10%": 0.1,
+        "100%": 1,
+        "25%": 0.25,
+        "50%": 0.5,
+        "75%": 0.75,
+        "90%": 0.9,
+        "off": 0
+      }
+    },
+    "emailMemoryLeak": {
+      "defaultVariant": "off",
+      "description": "Memory leak in the email service.",
+      "state": "ENABLED",
+      "variants": {
+        "10000x": 10000,
+        "1000x": 1000,
+        "100x": 100,
+        "10x": 10,
+        "1x": 1,
+        "off": 0
+      }
+    },
+    "failedReadinessProbe": {
+      "defaultVariant": "off",
+      "description": "readiness probe failure for cart service",
+      "state": "ENABLED",
+      "variants": {
+        "off": false,
+        "on": true
+      }
+    },
+    "imageSlowLoad": {
+      "defaultVariant": "off",
+      "description": "slow loading images in the frontend",
+      "state": "ENABLED",
+      "variants": {
+        "10sec": 10000,
+        "5sec": 5000,
+        "off": 0
+      }
+    },
+    "intlShippingSlowdown": {
+      "defaultVariant": "off",
+      "description": "Delays international shipping responses to simulate overseas shipping delay",
+      "state": "ENABLED",
+      "variants": {
+        "10sec": 10,
+        "5sec": 5,
+        "off": 0
+      }
+    },
+    "kafkaQueueProblems": {
+      "defaultVariant": "off",
+      "description": "Overloads Kafka queue while simultaneously introducing a consumer side delay leading to a lag spike",
+      "state": "ENABLED",
+      "variants": {
+        "off": 0,
+        "on": 100
+      }
+    },
+    "loadGeneratorTraffic": {
+      "defaultVariant": "on",
+      "description": "Enable synthetic traffic from the load generator. Turn off to pause all load-generator scenarios.",
+      "state": "ENABLED",
+      "variants": {
+        "off": 0,
+        "on": 1
+      }
+    },
+    "loadGeneratorVUs": {
+      "defaultVariant": "5",
+      "description": "Number of concurrent virtual users the load generator's HTTP scenario runs. Changes take effect on the wrapper's next poll, restarting k6.",
+      "state": "ENABLED",
+      "variants": {
+        "10": 10,
+        "25": 25,
+        "5": 5,
+        "50": 50
+      }
+    },
+    "paymentFailure": {
+      "defaultVariant": "off",
+      "description": "Fail payment service charge requests n%",
+      "state": "ENABLED",
+      "variants": {
+        "10%": 0.1,
+        "100%": 1,
+        "25%": 0.25,
+        "50%": 0.5,
+        "75%": 0.75,
+        "90%": 0.95,
+        "off": 0
+      }
+    },
+    "paymentUnreachable": {
+      "defaultVariant": "off",
+      "description": "Payment service is unavailable",
+      "state": "ENABLED",
+      "variants": {
+        "off": false,
+        "on": true
+      }
+    },
+    "productCatalogFailure": {
+      "defaultVariant": "off",
+      "description": "Fail product catalog service on a specific product",
+      "state": "ENABLED",
       "targeting": {
         "if": [
           {
@@ -22,140 +153,20 @@
           "off",
           "off"
         ]
+      },
+      "variants": {
+        "off": false,
+        "on": true
       }
     },
     "recommendationCacheFailure": {
+      "defaultVariant": "off",
       "description": "Fail recommendation service cache",
       "state": "ENABLED",
       "variants": {
-        "on": true,
-        "off": false
-      },
-      "defaultVariant": "off"
-    },
-    "adManualGc": {
-      "description": "Triggers full manual garbage collections in the ad service",
-      "state": "ENABLED",
-      "variants": {
-        "on": true,
-        "off": false
-      },
-      "defaultVariant": "off"
-    },
-    "adHighCpu": {
-      "description": "Triggers high cpu load in the ad service",
-      "state": "ENABLED",
-      "variants": {
-        "on": true,
-        "off": false
-      },
-      "defaultVariant": "off"
-    },
-    "adFailure": {
-      "description": "Fail ad service",
-      "state": "ENABLED",
-      "variants": {
-        "on": true,
-        "off": false
-      },
-      "defaultVariant": "off"
-    },
-    "kafkaQueueProblems": {
-      "description": "Overloads Kafka queue while simultaneously introducing a consumer side delay leading to a lag spike",
-      "state": "ENABLED",
-      "variants": {
-        "on": 100,
-        "off": 0
-      },
-      "defaultVariant": "off"
-    },
-    "cartFailure": {
-      "description": "Fail cart service n% of the time",
-      "state": "ENABLED",
-      "variants": {
-        "100%": 1,
-        "90%": 0.9,
-        "75%": 0.75,
-        "50%": 0.5,
-        "25%": 0.25,
-        "10%": 0.1,
-        "off": 0
-      },
-      "defaultVariant": "off"
-    },
-    "paymentFailure": {
-      "description": "Fail payment service charge requests n%",
-      "state": "ENABLED",
-      "variants": {
-        "100%": 1,
-        "90%": 0.95,
-        "75%": 0.75,
-        "50%": 0.5,
-        "25%": 0.25,
-        "10%": 0.1,
-        "off": 0
-      },
-      "defaultVariant": "off"
-    },
-    "paymentUnreachable": {
-      "description": "Payment service is unavailable",
-      "state": "ENABLED",
-      "variants": {
-        "on": true,
-        "off": false
-      },
-      "defaultVariant": "off"
-    },
-    "loadGeneratorFloodHomepage": {
-      "description": "Flood the frontend with a large amount of requests.",
-      "state": "ENABLED",
-      "variants": {
-        "on": 100,
-        "off": 0
-      },
-      "defaultVariant": "off"
-    },
-    "imageSlowLoad": {
-      "description": "slow loading images in the frontend",
-      "state": "ENABLED",
-      "variants": {
-        "10sec": 10000,
-        "5sec": 5000,
-        "off": 0
-      },
-      "defaultVariant": "off"
-    },
-    "failedReadinessProbe": {
-      "description": "readiness probe failure for cart service",
-      "state": "ENABLED",
-      "variants": {
-        "on": true,
-        "off": false
-      },
-      "defaultVariant": "off"
-    },
-    "emailMemoryLeak": {
-      "description": "Memory leak in the email service.",
-      "state": "ENABLED",
-      "variants": {
-        "off": 0,
-        "1x": 1,
-        "10x": 10,
-        "100x": 100,
-        "1000x": 1000,
-        "10000x": 10000
-      },
-      "defaultVariant": "off"
-    },
-    "intlShippingSlowdown": {
-      "description": "Delays international shipping responses to simulate overseas shipping delay",
-      "state": "ENABLED",
-      "variants": {
-        "10sec": 10,
-        "5sec": 5,
-        "off": 0
-      },
-      "defaultVariant": "off"
+        "off": false,
+        "on": true
+      }
     }
   }
 }
