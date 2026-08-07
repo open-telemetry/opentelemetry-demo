@@ -14,6 +14,7 @@ env:
 
 jobs:
   live-check:
+    name: Weaver live-check smoke
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -37,13 +38,13 @@ jobs:
         run: zstd -d -c demo-images.tar.zst | docker load
 
       - name: Setup Weaver
-        uses: open-telemetry/weaver/.github/actions/setup-weaver@14b8a6028f69c4ba70e3d112480b75c4cf06a508  # v0.24.2
+        uses: open-telemetry/weaver/.github/actions/setup-weaver@adcf6fda79c3df1cb537669442aef753b7019777  # v0.24.2
         with:
           version: ${{ env.WEAVER_VERSION }}
 
       - name: Start Weaver
         id: live-check
-        uses: open-telemetry/weaver/.github/actions/weaver-live-check-start@14b8a6028f69c4ba70e3d112480b75c4cf06a508  # v0.24.2
+        uses: open-telemetry/weaver/.github/actions/weaver-live-check-start@adcf6fda79c3df1cb537669442aef753b7019777  # v0.24.2
         with:
           registry: telemetry-schema
           config: test/telemetry/weaver-live-check.toml
@@ -80,13 +81,15 @@ jobs:
       - name: Stop Weaver and collect report
         id: live-check-report
         if: always() && steps.live-check.outcome == 'success'
-        uses: open-telemetry/weaver/.github/actions/weaver-live-check-stop@14b8a6028f69c4ba70e3d112480b75c4cf06a508  # v0.24.2
+        uses: open-telemetry/weaver/.github/actions/weaver-live-check-stop@adcf6fda79c3df1cb537669442aef753b7019777  # v0.24.2
         with:
           fail-on: none
 
       - name: Check observed telemetry coverage
         if: always() && steps.live-check-report.outputs.report-path != ''
-        run: python3 test/telemetry/check_weaver_live_report.py "${{ steps.live-check-report.outputs.report-path }}"
+        env:
+          REPORT_PATH: ${{ steps.live-check-report.outputs.report-path }}
+        run: python3 test/telemetry/check_weaver_live_report.py "$REPORT_PATH"
 
       - name: Print service logs on failure
         if: failure() && steps.demo.outputs.started == 'true'
