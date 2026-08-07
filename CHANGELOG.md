@@ -22,6 +22,8 @@ the release.
   The server bound to the port but was never started to accept connections, causing
   the service to fail its health checks.
   ([#3844](https://github.com/open-telemetry/opentelemetry-demo/pull/3844))
+* [testing] Add a report-only Weaver live-check smoke workflow for validating
+  emitted demo trace and metric telemetry against the demo telemetry schema.
 
 ## 3.0.0
 
@@ -68,8 +70,6 @@ the release.
   build, so the description ended up with no bottom margin; replaced with
   `mb-4` to match the flag name above it
   ([#3715](https://github.com/open-telemetry/opentelemetry-demo/issues/3715))
-* [testing] Add a report-only Weaver live-check smoke workflow for validating
-  emitted demo trace and metric telemetry against the demo telemetry schema.
 * [flagd-ui] Navigate between the `Basic` and `Advanced` tabs with LiveView
   navigation instead of plain links. The plain links triggered a full page
   reload, which tore down the LiveView WebSocket and produced a trace
@@ -99,25 +99,6 @@ the release.
   no runtime file writes of their own; other services write files at
   startup and need dedicated tmpfs mounts before they can be switched over
   ([#1731](https://github.com/open-telemetry/opentelemetry-demo/issues/1731))
-* [frontend] Avoid hardcoded `localhost:8080` image URLs during SSR and
-  normalize leading slashes in the custom image loader
-  ([#3582](https://github.com/open-telemetry/opentelemetry-demo/pull/3582))
-* [payment] Annotate synthetic load-generator payment requests with the
-  `user_agent.synthetic.type` semantic convention attribute.
-* [checkout] Migrate OTLP exporters (traces, metrics, logs) from gRPC to
-  http/protobuf
-  ([#3618](https://github.com/open-telemetry/opentelemetry-demo/pull/3618))
-* [shipping] Migrate OTLP exporters (traces, metrics, logs) from gRPC to
-  http/protobuf
-  ([#3619](https://github.com/open-telemetry/opentelemetry-demo/pull/3619))
-* [accounting] Run the Kafka consumer as a hosted background service so process
-  shutdown can stop the consumer cleanly
-  ([#3608](https://github.com/open-telemetry/opentelemetry-demo/pull/3608))
-* [collector] Add `gen_ai_normalizer` processor to the traces pipeline to
-  convert OpenLLMetry/Traceloop instrumentation telemetry (from the agent
-  service) into official GenAI semantic conventions (`gen_ai.*` attributes).
-  Bump collector-contrib to v0.155.0 which includes the processor
-  ([#3526](https://github.com/open-telemetry/opentelemetry-demo/issues/3526))
 * [llm] Increase `llm` service memory limit from 50M to 100M to prevent a
   startup restart loop caused by the container exceeding its memory limit
   ([#2944](https://github.com/open-telemetry/opentelemetry-demo/issues/2944))
