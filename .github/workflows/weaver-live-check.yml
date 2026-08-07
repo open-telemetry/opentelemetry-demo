@@ -52,6 +52,8 @@ jobs:
       - name: Start demo
         id: demo
         run: |
+          # Run an isolated demo stack so Weaver receives a focused OTLP stream
+          # and the normal telemetry tests can keep querying their backends.
           touch .env.override
           echo "started=true" >> "$GITHUB_OUTPUT"
           docker compose \
