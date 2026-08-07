@@ -1,0 +1,106 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+name: Weaver Live Check
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+env:
+  WEAVER_VERSION: v0.24.2
+  COMPOSE_FILE: compose.yaml:test/telemetry/compose-weaver-live-check.yaml:compose.extras.yaml
+
+jobs:
+  live-check:
+    name: Weaver live-check smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.ref }}
+          persist-credentials: false
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          docker system prune -af
+
+      - name: Download demo images artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: demo-images-${{ github.run_id }}
+
+      - name: Load demo images
+        run: zstd -d -c demo-images.tar.zst | docker load
+
+      - name: Setup Weaver
+        uses: open-telemetry/weaver/.github/actions/setup-weaver@adcf6fda79c3df1cb537669442aef753b7019777  # v0.24.2
+        with:
+          version: ${{ env.WEAVER_VERSION }}
+
+      - name: Start Weaver
+        id: live-check
+        uses: open-telemetry/weaver/.github/actions/weaver-live-check-start@adcf6fda79c3df1cb537669442aef753b7019777  # v0.24.2
+        with:
+          registry: telemetry-schema
+          config: test/telemetry/weaver-live-check.toml
+          inactivity-timeout: '300'
+
+      - name: Start demo
+        id: demo
+        run: |
+          # Run an isolated demo stack so Weaver receives a focused OTLP stream
+          # and the normal telemetry tests can keep querying their backends.
+          touch .env.override
+          echo "started=true" >> "$GITHUB_OUTPUT"
+          docker compose \
+            --env-file .env --env-file .env.override \
+            up --force-recreate --remove-orphans --detach \
+            --wait --wait-timeout 180 --scale load-generator=0
+
+      - name: Drive checkout traffic
+        run: |
+          docker compose \
+            --env-file .env --env-file .env.override \
+            run --rm --no-deps --entrypoint k6 \
+            -e K6_BROWSER_ENABLED=false \
+            load-generator run --out opentelemetry weaver-checkout.js
+          sleep 15
+
+      - name: Flush telemetry
+        if: always() && steps.demo.outputs.started == 'true'
+        run: |
+          docker compose \
+            --env-file .env --env-file .env.override \
+            stop --timeout 30 otel-collector
+
+      - name: Stop Weaver and collect report
+        id: live-check-report
+        if: always() && steps.live-check.outcome == 'success'
+        uses: open-telemetry/weaver/.github/actions/weaver-live-check-stop@adcf6fda79c3df1cb537669442aef753b7019777  # v0.24.2
+        with:
+          fail-on: none
+
+      - name: Check observed telemetry coverage
+        if: always() && steps.live-check-report.outputs.report-path != ''
+        env:
+          REPORT_PATH: ${{ steps.live-check-report.outputs.report-path }}
+        run: python3 test/telemetry/check_weaver_live_report.py "$REPORT_PATH"
+
+      - name: Print service logs on failure
+        if: failure() && steps.demo.outputs.started == 'true'
+        run: |
+          docker compose \
+            --env-file .env --env-file .env.override \
+            logs --tail=80
+
+      - name: Stop demo
+        if: always() && steps.demo.outputs.started == 'true'
+        run: |
+          docker compose \
+            --env-file .env --env-file .env.override \
+            down --remove-orphans --volumes

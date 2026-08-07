@@ -255,6 +255,13 @@ function selectTask() {
 
 // ---- HTTP entrypoint --------------------------------------------------------
 
+export function checkoutScenario() {
+    if (sessionId === null) {
+        onStart()
+    }
+    checkout()
+}
+
 export function httpScenario() {
     if (getFlagdValue('loadGeneratorTraffic') <= 0) {
         sleep(cryptoRandom() * 9 + 1)

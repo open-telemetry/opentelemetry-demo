@@ -170,3 +170,11 @@ telemetry flows end-to-end. They are complementary:
 
 - **Weaver**: "Are the attribute definitions correct?" (static)
 - **Telemetry tests**: "Is each service sending data?" (runtime)
+
+The `Weaver Live Check` CI job compares post-Collector custom demo telemetry
+with `telemetry-schema/`. Findings are reported in the job summary and the
+`weaver-live-check-report` artifact. The job is currently report-only for
+Weaver findings. The Python coverage check only guards against empty or weak
+reports by requiring registered spans, attributes, and metrics. A green result
+confirms that registered telemetry was observed, not that the report contains no
+violations.

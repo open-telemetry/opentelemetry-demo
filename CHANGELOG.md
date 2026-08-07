@@ -15,6 +15,8 @@ the release.
   ([#3656](https://github.com/open-telemetry/opentelemetry-demo/pull/3656))
 * [react-native-app] Render missing `City` and `State` input fields in `CheckoutForm`
   ([#3754](https://github.com/open-telemetry/opentelemetry-demo/issues/3754))
+* [testing] Add a report-only Weaver live-check smoke workflow for validating
+  emitted demo trace and metric telemetry against the demo telemetry schema.
 
 ## 3.0.0
 
