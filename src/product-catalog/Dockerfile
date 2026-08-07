@@ -14,8 +14,9 @@ RUN go mod download
 COPY ./src/product-catalog/genproto/oteldemo/ genproto/oteldemo/
 COPY ./src/product-catalog/flags/ flags/
 COPY ./src/product-catalog/main.go main.go
+COPY ./src/product-catalog/opamp.go opamp.go
 
-RUN CGO_ENABLED=0 GOOS=linux GO111MODULE=on go build -ldflags "-s -w" -o product-catalog main.go
+RUN CGO_ENABLED=0 GOOS=linux GO111MODULE=on go build -ldflags "-s -w" -o product-catalog .
 
 FROM ghcr.io/grpc-ecosystem/grpc-health-probe:v0.4.53@sha256:a732f1b3a737926c2902393809b344c9f293b62f7069dbd0614caebd298b2e8d AS grpc-health-probe
 

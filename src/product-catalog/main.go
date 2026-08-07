@@ -160,6 +160,19 @@ func main() {
 		logger.Error(err.Error())
 	}
 
+	opampClient, err := startOpAmpClient(context.Background())
+	if err != nil {
+		logger.Error(fmt.Sprintf("Failed to start OpAMP client: %v", err))
+	} else if opampClient != nil {
+		defer func() {
+			if err := opampClient.Stop(context.Background()); err != nil {
+				logger.Error(fmt.Sprintf("Error stopping OpAMP client: %v", err))
+			} else {
+				logger.Info("Stopped OpAMP client")
+			}
+		}()
+	}
+
 	svc := &productCatalog{}
 	var port string
 	mustMapEnv(&port, "PRODUCT_CATALOG_PORT")
