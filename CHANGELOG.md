@@ -7,6 +7,10 @@ the release.
 
 ## Unreleased
 
+* [collector] Add a data redaction/deletion example: delete, hash, and partially
+  mask sensitive attributes with the transform processor, plus a documented
+  redaction-processor fallback
+  ([#PR](https://github.com/open-telemetry/opentelemetry-demo/pull/PR))
 * [react-native-app] Fix `SessionGateway.setSessionValue` to await `getSession()`,
   preventing stored session corruption and loss of `userId`
   ([#3765](https://github.com/open-telemetry/opentelemetry-demo/issues/3765))
