@@ -1,0 +1,85 @@
+diff --git a/internal/examples/html/html/agent.html b/internal/examples/html/html/agent.html
+index 5f2bb48..aed2428 100644
+--- a/internal/examples/html/html/agent.html
++++ b/internal/examples/html/html/agent.html
+@@ -8,0 +9,19 @@
++    .config-table {
++        table-layout: fixed;
++        width: 100%;
++    }
++    .config-table > tbody > tr > td {
++        width: 50%;
++    }
++    .config-table pre {
++        white-space: pre-wrap;
++        word-break: break-word;
++        overflow: auto;
++        max-height: 500px;
++        border: 1px solid #ccc;
++        padding: 5px;
++    }
++    .config-table textarea {
++        width: 100%;
++        box-sizing: border-box;
++    }
+@@ -11,4 +29,0 @@
+-<link rel="stylesheet"
+-      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/styles/default.min.css">
+-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+-<script>hljs.highlightAll();</script>
+@@ -67 +82 @@
+-<table width="100%">
++<table class="config-table">
+@@ -75 +90,8 @@
+-            <form action="/save_config" method="post">
++            <p><strong>Trusted-local demo only:</strong> saving posts to
++            <code>http://127.0.0.1:4321</code> on the machine running this browser.
++            Open <code>http://localhost:8080/opamp/</code> on the demo host to push
++            config. Production OpAMP servers should require access control.</p>
++            <p>Paste a Collector YAML overlay snippet. The Supervisor merges it on
++            top of the checked-in demo config; Collector config arrays generally
++            replace existing arrays rather than append.</p>
++            <form action="http://127.0.0.1:4321/save_config" method="post">
+@@ -77 +96 @@
+-            <textarea cols="40" rows="20" name="config">{{ .CustomInstanceConfig }}</textarea><br/>
++            <textarea rows="20" name="config">{{ .CustomInstanceConfig }}</textarea><br/>
+diff --git a/internal/examples/server/uisrv/ui.go b/internal/examples/server/uisrv/ui.go
+index 917bc83..a802084 100644
+--- a/internal/examples/server/uisrv/ui.go
++++ b/internal/examples/server/uisrv/ui.go
+@@ -121,0 +122,25 @@ func sendCustomMessage(w http.ResponseWriter, r *http.Request) {
++func localOrigin(r *http.Request) (string, bool) {
++	origin := r.Header.Get("Origin")
++	if origin == "" {
++		return "", false
++	}
++
++	parsed, err := url.Parse(origin)
++	if err != nil {
++		return "", false
++	}
++
++	switch parsed.Scheme {
++	case "http", "https":
++	default:
++		return "", false
++	}
++
++	switch parsed.Hostname() {
++	case "localhost", "127.0.0.1", "::1":
++		return parsed.Scheme + "://" + parsed.Host, true
++	default:
++		return "", false
++	}
++}
++
+@@ -122,0 +148,6 @@ func saveCustomConfigForInstance(w http.ResponseWriter, r *http.Request) {
++	origin, ok := localOrigin(r)
++	if r.Method != http.MethodPost || !ok {
++		w.WriteHeader(http.StatusForbidden)
++		return
++	}
++
+@@ -160 +191 @@ func saveCustomConfigForInstance(w http.ResponseWriter, r *http.Request) {
+-	http.Redirect(w, r, "/agent?instanceid="+uid.String(), http.StatusSeeOther)
++	http.Redirect(w, r, origin+"/opamp/agent?instanceid="+uid.String(), http.StatusSeeOther)
