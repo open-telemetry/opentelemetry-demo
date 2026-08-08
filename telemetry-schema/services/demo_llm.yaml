@@ -1,0 +1,28 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+attribute_groups:
+  - id: service.demo_llm
+    visibility: public
+    brief: Demo LLM service attributes
+    stability: stable
+    attributes:
+      - ref: gen_ai.operation.name
+      - ref: gen_ai.provider.name
+      - ref: gen_ai.request.model
+      - ref: gen_ai.request.max_tokens
+      - ref: gen_ai.request.temperature
+      - ref: gen_ai.request.top_k
+      - ref: gen_ai.response.id
+      - ref: gen_ai.response.model
+      - ref: gen_ai.response.finish_reasons
+      - ref: gen_ai.usage.input_tokens
+      - ref: gen_ai.usage.output_tokens
+      - ref: demo.llm.sample_attempts
+      - ref: demo.llm.sample_attempt
+      - ref: demo.llm.dropped_tool_calls
+      - ref: demo.llm.tool_call_rejection_reasons
+      - ref: demo.llm.tool_call_rejection_reason
+      - ref: demo.llm.prompt_truncated
+      - ref: demo.llm.time_to_first_token

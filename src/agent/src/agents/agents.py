@@ -105,6 +105,7 @@ class Agent:
             host="0.0.0.0",
             port=agent_port,
             log_level="info",
+            limit_concurrency=8,
         )
         agent_server = uvicorn.Server(agent_config)
         await agent_server.serve()
