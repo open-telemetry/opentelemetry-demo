@@ -25,7 +25,12 @@ const request = async <T>({
   });
 
   const responseText = await response.text();
-  const data = responseText ? JSON.parse(responseText) : undefined;
+  let data;
+  try {
+    data = responseText ? JSON.parse(responseText) : undefined;
+  } catch {
+    data = undefined;
+  }
 
   if (!response.ok) {
     throw new Error(data?.error || `Request failed with status ${response.status}`);
