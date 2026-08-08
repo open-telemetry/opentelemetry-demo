@@ -1,0 +1,56 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+attributes:
+  - key: demo.llm.sample_attempts
+    type: int
+    brief: Number of wasted generations
+    stability: stable
+    note: >
+      A value above one means at least one generation was thrown away.
+    examples: [1, 2]
+  - key: demo.llm.sample_attempt
+    type: int
+    brief: Index of this generation within a chat request, starting at one
+    stability: stable
+    note: >
+      Set on every generation span. More than one for a resampled request
+    examples: [1, 2]
+  - key: demo.llm.dropped_tool_calls
+    type: int
+    brief: Tool calls removed from the response before it was returned
+    stability: stable
+    note: >
+      A call is dropped when the caller never offered that tool, or
+      arguments are not valid JSON.
+    examples: [0, 1]
+  - key: demo.llm.tool_call_rejection_reasons
+    type: string[]
+    brief: Reasons the generated tool calls were rejected
+    stability: stable
+    note: >
+      See demo.llm.tool_call_rejection_reason for the individual values.
+    examples: [["not_offered"], ["not_offered", "unparseable_arguments"]]
+  - key: demo.llm.tool_call_rejection_reason
+    type: string
+    brief: Why a generated tool call was rejected
+    stability: stable
+    note: >
+      Either not_offered, when the model named a tool the caller did not
+      offer, or unparseable_arguments or generated args are not valid
+    examples: ["not_offered", "unparseable_arguments"]
+  - key: demo.llm.prompt_truncated
+    type: boolean
+    brief: Whether the prompt was cropped to fit the context window
+    stability: stable
+    note: >
+      Truncated prompt means earlier turns of the conversation not seen.
+  - key: demo.llm.time_to_first_token
+    type: double
+    brief: Prefill time + Time to generate 1 token
+    stability: stable
+    note: >
+      Everything after this point is one forward pass per token.
+      Gives and idea of prefill and decode cost.
+    examples: [0.12, 0.87]

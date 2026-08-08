@@ -1,3 +1,8 @@
+#!/usr/bin/python
+
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Block 3: a decoder-only transformer, small enough to fit under 5M parameters.
 """
@@ -177,8 +182,10 @@ class TinyGPT(nn.Module):
         x = self.drop(self.wte(idx))
         presents = []
         for i, block in enumerate(self.blocks):
-            x, present = block(x, self.rope_cos, self.rope_sin,
-                               None if past is None else past[i])
+            x, present = block(
+                x, self.rope_cos, self.rope_sin,
+                None if past is None else past[i],
+            )
             presents.append(present)
         logits = self.lm_head(self.ln_f(x))
 
@@ -190,15 +197,19 @@ class TinyGPT(nn.Module):
         return (logits, loss, presents) if use_cache else (logits, loss)
 
     @torch.no_grad()
-    def generate(self, idx, max_new_tokens, temperature=1.0, top_k=None,
-                 stop_id=None, use_cache=True):
+    def generate(
+        self, idx, max_new_tokens, temperature=1.0, top_k=None,
+        stop_id=None, use_cache=True, on_first_token=None,
+    ):
         was_training = self.training
         self.eval()
         if stop_id is not None and not hasattr(stop_id, "__iter__"):
             stop_id = [stop_id]
         try:
             gen = self._generate_cached if use_cache else self._generate
-            return gen(idx, max_new_tokens, temperature, top_k, stop_id)
+            return gen(
+                idx, max_new_tokens, temperature, top_k, stop_id, on_first_token
+            )
         finally:
             self.train(was_training)
 
@@ -209,13 +220,18 @@ class TinyGPT(nn.Module):
             logits[logits < v[:, [-1]]] = float("-inf")
         return torch.multinomial(F.softmax(logits, dim=-1), num_samples=1)
 
-    def _generate_cached(self, idx, max_new_tokens, temperature, top_k, stop_id):
+    def _generate_cached(
+        self, idx, max_new_tokens, temperature, top_k, stop_id,
+        on_first_token=None,
+    ):
         room = self.cfg.context - max_new_tokens
         cur = idx[:, -room:] if idx.size(1) > room else idx
         past = None
-        for _ in range(max_new_tokens):
+        for step in range(max_new_tokens):
             logits, _, past = self(cur, past=past, use_cache=True)
             nxt = self._sample(logits, temperature, top_k)
+            if step == 0 and on_first_token is not None:
+                on_first_token()
             idx = torch.cat((idx, nxt), dim=1)
             cur = nxt
             if stop_id is not None and all(int(t) in stop_id for t in nxt.flatten()):
@@ -224,8 +240,11 @@ class TinyGPT(nn.Module):
                 break
         return idx
 
-    def _generate(self, idx, max_new_tokens, temperature, top_k, stop_id):
-        for _ in range(max_new_tokens):
+    def _generate(
+        self, idx, max_new_tokens, temperature, top_k, stop_id,
+        on_first_token=None,
+    ):
+        for step in range(max_new_tokens):
             # crop to the context window; the model cannot see further back
             window = idx[:, -self.cfg.context:]
             logits, _ = self(window)
@@ -234,6 +253,8 @@ class TinyGPT(nn.Module):
                 v, _ = torch.topk(logits, min(top_k, logits.size(-1)))
                 logits[logits < v[:, [-1]]] = float("-inf")
             nxt = torch.multinomial(F.softmax(logits, dim=-1), num_samples=1)
+            if step == 0 and on_first_token is not None:
+                on_first_token()
             idx = torch.cat((idx, nxt), dim=1)
             if stop_id is not None and all(int(t) in stop_id for t in nxt.flatten()):
                 break
@@ -258,14 +279,18 @@ def main():
     args = ap.parse_args()
 
     if args.compare:
-        print(f"{'preset':<10}{'d_model':>9}{'layers':>8}{'heads':>7}"
-              f"{'params':>13}{'fp32':>9}{'tok/param':>11}")
+        print(
+            f"{'preset':<10}{'d_model':>9}{'layers':>8}{'heads':>7}"
+            f"{'params':>13}{'fp32':>9}{'tok/param':>11}"
+        )
         print("-" * 67)
         for name, over in PRESETS.items():
             m = TinyGPT(Config(**over))
             n = m.param_breakdown()["TOTAL"]
-            print(f"{name:<10}{over['d_model']:>9}{over['n_layer']:>8}{over['n_head']:>7}"
-                  f"{n:>13,}{n * 4 / 1e6:>8.1f}M{291_745 / n:>11.2f}")
+            print(
+                f"{name:<10}{over['d_model']:>9}{over['n_layer']:>8}{over['n_head']:>7}"
+                f"{n:>13,}{n * 4 / 1e6:>8.1f}M{291_745 / n:>11.2f}"
+            )
         print()
         print("tok/param is training tokens per parameter. Chinchilla-optimal is ~20;")
         print("everything here is heavily over-parameterised, which is what memorising needs.")
@@ -274,8 +299,10 @@ def main():
     cfg = Config(**PRESETS[args.preset])
     model = TinyGPT(cfg)
 
-    print(f"preset '{args.preset}':  vocab {cfg.vocab_size}  d_model {cfg.d_model}  "
-          f"layers {cfg.n_layer}  heads {cfg.n_head}  context {cfg.context}")
+    print(
+        f"preset '{args.preset}':  vocab {cfg.vocab_size}  d_model {cfg.d_model}  "
+        f"layers {cfg.n_layer}  heads {cfg.n_head}  context {cfg.context}"
+    )
     print()
     groups = model.param_breakdown()
     total = groups["TOTAL"]
@@ -287,8 +314,10 @@ def main():
             print(f"{name:<28}{n:>12,}{n / total:>9.0%}")
     print()
     print(f"fp32 size: {total * 4 / 1e6:.1f} MB   fp16: {total * 2 / 1e6:.1f} MB")
-    print(f"per-block: {groups['blocks'] // cfg.n_layer:,}   "
-          f"(formula 12*d^2 = {12 * cfg.d_model ** 2:,}, plus biases and layernorms)")
+    print(
+        f"per-block: {groups['blocks'] // cfg.n_layer:,}   "
+        f"(formula 12*d^2 = {12 * cfg.d_model ** 2:,}, plus biases and layernorms)"
+    )
 
     print()
     print("SANITY CHECKS")
@@ -321,8 +350,10 @@ def main():
     pairs = [(5, 3), (10, 8), (100, 98), (1000, 998)]
     scores = [score(i, j) for i, j in pairs]
     spread = max(scores) - min(scores)
-    print(f"  RoPE is relative   : gap-2 score at positions {[p[0] for p in pairs]} "
-          f"varies by {spread:.2e}")
+    print(
+        f"  RoPE is relative   : gap-2 score at positions {[p[0] for p in pairs]} "
+        f"varies by {spread:.2e}"
+    )
     print(f"  RoPE norm preserved: {torch.allclose(apply_rope(qv, cos[7:8], sin[7:8]).norm(), qv.norm()):}")
 
     torch.manual_seed(0)
@@ -340,11 +371,14 @@ def main():
     fast = model.generate(prompt, max_new_tokens=32, temperature=0.0, top_k=None)
     t_fast = time.perf_counter() - t
     t = time.perf_counter()
-    slow = model.generate(prompt, max_new_tokens=32, temperature=0.0, top_k=None,
-                          use_cache=False)
+    slow = model.generate(
+        prompt, max_new_tokens=32, temperature=0.0, top_k=None, use_cache=False
+    )
     t_slow = time.perf_counter() - t
-    print(f"  kv cache == no cache: {torch.equal(fast, slow)}   "
-          f"({fast.shape[1] - prompt.shape[1]} tokens, {t_slow / t_fast:.1f}x faster)")
+    print(
+        f"  kv cache == no cache: {torch.equal(fast, slow)}   "
+        f"({fast.shape[1] - prompt.shape[1]} tokens, {t_slow / t_fast:.1f}x faster)"
+    )
 
     model.train()
     out = model.generate(torch.zeros((1, 1), dtype=torch.long), max_new_tokens=8)

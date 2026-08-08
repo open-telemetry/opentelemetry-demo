@@ -26,7 +26,7 @@ import uuid
 import torch
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
-from opentelemetry import trace
+from opentelemetry import metrics, trace
 from pydantic import BaseModel
 
 from demo_llm.architecture import Config, TinyGPT
@@ -38,6 +38,11 @@ UUID_RE = re.compile(
 MARKERS = re.compile(
     r"(<\|assistant\|>|<\|call\|>|<\|result\|>|<\|user\|>|<\|end\|>)"
 )
+
+# gen_ai.provider.name identifies who serves the model, and this demo serves its
+# own. Model, temperature and token counts are all upstream gen_ai conventions,
+# so no demo specific attribute is defined for any of them.
+PROVIDER = "demo-llm"
 
 tracer = trace.get_tracer(__name__)
 
@@ -171,6 +176,37 @@ def build_app(model, tok, adapter, device, model_name, max_retries=3):
     ]
     stats = {"requests": 0, "resampled": 0, "dropped_calls": 0}
 
+    meter = metrics.get_meter(__name__)
+    request_duration = meter.create_histogram(
+        "gen_ai.server.request.duration",
+        unit="s",
+        description="Generative AI server request duration such as "
+                    "time-to-last byte or last output token.",
+    )
+    time_to_first_token = meter.create_histogram(
+        "gen_ai.server.time_to_first_token",
+        unit="s",
+        description="Time to generate first token for successful responses.",
+    )
+    time_per_output_token = meter.create_histogram(
+        "gen_ai.server.time_per_output_token",
+        unit="s",
+        description="Time per output token generated after the first token "
+                    "for successful responses.",
+    )
+    resamples = meter.create_counter(
+        "demo.llm.resamples",
+        unit="{resample}",
+        description="Generations thrown away and retried because the model "
+                    "returned nothing usable.",
+    )
+    dropped_tool_calls = meter.create_counter(
+        "demo.llm.dropped_tool_calls",
+        unit="{tool_call}",
+        description="Tool calls removed from the response because the Agent "
+                    "could not have executed them.",
+    )
+
     def offered_names(req):
         return {
             t["function"]["name"]
@@ -187,42 +223,71 @@ def build_app(model, tok, adapter, device, model_name, max_retries=3):
         for c in calls:
             fn = c["function"]
             if fn["name"] not in allowed:
-                bad.append((fn["name"], "not offered"))
+                bad.append((fn["name"], "not_offered"))
                 continue
             try:
                 json.loads(fn["arguments"])
             except json.JSONDecodeError:
-                bad.append((fn["name"], "unparseable arguments"))
+                bad.append((fn["name"], "unparseable_arguments"))
         return bad
 
     def run(req):
         prompt, uid_seen = adapter.encode(req.messages, req.tools)
         ids = tok.encode(prompt)
         room = model.cfg.context - req.max_tokens
-        if len(ids) > room:
+        truncated = len(ids) > room
+        if truncated:
             ids = ids[-room:]
         allowed = offered_names(req)
         stats["requests"] += 1
 
         content, calls, n_gen, bad, tries = "", [], 0, [], 0
+        ttft, decode = None, None
         for attempt in range(max_retries + 1):
             tries = attempt + 1
-            out = model.generate(
-                torch.tensor([ids], device=device),
-                max_new_tokens=req.max_tokens,
-                temperature=req.temperature,
-                top_k=req.top_k,
-                stop_id=stop_ids,
-            )
-            n_gen = out.shape[1] - len(ids)
-            content, calls = adapter.decode(
-                tok.decode(out[0].tolist()[len(ids):]), uid_seen
-            )
-            bad = invalid(calls, allowed)
+            with tracer.start_as_current_span("generate") as span:
+                first_at = None
+
+                def on_first_token():
+                    nonlocal first_at
+                    first_at = time.perf_counter()
+
+                started = time.perf_counter()
+                out = model.generate(
+                    torch.tensor([ids], device=device),
+                    max_new_tokens=req.max_tokens,
+                    temperature=req.temperature,
+                    top_k=req.top_k,
+                    stop_id=stop_ids,
+                    on_first_token=on_first_token,
+                )
+                finished = time.perf_counter()
+                n_gen = out.shape[1] - len(ids)
+                content, calls = adapter.decode(
+                    tok.decode(out[0].tolist()[len(ids):]), uid_seen
+                )
+                bad = invalid(calls, allowed)
+
+                # The prompt forward pass is everything up to the first sampled
+                # token; the rest is one pass per token, served from the KV
+                # cache. Splitting them is what makes a slow request readable.
+                ttft = None if first_at is None else first_at - started
+                decode = None if first_at is None else finished - first_at
+                span.set_attribute("demo.llm.sample_attempt", tries)
+                span.set_attribute("gen_ai.usage.output_tokens", n_gen)
+                if ttft is not None:
+                    span.set_attribute("demo.llm.time_to_first_token", ttft)
+                if bad:
+                    span.set_attribute(
+                        "demo.llm.tool_call_rejection_reasons",
+                        sorted({reason for _, reason in bad}),
+                    )
+
             if not bad and (content.strip() or calls):
                 break
             if attempt < max_retries:
                 stats["resampled"] += 1
+                resamples.add(1, {"gen_ai.request.model": model_name})
 
         if bad:
             # Returning a call the Agent cannot execute is worse than returning
@@ -230,7 +295,22 @@ def build_app(model, tok, adapter, device, model_name, max_retries=3):
             dropped = {n for n, _ in bad}
             calls = [c for c in calls if c["function"]["name"] not in dropped]
             stats["dropped_calls"] += len(bad)
-        return content, calls, len(ids), n_gen, tries, bad
+            for _, reason in bad:
+                dropped_tool_calls.add(1, {
+                    "gen_ai.request.model": model_name,
+                    "demo.llm.tool_call_rejection_reason": reason,
+                })
+        return {
+            "content": content,
+            "calls": calls,
+            "prompt_tokens": len(ids),
+            "output_tokens": n_gen,
+            "attempts": tries,
+            "dropped": len(bad),
+            "truncated": truncated,
+            "ttft": ttft,
+            "decode": decode,
+        }
 
     def envelope(content, calls, n_prompt, n_gen):
         message = {"role": "assistant", "content": content or None}
@@ -279,25 +359,57 @@ def build_app(model, tok, adapter, device, model_name, max_retries=3):
     def completions(req: ChatRequest):
         if not req.messages:
             raise HTTPException(400, "messages must not be empty")
-        with tracer.start_as_current_span("chat demo-llm") as span:
-            content, calls, n_prompt, n_gen, tries, bad = run(req)
-            # gen_ai.* is an upstream semantic convention, so no demo specific
-            # attribute is defined for any of this.
-            span.set_attribute("gen_ai.operation.name", "chat")
-            span.set_attribute("gen_ai.system", "demo-llm")
-            span.set_attribute("gen_ai.request.model", model_name)
+
+        # The same attributes identify the operation on every gen_ai metric, so
+        # a span and its metrics can be filtered the same way.
+        common = {
+            "gen_ai.operation.name": "chat",
+            "gen_ai.provider.name": PROVIDER,
+            "gen_ai.request.model": req.model or model_name,
+            "gen_ai.response.model": model_name,
+        }
+        started = time.perf_counter()
+        with tracer.start_as_current_span(
+            f"chat {model_name}", kind=trace.SpanKind.SERVER
+        ) as span:
+            try:
+                out = run(req)
+            except Exception as exc:
+                request_duration.record(
+                    time.perf_counter() - started,
+                    dict(common, **{"error.type": type(exc).__qualname__}),
+                )
+                raise
+
+            calls, n_prompt = out["calls"], out["prompt_tokens"]
+            n_gen = out["output_tokens"]
+            body = envelope(out["content"], calls, n_prompt, n_gen)
+            elapsed = time.perf_counter() - started
+
+            span.set_attributes(common)
             span.set_attribute("gen_ai.request.temperature", req.temperature)
             span.set_attribute("gen_ai.request.max_tokens", req.max_tokens)
-            span.set_attribute("gen_ai.response.model", model_name)
+            if req.top_k is not None:
+                span.set_attribute("gen_ai.request.top_k", req.top_k)
+            span.set_attribute("gen_ai.response.id", body["id"])
             span.set_attribute("gen_ai.usage.input_tokens", n_prompt)
             span.set_attribute("gen_ai.usage.output_tokens", n_gen)
             span.set_attribute(
                 "gen_ai.response.finish_reasons",
                 ["tool_calls"] if calls else ["stop"],
             )
-            span.set_attribute("demo.llm.sample_attempts", tries)
-            span.set_attribute("demo.llm.dropped_tool_calls", len(bad))
-            body = envelope(content, calls, n_prompt, n_gen)
+            span.set_attribute("demo.llm.sample_attempts", out["attempts"])
+            span.set_attribute("demo.llm.dropped_tool_calls", out["dropped"])
+            span.set_attribute("demo.llm.prompt_truncated", out["truncated"])
+
+            # Token usage is not recorded here: the Agent already reports
+            # gen_ai.client.token.usage for the same call, and it is the only
+            # caller, so a server side copy would only double count.
+            request_duration.record(elapsed, common)
+            if out["ttft"] is not None:
+                time_to_first_token.record(out["ttft"], common)
+            if out["decode"] is not None and n_gen > 1:
+                time_per_output_token.record(out["decode"] / (n_gen - 1), common)
 
         if not req.stream:
             return body

@@ -8,8 +8,10 @@ import pathlib
 import re
 from collections import Counter, defaultdict
 
-STRUCTURAL = ["<|user|>", "<|assistant|>", "<|call|>", "<|result|>", "<|end|>",
-              "<|uid|>", "<|tools|>"]
+STRUCTURAL = [
+    "<|user|>", "<|assistant|>", "<|call|>", "<|result|>", "<|end|>",
+    "<|uid|>", "<|tools|>",
+]
 
 
 def discover_conditioning_atoms(data_dir, text):

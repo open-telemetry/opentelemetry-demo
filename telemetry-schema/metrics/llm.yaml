@@ -1,0 +1,28 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+metrics:
+  - name: demo.llm.resamples
+    brief: Generations thrown away because nothing usable came back
+    instrument: counter
+    unit: "{resample}"
+    stability: stable
+    annotations:
+      service: demo-llm
+    attributes:
+      - ref: gen_ai.request.model
+        requirement_level: required
+
+  - name: demo.llm.dropped_tool_calls
+    brief: Tool calls removed from a response before it was returned
+    instrument: counter
+    unit: "{tool_call}"
+    stability: stable
+    annotations:
+      service: demo-llm
+    attributes:
+      - ref: gen_ai.request.model
+        requirement_level: required
+      - ref: demo.llm.tool_call_rejection_reason
+        requirement_level: required
