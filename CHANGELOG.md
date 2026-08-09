@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [flagd] Fix `productCatalogFailure` targeting so the flag can be enabled;
+  it resolved to `off` in both branches, which overrode `defaultVariant`
+  ([#3816](https://github.com/open-telemetry/opentelemetry-demo/issues/3816))
 * [react-native-app] Fix `SessionGateway.setSessionValue` to await `getSession()`,
   preventing stored session corruption and loss of `userId`
   ([#3765](https://github.com/open-telemetry/opentelemetry-demo/issues/3765))
