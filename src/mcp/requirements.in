@@ -4,7 +4,7 @@ python-dotenv==1.2.2
 httpx==0.28.1
 langchain==1.3.14
 mcp==1.29.0
-fastmcp==3.4.5
+fastmcp==3.4.6
 fastapi==0.141.1
 opentelemetry-api==1.43.0
 opentelemetry-sdk==1.43.0
