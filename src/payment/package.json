@@ -26,6 +26,7 @@
     "@opentelemetry/resources": "2.10.0",
     "@opentelemetry/sdk-metrics": "2.10.0",
     "@opentelemetry/sdk-node": "0.221.0",
+    "@opentelemetry/semantic-conventions": "1.43.0",
     "grpc-js-health-check": "1.2.2",
     "pino": "^10.3.1",
     "pino-opentelemetry-transport": "^4.0.2",
