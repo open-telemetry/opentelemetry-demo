@@ -11,6 +11,7 @@ attribute_groups:
       - ref: user_agent.synthetic.type
       - ref: user.id
       - ref: user.email
+      - ref: user.hash
       - ref: demo.user_context.selected_currency
       - ref: demo.payment.transaction.id
       - ref: demo.payment.card_number
