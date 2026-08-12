@@ -7,8 +7,24 @@ the release.
 
 ## Unreleased
 
+* [react-native-app] Fix `SessionGateway.setSessionValue` to await `getSession()`,
+  preventing stored session corruption and loss of `userId`
+  ([#3765](https://github.com/open-telemetry/opentelemetry-demo/issues/3765))
+* [cart] Report health to the demo's OpAMP server when running with the
+  observability stack.
+  ([#3656](https://github.com/open-telemetry/opentelemetry-demo/pull/3656))
+* [payment] Add `error.type` attribute to error spans in `charge.js` and
+  `index.js` to align with OpenTelemetry Semantic Conventions for errors
+  ([#3758](https://github.com/open-telemetry/opentelemetry-demo/issues/3758))
 * [react-native-app] Render missing `City` and `State` input fields in `CheckoutForm`
   ([#3754](https://github.com/open-telemetry/opentelemetry-demo/issues/3754))
+* [payment] Fix gRPC server not starting by calling `server.start()` after `bindAsnc()`.
+  The server bound to the port but was never started to accept connections, causing
+  the service to fail its health checks.
+  ([#3844](https://github.com/open-telemetry/opentelemetry-demo/pull/3844))
+
+## 3.0.0
+
 * [react-native-app] Fix `ProductCard` price calculation where `nanos` was
   divided by `100_000_000` (1e8) instead of `1_000_000_000` (1e9), inflating
   the displayed price

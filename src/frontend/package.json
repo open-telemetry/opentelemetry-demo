@@ -40,24 +40,24 @@
     "cookies-next": "6.1.1",
     "currency-symbol-map": "5.1.0",
     "dotenv": "17.4.2",
-    "dotenv-expand": "13.0.0",
-    "next": "16.2.12",
+    "dotenv-expand": "1000.0.0",
+    "next": "16.3.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "sharp": "0.35.3",
-    "styled-components": "6.4.4",
+    "styled-components": "6.5.1",
     "uuid": "14.0.1"
   },
   "devDependencies": {
-    "@types/node": "26.1.2",
-    "@types/react": "19.2.17",
-    "@types/react-dom": "19.2.3",
+    "@types/node": "26.2.0",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
     "@types/styled-components": "5.1.36",
-    "@typescript-eslint/eslint-plugin": "8.65.0",
-    "@typescript-eslint/parser": "8.65.0",
-    "cypress": "15.19.0",
+    "@typescript-eslint/eslint-plugin": "8.66.0",
+    "@typescript-eslint/parser": "8.66.0",
+    "cypress": "15.20.0",
     "eslint": "9.39.5",
-    "eslint-config-next": "16.2.12",
+    "eslint-config-next": "16.3.0",
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "7.1.1",
     "ts-proto": "2.12.0",
@@ -65,7 +65,7 @@
   },
   "overrides": {
     "@cypress/request": "4.0.0",
-    "postcss": "8.5.14",
+    "postcss": "8.5.23",
     "qs": "6.15.2"
   }
 }
