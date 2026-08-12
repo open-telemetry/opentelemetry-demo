@@ -62,6 +62,7 @@ server.bindAsync(address, grpc.ServerCredentials.createInsecure(), (err, port) =
     return logger.error({ err })
   }
 
+  server.start()
   logger.info(`payment gRPC server started on ${address}`)
 })
 
