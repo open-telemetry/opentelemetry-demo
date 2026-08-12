@@ -315,11 +315,61 @@ export async function browserScenario() {
         return
     }
 
-    const page = await browser.newPage()
+    // Fresh context per iteration - a shared/persistent context (the k6
+    // browser default when only newPage() is called) leaks cookies and
+    // storage across every simulated "user" for the VU's entire 9999h
+    // lifetime, which breaks the RUM agent's session bookkeeping over time.
+    const context = await browser.newContext()
+    const page = await context.newPage()
+    // Tag first-party requests as synthetic via baggage, scoped to
+    // same-origin only. A custom header on a cross-origin request is a
+    // non-simple request under the Fetch spec, forcing a real CORS
+    // preflight; k6/Playwright drive the page through CDP, which loses
+    // Chromium's normal "simple cross-origin request" fast path once a
+    // custom header is present. Applying this header to every request via
+    // setExtraHTTPHeaders (including third-party ones) forces that
+    // preflight on any cross-origin resource the page loads - confirmed
+    // breaking both a third-party RUM agent's chunk-loading domain and
+    // Google Fonts' fonts.gstatic.com, since most CDNs never expect (and
+    // don't handle) an OPTIONS preflight for what would otherwise be a
+    // simple cross-origin GET. Scoping the header to same-origin avoids
+    // triggering a preflight for any third-party resource in the first
+    // place. This is done via an in-page addInitScript() rather than
+    // page.route()/route.continue() - CDP-level request interception -
+    // because a page.route() handler here leaves the VU unable to start a
+    // second iteration: context.close() reports a clean teardown (visible
+    // even with K6_BROWSER_DEBUG=true), but k6's own VU/executor never
+    // reclaims the VU afterward, silently stalling the whole scenario
+    // after exactly one iteration.
+    await context.addInitScript(() => {
+        const origFetch = window.fetch
+        window.fetch = function (input, init) {
+            try {
+                const url = typeof input === 'string' ? input : input.url
+                if (url && url.startsWith(window.location.origin)) {
+                    init = init || {}
+                    const headers = new Headers(init.headers || {})
+                    const existing = headers.get('baggage') || ''
+                    headers.set('baggage', [existing, 'synthetic_request=true'].filter(Boolean).join(', '))
+                    init.headers = headers
+                }
+            } catch (e) {}
+            return origFetch.call(this, input, init)
+        }
+        const origOpen = XMLHttpRequest.prototype.open
+        XMLHttpRequest.prototype.open = function (method, url, ...rest) {
+            const result = origOpen.call(this, method, url, ...rest)
+            try {
+                if (url && (url.startsWith(window.location.origin) || url.startsWith('/'))) {
+                    this.setRequestHeader('baggage', 'synthetic_request=true')
+                }
+            } catch (e) {}
+            return result
+        }
+    })
     const isCurrencyChange = cryptoRandom() < 0.5
     const span = tracer.startSpan(isCurrencyChange ? 'browser_change_currency' : 'browser_add_to_cart')
     try {
-        await page.setExtraHTTPHeaders({ baggage: 'synthetic_request=true' })
         if (isCurrencyChange) {
             span.log('Currency changed to CHF')
             await changeCurrency(page)
@@ -331,7 +381,22 @@ export async function browserScenario() {
         console.error(`browser task error: ${e}`)
     } finally {
         span.end()
-        await page.close()
+        // INP/RUM beacons are only finalized/sent by client-side agents
+        // when their visibilitychange handler observes
+        // document.visibilityState === "hidden" (checked inside the
+        // handler, not inferred from the event alone). Dispatching a bare
+        // 'visibilitychange' event does not change that real,
+        // browser-computed property, so an agent's internal check can
+        // silently fail and the pre-close beacon flush never actually
+        // runs. Override the getters first so that check passes.
+        await page.evaluate(() => {
+            Object.defineProperty(document, 'visibilityState', { get: () => 'hidden', configurable: true })
+            Object.defineProperty(document, 'hidden', { get: () => true, configurable: true })
+            document.dispatchEvent(new Event('visibilitychange'))
+            window.dispatchEvent(new Event('pagehide'))
+        }).catch(() => {})
+        await page.waitForTimeout(300)
+        await context.close()
     }
 
     sleep(cryptoRandom() * 9 + 1)
