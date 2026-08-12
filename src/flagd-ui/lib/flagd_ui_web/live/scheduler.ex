@@ -171,7 +171,7 @@ defmodule FlagdUiWeb.Scheduler do
                 No schedulable flags found in the current configuration.
               </p>
 
-              <div class="max-h-96 overflow-y-auto">
+              <div class="max-h-[70vh] overflow-y-auto">
                 <div
                   :for={{name, variants} <- @available}
                   class="border-b border-gray-700 py-2 last:border-b-0"
