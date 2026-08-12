@@ -21,12 +21,6 @@ defmodule FlagdUi.Scheduler do
 
   @topic "scheduler"
 
-  # "off" is not the resting state of loadGeneratorTraffic: the demo expects it
-  # enabled, and toggling it would stop all synthetic traffic.
-  @excluded_flags ["loadGeneratorTraffic"]
-
-  @resting_variant "off"
-
   @history_limit 10
 
   @default_config %{
@@ -71,26 +65,30 @@ defmodule FlagdUi.Scheduler do
   Returns the flags eligible for scheduling as `{name, activatable_variants}`
   pairs, given a flagd configuration.
 
-  A flag is eligible when it has an "off" variant to return to and at least one
-  other variant to switch to. That excludes flags such as `loadGeneratorVUs`,
-  which is a tuning knob rather than a failure scenario.
+  A flag is eligible when it has a resting variant, its configured default, to
+  return to and at least one other variant to switch to.
   """
-  def schedulable_flags(%{"flags" => flags}) when is_map(flags) do
+  def schedulable_flags(config) do
+    config
+    |> eligible_flag_specs()
+    |> Enum.map(fn {name, _resting, activatable} -> {name, activatable} end)
+  end
+
+  defp eligible_flag_specs(%{"flags" => flags}) when is_map(flags) do
     flags
-    |> Enum.flat_map(&schedulable_flag/1)
+    |> Enum.flat_map(&flag_spec/1)
     |> Enum.sort()
   end
 
-  def schedulable_flags(_), do: []
+  defp eligible_flag_specs(_), do: []
 
-  defp schedulable_flag({name, _data}) when name in @excluded_flags, do: []
-
-  defp schedulable_flag({name, data}) do
+  defp flag_spec({name, data}) do
     variants = variant_names(data)
-    activatable = Enum.sort(variants -- [@resting_variant])
+    resting = Map.get(data, "defaultVariant")
+    activatable = Enum.sort(variants -- [resting])
 
-    if @resting_variant in variants and activatable != [] do
-      [{name, activatable}]
+    if resting in variants and activatable != [] do
+      [{name, resting, activatable}]
     else
       []
     end
@@ -112,7 +110,8 @@ defmodule FlagdUi.Scheduler do
        next_up: [],
        active: %{},
        history: [],
-       timers: %{}
+       timers: %{},
+       eligible: []
      }}
   end
 
@@ -126,13 +125,18 @@ defmodule FlagdUi.Scheduler do
     case validate(config) do
       :ok ->
         {seed, rand} = seed_rand(config.seed)
+        state = state |> cancel_timers() |> revert_all()
+
+        # Frozen for the run: the flags' own resting variants are read back from
+        # storage as this run writes over them, so re-deriving mid-run would
+        # mistake a flag's currently active variant for its rest state.
+        eligible = state.storage |> GenServer.call(:read) |> eligible_flag_specs()
 
         new_state =
           state
-          |> cancel_timers()
-          |> revert_all()
           |> Map.merge(%{
             config: config,
+            eligible: eligible,
             running: true,
             epoch: state.epoch + 1,
             rand: rand,
@@ -179,7 +183,7 @@ defmodule FlagdUi.Scheduler do
 
   @impl true
   def handle_info(
-        {:trigger, epoch, flag, variant, duration_ms},
+        {:trigger, epoch, flag, variant, resting_variant, duration_ms},
         %{running: true, epoch: epoch} = state
       ) do
     # The same flag can be picked again while a previous hold is still running,
@@ -199,6 +203,7 @@ defmodule FlagdUi.Scheduler do
     activation = %{
       flag: flag,
       variant: variant,
+      resting_variant: resting_variant,
       duration_ms: duration_ms,
       started_at: DateTime.utc_now(),
       until: System.monotonic_time(:millisecond) + duration_ms
@@ -271,10 +276,20 @@ defmodule FlagdUi.Scheduler do
   defp log_shortfall(_wanted, _available), do: :ok
 
   defp schedule_activation(state, plan, epoch) do
-    %{flag: flag, variant: variant, duration_ms: duration_ms, offset_ms: offset_ms} = plan
+    %{
+      flag: flag,
+      variant: variant,
+      resting_variant: resting_variant,
+      duration_ms: duration_ms,
+      offset_ms: offset_ms
+    } = plan
 
     timer =
-      Process.send_after(self(), {:trigger, epoch, flag, variant, duration_ms}, offset_ms)
+      Process.send_after(
+        self(),
+        {:trigger, epoch, flag, variant, resting_variant, duration_ms},
+        offset_ms
+      )
 
     pending = %{
       flag: flag,
@@ -292,7 +307,7 @@ defmodule FlagdUi.Scheduler do
   defp plan_activations([], _wanted, _config, rand), do: {[], rand}
 
   defp plan_activations(flags, wanted, config, rand) do
-    {{flag, variants} = picked, rand} = random_element(flags, rand)
+    {{flag, resting_variant, variants} = picked, rand} = random_element(flags, rand)
 
     {duration_ms, rand} =
       random_in_range(config.min_duration_ms, config.max_duration_ms, rand)
@@ -300,18 +315,26 @@ defmodule FlagdUi.Scheduler do
     {offset_ms, rand} = random_in_range(0, config.interval_ms - duration_ms, rand)
     {variant, rand} = random_element(variants, rand)
 
-    plan = %{flag: flag, variant: variant, duration_ms: duration_ms, offset_ms: offset_ms}
+    plan = %{
+      flag: flag,
+      variant: variant,
+      resting_variant: resting_variant,
+      duration_ms: duration_ms,
+      offset_ms: offset_ms
+    }
 
     {rest, rand} = plan_activations(List.delete(flags, picked), wanted - 1, config, rand)
 
     {[plan | rest], rand}
   end
 
-  defp eligible_flags(%{storage: storage, config: %{flags: selection}}) do
-    storage
-    |> GenServer.call(:read)
-    |> schedulable_flags()
-    |> Enum.flat_map(fn {name, variants} -> select_variants(selection, name, variants) end)
+  defp eligible_flags(%{eligible: eligible, config: %{flags: selection}}) do
+    Enum.flat_map(eligible, fn {name, resting, variants} ->
+      case select_variants(selection, name, variants) do
+        [{^name, allowed}] -> [{name, resting, allowed}]
+        [] -> []
+      end
+    end)
   end
 
   defp select_variants(:all, name, variants), do: [{name, variants}]
@@ -333,10 +356,12 @@ defmodule FlagdUi.Scheduler do
     end)
   end
 
-  defp revert_flag(%{storage: storage} = state, flag) do
-    GenServer.cast(storage, {:write, flag, @resting_variant})
+  defp revert_flag(%{storage: storage, active: active} = state, flag) do
+    variant = active |> Map.fetch!(flag) |> Map.fetch!(:resting_variant)
 
-    Logger.info("Flag scheduler reverted #{flag} to #{@resting_variant}")
+    GenServer.cast(storage, {:write, flag, variant})
+
+    Logger.info("Flag scheduler reverted #{flag} to #{variant}")
 
     state
   end

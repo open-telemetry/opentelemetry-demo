@@ -48,7 +48,7 @@ defmodule FlagdUiWeb.Scheduler do
                 {if @scheduler.running, do: "Scheduler running", else: "Scheduler stopped"}
               </p>
               <p class="text-sm">
-                Activates randomly picked flags each interval, then turns them back off.
+                Activates randomly picked flags each interval, then reverts them to normal.
               </p>
             </div>
             <span class={[

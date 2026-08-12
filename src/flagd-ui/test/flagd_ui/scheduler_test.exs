@@ -32,8 +32,17 @@ defmodule FlagdUi.SchedulerTest do
     name
   end
 
-  defp variant_of(flag),
-    do: get_in(GenServer.call(Storage, :read), ["flags", flag, "defaultVariant"])
+  # Mirrors Storage.update_flag/3: a flag with a 3-element targeting.if
+  # (condition, on-value, off-value) is toggled through that rule rather than
+  # its defaultVariant, e.g. productCatalogFailure.
+  defp variant_of(flag) do
+    data = get_in(GenServer.call(Storage, :read), ["flags", flag])
+
+    case get_in(data, ["targeting", "if"]) do
+      [_condition, on_value, _off_value] -> on_value
+      _ -> Map.get(data, "defaultVariant")
+    end
+  end
 
   defp eventually(fun, timeout \\ 3000) do
     deadline = System.monotonic_time(:millisecond) + timeout
@@ -65,24 +74,16 @@ defmodule FlagdUi.SchedulerTest do
       assert {"cartFailure", ["10%", "100%", "25%", "50%", "75%", "90%"]} in flags
     end
 
-    test "excludes loadGeneratorTraffic, whose resting state is on" do
-      names =
-        Storage
-        |> GenServer.call(:read)
-        |> Scheduler.schedulable_flags()
-        |> Enum.map(fn {name, _variants} -> name end)
+    test "offers loadGeneratorTraffic, whose resting state is on" do
+      flags = Storage |> GenServer.call(:read) |> Scheduler.schedulable_flags()
 
-      refute "loadGeneratorTraffic" in names
+      assert {"loadGeneratorTraffic", ["off"]} in flags
     end
 
-    test "excludes flags with no off variant to return to" do
-      names =
-        Storage
-        |> GenServer.call(:read)
-        |> Scheduler.schedulable_flags()
-        |> Enum.map(fn {name, _variants} -> name end)
+    test "offers loadGeneratorVUs, whose resting state is its default variant" do
+      flags = Storage |> GenServer.call(:read) |> Scheduler.schedulable_flags()
 
-      refute "loadGeneratorVUs" in names
+      assert {"loadGeneratorVUs", ["10", "25", "50"]} in flags
     end
 
     test "tolerates a configuration without flags" do
@@ -175,12 +176,52 @@ defmodule FlagdUi.SchedulerTest do
       assert Enum.any?(Scheduler.state(scheduler).history, &(&1.flag == flag))
     end
 
+    test "reverts loadGeneratorTraffic to on, not off" do
+      scheduler = start_scheduler(TrafficRevertScheduler)
+
+      config = immediate_config(%{flags: %{"loadGeneratorTraffic" => ["off"]}})
+
+      assert :ok = Scheduler.start_schedule(scheduler, config)
+
+      assert_receive {:scheduler_state, %{active: [%{flag: "loadGeneratorTraffic"}]}}, 2000
+      assert eventually(fn -> variant_of("loadGeneratorTraffic") == "off" end)
+
+      assert :ok = Scheduler.stop_schedule(scheduler)
+
+      assert eventually(fn -> variant_of("loadGeneratorTraffic") == "on" end)
+    end
+
+    test "reverts loadGeneratorVUs to its own default, not off" do
+      scheduler = start_scheduler(VUsRevertScheduler)
+
+      config = immediate_config(%{flags: %{"loadGeneratorVUs" => ["25"]}})
+
+      assert :ok = Scheduler.start_schedule(scheduler, config)
+
+      assert_receive {:scheduler_state, %{active: [%{flag: "loadGeneratorVUs", variant: "25"}]}},
+                     2000
+
+      assert :ok = Scheduler.stop_schedule(scheduler)
+
+      assert eventually(fn -> variant_of("loadGeneratorVUs") == "5" end)
+    end
+
     test "reverts every flag it activates when holds fill the whole interval" do
       scheduler = start_scheduler(BackToBackScheduler)
 
+      # Restrict to off-resting flags: loadGeneratorTraffic and loadGeneratorVUs
+      # rest elsewhere and are covered by their own revert tests above.
+      selection =
+        Storage
+        |> GenServer.call(:read)
+        |> Scheduler.schedulable_flags()
+        |> Enum.reject(fn {name, _} -> name in ["loadGeneratorTraffic", "loadGeneratorVUs"] end)
+        |> Map.new()
+
       # A hold as long as the interval makes each revert land exactly on the next
       # interval boundary, which previously left the earlier flag switched on.
-      assert :ok = Scheduler.start_schedule(scheduler, immediate_config(%{seed: 99}))
+      assert :ok =
+               Scheduler.start_schedule(scheduler, immediate_config(%{seed: 99, flags: selection}))
 
       assert_receive {:scheduler_state, %{active: [%{flag: _}]}}, 2000
 

@@ -29,7 +29,10 @@ presenting a backend that shows issues at a "recent" point in time.
 Each interval the scheduler activates up to a configured number of distinct
 randomly picked flags. Every activation gets its own hold duration between the
 configured minimum and maximum, and its own offset, so that the whole activation
-fits inside the interval. When a hold expires that flag is set back to `off`.
+fits inside the interval. When a hold expires that flag is set back to its
+resting variant, the flag's own configured default. That is `off` for most
+failure scenarios, but `on` for `loadGeneratorTraffic` and `5` for
+`loadGeneratorVUs`.
 
 The following can be configured:
 
@@ -43,10 +46,8 @@ The following can be configured:
 * **Flags**: which flag variants may be picked, chosen one variant at a time. A
   flag with graded variants can take part with only some of them, so
   `cartFailure` can be scheduled at `10%` and `25%` while `100%` is left out.
-  A flag is offered when it has an `off` variant to return to and at least one
-  other variant to switch to. That leaves out `loadGeneratorVUs`, which is a
-  tuning knob rather than a failure scenario, and `loadGeneratorTraffic`, whose
-  resting state is `on`.
+  A flag is offered when it has a resting variant, its configured default, to
+  return to and at least one other variant to switch to.
 
   A flag is picked first and one of its selected variants second, so a flag with
   many variants is no more likely to be chosen than a flag with one.

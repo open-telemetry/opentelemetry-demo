@@ -23,7 +23,7 @@ defmodule FlagdUiWeb.SchedulerTest do
     assert html =~ "Scheduler stopped"
     assert html =~ "Idle"
     assert html =~ "adFailure"
-    refute html =~ "loadGeneratorVUs"
+    assert html =~ "loadGeneratorVUs"
   end
 
   test "navigating from the dashboard live redirects", %{conn: conn} do
