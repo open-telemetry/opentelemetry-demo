@@ -137,9 +137,12 @@ jobs:
         env:
           GITHUB_WORKSPACE_PATH: ${{ github.workspace }}
         run: |
+          # Reuse the Dependabot-tracked weaver pin from the telemetry-docs Dockerfile so this
+          # check never drifts from the version used to actually generate the docs.
+          WEAVER_IMAGE=$(grep -oP '(?<=^FROM )\S*otel/weaver\S*' src/telemetry-docs/Dockerfile)
           docker run --rm \
             --mount "type=bind,source=${GITHUB_WORKSPACE_PATH}/telemetry-schema,target=/home/weaver/source,readonly" \
-            otel/weaver:v0.22.1 \
+            "${WEAVER_IMAGE}" \
             registry check -r source
 
   check-react-native-changes:
@@ -153,7 +156,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Check React Native paths
-        uses: dorny/paths-filter@7b450fff21473bca461d4b92ce414b9d0420d706  # v4.0.2
+        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d  # v4.0.3
         id: filter
         with:
           filters: |
