@@ -3,8 +3,8 @@ module github.com/open-telemetry/opentelemetry-demo/src/load-generator/xk6-otel
 go 1.25.0
 
 require (
-	github.com/grafana/sobek v0.0.0-20260429085637-a66d4790012b
-	go.k6.io/k6/v2 v2.1.0
+	github.com/grafana/sobek v0.0.0-20260727154728-7781506a890f
+	go.k6.io/k6/v2 v2.2.0
 	go.opentelemetry.io/contrib/instrumentation/runtime v0.70.0
 	go.opentelemetry.io/otel v1.45.0
 	go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp v0.21.0
@@ -20,8 +20,8 @@ require (
 require (
 	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
-	github.com/dlclark/regexp2 v1.12.0 // indirect
-	github.com/evanw/esbuild v0.28.0 // indirect
+	github.com/dlclark/regexp2/v2 v2.5.2 // indirect
+	github.com/evanw/esbuild v0.28.1 // indirect
 	github.com/fatih/color v1.19.0 // indirect
 	github.com/fsnotify/fsnotify v1.10.1 // indirect
 	github.com/go-logr/logr v1.4.4 // indirect
@@ -31,7 +31,7 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0 // indirect
 	github.com/mattn/go-colorable v0.1.15 // indirect
-	github.com/mattn/go-isatty v0.0.22 // indirect
+	github.com/mattn/go-isatty v0.0.24 // indirect
 	github.com/mstoykov/atlas v0.0.0-20220811071828-388f114305dd // indirect
 	github.com/serenize/snaker v0.0.0-20201027110005-a7ad2135616e // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
