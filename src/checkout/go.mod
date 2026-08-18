@@ -5,7 +5,7 @@ go 1.25.0
 require (
 	github.com/IBM/sarama v1.60.1
 	github.com/google/uuid v1.6.0
-	github.com/open-feature/go-sdk v1.17.2
+	github.com/open-feature/go-sdk v1.18.0
 	github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.7
 	github.com/open-feature/go-sdk-contrib/providers/flagd v0.6.0
 	go.opentelemetry.io/contrib/bridges/otelslog v0.20.0
@@ -22,7 +22,7 @@ require (
 	go.opentelemetry.io/otel/sdk/metric v1.45.0
 	go.opentelemetry.io/otel/trace v1.45.0
 	google.golang.org/grpc v1.83.0
-	google.golang.org/protobuf v1.36.11
+	google.golang.org/protobuf v1.36.12
 )
 
 require (
