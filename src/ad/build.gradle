@@ -7,7 +7,7 @@ plugins {
     id 'com.github.sherter.google-java-format' version '0.9'
     id 'idea'
     id 'application'
-    id 'com.github.ben-manes.versions' version '0.60.0'
+    id 'com.github.ben-manes.versions' version '0.61.0'
 }
 
 repositories {
