@@ -7,9 +7,12 @@ import (
 	"crypto/rand"
 	"crypto/tls"
 	"encoding/hex"
+	"errors"
 	"fmt"
+	"log/slog"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/open-telemetry/opamp-go/client"
 	"github.com/open-telemetry/opamp-go/client/types"
@@ -29,6 +32,18 @@ const (
 	opampServerTLSInsecureSkipVerifyEnv = "OPAMP_SERVER_TLS_INSECURE_SKIP_VERIFY"
 )
 
+type opampLogger struct {
+	logger *slog.Logger
+}
+
+func (l opampLogger) Debugf(ctx context.Context, format string, args ...any) {
+	l.logger.DebugContext(ctx, fmt.Sprintf(format, args...))
+}
+
+func (l opampLogger) Errorf(ctx context.Context, format string, args ...any) {
+	l.logger.ErrorContext(ctx, fmt.Sprintf(format, args...))
+}
+
 func startOpAmpClient(ctx context.Context) (client.OpAMPClient, error) {
 	endpoint := os.Getenv(opampServerEndpointEnv)
 	if endpoint == "" {
@@ -47,8 +62,11 @@ func startOpAmpClient(ctx context.Context) (client.OpAMPClient, error) {
 		resource.WithContainer(),
 		resource.WithAttributes(attribute.String("service.instance.id", hex.EncodeToString(instanceUID[:]))),
 	)
-	if err != nil {
+	if err != nil && !errors.Is(err, resource.ErrPartialResource) {
 		return nil, fmt.Errorf("failed to build resource: %w", err)
+	}
+	if err != nil {
+		logger.Warn("Built partial resource for OpAMP", slog.Any("error", err))
 	}
 
 	var identifying, nonIdentifying []*protobufs.KeyValue
@@ -66,7 +84,7 @@ func startOpAmpClient(ctx context.Context) (client.OpAMPClient, error) {
 		}
 	}
 
-	opampClient := client.NewWebSocket(nil)
+	opampClient := client.NewWebSocket(opampLogger{logger: logger})
 
 	err = opampClient.SetAgentDescription(&protobufs.AgentDescription{
 		IdentifyingAttributes:    identifying,
@@ -76,14 +94,21 @@ func startOpAmpClient(ctx context.Context) (client.OpAMPClient, error) {
 		return nil, fmt.Errorf("failed to set agent description: %w", err)
 	}
 
-	if err := opampClient.SetHealth(&protobufs.ComponentHealth{Healthy: true}); err != nil {
+	if err := opampClient.SetHealth(&protobufs.ComponentHealth{
+		Healthy:           true,
+		StartTimeUnixNano: uint64(time.Now().UnixNano()),
+	}); err != nil {
 		return nil, fmt.Errorf("failed to set health: %w", err)
+	}
+
+	capabilities := protobufs.AgentCapabilities_AgentCapabilities_ReportsHealth
+	if err := opampClient.SetCapabilities(&capabilities); err != nil {
+		return nil, fmt.Errorf("failed to set capabilities: %w", err)
 	}
 
 	startSettings := types.StartSettings{
 		OpAMPServerURL: endpoint,
 		InstanceUid:    instanceUID,
-		Capabilities:   protobufs.AgentCapabilities_AgentCapabilities_ReportsHealth,
 	}
 
 	skipTLSCertificateVerificationEnv := os.Getenv(opampServerTLSInsecureSkipVerifyEnv)
