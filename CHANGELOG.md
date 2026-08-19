@@ -7,6 +7,10 @@ the release.
 
 ## Unreleased
 
+* [checkout] Fix synchronous `srv.Serve` call blocking signal handler
+  registration, enabling graceful `SIGTERM` shutdown and preventing
+  OpenTelemetry SDK telemetry drop on container termination
+  ([#3865](https://github.com/open-telemetry/opentelemetry-demo/issues/3865))
 * [flagd-ui] Add a scheduler that periodically activates randomly picked feature
   flags for a random duration, so failure scenarios appear and disappear on
   their own without external tooling. Configurable interval, minimum and maximum
