@@ -102,6 +102,11 @@ func initDatabase() error {
 func main() {
 	ctx := context.Background()
 
+	opampIdentity, err := prepareOpAmpIdentity()
+	if err != nil {
+		logger.Error(fmt.Sprintf("Failed to prepare OpAMP identity: %v", err))
+	}
+
 	// Initialize OpenTelemetry SDK with otelconf
 	sdk, err := otelconf.NewSDK(otelconf.WithContext(ctx))
 	if err != nil {
@@ -160,7 +165,7 @@ func main() {
 		logger.Error(err.Error())
 	}
 
-	opampClient, err := startOpAmpClient(context.Background())
+	opampClient, err := startOpAmpClient(context.Background(), opampIdentity)
 	if err != nil {
 		logger.Error(fmt.Sprintf("Failed to start OpAMP client: %v", err))
 	} else if opampClient != nil {
