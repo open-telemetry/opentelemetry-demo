@@ -30,7 +30,13 @@ var opampIdentifyingKeys = map[string]bool{
 const (
 	opampServerEndpointEnv              = "OPAMP_SERVER_ENDPOINT"
 	opampServerTLSInsecureSkipVerifyEnv = "OPAMP_SERVER_TLS_INSECURE_SKIP_VERIFY"
+	otelResourceAttributesEnv           = "OTEL_RESOURCE_ATTRIBUTES"
 )
+
+type opampIdentity struct {
+	instanceUID       types.InstanceUid
+	serviceInstanceID string
+}
 
 type opampLogger struct {
 	logger *slog.Logger
@@ -44,7 +50,7 @@ func (l opampLogger) Errorf(ctx context.Context, format string, args ...any) {
 	l.logger.ErrorContext(ctx, fmt.Sprintf(format, args...))
 }
 
-func startOpAmpClient(ctx context.Context) (client.OpAMPClient, error) {
+func prepareOpAmpIdentity() (*opampIdentity, error) {
 	endpoint := os.Getenv(opampServerEndpointEnv)
 	if endpoint == "" {
 		return nil, nil
@@ -55,12 +61,34 @@ func startOpAmpClient(ctx context.Context) (client.OpAMPClient, error) {
 		return nil, fmt.Errorf("failed to generate instance uid: %w", err)
 	}
 
+	serviceInstanceID := hex.EncodeToString(instanceUID[:])
+	resourceAttributes := os.Getenv(otelResourceAttributesEnv)
+	if resourceAttributes != "" {
+		resourceAttributes += ","
+	}
+	resourceAttributes += "service.instance.id=" + serviceInstanceID
+	if err := os.Setenv(otelResourceAttributesEnv, resourceAttributes); err != nil {
+		return nil, fmt.Errorf("failed to set service instance id: %w", err)
+	}
+
+	return &opampIdentity{
+		instanceUID:       instanceUID,
+		serviceInstanceID: serviceInstanceID,
+	}, nil
+}
+
+func startOpAmpClient(ctx context.Context, identity *opampIdentity) (client.OpAMPClient, error) {
+	endpoint := os.Getenv(opampServerEndpointEnv)
+	if endpoint == "" || identity == nil {
+		return nil, nil
+	}
+
 	res, err := resource.New(ctx,
 		resource.WithFromEnv(),
 		resource.WithTelemetrySDK(),
 		resource.WithHost(),
 		resource.WithContainer(),
-		resource.WithAttributes(attribute.String("service.instance.id", hex.EncodeToString(instanceUID[:]))),
+		resource.WithAttributes(attribute.String("service.instance.id", identity.serviceInstanceID)),
 	)
 	if err != nil && !errors.Is(err, resource.ErrPartialResource) {
 		return nil, fmt.Errorf("failed to build resource: %w", err)
@@ -108,7 +136,7 @@ func startOpAmpClient(ctx context.Context) (client.OpAMPClient, error) {
 
 	startSettings := types.StartSettings{
 		OpAMPServerURL: endpoint,
-		InstanceUid:    instanceUID,
+		InstanceUid:    identity.instanceUID,
 	}
 
 	skipTLSCertificateVerificationEnv := os.Getenv(opampServerTLSInsecureSkipVerifyEnv)
