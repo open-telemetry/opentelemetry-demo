@@ -89,7 +89,23 @@ jobs:
         if: always() && steps.live-check-report.outputs.report-path != ''
         env:
           REPORT_PATH: ${{ steps.live-check-report.outputs.report-path }}
-        run: python3 test/telemetry/check_weaver_live_report.py "$REPORT_PATH"
+        run: |
+          jq -e '
+            (
+              (.statistics.total_entities // 0) > 0
+              and any(.samples[]?; .span != null)
+              and (
+                (.statistics.seen_registry_attributes // {})
+                | any(.[]; . > 0)
+              )
+              and (
+                (.statistics.seen_registry_metrics // {})
+                | any(.[]; . > 0)
+              )
+            ) or error(
+              "Weaver did not observe registered spans, attributes, and metrics"
+            )
+          ' "$REPORT_PATH" > /dev/null
 
       - name: Print service logs on failure
         if: failure() && steps.demo.outputs.started == 'true'
