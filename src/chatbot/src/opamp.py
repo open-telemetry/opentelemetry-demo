@@ -6,6 +6,7 @@
 import logging
 import os
 import ssl
+import threading
 import time
 from urllib.parse import urlparse, urlunparse
 
@@ -77,6 +78,7 @@ class HealthReportingOpAMPClient(OpAMPClient):
 class WebSocketTransport(HttpTransport):
     def __init__(self):
         self._socket = None
+        self._lock = threading.Lock()
 
     def send(
         self,
@@ -89,23 +91,45 @@ class WebSocketTransport(HttpTransport):
         tls_client_certificate=None,
         tls_client_key=None,
     ):
-        if self._socket is None or not self._socket.connected:
-            self._socket = websocket.create_connection(
-                _websocket_url(url),
-                header=_websocket_headers(headers),
-                timeout=timeout_millis / 1e3,
-                sslopt=_ssl_options(tls_certificate),
-            )
+        with self._lock:
+            try:
+                if self._socket is None or not self._socket.connected:
+                    self._socket = websocket.create_connection(
+                        _websocket_url(url),
+                        header=_websocket_headers(headers),
+                        timeout=timeout_millis / 1e3,
+                        sslopt=_ssl_options(tls_certificate),
+                    )
 
-        self._socket.send(b"\x00" + data, opcode=websocket.ABNF.OPCODE_BINARY)
-        response = self._socket.recv()
-        if not isinstance(response, bytes):
-            raise ValueError("OpAMP server returned a non-binary WebSocket message")
+                self._socket.send(
+                    b"\x00" + data, opcode=websocket.ABNF.OPCODE_BINARY
+                )
+                response = self._socket.recv()
+            except (OSError, websocket.WebSocketException):
+                self._reset_socket()
+                raise
 
-        if response.startswith(b"\x00"):
-            response = response[1:]
+            if not isinstance(response, bytes):
+                self._reset_socket()
+                raise ValueError(
+                    "OpAMP server returned a non-binary WebSocket message"
+                )
 
-        return messages.decode_message(response)
+            if response.startswith(b"\x00"):
+                response = response[1:]
+
+            return messages.decode_message(response)
+
+    def _reset_socket(self):
+        socket = self._socket
+        self._socket = None
+        if socket is None:
+            return
+
+        try:
+            socket.close()
+        except (OSError, websocket.WebSocketException):
+            logging.debug("Failed to close OpAMP WebSocket", exc_info=True)
 
 
 def start_opamp_agent() -> OpAMPAgent | None:
@@ -113,9 +137,13 @@ def start_opamp_agent() -> OpAMPAgent | None:
     if endpoint is None:
         return None
 
-    skip_tls_certificate_verification = _parse_bool_env(
-        OPAMP_SERVER_TLS_INSECURE_SKIP_VERIFY_ENV
-    )
+    try:
+        skip_tls_certificate_verification = _parse_bool_env(
+            OPAMP_SERVER_TLS_INSECURE_SKIP_VERIFY_ENV
+        )
+    except ValueError as error:
+        logging.error("OpAMP client disabled: %s", error)
+        return None
 
     identifying_attributes, non_identifying_attributes = _resource_attributes()
     client = HealthReportingOpAMPClient(
@@ -190,7 +218,12 @@ def _websocket_headers(headers):
 
 
 def _ssl_options(tls_certificate):
-    if tls_certificate is not False:
-        return {}
+    if tls_certificate is False:
+        return {"cert_reqs": ssl.CERT_NONE, "check_hostname": False}
+    if isinstance(tls_certificate, str):
+        return {
+            "cert_reqs": ssl.CERT_REQUIRED,
+            "ca_certs": tls_certificate,
+        }
 
-    return {"cert_reqs": ssl.CERT_NONE, "check_hostname": False}
+    return {}
