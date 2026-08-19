@@ -11,6 +11,12 @@ the release.
   mask sensitive attributes with the transform processor, plus a documented
   redaction-processor fallback
   ([#3662](https://github.com/open-telemetry/opentelemetry-demo/pull/3662))
+* [flagd-ui] Add a scheduler that periodically activates randomly picked feature
+  flags for a random duration, so failure scenarios appear and disappear on
+  their own without external tooling. Configurable interval, minimum and maximum
+  hold duration, how many flags run at once, per variant flag selection, and an
+  optional seed for reproducible patterns
+  ([#2375](https://github.com/open-telemetry/opentelemetry-demo/issues/2375))
 * [react-native-app] Fix `SessionGateway.setSessionValue` to await `getSession()`,
   preventing stored session corruption and loss of `userId`
   ([#3765](https://github.com/open-telemetry/opentelemetry-demo/issues/3765))
