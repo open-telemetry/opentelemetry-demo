@@ -18,6 +18,7 @@ defmodule FlagdUi.Application do
       {DNSCluster, query: Application.get_env(:flagd_ui, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: FlagdUi.PubSub},
       FlagdUi.Storage,
+      FlagdUi.Scheduler,
       # Start a worker by calling: FlagdUi.Worker.start_link(arg)
       # {FlagdUi.Worker, arg},
       # Start to serve requests, typically the last entry

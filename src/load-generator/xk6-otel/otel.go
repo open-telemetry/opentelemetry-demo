@@ -245,7 +245,7 @@ func makeSpanLog(span trace.Span) func(sobek.FunctionCall) sobek.Value {
 		var r otellog.Record
 		r.SetTimestamp(time.Now())
 		r.SetSeverity(otellog.SeverityInfo)
-		r.SetBody(otellog.StringValue(msg))
+		r.SetBody(attribute.StringValue(msg))
 
 		// Inject span context so the SDK attaches trace/span IDs to the record.
 		ctx := trace.ContextWithSpanContext(context.Background(), sc)
