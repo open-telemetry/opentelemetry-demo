@@ -186,7 +186,6 @@ services:
         limits:
           memory: 20M
     restart: unless-stopped
-    stop_grace_period: 30s
     ports:
       - "${CURRENCY_PORT}"
     environment:
