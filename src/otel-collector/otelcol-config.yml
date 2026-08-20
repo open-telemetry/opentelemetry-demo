@@ -242,22 +242,16 @@ processors:
           - set_semconv_span_name("1.37.0", "original_span_name")
 
   # Demo: redact sensitive attributes before export. Collector-side redaction is
-  # a fallback -- prefer not collecting sensitive data in the first place.
+  # a fallback -- prefer not collecting sensitive data in the first place. Raw
+  # PII is only emitted by checkout/payment when the `emitRawPii` feature flag
+  # is enabled (off by default); these processors run unconditionally as a
+  # safety net regardless of the flag.
   #
-  # An alternative is the purpose-built redaction processor (commented out below).
-  # It is fail-closed: with allow_all_keys=false it drops every attribute not in
-  # allowed_keys, which would strip attributes across this shared gateway pipeline.
-  # To try it, uncomment, set REDACTION_HMAC_KEY, and add `redaction` to the
-  # traces pipeline processors below.
-  # redaction:
-  #   allow_all_keys: true
-  #   # Hash values matching a credit card number (13-16 digits, optional
-  #   # dashes/spaces) instead of exporting them in the clear.
-  #   blocked_values:
-  #     - "\\d{4}[- ]?\\d{4}[- ]?\\d{4}[- ]?\\d{1,4}"
-  #   hash_function: hmac-sha256
-  #   hmac_key: ${env:REDACTION_HMAC_KEY}
-  #   summary: debug
+  # transform/redact_sensitive_data does precise, per-key handling of the known
+  # sensitive attributes (delete, hash, partial-mask). The redaction processor
+  # below layers a broader key-name safety net for attributes transform doesn't
+  # know about, e.g. a future demo.payment.card_pin or a stray password/secret
+  # attribute.
   transform/redact_sensitive_data:
     error_mode: ignore
     trace_statements:
@@ -268,6 +262,21 @@ processors:
           - delete_key(attributes, "user.email") where attributes["user.email"] != nil
           # Keep only the last four digits, e.g. 4432-8015-6152-0454 -> ****-****-****-0454
           - replace_pattern(attributes["demo.payment.card_number"], "^\\d{4}-\\d{4}-\\d{4}-", "****-****-****-") where attributes["demo.payment.card_number"] != nil
+  # allow_all_keys avoids the fail-closed default (allow_all_keys=false drops every
+  # attribute not in allowed_keys), which would strip attributes across this shared
+  # gateway pipeline. blocked_key_patterns matches attribute keys rather than
+  # values, so it can't over-redact benign numeric attributes like demo.order.id.
+  redaction:
+    allow_all_keys: true
+    # Already masked to its last 4 digits above; keep it out of blocked_key_patterns
+    # matching so this processor doesn't re-mask it to ****.
+    ignored_keys:
+      - demo.payment.card_number
+    blocked_key_patterns:
+      - "demo\\.payment\\.card_pin"
+      - "password"
+      - "secret"
+    summary: debug
 
 connectors:
   span_metrics:
@@ -276,7 +285,7 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [resourcedetection, memory_limiter, transform/sanitize_spans, gen_ai_normalizer, transform/redact_sensitive_data]
+      processors: [resourcedetection, memory_limiter, transform/sanitize_spans, gen_ai_normalizer, transform/redact_sensitive_data, redaction]
       exporters: [debug, span_metrics]
     metrics:
       receivers: [docker_stats, http_check/frontend-proxy, host_metrics, nginx, otlp, redis, postgresql, prometheus/ad, span_metrics]

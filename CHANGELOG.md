@@ -11,6 +11,12 @@ the release.
   mask sensitive attributes with the transform processor, plus a documented
   redaction-processor fallback
   ([#3662](https://github.com/open-telemetry/opentelemetry-demo/pull/3662))
+* [collector] Gate raw PII emission (`user.email`, `demo.payment.card_number`,
+  `demo.payment.card_cvv`) behind the new `emitRawPii` feature flag (off by
+  default) in checkout/payment, and layer the purpose-built `redaction`
+  processor alongside `transform/redact_sensitive_data` as a key-name safety
+  net
+  ([#3867](https://github.com/open-telemetry/opentelemetry-demo/issues/3867))
 * [flagd-ui] Add a scheduler that periodically activates randomly picked feature
   flags for a random duration, so failure scenarios appear and disappear on
   their own without external tooling. Configurable interval, minimum and maximum

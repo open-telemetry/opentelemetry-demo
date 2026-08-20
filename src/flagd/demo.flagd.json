@@ -55,6 +55,15 @@
         "off": 0
       }
     },
+    "emitRawPii": {
+      "defaultVariant": "off",
+      "description": "Emit raw PII attributes (user.email, demo.payment.card_number, demo.payment.card_cvv) from checkout and payment for the collector redaction example. Not a failure scenario -- controls PII emission, independent of collector-side redaction which always runs.",
+      "state": "ENABLED",
+      "variants": {
+        "off": false,
+        "on": true
+      }
+    },
     "failedReadinessProbe": {
       "defaultVariant": "off",
       "description": "readiness probe failure for cart service",
