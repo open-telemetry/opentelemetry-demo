@@ -20,9 +20,10 @@ the release.
 * [react-native-app] Fix `SessionGateway.setSessionValue` to await `getSession()`,
   preventing stored session corruption and loss of `userId`
   ([#3765](https://github.com/open-telemetry/opentelemetry-demo/issues/3765))
-* [cart] Report health to the demo's OpAMP server when running with the
-  observability stack.
-  ([#3656](https://github.com/open-telemetry/opentelemetry-demo/pull/3656))
+* [cart, product-catalog] Report health from SDK-instrumented services to the
+  demo's OpAMP server when running with the observability stack.
+  ([#3656](https://github.com/open-telemetry/opentelemetry-demo/pull/3656),
+  [#3807](https://github.com/open-telemetry/opentelemetry-demo/pull/3807))
 * [payment] Add `error.type` attribute to error spans in `charge.js` and
   `index.js` to align with OpenTelemetry Semantic Conventions for errors
   ([#3758](https://github.com/open-telemetry/opentelemetry-demo/issues/3758))

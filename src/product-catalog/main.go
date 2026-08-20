@@ -102,6 +102,11 @@ func initDatabase() error {
 func main() {
 	ctx := context.Background()
 
+	opampIdentity, err := prepareOpAmpIdentity()
+	if err != nil {
+		logger.Error(fmt.Sprintf("Failed to prepare OpAMP identity: %v", err))
+	}
+
 	// Initialize OpenTelemetry SDK with otelconf
 	sdk, err := otelconf.NewSDK(otelconf.WithContext(ctx))
 	if err != nil {
@@ -160,6 +165,19 @@ func main() {
 		logger.Error(err.Error())
 	}
 
+	opampClient, err := startOpAmpClient(context.Background(), opampIdentity)
+	if err != nil {
+		logger.Error(fmt.Sprintf("Failed to start OpAMP client: %v", err))
+	} else if opampClient != nil {
+		defer func() {
+			if err := opampClient.Stop(context.Background()); err != nil {
+				logger.Error(fmt.Sprintf("Error stopping OpAMP client: %v", err))
+			} else {
+				logger.Info("Stopped OpAMP client")
+			}
+		}()
+	}
+
 	svc := &productCatalog{}
 	var port string
 	mustMapEnv(&port, "PRODUCT_CATALOG_PORT")
@@ -184,7 +202,7 @@ func main() {
 	healthcheck := health.NewServer()
 	healthpb.RegisterHealthServer(srv, healthcheck)
 
-	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGKILL)
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer cancel()
 
 	go func() {
