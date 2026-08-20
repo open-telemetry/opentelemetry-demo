@@ -53,8 +53,16 @@ using opentelemetry::logs::EventId;
 
 namespace
 {
-  constexpr auto server_shutdown_timeout = std::chrono::seconds(5);
-  constexpr auto telemetry_shutdown_timeout = std::chrono::seconds(5);
+  constexpr auto shutdown_timeout = std::chrono::seconds(9);
+
+  std::chrono::microseconds remainingShutdownTimeout(
+      std::chrono::steady_clock::time_point shutdown_deadline)
+  {
+    const auto remaining = std::chrono::duration_cast<std::chrono::microseconds>(
+        shutdown_deadline - std::chrono::steady_clock::now());
+    return remaining > std::chrono::microseconds::zero() ? remaining
+                                                          : std::chrono::microseconds(1);
+  }
 
   EventId eventName(nostd::string_view name) {
     // The OTLP exporter ignores the numeric EventId and exports only the event name.
@@ -258,7 +266,9 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
   }
 };
 
-bool RunServer(uint16_t port, const sigset_t& shutdown_signals)
+bool RunServer(uint16_t port,
+               const sigset_t& shutdown_signals,
+               std::chrono::steady_clock::time_point& shutdown_deadline)
 {
   std::string ip("0.0.0.0");
 
@@ -300,7 +310,9 @@ bool RunServer(uint16_t port, const sigset_t& shutdown_signals)
     std::cout << "Received " << signal_name << ", shutting down Currency Server\n";
   }
 
-  server->Shutdown(std::chrono::system_clock::now() + server_shutdown_timeout);
+  shutdown_deadline = std::chrono::steady_clock::now() + shutdown_timeout;
+  server->Shutdown(std::chrono::system_clock::now() +
+                   remainingShutdownTimeout(shutdown_deadline));
   server->Wait();
   return signal_error == 0;
 }
@@ -335,23 +347,27 @@ int main(int argc, char **argv) {
   currency_counter = initIntCounter("demo.exchange.conversions", version);
   logger = getLogger(name);
 
-  const bool server_shutdown = RunServer(port, shutdown_signals);
-  const bool tracer_shutdown = tracer_provider->Shutdown(telemetry_shutdown_timeout);
+  auto shutdown_deadline = std::chrono::steady_clock::now() + shutdown_timeout;
+  const bool server_shutdown = RunServer(port, shutdown_signals, shutdown_deadline);
+  const bool tracer_shutdown =
+      tracer_provider->Shutdown(remainingShutdownTimeout(shutdown_deadline));
   if (!tracer_shutdown) {
     std::cerr << "Tracer provider shutdown failed\n";
   }
 
-  const bool meter_flush = meter_provider->ForceFlush(telemetry_shutdown_timeout);
+  const bool meter_flush = meter_provider->ForceFlush(remainingShutdownTimeout(shutdown_deadline));
   if (!meter_flush) {
     std::cerr << "Meter provider flush failed\n";
   }
 
-  const bool meter_shutdown = meter_provider->Shutdown(telemetry_shutdown_timeout);
+  const bool meter_shutdown =
+      meter_provider->Shutdown(remainingShutdownTimeout(shutdown_deadline));
   if (!meter_shutdown) {
     std::cerr << "Meter provider shutdown failed\n";
   }
 
-  const bool logger_shutdown = logger_provider->Shutdown(telemetry_shutdown_timeout);
+  const bool logger_shutdown =
+      logger_provider->Shutdown(remainingShutdownTimeout(shutdown_deadline));
   if (!logger_shutdown) {
     std::cerr << "Logger provider shutdown failed\n";
   }
