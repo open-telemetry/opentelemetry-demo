@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -373,7 +374,7 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 	shippingTrackingAttribute := attribute.String("demo.shipping.tracking.id", shippingTrackingID)
 	span.AddEvent("shipped", trace.WithAttributes(shippingTrackingAttribute))
 
-	_ = cs.emptyUserCart(ctx, req.UserId)
+	_ = cs.removeOrderedItemsFromCart(ctx, req.UserId, prep.cartItems)
 
 	orderResult := &pb.OrderResult{
 		OrderId:            orderID.String(),
@@ -527,11 +528,24 @@ func (cs *checkout) getUserCart(ctx context.Context, userID string) ([]*pb.CartI
 	return cart.GetItems(), nil
 }
 
-func (cs *checkout) emptyUserCart(ctx context.Context, userID string) error {
-	if _, err := cs.cartSvcClient.EmptyCart(ctx, &pb.EmptyCartRequest{UserId: userID}); err != nil {
-		return fmt.Errorf("failed to empty user cart during checkout: %+v", err)
+// removeOrderedItemsFromCart removes exactly the items that were placed in this order, rather than
+// clearing the whole cart. Clearing unconditionally would silently discard anything the user added
+// to their cart in the window between prepareOrderItemsAndShippingQuoteFromCart's GetCart call and
+// this call (e.g. a second browser tab, a retried request, or the load generator).
+func (cs *checkout) removeOrderedItemsFromCart(ctx context.Context, userID string, items []*pb.CartItem) error {
+	var errs []error
+	for _, item := range items {
+		if _, err := cs.cartSvcClient.AddItem(ctx, &pb.AddItemRequest{
+			UserId: userID,
+			Item: &pb.CartItem{
+				ProductId: item.GetProductId(),
+				Quantity:  -item.GetQuantity(),
+			},
+		}); err != nil {
+			errs = append(errs, fmt.Errorf("failed to remove product %q from cart during checkout: %+v", item.GetProductId(), err))
+		}
 	}
-	return nil
+	return errors.Join(errs...)
 }
 
 func (cs *checkout) prepOrderItems(ctx context.Context, items []*pb.CartItem, userCurrency string) ([]*pb.OrderItem, error) {
