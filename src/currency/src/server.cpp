@@ -1,9 +1,14 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
+#include <chrono>
+#include <cerrno>
+#include <csignal>
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <math.h>
+#include <pthread.h>
 #include <demo.grpc.pb.h>
 #include <grpc/health/v1/health.grpc.pb.h>
 
@@ -48,6 +53,9 @@ using opentelemetry::logs::EventId;
 
 namespace
 {
+  constexpr auto server_shutdown_timeout = std::chrono::seconds(5);
+  constexpr auto telemetry_shutdown_timeout = std::chrono::seconds(5);
+
   EventId eventName(nostd::string_view name) {
     // The OTLP exporter ignores the numeric EventId and exports only the event name.
     // Use 0 to satisfy the C++ API; revisit when the C++ SDK provides guidance.
@@ -250,7 +258,7 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
   }
 };
 
-void RunServer(uint16_t port)
+bool RunServer(uint16_t port, const sigset_t& shutdown_signals)
 {
   std::string ip("0.0.0.0");
 
@@ -274,15 +282,45 @@ void RunServer(uint16_t port)
   builder.AddListeningPort(address, grpc::InsecureServerCredentials());
 
   std::unique_ptr<Server> server(builder.BuildAndStart());
+  if (server == nullptr) {
+    std::cerr << "Failed to start Currency Server\n";
+    return false;
+  }
+
   logger->Info(eventName("currency.server.started"),
                "Currency Server started",
                opentelemetry::common::MakeAttributes({{"server.address", address.c_str()}}));
+
+  int received_signal = 0;
+  const int signal_error = sigwait(&shutdown_signals, &received_signal);
+  if (signal_error != 0) {
+    std::cerr << "Failed to wait for shutdown signal: " << std::strerror(signal_error) << "\n";
+  } else {
+    const char* signal_name = received_signal == SIGTERM ? "SIGTERM" : "SIGINT";
+    std::cout << "Received " << signal_name << ", shutting down Currency Server\n";
+  }
+
+  server->Shutdown(std::chrono::system_clock::now() + server_shutdown_timeout);
   server->Wait();
-  server->Shutdown();
+  return signal_error == 0;
 }
 }
 
 int main(int argc, char **argv) {
+
+  sigset_t shutdown_signals;
+  if (sigemptyset(&shutdown_signals) == -1 ||
+      sigaddset(&shutdown_signals, SIGINT) == -1 ||
+      sigaddset(&shutdown_signals, SIGTERM) == -1) {
+    std::cerr << "Failed to configure shutdown signals: " << std::strerror(errno) << "\n";
+    return 1;
+  }
+
+  const int signal_mask_error = pthread_sigmask(SIG_BLOCK, &shutdown_signals, nullptr);
+  if (signal_mask_error != 0) {
+    std::cerr << "Failed to block shutdown signals: " << std::strerror(signal_mask_error) << "\n";
+    return 1;
+  }
 
   if (argc < 2) {
     std::cout << "Usage: currency <port>";
@@ -291,12 +329,33 @@ int main(int argc, char **argv) {
 
   uint16_t port = atoi(argv[1]);
 
-  initTracer();
-  initMeter();
-  initLogger();
+  auto tracer_provider = initTracer();
+  auto meter_provider = initMeter();
+  auto logger_provider = initLogger();
   currency_counter = initIntCounter("demo.exchange.conversions", version);
   logger = getLogger(name);
-  RunServer(port);
 
-  return 0;
+  const bool server_shutdown = RunServer(port, shutdown_signals);
+  const bool tracer_shutdown = tracer_provider->Shutdown(telemetry_shutdown_timeout);
+  if (!tracer_shutdown) {
+    std::cerr << "Tracer provider shutdown failed\n";
+  }
+
+  const bool meter_flush = meter_provider->ForceFlush(telemetry_shutdown_timeout);
+  if (!meter_flush) {
+    std::cerr << "Meter provider flush failed\n";
+  }
+
+  const bool meter_shutdown = meter_provider->Shutdown(telemetry_shutdown_timeout);
+  if (!meter_shutdown) {
+    std::cerr << "Meter provider shutdown failed\n";
+  }
+
+  const bool logger_shutdown = logger_provider->Shutdown(telemetry_shutdown_timeout);
+  if (!logger_shutdown) {
+    std::cerr << "Logger provider shutdown failed\n";
+  }
+
+  return server_shutdown && tracer_shutdown && meter_flush && meter_shutdown && logger_shutdown ? 0
+                                                                                                : 1;
 }
