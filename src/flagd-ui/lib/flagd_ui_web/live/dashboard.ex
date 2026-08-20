@@ -8,6 +8,10 @@ defmodule FlagdUiWeb.Dashboard do
   alias FlagdUiWeb.Components.Navbar
 
   def mount(_, _, socket) do
+    if connected?(socket) do
+      Phoenix.PubSub.subscribe(FlagdUi.PubSub, FlagdUi.Storage.topic())
+    end
+
     %{"flags" => flags} = GenServer.call(Storage, :read)
     {:ok, socket |> assign(:flags, flags)}
   end
@@ -64,6 +68,11 @@ defmodule FlagdUiWeb.Dashboard do
     new_socket = put_flash(socket, :info, "Saved: #{target}")
     {:noreply, new_socket}
   end
+
+  def handle_info({:flags_changed, %{"flags" => flags}}, socket),
+    do: {:noreply, assign(socket, :flags, flags)}
+
+  def handle_info({:flags_changed, _state}, socket), do: {:noreply, socket}
 
   defp get_variants(%{"variants" => variants}), do: Enum.map(variants, fn {key, _} -> key end)
   defp get_variants(_), do: []
