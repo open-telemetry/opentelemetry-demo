@@ -55,4 +55,4 @@ COPY --from=builder /usr/local /usr/local
 
 EXPOSE ${CURRENCY_PORT}
 
-ENTRYPOINT ["sh", "-c", "./usr/local/bin/currency ${CURRENCY_PORT}"]
+ENTRYPOINT ["sh", "-c", "exec /usr/local/bin/currency \"${CURRENCY_PORT}\""]
