@@ -9,6 +9,18 @@ attributes:
     stability: stable
     note: The monetary amount being charged
     examples: ["29.99", "99.95", "150.00"]
+  - key: demo.payment.card_cvv
+    type: int
+    brief: Credit card CVV
+    stability: stable
+    note: The credit card verification value used for payment. Deleted by the collector before export.
+    examples: [672, 114]
+  - key: demo.payment.card_number
+    type: string
+    brief: Credit card number
+    stability: stable
+    note: The credit card number used for payment. Masked by the collector before export, keeping only the last 4 digits.
+    examples: ["****-****-****-0454"]
   - key: demo.payment.card_type
     type: string
     brief: Credit card type
