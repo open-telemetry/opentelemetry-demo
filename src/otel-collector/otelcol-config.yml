@@ -241,6 +241,34 @@ processors:
           # SANITIZE ALL SPAN NAMES TO PREVENT CARDINALITY EXPLOSION
           - set_semconv_span_name("1.37.0", "original_span_name")
 
+  # Demo: redact sensitive attributes before export. Collector-side redaction is
+  # a fallback -- prefer not collecting sensitive data in the first place.
+  #
+  # An alternative is the purpose-built redaction processor (commented out below).
+  # It is fail-closed: with allow_all_keys=false it drops every attribute not in
+  # allowed_keys, which would strip attributes across this shared gateway pipeline.
+  # To try it, uncomment, set REDACTION_HMAC_KEY, and add `redaction` to the
+  # traces pipeline processors below.
+  # redaction:
+  #   allow_all_keys: true
+  #   # Hash values matching a credit card number (13-16 digits, optional
+  #   # dashes/spaces) instead of exporting them in the clear.
+  #   blocked_values:
+  #     - "\\d{4}[- ]?\\d{4}[- ]?\\d{4}[- ]?\\d{1,4}"
+  #   hash_function: hmac-sha256
+  #   hmac_key: ${env:REDACTION_HMAC_KEY}
+  #   summary: debug
+  transform/redact_sensitive_data:
+    error_mode: ignore
+    trace_statements:
+      - context: span
+        statements:
+          - delete_key(attributes, "demo.payment.card_cvv") where attributes["demo.payment.card_cvv"] != nil
+          - set(attributes["user.hash"], SHA256(attributes["user.email"])) where attributes["user.email"] != nil
+          - delete_key(attributes, "user.email") where attributes["user.email"] != nil
+          # Keep only the last four digits, e.g. 4432-8015-6152-0454 -> ****-****-****-0454
+          - replace_pattern(attributes["demo.payment.card_number"], "^\\d{4}-\\d{4}-\\d{4}-", "****-****-****-") where attributes["demo.payment.card_number"] != nil
+
 connectors:
   span_metrics:
 
@@ -248,7 +276,7 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [resourcedetection, memory_limiter, transform/sanitize_spans, gen_ai_normalizer]
+      processors: [resourcedetection, memory_limiter, transform/sanitize_spans, gen_ai_normalizer, transform/redact_sensitive_data]
       exporters: [debug, span_metrics]
     metrics:
       receivers: [docker_stats, http_check/frontend-proxy, host_metrics, nginx, otlp, redis, postgresql, prometheus/ad, span_metrics]
