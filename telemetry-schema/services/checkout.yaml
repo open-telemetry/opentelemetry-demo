@@ -10,8 +10,12 @@ attribute_groups:
     attributes:
       - ref: user_agent.synthetic.type
       - ref: user.id
+      - ref: user.email
+      - ref: user.hash
       - ref: demo.user_context.selected_currency
       - ref: demo.payment.transaction.id
+      - ref: demo.payment.card_number
+      - ref: demo.payment.card_cvv
       - ref: demo.shipping.tracking.id
       - ref: demo.order.id
       - ref: demo.shipping.amount
