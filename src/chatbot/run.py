@@ -15,6 +15,7 @@ from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from src.chat_interface.chat_interface import ChatAgentUI, get_chat_ui_config
+from src.opamp import start_opamp_agent, stop_opamp_agent
 
 logging.basicConfig(level=logging.INFO)
 
@@ -35,13 +36,17 @@ _configure_tracing()
 
 async def start_servers():
     """Runs chatbot server"""
+    opamp_agent = start_opamp_agent()
     tasks = []
 
     chat_ui_config = get_chat_ui_config()
     chat_interface = ChatAgentUI(chat_ui_config)
     tasks.append(asyncio.to_thread(chat_interface.launch))
 
-    await asyncio.gather(*tasks)
+    try:
+        await asyncio.gather(*tasks)
+    finally:
+        stop_opamp_agent(opamp_agent)
 
 
 if __name__ == "__main__":

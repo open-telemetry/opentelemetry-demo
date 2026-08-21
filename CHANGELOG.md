@@ -11,6 +11,10 @@ the release.
   registration, enabling graceful `SIGTERM` shutdown and preventing
   OpenTelemetry SDK telemetry drop on container termination
   ([#3865](https://github.com/open-telemetry/opentelemetry-demo/issues/3865))
+* [collector] Add a data redaction/deletion example: delete, hash, and partially
+  mask sensitive attributes with the transform processor, plus a documented
+  redaction-processor fallback
+  ([#3662](https://github.com/open-telemetry/opentelemetry-demo/pull/3662))
 * [flagd-ui] Add a scheduler that periodically activates randomly picked feature
   flags for a random duration, so failure scenarios appear and disappear on
   their own without external tooling. Configurable interval, minimum and maximum
@@ -23,6 +27,9 @@ the release.
 * [cart] Report health to the demo's OpAMP server when running with the
   observability stack.
   ([#3656](https://github.com/open-telemetry/opentelemetry-demo/pull/3656))
+* [chatbot] Report health to the demo's OpAMP server when running with the
+  agentic and observability stacks.
+  ([#3808](https://github.com/open-telemetry/opentelemetry-demo/pull/3808))
 * [payment] Add `error.type` attribute to error spans in `charge.js` and
   `index.js` to align with OpenTelemetry Semantic Conventions for errors
   ([#3758](https://github.com/open-telemetry/opentelemetry-demo/issues/3758))

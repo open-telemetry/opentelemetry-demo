@@ -31,8 +31,21 @@ receivers:
     collection_interval: 10s
   docker_stats:
     endpoint: unix:///var/run/docker.sock
-    # https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/44511
-    api_version: "1.44"
+    metrics:
+      container.blockio.io_serviced_recursive:
+        enabled: true
+      container.cpu.usage.system:
+        enabled: true
+      container.memory.hierarchical_memory_limit:
+        enabled: true
+      container.memory.rss:
+        enabled: true
+      container.network.io.usage.rx_packets:
+        enabled: true
+      container.network.io.usage.tx_packets:
+        enabled: true
+      container.uptime:
+        enabled: true
   redis:
     endpoint: "valkey-cart:6379"
     username: "valkey"
@@ -60,11 +73,8 @@ receivers:
         enabled: true
     tls:
       insecure: true
-  # Demo: scrape a Prometheus `/metrics` endpoint exposed by the ad service
-  # using the Prometheus Java client library. This illustrates a common
-  # OTel-adoption pattern -- bridging existing Prometheus-client
-  # instrumentation into an OTel pipeline. For new custom metrics, prefer
-  # the OpenTelemetry SDK directly. See `src/ad/README.md` for details.
+  # Scrape a Prometheus `/metrics` endpoint exposed by the ad service.
+  # See: https://opentelemetry.io/docs/demo/services/ad/#bridging-non-otel-custom-metrics-prometheus-client-library
   prometheus/ad:
     config:
       scrape_configs:
@@ -79,8 +89,6 @@ receivers:
       cpu:
         metrics:
           system.cpu.utilization:
-            enabled: true
-          system.cpu.logical.count:
             enabled: true
       disk:
       load:
@@ -130,7 +138,7 @@ receivers:
       network:
       paging:
         metrics:
-          system.paging.usage:
+          system.paging.utilization:
             enabled: true
       processes:
       process:
@@ -138,9 +146,6 @@ receivers:
         mute_process_io_error: true
         mute_process_user_error: true
       system:
-        metrics:
-          system.uptime:
-            enabled: true
 
 exporters:
   debug:
@@ -150,13 +155,11 @@ processors:
     check_interval: 5s
     limit_percentage: 80
     spike_limit_percentage: 25
-  resourcedetection:
+  resource_detection:
     detectors: [env, docker, system]
     system:
       hostname_sources: ["os"]
       resource_attributes:
-        host.name:
-          enabled: true
         host.arch:
           enabled: true
         host.cpu.vendor.id:
@@ -172,8 +175,6 @@ processors:
         host.cpu.cache.l2.size:
           enabled: true
         os.description:
-          enabled: true
-        os.type:
           enabled: true
   filter/sanitize_profiles:
     error_mode: ignore
@@ -200,46 +201,35 @@ processors:
     trace_statements:
       - context: span
         statements:
-          # Sanitize spans to prevent span metrics cardinality explosion
-          # caused by non-compliant high cardinality span names:
-          # 1. Define missing http.route on key HTTP operations for meaningful operation names
-          # 2. Then normalize span names; http server spans lacking http.route default to operations "GET", "POST", etc.
+          - set_semconv_span_name("1.43.0", "original_span_name")
 
-          # FRONTEND SERVICE
-
-          # Workaround for Next.js high cardinality span name issue: https://github.com/vercel/next.js/issues/54694
-          - set(span.attributes["http.route"], "/api/cart") where
-            span.kind == SPAN_KIND_SERVER and
-            resource.attributes["service.name"] == "frontend" and
-            span.attributes["http.route"] == nil and
-            IsMatch(span.attributes["http.target"], "\\/api\\/cart")  # e.g. # /api/cart
-
-          - set(span.attributes["http.route"], "/api/checkout") where
-            span.kind == SPAN_KIND_SERVER and
-            resource.attributes["service.name"] == "frontend" and
-            span.attributes["http.route"] == nil and
-            IsMatch(span.attributes["http.target"], "\\/api\\/checkout")  # e.g. # /api/checkout
-
-          - set(span.attributes["http.route"], "/api/products/{productId}") where
-            span.kind == SPAN_KIND_SERVER and
-            resource.attributes["service.name"] == "frontend" and
-            span.attributes["http.route"] == nil and
-            IsMatch(span.attributes["http.target"], "\\/api\\/products\\/.*")  # e.g. /api/products/1YMWWN1N4O
-
-          - set(span.attributes["http.route"], "/api/recommendations") where
-            span.kind == SPAN_KIND_SERVER and
-            resource.attributes["service.name"] == "frontend" and
-            span.attributes["http.route"] == nil and
-            IsMatch(span.attributes["http.target"], "\\/api\\/recommendations")  # e.g. # /api/recommendations?productIds=...
-
-          - set(span.attributes["http.route"], "/api/data") where
-            span.kind == SPAN_KIND_SERVER and
-            resource.attributes["service.name"] == "frontend" and
-            span.attributes["http.route"] == nil and
-            IsMatch(span.attributes["http.target"], "\\/api\\/data.*")  # e.g. # " /api/data?contextKeys=telescopes" or /api/data/?contextKeys=cameras
-
-          # SANITIZE ALL SPAN NAMES TO PREVENT CARDINALITY EXPLOSION
-          - set_semconv_span_name("1.37.0", "original_span_name")
+  # Demo: redact sensitive attributes before export. Collector-side redaction is
+  # a fallback -- prefer not collecting sensitive data in the first place.
+  #
+  # An alternative is the purpose-built redaction processor (commented out below).
+  # It is fail-closed: with allow_all_keys=false it drops every attribute not in
+  # allowed_keys, which would strip attributes across this shared gateway pipeline.
+  # To try it, uncomment, set REDACTION_HMAC_KEY, and add `redaction` to the
+  # traces pipeline processors below.
+  # redaction:
+  #   allow_all_keys: true
+  #   # Hash values matching a credit card number (13-16 digits, optional
+  #   # dashes/spaces) instead of exporting them in the clear.
+  #   blocked_values:
+  #     - "\\d{4}[- ]?\\d{4}[- ]?\\d{4}[- ]?\\d{1,4}"
+  #   hash_function: hmac-sha256
+  #   hmac_key: ${env:REDACTION_HMAC_KEY}
+  #   summary: debug
+  transform/redact_sensitive_data:
+    error_mode: ignore
+    trace_statements:
+      - context: span
+        statements:
+          - delete_key(attributes, "demo.payment.card_cvv") where attributes["demo.payment.card_cvv"] != nil
+          - set(attributes["user.hash"], SHA256(attributes["user.email"])) where attributes["user.email"] != nil
+          - delete_key(attributes, "user.email") where attributes["user.email"] != nil
+          # Keep only the last four digits, e.g. 4432-8015-6152-0454 -> ****-****-****-0454
+          - replace_pattern(attributes["demo.payment.card_number"], "^\\d{4}-\\d{4}-\\d{4}-", "****-****-****-") where attributes["demo.payment.card_number"] != nil
 
 connectors:
   span_metrics:
@@ -248,19 +238,19 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [resourcedetection, memory_limiter, transform/sanitize_spans, gen_ai_normalizer]
+      processors: [resource_detection, memory_limiter, transform/sanitize_spans, gen_ai_normalizer, transform/redact_sensitive_data]
       exporters: [debug, span_metrics]
     metrics:
       receivers: [docker_stats, http_check/frontend-proxy, host_metrics, nginx, otlp, redis, postgresql, prometheus/ad, span_metrics]
-      processors: [resourcedetection, memory_limiter]
+      processors: [resource_detection, memory_limiter]
       exporters: [debug]
     logs:
       receivers: [otlp]
-      processors: [resourcedetection, memory_limiter, transform/sanitize_logs]
+      processors: [resource_detection, memory_limiter, transform/sanitize_logs]
       exporters: [debug]
     profiles:
       receivers: [otlp]
-      processors: [resourcedetection, filter/sanitize_profiles, memory_limiter]
+      processors: [resource_detection, filter/sanitize_profiles, memory_limiter]
       exporters: [debug]
   telemetry:
     metrics:
