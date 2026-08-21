@@ -35,6 +35,8 @@ the release.
   The server bound to the port but was never started to accept connections, causing
   the service to fail its health checks.
   ([#3844](https://github.com/open-telemetry/opentelemetry-demo/pull/3844))
+* [testing] Add a report-only Weaver live-check smoke workflow for validating
+  emitted demo trace and metric telemetry against the demo telemetry schema.
 
 ## 3.0.0
 
