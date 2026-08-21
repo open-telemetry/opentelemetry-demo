@@ -3,7 +3,7 @@
 
 # Build stage: compile a custom k6 binary that includes the OTel extension.
 # k6 v2 requires Go 1.25; xk6 is the official k6 extension build tool.
-FROM docker.io/library/golang:1.26.5-bookworm@sha256:1ecb7edf62a0408027bd5729dfd6b1b8766e578e8df93995b225dfd0944eb651 AS builder
+FROM docker.io/library/golang:1.26.6-bookworm@sha256:116d58cbd88c1297624acc6e967a060012422bacf9930927e23fb719189c6f36 AS builder
 
 # xk6 is the build tool, not part of the runtime image; pin to a known-good
 # release independent of the k6 version being built below.
@@ -22,7 +22,7 @@ RUN xk6 build v2.1.0 \
 # Runtime on Grafana's k6 browser image for a working headless Chromium
 # (Debian's Chromium crashes on startup). Its stock k6 lacks the xk6-otel
 # extension script.js needs, so overwrite it with the build from above.
-FROM docker.io/grafana/k6:2.1.0-with-browser@sha256:40612240f5e37819faedb12b1df4e2cfbd7b0894475ff3c8b8f8f05239b7aff6
+FROM docker.io/grafana/k6:2.2.0-with-browser@sha256:defdc0a3e70c46bce010bfc10dedc03e335cc7febe01f6359552fe72827c2aa2
 
 COPY --from=builder /build/k6 /usr/bin/k6
 
