@@ -103,7 +103,7 @@ jobs:
                 | any(.[]; . > 0)
               )
             ) or error(
-              "Weaver did not observe registered spans, attributes, and metrics"
+              "Weaver did not observe spans, registered attributes, and registered metrics"
             )
           ' "$REPORT_PATH" > /dev/null
 

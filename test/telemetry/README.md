@@ -143,9 +143,9 @@ make run-telemetry-tests-agentic   # Agentic scope (agent, mcp, chatbot)
 
 Two separate workflows handle telemetry tests:
 
-- **`.github/workflows/run-telemetry-tests.yml`** - two parallel jobs (full
-  and minimal). Triggered on every PR touching `src/`, `test/telemetry/`, or
-  core compose files.
+- **`.github/workflows/run-telemetry-tests.yml`** - three test jobs (full,
+  minimal, and Weaver live-check) sharing PR-built demo images. Runs on
+  dependabot PRs automatically; for human PRs it runs after reviewer approval.
 - **`.github/workflows/run-agentic-telemetry-tests.yml`** - agentic scope.
   Runs on dependabot PRs automatically; for human PRs it runs after reviewer
   approval. Only fires when `src/agent/`, `src/mcp/`, `src/chatbot/`,
@@ -171,10 +171,11 @@ telemetry flows end-to-end. They are complementary:
 - **Weaver**: "Are the attribute definitions correct?" (static)
 - **Telemetry tests**: "Is each service sending data?" (runtime)
 
-The `Weaver Live Check` CI job compares post-Collector custom demo telemetry
-with `telemetry-schema/`. Findings are reported in the job summary and the
+The `Weaver Live Check` CI job sends a filtered copy of OTLP trace and metric
+data from the Collector receiver to Weaver after applying the demo's
+sensitive-data redaction. Findings are reported in the job summary and the
 `weaver-live-check-report` artifact. The job is currently report-only for
 Weaver findings. A small report check guards against a vacuous result by
-requiring registered spans, attributes, and metrics. A green result confirms
-that registered telemetry was observed, not that the report contains no
-violations.
+requiring at least one span, one observed registry attribute, and one observed
+registry metric. A green result confirms that some registered telemetry was
+observed, not full service coverage or a report without violations.
