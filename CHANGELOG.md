@@ -7,6 +7,10 @@ the release.
 
 ## Unreleased
 
+* [checkout] Fix synchronous `srv.Serve` call blocking signal handler
+  registration, enabling graceful `SIGTERM` shutdown and preventing
+  OpenTelemetry SDK telemetry drop on container termination
+  ([#3865](https://github.com/open-telemetry/opentelemetry-demo/issues/3865))
 * [collector] Add a data redaction/deletion example: delete, hash, and partially
   mask sensitive attributes with the transform processor, plus a documented
   redaction-processor fallback
