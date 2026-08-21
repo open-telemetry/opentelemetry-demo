@@ -26,5 +26,6 @@ WORKDIR /usr/src/app/
 COPY --from=builder /usr/src/app/product-catalog/ ./
 COPY --from=grpc-health-probe /ko-app/grpc-health-probe /bin/grpc_health_probe
 
+ARG PRODUCT_CATALOG_PORT=3550
 EXPOSE ${PRODUCT_CATALOG_PORT}
 ENTRYPOINT [ "./product-catalog" ]

@@ -22,6 +22,10 @@ the release.
   The server bound to the port but was never started to accept connections, causing
   the service to fail its health checks.
   ([#3844](https://github.com/open-telemetry/opentelemetry-demo/pull/3844))
+* [podman] Fix podman build issues by add ARG to all dockerfiles, also add
+  podman socket to .env.override to allow users to use rootless podman in
+  the demo.
+  ([#3899](https://github.com/open-telemetry/opentelemetry-demo/pull/3899))
 
 ## 3.0.0
 

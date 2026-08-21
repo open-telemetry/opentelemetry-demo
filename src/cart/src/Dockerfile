@@ -40,5 +40,6 @@ COPY --from=grpc-health-probe /ko-app/grpc-health-probe /bin/grpc_health_probe
 
 ENV DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE=false
 
+ARG CART_PORT=7070
 EXPOSE ${CART_PORT}
 ENTRYPOINT [ "./cart" ]
