@@ -43,7 +43,7 @@ service:
   pipelines:
     traces/weaver:
       receivers: [otlp]
-      processors: [transform/weaver, filter/weaver_traces]
+      processors: [transform/redact_sensitive_data, transform/weaver, filter/weaver_traces]
       exporters: [otlp_grpc/weaver]
     metrics/weaver:
       receivers: [otlp]
