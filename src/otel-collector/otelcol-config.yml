@@ -247,7 +247,7 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [resourcedetection, memory_limiter, transform/sanitize_spans, gen_ai_normalizer, transform/redact_sensitive_data, redaction]
+      processors: [resource_detection, memory_limiter, transform/sanitize_spans, gen_ai_normalizer, transform/redact_sensitive_data, redaction]
       exporters: [debug, span_metrics]
     metrics:
       receivers: [docker_stats, http_check/frontend-proxy, host_metrics, nginx, otlp, redis, postgresql, prometheus/ad, span_metrics]
