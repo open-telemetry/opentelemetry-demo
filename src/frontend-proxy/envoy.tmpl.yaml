@@ -48,8 +48,12 @@ static_resources:
                           route: { cluster: grafana }
                         - match: { path: "/opamp" }
                           redirect: { path_redirect: "/opamp/" }
-                        - match: { prefix: "/opamp/" }
+                        - match: { path: "/opamp/" }
                           route: { cluster: opamp, prefix_rewrite: "/" }
+                        - match: { prefix: "/opamp/agent" }
+                          route: { cluster: opamp, prefix_rewrite: "/agent" }
+                        - match: { prefix: "/opamp/" }
+                          direct_response: { status: 403 }
                         - match: { path: "/telemetry" }
                           redirect: { path_redirect: "/telemetry/" }
                         - match: { prefix: "/telemetry/" }

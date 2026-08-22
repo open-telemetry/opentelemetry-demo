@@ -136,8 +136,7 @@ services:
         max-file: "2"
 
   # OpAMP Server
-  # The collector connects to this control plane and reports status through the
-  # opampextension.
+  # The Collector Supervisor connects to this control plane.
   opamp-server:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-opamp-server
     container_name: opamp-server
@@ -153,6 +152,11 @@ services:
         limits:
           memory: 65M
     restart: unless-stopped
+    networks:
+      - opamp-control
+      - opamp-admin
+    ports:
+      - "127.0.0.1:4321:4321"
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:4321/"]
       start_period: 10s
@@ -167,13 +171,16 @@ services:
 
   # Patch frontend-proxy to wait for observability UIs
   frontend-proxy:
+    networks:
+      - default
+      - opamp-control
+    healthcheck:
+      retries: 40
     depends_on:
       jaeger:
         condition: service_started
       grafana:
         condition: service_started
-      opamp-server:
-        condition: service_healthy
 
   # Patch otel-collector to add observability exporters and wait for backends.
   # Note: otelcol-config-full.yml is included here to maintain correct config ordering
@@ -181,12 +188,23 @@ services:
   # compose.full.yaml, the Kafka/PostgreSQL receivers in the full config are harmless —
   # they will simply fail to scrape since those services are not running.
   otel-collector:
-    command:
-      - "--config=/etc/otelcol-config.yml"
-      - "--config=/etc/otelcol-config-full.yml"
-      - "--config=/etc/otelcol-config-observability.yml"
-      - "--config=/etc/otelcol-config-extras.yml"
-      - "--feature-gates=service.profilesSupport"
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-otel-collector
+    build:
+      context: ./
+      dockerfile: ${OTEL_COLLECTOR_DOCKERFILE}
+      args:
+        COLLECTOR_CONTRIB_IMAGE: ${COLLECTOR_CONTRIB_IMAGE}
+        OPAMP_SUPERVISOR_IMAGE: ${OPAMP_SUPERVISOR_IMAGE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-otel-collector
+    command: []
+    networks:
+      - default
+      - opamp-control
+    tmpfs:
+      - /etc/otel/supervisor-data
+    # Required by host metrics and Docker stats receivers mounted from compose.yaml.
+    user: 0:0
     volumes:
       - ${OTEL_COLLECTOR_CONFIG}:/etc/otelcol-config.yml
       - ${OTEL_COLLECTOR_CONFIG_FULL}:/etc/otelcol-config-full.yml
@@ -194,6 +212,12 @@ services:
       - ${OTEL_COLLECTOR_CONFIG_EXTRAS}:/etc/otelcol-config-extras.yml
     environment:
       - KAFKA_ADDR
+    healthcheck:
+      test: ["CMD-SHELL", "pidof otelcol-contrib >/dev/null && nc -z otel-collector ${OTEL_COLLECTOR_PORT_HTTP}"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 10
     depends_on:
       jaeger:
         condition: service_started
@@ -209,3 +233,8 @@ services:
     depends_on:
       opamp-server:
         condition: service_healthy
+
+networks:
+  opamp-admin:
+  opamp-control:
+    internal: true

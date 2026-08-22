@@ -67,6 +67,8 @@ the release.
   physical unit of that model, so `device.id` was identical across different
   devices instead of uniquely identifying each one
   ([#3722](https://github.com/open-telemetry/opentelemetry-demo/issues/3722))
+* [otel-collector] Run the Collector under the alpha OpAMP Supervisor, with
+  startup fallback configuration when the OpAMP server is unavailable.
 * [currency] Fix `IPV6_ENABLED` check comparing a `const char*` pointer
   against a string literal instead of the string's contents, so the check
   was always false and the service could never bind to `[::]`
