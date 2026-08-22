@@ -86,8 +86,9 @@ defmodule FlagdUi.Scheduler do
     variants = variant_names(data)
     resting = Map.get(data, "defaultVariant")
     activatable = Enum.sort(variants -- [resting])
+    schedulable = get_in(data, ["metadata", "schedulable"]) != false
 
-    if resting in variants and activatable != [] do
+    if schedulable and resting in variants and activatable != [] do
       [{name, resting, activatable}]
     else
       []
