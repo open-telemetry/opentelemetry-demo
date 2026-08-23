@@ -8,6 +8,7 @@ metrics:
     instrument: counter
     unit: "{request}"
     stability: stable
+    requirement_level: recommended
     note: Counts chat messages sent from the chatbot UI to the agent service
     annotations:
       service: chatbot

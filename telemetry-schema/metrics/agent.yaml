@@ -8,6 +8,7 @@ metrics:
     instrument: counter
     unit: "{call}"
     stability: stable
+    requirement_level: recommended
     note: >
       Counts Astronomy Shop tool invocations. Emitted by both the agent
       service (when calling its local tools directly) and the mcp service
