@@ -23,6 +23,9 @@ the release.
 * [cart] Report health to the demo's OpAMP server when running with the
   observability stack.
   ([#3656](https://github.com/open-telemetry/opentelemetry-demo/pull/3656))
+* [chatbot] Report health to the demo's OpAMP server when running with the
+  agentic and observability stacks.
+  ([#3808](https://github.com/open-telemetry/opentelemetry-demo/pull/3808))
 * [payment] Add `error.type` attribute to error spans in `charge.js` and
   `index.js` to align with OpenTelemetry Semantic Conventions for errors
   ([#3758](https://github.com/open-telemetry/opentelemetry-demo/issues/3758))
