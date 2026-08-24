@@ -115,6 +115,26 @@
       },
       "defaultVariant": "off"
     },
+    "loadGeneratorTraffic": {
+      "description": "Enable synthetic traffic from the load generator. Turn off to pause all load-generator scenarios.",
+      "state": "ENABLED",
+      "variants": {
+        "on": 1,
+        "off": 0
+      },
+      "defaultVariant": "on"
+    },
+    "loadGeneratorVUs": {
+      "description": "Number of concurrent virtual users the load generator's HTTP scenario runs.",
+      "state": "ENABLED",
+      "variants": {
+        "5": 5,
+        "10": 10,
+        "25": 25,
+        "50": 50
+      },
+      "defaultVariant": "5"
+    },
     "imageSlowLoad": {
       "description": "slow loading images in the frontend",
       "state": "ENABLED",
