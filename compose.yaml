@@ -829,7 +829,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 200M
+          memory: 400M
     restart: unless-stopped
     command:
       - --config=/etc/otelcol-config.yml
