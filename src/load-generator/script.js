@@ -283,12 +283,27 @@ async function addProductToCartBrowser(page) {
     // :has-text(), which k6 browser's native CSS engine does not support
     // (it forwards selectors straight to document.querySelectorAll, unlike
     // Playwright's own selector engine).
-    await page.goto(`${BASE_URL}/`, { waitUntil: 'domcontentloaded' })
+    //
+    // The imageSlowLoad flagd flag delays every product image fetch by up to
+    // 10s. The homepage isn't actually hydrated/interactive until that
+    // thumbnail request resolves, so a click fired before it lands never
+    // reaches the Next.js router and the SPA navigation silently no-ops.
+    // Gate the click on that response, mirroring the pre-click
+    // wait_for_event in the pre-k6 (Locust) fix for this same flag (#3171).
+    await Promise.all([
+        page.waitForResponse(/\/images\/products\/RoofBinoculars\.jpg/, { timeout: 25000 }),
+        page.goto(`${BASE_URL}/`, { waitUntil: 'domcontentloaded' }),
+    ])
     await page.waitForSelector('a[href="/product/2ZYFJ3GM2N"]', { timeout: 15000 })
     await page.click('a[href="/product/2ZYFJ3GM2N"]')
-    await page.waitForLoadState('domcontentloaded')
+    // The product-link click is a client-side (SPA/pushState) route change, not
+    // a full navigation - domcontentloaded already fired once for the initial
+    // page load and never fires again for this transition. waitForLoadState
+    // here is a no-op that resolves instantly, before React has rendered the
+    // new route, so the add-to-cart click below never finds its target. Wait
+    // for the actual element instead - correct for both SPA and full navigation.
+    await page.waitForSelector('[data-cy="product-add-to-cart"]', { timeout: 25000 })
     await page.click('[data-cy="product-add-to-cart"]')
-    await page.waitForLoadState('domcontentloaded')
     await page.waitForTimeout(2000)
 }
 

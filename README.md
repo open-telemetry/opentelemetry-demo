@@ -87,8 +87,7 @@ Wednesday at 8:30 AM PST and anyone is welcome.
 
 - [Cyrille Le Clerc](https://github.com/cyrille-leclerc), Datadog
 - [Juliano Costa](https://github.com/julianocosta89), Datadog
-- [Pierre Tessier](https://github.com/puckpuck), Resolve AI
-- [Roger Coll](https://github.com/rogercoll), Elastic
+- [Shenoy Pratik](https://github.com/ps48), AWS OpenSearch
 
 For more information about the maintainer role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).
 
@@ -96,7 +95,6 @@ For more information about the maintainer role, see the [community repository](h
 
 - [D&#xF3;nal O'Sullivan](https://github.com/osullivandonal), Elastic
 - [Piotr Kie&#x142;kowicz](https://github.com/Kielek), Splunk
-- [Shenoy Pratik](https://github.com/ps48), AWS OpenSearch
 
 For more information about the approver role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver).
 
@@ -109,7 +107,9 @@ For more information about the approver role, see the [community repository](htt
 - [Mikko Viitanen](https://github.com/mviitane), Maintainer
 - [Morgan McLean](https://github.com/mtwo), Approver
 - [Penghan Wang](https://github.com/wph95), Approver
+- [Pierre Tessier](https://github.com/puckpuck), Maintainer
 - [Reiley Yang](https://github.com/reyang), Approver
+- [Roger Coll](https://github.com/rogercoll), Maintainer
 - [Ziqi Zhao](https://github.com/fatsheep9146), Approver
 
 For more information about the emeritus role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#emeritus-maintainerapprovertriager).

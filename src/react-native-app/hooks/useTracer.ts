@@ -23,8 +23,8 @@ import {
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 import { useEffect, useState } from "react";
 import {
-  getDeviceId,
   getSystemVersion,
+  getUniqueIdSync,
   getVersion,
 } from "react-native-device-info";
 import { Platform } from "react-native";
@@ -55,7 +55,7 @@ export const setupTracerProvider = (proxyURL: string) => {
     [ATTR_OS_NAME]: Platform.OS,
     [ATTR_OS_VERSION]: getSystemVersion(),
     [ATTR_SERVICE_VERSION]: getVersion(),
-    [ATTR_DEVICE_ID]: getDeviceId(),
+    [ATTR_DEVICE_ID]: getUniqueIdSync(),
   });
 
   // TODO Not obvious that the WebTracerProvider can be used for React Native, might be useful to have a thin

@@ -7,6 +7,70 @@ the release.
 
 ## Unreleased
 
+* [collector] Add a data redaction/deletion example: delete, hash, and partially
+  mask sensitive attributes with the transform processor, plus a documented
+  redaction-processor fallback
+  ([#3662](https://github.com/open-telemetry/opentelemetry-demo/pull/3662))
+* [flagd-ui] Add a scheduler that periodically activates randomly picked feature
+  flags for a random duration, so failure scenarios appear and disappear on
+  their own without external tooling. Configurable interval, minimum and maximum
+  hold duration, how many flags run at once, per variant flag selection, and an
+  optional seed for reproducible patterns
+  ([#2375](https://github.com/open-telemetry/opentelemetry-demo/issues/2375))
+* [react-native-app] Fix `SessionGateway.setSessionValue` to await `getSession()`,
+  preventing stored session corruption and loss of `userId`
+  ([#3765](https://github.com/open-telemetry/opentelemetry-demo/issues/3765))
+* [cart] Report health to the demo's OpAMP server when running with the
+  observability stack.
+  ([#3656](https://github.com/open-telemetry/opentelemetry-demo/pull/3656))
+* [chatbot] Report health to the demo's OpAMP server when running with the
+  agentic and observability stacks.
+  ([#3808](https://github.com/open-telemetry/opentelemetry-demo/pull/3808))
+* [payment] Add `error.type` attribute to error spans in `charge.js` and
+  `index.js` to align with OpenTelemetry Semantic Conventions for errors
+  ([#3758](https://github.com/open-telemetry/opentelemetry-demo/issues/3758))
+* [react-native-app] Render missing `City` and `State` input fields in `CheckoutForm`
+  ([#3754](https://github.com/open-telemetry/opentelemetry-demo/issues/3754))
+* [payment] Fix gRPC server not starting by calling `server.start()` after `bindAsnc()`.
+  The server bound to the port but was never started to accept connections, causing
+  the service to fail its health checks.
+  ([#3844](https://github.com/open-telemetry/opentelemetry-demo/pull/3844))
+
+## 3.0.0
+
+* [react-native-app] Fix `ProductCard` price calculation where `nanos` was
+  divided by `100_000_000` (1e8) instead of `1_000_000_000` (1e9), inflating
+  the displayed price
+  ([#3751](https://github.com/open-telemetry/opentelemetry-demo/issues/3751))
+* [agentic] Move agent, chatbot and mcp to OTLP http exporter
+  ([#3745](https://github.com/open-telemetry/opentelemetry-demo/pull/3745))
+* [payment] Fix `demo.payment.amount` telemetry attribute throwing a TypeError
+  at runtime. `Money.units` is an `int64` proto field decoded by
+  `@grpc/proto-loader` as a `Long` object, not a JS number. Adding a `Long` to
+  a float still returns a `Long`, which has no `.toFixed()` method. Wrap
+  `amount.units` in `Number()` before the arithmetic so `.toFixed(2)` works
+  correctly
+  ([#3747](https://github.com/open-telemetry/opentelemetry-demo/issues/3747))
+* [currency] Guard the `VERSION` environment variable lookup against `nullptr`:
+  constructing a `std::string` directly from `std::getenv("VERSION")` crashes
+  when the variable is unset, so fall back to `"unknown"` instead
+  ([#3743](https://github.com/open-telemetry/opentelemetry-demo/pull/3743))
+* [checkout] Fix `demo.shipping.amount` and `demo.order.amount` telemetry
+  always dropping the cents. `Money.nanos` is billionths of a unit, so
+  dividing by `1_000_000_000` is integer division of a value that never
+  reaches that divisor, always producing `0`; divide by `10_000_000` instead
+  to get the cents component
+  ([#3742](https://github.com/open-telemetry/opentelemetry-demo/issues/3742))
+* [react-native-app] Use `getUniqueIdSync()` instead of `getDeviceId()` to
+  populate the `device.id` resource attribute. `getDeviceId()` returns the
+  hardware/model identifier (e.g. `iPhone13,4`), which is the same for every
+  physical unit of that model, so `device.id` was identical across different
+  devices instead of uniquely identifying each one
+  ([#3722](https://github.com/open-telemetry/opentelemetry-demo/issues/3722))
+* [currency] Fix `IPV6_ENABLED` check comparing a `const char*` pointer
+  against a string literal instead of the string's contents, so the check
+  was always false and the service could never bind to `[::]`
+  ([#3735](https://github.com/open-telemetry/opentelemetry-demo/issues/3735))
 * [kafka] Add `KAFKA_TOPIC` environment variable to configure the Kafka topic
   name used by `checkout`, `accounting`, and `fraud-detection`, defaulting to
   `orders` to preserve existing behavior

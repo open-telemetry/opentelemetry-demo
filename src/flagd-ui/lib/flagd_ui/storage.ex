@@ -12,15 +12,34 @@ defmodule FlagdUi.Storage do
 
   @file_path Application.compile_env!(:flagd_ui, :storage_file_path)
 
+  @topic "flags"
+
   def start_link(opts) do
     name = Keyword.get(opts, :name, Storage)
 
     GenServer.start_link(__MODULE__, %{}, name: name)
   end
 
+  @doc "PubSub topic carrying the configuration after every write."
+  def topic, do: @topic
+
   @impl true
   def init(_) do
-    state = @file_path |> File.read!() |> Jason.decode!()
+    state =
+      case File.read(@file_path) do
+        {:ok, ""} ->
+          %{}
+
+        {:ok, content} ->
+          case Jason.decode(content) do
+            {:ok, parsed} -> parsed
+            {:error, _} -> %{}
+          end
+
+        {:error, _} ->
+          %{}
+      end
+
     Logger.info("Read new state from file")
 
     {:ok, state}
@@ -32,12 +51,17 @@ defmodule FlagdUi.Storage do
   end
 
   @impl true
-  def handle_cast({:replace, json_string}, _) do
-    new_state = Jason.decode!(json_string)
+  def handle_cast({:replace, json_string}, state) do
+    case Jason.decode(json_string) do
+      {:ok, new_state} ->
+        write_state(json_string)
+        broadcast(new_state)
+        {:noreply, new_state}
 
-    write_state(json_string)
-
-    {:noreply, new_state}
+      {:error, _} ->
+        Logger.warning("Ignoring replace with invalid JSON")
+        {:noreply, state}
+    end
   end
 
   @impl true
@@ -50,6 +74,7 @@ defmodule FlagdUi.Storage do
     json_state = Jason.encode!(new_state, pretty: true)
 
     write_state(json_state)
+    broadcast(new_state)
 
     {:noreply, new_state}
   end
@@ -71,15 +96,23 @@ defmodule FlagdUi.Storage do
           end
 
         {flag, updated_data}
-      {flag, data} when flag == flag_name -> {flag, Map.replace(data, "defaultVariant", value)}
       {flag, data} -> {flag, data}
     end)
     |> Map.new()
   end
 
   defp write_state(json_string) do
-    File.write!(@file_path, json_string)
+    # Write-then-rename so concurrent readers (e.g. flagd, or another Storage
+    # process in tests) never observe a truncated/empty file mid-write:
+    # rename/2 is atomic on the same filesystem, plain File.write!/2 is not.
+    tmp_path = @file_path <> ".tmp"
+    File.write!(tmp_path, json_string)
+    File.rename!(tmp_path, @file_path)
 
     Logger.info("Wrote new state to file")
+  end
+
+  defp broadcast(state) do
+    Phoenix.PubSub.broadcast(FlagdUi.PubSub, @topic, {:flags_changed, state})
   end
 end

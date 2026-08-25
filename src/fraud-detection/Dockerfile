@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM --platform=${BUILDPLATFORM} docker.io/library/gradle:9.6.1-jdk17@sha256:7364ce528f33bb6038672bcef990d524f1ad8fbc292935819c235db886d0fae7 AS builder
+FROM --platform=${BUILDPLATFORM} docker.io/library/gradle:9.7.1-jdk17@sha256:79720ed2c6d00e4d0642aede904bfff1c14324d95047681ae0fa74a2aae40eba AS builder
 
 WORKDIR /usr/src/app/
 

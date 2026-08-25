@@ -7,7 +7,7 @@ plugins {
     id 'com.github.sherter.google-java-format' version '0.9'
     id 'idea'
     id 'application'
-    id 'com.github.ben-manes.versions' version '0.54.0'
+    id 'com.github.ben-manes.versions' version '0.61.0'
 }
 
 repositories {
@@ -19,11 +19,11 @@ description = 'Ad Service'
 group = "ad"
 version = "0.1.0-SNAPSHOT"
 
-def opentelemetryVersion = "1.64.0"
-def opentelemetryInstrumentationVersion = "2.29.0"
-def grpcVersion = "1.82.2"
-def jacksonVersion = "2.22.1"
-def protocVersion = "4.35.1"
+def opentelemetryVersion = "1.65.0"
+def opentelemetryInstrumentationVersion = "2.31.0"
+def grpcVersion = "1.83.1"
+def jacksonVersion = "2.22.2"
+def protocVersion = "4.36.0"
 def prometheusMetricsVersion = "1.8.0"
 
 tasks.withType(JavaCompile).configureEach {
@@ -44,7 +44,7 @@ dependencies {
         implementation platform("io.opentelemetry:opentelemetry-bom:${opentelemetryVersion}")
         implementation platform("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom:${opentelemetryInstrumentationVersion}")
 
-        implementation "com.google.api.grpc:proto-google-common-protos:2.73.0",
+        implementation "com.google.api.grpc:proto-google-common-protos:2.74.0",
                 "com.google.protobuf:protobuf-java:${protocVersion}",
                 "javax.annotation:javax.annotation-api:1.3.2",
                 "io.grpc:grpc-protobuf:${grpcVersion}",
@@ -55,8 +55,8 @@ dependencies {
                 "io.opentelemetry:opentelemetry-sdk",
                 "io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations",
                 "org.apache.logging.log4j:log4j-core:2.26.1",
-                "dev.openfeature.contrib.providers:flagd:0.14.0",
-                'dev.openfeature:sdk:1.21.0',
+                "dev.openfeature.contrib.providers:flagd:0.14.1",
+                'dev.openfeature:sdk:1.22.0',
                 "io.prometheus:prometheus-metrics-core:${prometheusMetricsVersion}",
                 "io.prometheus:prometheus-metrics-exporter-httpserver:${prometheusMetricsVersion}"
 
