@@ -22,7 +22,7 @@ version = "1.0"
 
 
 val grpcVersion = "1.83.1"
-val protobufVersion = "4.35.1"
+val protobufVersion = "4.36.0"
 
 
 repositories {
@@ -49,7 +49,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.18")
     implementation("com.google.protobuf:protobuf-kotlin:${protobufVersion}")
     implementation("dev.openfeature:sdk:1.22.0")
-    implementation("dev.openfeature.contrib.providers:flagd:0.14.0")
+    implementation("dev.openfeature.contrib.providers:flagd:0.14.1")
 
     if (JavaVersion.current().isJava9Compatible) {
         // Workaround for @javax.annotation.Generated
