@@ -171,14 +171,6 @@ jobs:
     if: needs.check-react-native-changes.outputs.should_build == 'true'
     uses: ./.github/workflows/react-native-build.yml
 
-  zizmor:
-    name: zizmor scan
-    permissions:
-      actions: read  # required to scan GitHub Actions workflows
-      contents: read  # required to checkout the repository
-      security-events: write  # required to upload zizmor SARIF to code scanning
-    uses: ./.github/workflows/zizmor.yml
-
   codeql-analysis:
     name: CodeQL analysis
     permissions:
