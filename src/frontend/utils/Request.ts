@@ -28,7 +28,10 @@ const request = async <T>({
   let data;
   try {
     data = responseText ? JSON.parse(responseText) : undefined;
-  } catch {
+  } catch (err) {
+    if (response.ok) {
+      throw err;
+    }
     data = undefined;
   }
 

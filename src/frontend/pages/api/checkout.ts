@@ -33,10 +33,12 @@ const handler = async ({ method, body, query }: NextApiRequest, res: NextApiResp
         const details = (error as ServiceError)?.details || (error as Error)?.message || '';
 
         if (details.startsWith(PAYMENT_FAILURE_PREFIX)) {
-          return res.status(422).json({
-            error: 'Your payment could not be processed. Please check your card details and try again.',
-            code: 'PAYMENT_FAILED',
-          });
+          if (!details.includes('code = Unavailable') && !details.includes('code = Internal')) {
+            return res.status(422).json({
+              error: 'Your payment could not be processed. Please check your card details and try again.',
+              code: 'PAYMENT_FAILED',
+            });
+          }
         }
 
         return res.status(500).json({ error: details || 'Failed to place order.' });
