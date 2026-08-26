@@ -4,6 +4,7 @@ const grpc = require('@grpc/grpc-js')
 const protoLoader = require('@grpc/proto-loader')
 const health = require('grpc-js-health-check')
 const opentelemetry = require('@opentelemetry/api')
+const { ATTR_ERROR_TYPE } = require('@opentelemetry/semantic-conventions')
 
 const charge = require('./charge')
 const logger = require('./logger')
@@ -25,6 +26,7 @@ async function chargeServiceHandler(call, callback) {
     logger.warn({ err })
 
     span?.setStatus({ code: opentelemetry.SpanStatusCode.ERROR, message: err.message })
+    span?.setAttribute(ATTR_ERROR_TYPE, err.name || 'Error')
     callback(err)
   }
 }
@@ -60,6 +62,7 @@ server.bindAsync(address, grpc.ServerCredentials.createInsecure(), (err, port) =
     return logger.error({ err })
   }
 
+  server.start()
   logger.info(`payment gRPC server started on ${address}`)
 })
 
