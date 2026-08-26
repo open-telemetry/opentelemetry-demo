@@ -41,7 +41,7 @@ const handler = async ({ method, body, query }: NextApiRequest, res: NextApiResp
           }
         }
 
-        return res.status(500).json({ error: details || 'Failed to place order.' });
+        return res.status(500).json({ error: 'Failed to place order.' });
       }
 
       const { order: { items = [], ...order } = {} } = placeOrderResponse;
