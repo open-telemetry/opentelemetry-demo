@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [load-generator] Make the k6 browser scenario's VU count configurable via
+  `BROWSER_GENERATOR_VUS` (default `1`), independent of `LOAD_GENERATOR_VUS`
+  ([#3813](https://github.com/open-telemetry/opentelemetry-demo/issues/3813))
 * [react-native-app] Catch errors from `placeOrder` in the Cart screen and
   show an error toast so payment failures are visible to the user instead of
   being silently dropped
