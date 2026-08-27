@@ -7,6 +7,14 @@ the release.
 
 ## Unreleased
 
+* [load-generator] Fix the k6 browser scenario's RUM context isolation and
+  CORS preflight breakage: use a fresh browser context per iteration instead
+  of a persistent one, scope the `synthetic_request` baggage header to
+  same-origin requests so third-party/CDN resources don't get forced into a
+  CORS preflight, and force `document.visibilityState`/`hidden` before
+  closing so the RUM agent's visibilitychange-triggered beacon flush
+  actually fires
+  ([#3812](https://github.com/open-telemetry/opentelemetry-demo/issues/3812))
 * [react-native-app] Catch errors from `placeOrder` in the Cart screen and
   show an error toast so payment failures are visible to the user instead of
   being silently dropped
