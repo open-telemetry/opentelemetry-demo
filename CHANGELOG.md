@@ -7,6 +7,10 @@ the release.
 
 ## Unreleased
 
+* [react-native-app] Catch errors from `placeOrder` in the Cart screen and
+  show an error toast so payment failures are visible to the user instead of
+  being silently dropped
+  ([#3760](https://github.com/open-telemetry/opentelemetry-demo/issues/3760))
 * [collector] Add a data redaction/deletion example: delete, hash, and partially
   mask sensitive attributes with the transform processor, plus a documented
   redaction-processor fallback
