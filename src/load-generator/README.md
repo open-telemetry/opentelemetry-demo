@@ -57,10 +57,11 @@ favor of a single implicit scenario, the same way `K6_DURATION`/
 `K6_ITERATIONS`/`K6_STAGES` do - so none of those reserved names should ever
 be set as a container env var here.
 
-The browser scenario runs a single headless browser session alongside the HTTP
-traffic, so it always runs one browser VU. It is opt-in via `K6_BROWSER_ENABLED`
-(default off), since headless Chromium requires a relaxed pod security context
-that most Kubernetes clusters don't grant by default. When enabled, Chromium's
+The browser scenario runs headless browser sessions alongside the HTTP
+traffic, scaled independently via `BROWSER_GENERATOR_VUS` (default `1`). It is
+opt-in via `K6_BROWSER_ENABLED` (default off), since headless Chromium
+requires a relaxed pod security context that most Kubernetes clusters don't
+grant by default. When enabled, Chromium's
 executable path and launch args come from the `K6_BROWSER_EXECUTABLE_PATH` and
 `K6_BROWSER_ARGS` env vars (comma-separated, no `--` prefix) rather than the
 scenario's own `browser` options field, which k6 ignores for these.

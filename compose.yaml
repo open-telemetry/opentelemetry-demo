@@ -421,6 +421,7 @@ services:
     restart: unless-stopped
     environment:
       - LOAD_GENERATOR_VUS
+      - BROWSER_GENERATOR_VUS
       - K6_TARGET_URL
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
