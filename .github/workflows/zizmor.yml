@@ -8,7 +8,7 @@ on:
     branches: [main]
   pull_request:
   schedule:
-    - cron: '39 11 * * 6' # weekly at 11:39 UTC on Saturday
+    - cron: '39 11 * * 6'  # weekly at 11:39 UTC on Saturday
   workflow_dispatch:
 
 permissions: {}
@@ -16,8 +16,8 @@ permissions: {}
 jobs:
   zizmor:
     permissions:
-      contents: read # for actions/checkout
-      security-events: write # for zizmor to upload SARIF results
-    uses: open-telemetry/shared-workflows/.github/workflows/zizmor.yml@d9b812f9924a121c6a8276ea2f9e6f5b622cdd4d # v0.10.0
+      contents: read  # for actions/checkout
+      security-events: write  # for zizmor to upload SARIF results
+    uses: open-telemetry/shared-workflows/.github/workflows/zizmor.yml@d9b812f9924a121c6a8276ea2f9e6f5b622cdd4d  # v0.10.0
     with:
       persona: pedantic
