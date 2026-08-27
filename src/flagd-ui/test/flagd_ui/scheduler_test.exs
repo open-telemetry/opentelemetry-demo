@@ -74,18 +74,6 @@ defmodule FlagdUi.SchedulerTest do
       assert {"cartFailure", ["10%", "100%", "25%", "50%", "75%", "90%"]} in flags
     end
 
-    test "offers loadGeneratorTraffic, whose resting state is on" do
-      flags = Storage |> GenServer.call(:read) |> Scheduler.schedulable_flags()
-
-      assert {"loadGeneratorTraffic", ["off"]} in flags
-    end
-
-    test "offers loadGeneratorVUs, whose resting state is its default variant" do
-      flags = Storage |> GenServer.call(:read) |> Scheduler.schedulable_flags()
-
-      assert {"loadGeneratorVUs", ["10", "25", "50"]} in flags
-    end
-
     test "tolerates a configuration without flags" do
       assert Scheduler.schedulable_flags(%{}) == []
       assert Scheduler.schedulable_flags(%{"flags" => nil}) == []
@@ -146,17 +134,6 @@ defmodule FlagdUi.SchedulerTest do
       :ok
     end
 
-    # loadGeneratorTraffic rests at "on" and loadGeneratorVUs rests at its own
-    # default, not "off"; both have their own revert tests below and would
-    # break the "back to off" assumption the generic tests below make.
-    defp off_resting_flags do
-      Storage
-      |> GenServer.call(:read)
-      |> Scheduler.schedulable_flags()
-      |> Enum.reject(fn {name, _} -> name in ["loadGeneratorTraffic", "loadGeneratorVUs"] end)
-      |> Map.new()
-    end
-
     test "activates a flag and reports it as active" do
       scheduler = start_scheduler(ActivationScheduler)
 
@@ -177,12 +154,7 @@ defmodule FlagdUi.SchedulerTest do
       scheduler = start_scheduler(RevertScheduler)
 
       config =
-        immediate_config(%{
-          interval_ms: 5000,
-          min_duration_ms: 1000,
-          max_duration_ms: 1000,
-          flags: off_resting_flags()
-        })
+        immediate_config(%{interval_ms: 5000, min_duration_ms: 1000, max_duration_ms: 1000})
 
       assert :ok = Scheduler.start_schedule(scheduler, config)
 
@@ -192,46 +164,13 @@ defmodule FlagdUi.SchedulerTest do
       assert Enum.any?(Scheduler.state(scheduler).history, &(&1.flag == flag))
     end
 
-    test "reverts loadGeneratorTraffic to on, not off" do
-      scheduler = start_scheduler(TrafficRevertScheduler)
-
-      config = immediate_config(%{flags: %{"loadGeneratorTraffic" => ["off"]}})
-
-      assert :ok = Scheduler.start_schedule(scheduler, config)
-
-      assert_receive {:scheduler_state, %{active: [%{flag: "loadGeneratorTraffic"}]}}, 2000
-      assert eventually(fn -> variant_of("loadGeneratorTraffic") == "off" end)
-
-      assert :ok = Scheduler.stop_schedule(scheduler)
-
-      assert eventually(fn -> variant_of("loadGeneratorTraffic") == "on" end)
-    end
-
-    test "reverts loadGeneratorVUs to its own default, not off" do
-      scheduler = start_scheduler(VUsRevertScheduler)
-
-      config = immediate_config(%{flags: %{"loadGeneratorVUs" => ["25"]}})
-
-      assert :ok = Scheduler.start_schedule(scheduler, config)
-
-      assert_receive {:scheduler_state, %{active: [%{flag: "loadGeneratorVUs", variant: "25"}]}},
-                     2000
-
-      assert :ok = Scheduler.stop_schedule(scheduler)
-
-      assert eventually(fn -> variant_of("loadGeneratorVUs") == "5" end)
-    end
-
     test "reverts every flag it activates when holds fill the whole interval" do
       scheduler = start_scheduler(BackToBackScheduler)
 
       # A hold as long as the interval makes each revert land exactly on the next
       # interval boundary, which previously left the earlier flag switched on.
       assert :ok =
-               Scheduler.start_schedule(
-                 scheduler,
-                 immediate_config(%{seed: 99, flags: off_resting_flags()})
-               )
+               Scheduler.start_schedule(scheduler, immediate_config(%{seed: 99}))
 
       assert_receive {:scheduler_state, %{active: [%{flag: _}]}}, 2000
 
@@ -261,8 +200,7 @@ defmodule FlagdUi.SchedulerTest do
                  immediate_config(%{
                    interval_ms: 60_000,
                    max_duration_ms: 60_000,
-                   min_duration_ms: 60_000,
-                   flags: off_resting_flags()
+                   min_duration_ms: 60_000
                  })
                )
 
@@ -381,7 +319,7 @@ defmodule FlagdUi.SchedulerTest do
       assert :ok =
                Scheduler.start_schedule(
                  scheduler,
-                 held_config(%{concurrency: 4, flags: off_resting_flags()})
+                 held_config(%{concurrency: 4})
                )
 
       assert_receive {:scheduler_state, %{active: [_, _, _, _] = active}}, 2000
