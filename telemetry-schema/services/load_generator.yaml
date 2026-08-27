@@ -5,11 +5,12 @@ file_format: definition/2
 attribute_groups:
   - id: service.load_generator
     visibility: public
-    brief: Load Generator baggage attributes
+    brief: Load Generator attributes
     stability: stable
     attributes:
       - ref: session.id
       - ref: demo.synthetic_request
+      - ref: user.id
       - ref: demo.request.flood.count
       - ref: demo.product.id
       - ref: demo.product.quantity
