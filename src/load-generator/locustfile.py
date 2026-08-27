@@ -127,14 +127,14 @@ class WebsiteUser(HttpUser):
     @task(10)
     def browse_product(self):
         product = random.choice(products)
-        with self.tracer.start_as_current_span("user_browse_product", context=context.get_current(), attributes={"product.id": product}):
+        with self.tracer.start_as_current_span("user_browse_product", context=context.get_current(), attributes={"demo.product.id": product}):
             logging.info(f"User browsing product: {product}")
             self.client.get("/api/products/" + product)
 
     @task(3)
     def get_recommendations(self):
         product = random.choice(products)
-        with self.tracer.start_as_current_span("user_get_recommendations", context=context.get_current(), attributes={"product.id": product}):
+        with self.tracer.start_as_current_span("user_get_recommendations", context=context.get_current(), attributes={"demo.product.id": product}):
             logging.info(f"User getting recommendations for product: {product}")
             params = {
                 "productIds": [product],
@@ -144,7 +144,7 @@ class WebsiteUser(HttpUser):
     @task(3)
     def get_ads(self):
         category = random.choice(categories)
-        with self.tracer.start_as_current_span("user_get_ads", context=context.get_current(), attributes={"category": str(category)}):
+        with self.tracer.start_as_current_span("user_get_ads", context=context.get_current(), attributes={"demo.ad.category": str(category)}):
             logging.info(f"User getting ads for category: {category}")
             params = {
                 "contextKeys": [category],
@@ -163,7 +163,7 @@ class WebsiteUser(HttpUser):
             user = str(uuid.uuid1())
         product = random.choice(products)
         quantity = random.choice([1, 2, 3, 4, 5, 10])
-        with self.tracer.start_as_current_span("user_add_to_cart", context=context.get_current(), attributes={"user.id": user, "product.id": product, "quantity": quantity}):
+        with self.tracer.start_as_current_span("user_add_to_cart", context=context.get_current(), attributes={"user.id": user, "demo.product.id": product, "demo.product.quantity": quantity}):
             logging.info(f"User {user} adding {quantity} of product {product} to cart")
             self.client.get("/api/products/" + product)
             cart_item = {
@@ -190,7 +190,7 @@ class WebsiteUser(HttpUser):
         user = str(uuid.uuid1())
         item_count = random.choice([2, 3, 4])
         with self.tracer.start_as_current_span("user_checkout_multi", context=context.get_current(),
-                                            attributes={"user.id": user, "item.count": item_count}):
+                                            attributes={"user.id": user, "demo.cart.items.count": item_count}):
             for i in range(item_count):
                 self.add_to_cart(user=user)
             checkout_person = random.choice(people)
@@ -202,7 +202,7 @@ class WebsiteUser(HttpUser):
     def flood_home(self):
         flood_count = get_flagd_value("loadGeneratorFloodHomepage")
         if flood_count > 0:
-            with self.tracer.start_as_current_span("user_flood_home",  context=context.get_current(), attributes={"flood.count": flood_count}):
+            with self.tracer.start_as_current_span("user_flood_home",  context=context.get_current(), attributes={"demo.request.flood.count": flood_count}):
                 logging.info(f"User flooding homepage {flood_count} times")
                 for _ in range(0, flood_count):
                     self.client.get("/")

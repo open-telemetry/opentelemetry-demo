@@ -10,3 +10,8 @@ attribute_groups:
     attributes:
       - ref: session.id
       - ref: demo.synthetic_request
+      - ref: demo.request.flood.count
+      - ref: demo.product.id
+      - ref: demo.product.quantity
+      - ref: demo.ad.category
+      - ref: demo.cart.items.count
