@@ -191,8 +191,7 @@ jobs:
       checklicense,
       weaver-check,
       react-native-build,
-      codeql-analysis,
-      zizmor
+      codeql-analysis
     ]
     if: always() && !cancelled()
     runs-on: ubuntu-latest
