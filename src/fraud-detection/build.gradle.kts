@@ -22,7 +22,7 @@ version = "1.0"
 
 
 val grpcVersion = "1.83.1"
-val protobufVersion = "4.35.1"
+val protobufVersion = "4.36.0"
 
 
 repositories {
@@ -42,14 +42,14 @@ dependencies {
     implementation("io.grpc:grpc-stub:${grpcVersion}")
     implementation("io.grpc:grpc-netty:${grpcVersion}")
     implementation("io.grpc:grpc-services:${grpcVersion}")
-    implementation("io.opentelemetry:opentelemetry-api:1.64.0")
-    implementation("io.opentelemetry:opentelemetry-sdk:1.64.0")
+    implementation("io.opentelemetry:opentelemetry-api:1.65.0")
+    implementation("io.opentelemetry:opentelemetry-sdk:1.65.0")
     implementation("io.opentelemetry:opentelemetry-extension-annotations:1.18.0")
     implementation("org.apache.logging.log4j:log4j-core:2.26.1")
     implementation("org.slf4j:slf4j-api:2.0.18")
     implementation("com.google.protobuf:protobuf-kotlin:${protobufVersion}")
     implementation("dev.openfeature:sdk:1.22.0")
-    implementation("dev.openfeature.contrib.providers:flagd:0.14.0")
+    implementation("dev.openfeature.contrib.providers:flagd:0.14.1")
 
     if (JavaVersion.current().isJava9Compatible) {
         // Workaround for @javax.annotation.Generated
