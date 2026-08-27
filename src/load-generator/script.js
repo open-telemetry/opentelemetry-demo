@@ -321,50 +321,32 @@ export async function browserScenario() {
     // lifetime, which breaks the RUM agent's session bookkeeping over time.
     const context = await browser.newContext()
     const page = await context.newPage()
-    // Tag first-party requests as synthetic via baggage, scoped to
-    // same-origin only. A custom header on a cross-origin request is a
+    // Tag first-party requests as synthetic via baggage (checkout/payment
+    // annotate spans based on this - see telemetry-schema/services/),
+    // scoped to same-origin only. The old code added the header via a
+    // global page.setExtraHTTPHeaders matching every request, including
+    // third-party ones. A custom header on a cross-origin request is a
     // non-simple request under the Fetch spec, forcing a real CORS
-    // preflight; k6/Playwright drive the page through CDP, which loses
+    // preflight; k6-browser drives the page through CDP, which loses
     // Chromium's normal "simple cross-origin request" fast path once a
-    // custom header is present. Applying this header to every request via
-    // setExtraHTTPHeaders (including third-party ones) forces that
-    // preflight on any cross-origin resource the page loads - confirmed
-    // breaking both a third-party RUM agent's chunk-loading domain and
-    // Google Fonts' fonts.gstatic.com, since most CDNs never expect (and
-    // don't handle) an OPTIONS preflight for what would otherwise be a
-    // simple cross-origin GET. Scoping the header to same-origin avoids
-    // triggering a preflight for any third-party resource in the first
-    // place. This is done via an in-page addInitScript() rather than
-    // page.route()/route.continue() - CDP-level request interception -
-    // because a page.route() handler here leaves the VU unable to start a
-    // second iteration: context.close() reports a clean teardown (visible
-    // even with K6_BROWSER_DEBUG=true), but k6's own VU/executor never
-    // reclaims the VU afterward, silently stalling the whole scenario
-    // after exactly one iteration.
-    await context.addInitScript(() => {
-        const origFetch = window.fetch
-        window.fetch = function (input, init) {
-            try {
-                const url = typeof input === 'string' ? input : input.url
-                if (url && url.startsWith(window.location.origin)) {
-                    init = init || {}
-                    const headers = new Headers(init.headers || {})
-                    const existing = headers.get('baggage') || ''
-                    headers.set('baggage', [existing, 'synthetic_request=true'].filter(Boolean).join(', '))
-                    init.headers = headers
-                }
-            } catch (e) {}
-            return origFetch.call(this, input, init)
-        }
-        const origOpen = XMLHttpRequest.prototype.open
-        XMLHttpRequest.prototype.open = function (method, url, ...rest) {
-            const result = origOpen.call(this, method, url, ...rest)
-            try {
-                if (url && (url.startsWith(window.location.origin) || url.startsWith('/'))) {
-                    this.setRequestHeader('baggage', 'synthetic_request=true')
-                }
-            } catch (e) {}
-            return result
+    // custom header is present. Third-party RUM/analytics agents' own
+    // chunk-loading domains, and Google Fonts' fonts.gstatic.com, don't
+    // answer OPTIONS preflights on those paths, so the preflight failed
+    // and those chunks never loaded - even though the page itself loaded
+    // fine. Scoping the header to same-origin only avoids triggering a
+    // preflight for any third-party resource in the first place.
+    await page.route('**/*', async (route) => {
+        const req = route.request()
+        if (req.url().startsWith(BASE_URL)) {
+            const existingBaggage = req.headers()['baggage'] || ''
+            await route.continue({
+                headers: {
+                    ...req.headers(),
+                    baggage: [existingBaggage, 'synthetic_request=true'].filter(Boolean).join(', '),
+                },
+            })
+        } else {
+            await route.continue()
         }
     })
     const isCurrencyChange = cryptoRandom() < 0.5
@@ -395,7 +377,12 @@ export async function browserScenario() {
             document.dispatchEvent(new Event('visibilitychange'))
             window.dispatchEvent(new Event('pagehide'))
         }).catch(() => {})
-        await page.waitForTimeout(300)
+        // 300ms is nowhere near enough dwell time for a RUM agent's
+        // session-trace/beacon harvest to actually flush over the network
+        // (observed 6-20s between harvests in a real browser session) -
+        // confirmed this alone is what makes sessions land at all,
+        // independent of the visibilityState fix above.
+        await page.waitForTimeout(8000)
         await context.close()
     }
 
