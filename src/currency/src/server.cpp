@@ -55,6 +55,17 @@ namespace
 {
   constexpr auto shutdown_timeout = std::chrono::seconds(9);
 
+  struct ServerShutdownResult
+  {
+    bool succeeded;
+    std::chrono::steady_clock::time_point deadline;
+  };
+
+  ServerShutdownResult serverShutdownResult(bool succeeded)
+  {
+    return {succeeded, std::chrono::steady_clock::now() + shutdown_timeout};
+  }
+
   std::chrono::microseconds remainingShutdownTimeout(
       std::chrono::steady_clock::time_point shutdown_deadline)
   {
@@ -266,9 +277,7 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
   }
 };
 
-bool RunServer(uint16_t port,
-               const sigset_t& shutdown_signals,
-               std::chrono::steady_clock::time_point& shutdown_deadline)
+ServerShutdownResult RunServer(uint16_t port, const sigset_t& shutdown_signals)
 {
   std::string ip("0.0.0.0");
 
@@ -294,7 +303,7 @@ bool RunServer(uint16_t port,
   std::unique_ptr<Server> server(builder.BuildAndStart());
   if (server == nullptr) {
     std::cerr << "Failed to start Currency Server\n";
-    return false;
+    return serverShutdownResult(false);
   }
 
   logger->Info(eventName("currency.server.started"),
@@ -307,14 +316,17 @@ bool RunServer(uint16_t port,
     std::cerr << "Failed to wait for shutdown signal: " << std::strerror(signal_error) << "\n";
   } else {
     const char* signal_name = received_signal == SIGTERM ? "SIGTERM" : "SIGINT";
-    std::cout << "Received " << signal_name << ", shutting down Currency Server\n";
+    const std::string shutdown_message =
+        std::string("Received ") + signal_name + ", shutting down Currency Server";
+    std::cout << shutdown_message << "\n";
+    logger->Info(eventName("currency.server.stopping"), shutdown_message);
   }
 
-  shutdown_deadline = std::chrono::steady_clock::now() + shutdown_timeout;
+  const auto result = serverShutdownResult(signal_error == 0);
   server->Shutdown(std::chrono::system_clock::now() +
-                   remainingShutdownTimeout(shutdown_deadline));
+                   remainingShutdownTimeout(result.deadline));
   server->Wait();
-  return signal_error == 0;
+  return result;
 }
 }
 
@@ -347,31 +359,30 @@ int main(int argc, char **argv) {
   currency_counter = initIntCounter("demo.exchange.conversions", version);
   logger = getLogger(name);
 
-  auto shutdown_deadline = std::chrono::steady_clock::now() + shutdown_timeout;
-  const bool server_shutdown = RunServer(port, shutdown_signals, shutdown_deadline);
+  const auto server_shutdown = RunServer(port, shutdown_signals);
   const bool tracer_shutdown =
-      tracer_provider->Shutdown(remainingShutdownTimeout(shutdown_deadline));
+      tracer_provider->Shutdown(remainingShutdownTimeout(server_shutdown.deadline));
   if (!tracer_shutdown) {
     std::cerr << "Tracer provider shutdown failed\n";
   }
 
-  const bool meter_flush = meter_provider->ForceFlush(remainingShutdownTimeout(shutdown_deadline));
+  const bool meter_flush =
+      meter_provider->ForceFlush(remainingShutdownTimeout(server_shutdown.deadline));
   if (!meter_flush) {
     std::cerr << "Meter provider flush failed\n";
   }
 
   const bool meter_shutdown =
-      meter_provider->Shutdown(remainingShutdownTimeout(shutdown_deadline));
+      meter_provider->Shutdown(remainingShutdownTimeout(server_shutdown.deadline));
   if (!meter_shutdown) {
     std::cerr << "Meter provider shutdown failed\n";
   }
 
   const bool logger_shutdown =
-      logger_provider->Shutdown(remainingShutdownTimeout(shutdown_deadline));
+      logger_provider->Shutdown(remainingShutdownTimeout(server_shutdown.deadline));
   if (!logger_shutdown) {
     std::cerr << "Logger provider shutdown failed\n";
   }
 
-  return server_shutdown && tracer_shutdown && meter_flush && meter_shutdown && logger_shutdown ? 0
-                                                                                                : 1;
+  return server_shutdown.succeeded ? 0 : 1;
 }
