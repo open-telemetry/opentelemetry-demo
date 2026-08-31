@@ -66,7 +66,8 @@ defmodule FlagdUi.Scheduler do
   pairs, given a flagd configuration.
 
   A flag is eligible when it has a resting variant, its configured default, to
-  return to and at least one other variant to switch to.
+  return to, at least one other variant to switch to, and metadata is not configured
+  to opt out of scheduling (`metadata.schedulable: false`).
   """
   def schedulable_flags(config) do
     config

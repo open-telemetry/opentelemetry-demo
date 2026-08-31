@@ -230,12 +230,12 @@ processors:
   # values, so it can't over-redact benign numeric attributes like demo.order.id.
   redaction:
     allow_all_keys: true
-    # Already masked to its last 4 digits above; keep it out of blocked_key_patterns
-    # matching so this processor doesn't re-mask it to ****.
-    ignored_keys:
-      - demo.payment.card_number
+    # Preserve only the canonical last-4 mask produced by the transform
+    # above.
+    allowed_values:
+      - "^\*\*\{4\}-\*\*\{4\}-\*\*\{4\}-\\d{4}$"
     blocked_key_patterns:
-      - "demo\\.payment\\.card_pin"
+      - "demo\\.payment\\.card_(number|pin)"
       - "password"
       - "secret"
     summary: debug
