@@ -233,7 +233,7 @@ processors:
     # Preserve only the canonical last-4 mask produced by the transform
     # above.
     allowed_values:
-      - "^\*\*\{4\}-\*\*\{4\}-\*\*\{4\}-\\d{4}$"
+      - '^\*\*\{4\}-\*\*\{4\}-\*\*\{4\}-\d{4}$'
     blocked_key_patterns:
       - "demo\\.payment\\.card_(number|pin)"
       - "password"
