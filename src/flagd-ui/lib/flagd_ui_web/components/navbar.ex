@@ -24,6 +24,11 @@ defmodule FlagdUiWeb.Components.Navbar do
               Advanced
             </.link>
           </li>
+          <li>
+            <.link navigate={~p"/scheduler"} class={classes("scheduler", @mode)}>
+              Scheduler
+            </.link>
+          </li>
         </ul>
       </div>
     </nav>

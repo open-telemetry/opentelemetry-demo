@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM --platform=${BUILDPLATFORM} docker.io/library/rust:1.97.1@sha256:3382bd20aa942806c533e9a73cd000474fb3ef173f71e684cc9b942675781769 AS builder
+FROM --platform=${BUILDPLATFORM} docker.io/library/rust:1.98.0@sha256:271849e998ffce5776454bbf98c5dc21baafc854ff8e566197908d3aca9a81e8 AS builder
 ARG TARGETARCH
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
@@ -35,7 +35,7 @@ RUN if [ "${TARGETPLATFORM}" = "linux/arm64" ] && [ "${BUILDPLATFORM}" != "linux
     fi
 
 
-FROM gcr.io/distroless/cc-debian13:nonroot@sha256:d97bc0a941b8d4be647dc0ee75b264ddbb772f1ac5ba690a4309c00723b23775
+FROM gcr.io/distroless/cc-debian13:nonroot@sha256:c31ff9abcb1910f3ab25c7957bdaf0bfe12a01eb546e8df2282f1c8f682b606c
 
 WORKDIR /app
 

@@ -29,7 +29,7 @@ RUN /weaver/weaver registry package \
     --v2
 
 # Stage 2: Build static site
-FROM docker.io/library/python:3.14.6-slim-bookworm@sha256:86f975aca15cf04a40b399eebede9aea7c82eae084d1f1a0a6ef6bcaae871a30 AS site-builder
+FROM docker.io/library/python:3.14.7-slim-bookworm@sha256:9ab8d9c8514b44f90cf0029dd42fdd7e9e211e639c8b995304cc04568dee900f AS site-builder
 
 WORKDIR /app
 

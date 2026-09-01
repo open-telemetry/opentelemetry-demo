@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM docker.io/library/golang:1.26.5-bookworm@sha256:1ecb7edf62a0408027bd5729dfd6b1b8766e578e8df93995b225dfd0944eb651 AS builder
+FROM docker.io/library/golang:1.27.0-bookworm@sha256:ded31c68586d2e49e760acc2e65a884b23d032e9bbbed0ae0c55abd3fcaf4452 AS builder
 
 WORKDIR /usr/src/app/
 
@@ -17,9 +17,9 @@ COPY ./src/product-catalog/main.go main.go
 
 RUN CGO_ENABLED=0 GOOS=linux GO111MODULE=on go build -ldflags "-s -w" -o product-catalog main.go
 
-FROM ghcr.io/grpc-ecosystem/grpc-health-probe:v0.4.54@sha256:f6ad9567132a39f8f4e729a603215af36692a83e569cc8bcdf68c748a467de26 AS grpc-health-probe
+FROM ghcr.io/grpc-ecosystem/grpc-health-probe:v0.4.56@sha256:d4d9b3d32e3ebe1c14e04564cdcc5470233893d39acea1ed99fc46879dd2e838 AS grpc-health-probe
 
-FROM gcr.io/distroless/static-debian12:nonroot@sha256:1b7b9f0f0e0a1d2155f531db587cc48ec26aaf97ab64364225f5bf18a054e66a
+FROM gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab
 
 WORKDIR /usr/src/app/
 
