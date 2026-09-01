@@ -7,6 +7,10 @@ the release.
 
 ## Unreleased
 
+* [load-generator] Revert #3564: replace k6 with the pre-k6 Locust-based load
+  generator, removing the now-unused `loadGeneratorTraffic` and
+  `loadGeneratorVUs` feature flags along with it
+  ([#3873](https://github.com/open-telemetry/opentelemetry-demo/pull/3873))
 * [react-native-app] Catch errors from `placeOrder` in the Cart screen and
   show an error toast so payment failures are visible to the user instead of
   being silently dropped
