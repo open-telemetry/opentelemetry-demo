@@ -18,6 +18,7 @@ public class ValkeyCartStore : ICartStore
     private readonly ILogger _logger;
     private const string CartFieldName = "cart";
     private const int RedisRetryNumber = 30;
+    private const int CartMutationMaxAttempts = 30;
 
     private volatile ConnectionMultiplexer _redis;
     private volatile bool _isRedisConnectionOpened;
@@ -132,38 +133,28 @@ public class ValkeyCartStore : ICartStore
 
         try
         {
-            EnsureRedisConnected();
-
-            var db = _redis.GetDatabase();
-
-            // Access the cart from the cache
-            var value = await db.HashGetAsync(userId, CartFieldName);
-
-            Oteldemo.Cart cart;
-            if (value.IsNull)
+            await MutateCartAsync(userId, cart =>
             {
-                cart = new Oteldemo.Cart
-                {
-                    UserId = userId
-                };
-                cart.Items.Add(new Oteldemo.CartItem { ProductId = productId, Quantity = quantity });
-            }
-            else
-            {
-                cart = Oteldemo.Cart.Parser.ParseFrom((byte[])value);
                 var existingItem = cart.Items.SingleOrDefault(i => i.ProductId == productId);
                 if (existingItem == null)
                 {
-                    cart.Items.Add(new Oteldemo.CartItem { ProductId = productId, Quantity = quantity });
+                    if (quantity > 0)
+                    {
+                        cart.Items.Add(new Oteldemo.CartItem { ProductId = productId, Quantity = quantity });
+                    }
+                    return;
                 }
-                else
-                {
-                    existingItem.Quantity += quantity;
-                }
-            }
 
-            await db.HashSetAsync(userId, new[]{ new HashEntry(CartFieldName, cart.ToByteArray()) });
-            await db.KeyExpireAsync(userId, TimeSpan.FromMinutes(60));
+                existingItem.Quantity += quantity;
+                if (existingItem.Quantity <= 0)
+                {
+                    cart.Items.Remove(existingItem);
+                }
+            });
+        }
+        catch (RpcException)
+        {
+            throw;
         }
         catch (Exception ex)
         {
@@ -173,6 +164,42 @@ public class ValkeyCartStore : ICartStore
         {
             addItemHistogram.Record(stopwatch.Elapsed.TotalSeconds);
         }
+    }
+
+    private async Task MutateCartAsync(string userId, Action<Oteldemo.Cart> mutate)
+    {
+        EnsureRedisConnected();
+
+        var db = _redis.GetDatabase();
+
+        for (var attempt = 0; attempt < CartMutationMaxAttempts; attempt++)
+        {
+            var existingValue = await db.HashGetAsync(userId, CartFieldName);
+
+            var cart = existingValue.IsNull
+                ? new Oteldemo.Cart { UserId = userId }
+                : Oteldemo.Cart.Parser.ParseFrom((byte[])existingValue);
+
+            mutate(cart);
+
+            var transaction = db.CreateTransaction();
+            transaction.AddCondition(existingValue.IsNull
+                ? Condition.HashNotExists(userId, CartFieldName)
+                : Condition.HashEqual(userId, CartFieldName, existingValue));
+
+            _ = transaction.HashSetAsync(userId, new[] { new HashEntry(CartFieldName, cart.ToByteArray()) });
+            _ = transaction.KeyExpireAsync(userId, TimeSpan.FromMinutes(60));
+
+            if (await transaction.ExecuteAsync())
+            {
+                return;
+            }
+
+            await Task.Delay(Random.Shared.Next(2, 10) * (attempt + 1));
+        }
+
+        throw new RpcException(new Status(StatusCode.Aborted,
+            $"Couldn't update cart for user {userId} after {CartMutationMaxAttempts} attempts due to concurrent modifications."));
     }
 
     public async Task EmptyCartAsync(string userId)
