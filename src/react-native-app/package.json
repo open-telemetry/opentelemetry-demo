@@ -36,12 +36,12 @@
     "react-native": "0.86.3",
     "react-native-device-info": "^15.0.2",
     "react-native-get-random-values": "~2.0.0",
-    "react-native-reanimated": "4.6.0",
+    "react-native-reanimated": "4.5.4",
     "react-native-safe-area-context": "~5.9.0",
     "react-native-screens": "~4.27.0",
     "react-native-toast-message": "^2.4.0",
     "react-native-web": "~0.21.2",
-    "react-native-worklets": "0.12.1",
+    "react-native-worklets": "0.10.4",
     "uuid": "^14.0.1"
   },
   "devDependencies": {
