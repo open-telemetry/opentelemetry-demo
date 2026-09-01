@@ -7,6 +7,10 @@ the release.
 
 ## Unreleased
 
+* [checkout] Fix synchronous `srv.Serve` call blocking signal handler
+  registration, enabling graceful `SIGTERM` shutdown and preventing
+  OpenTelemetry SDK telemetry drop on container termination
+  ([#3865](https://github.com/open-telemetry/opentelemetry-demo/issues/3865))
 * [react-native-app] Catch errors from `placeOrder` in the Cart screen and
   show an error toast so payment failures are visible to the user instead of
   being silently dropped
