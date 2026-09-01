@@ -1,0 +1,8 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+[["live-check".finding_filters]]
+exclude_samples = ["service.name"]
+
+["live-check".otlp]
+grpc_address = "0.0.0.0"

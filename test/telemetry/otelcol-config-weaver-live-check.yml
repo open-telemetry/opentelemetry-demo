@@ -1,0 +1,16 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+exporters:
+  otlp_grpc/weaver:
+    endpoint: host.docker.internal:4317
+    compression: none
+    tls:
+      insecure: true
+
+service:
+  pipelines:
+    traces:
+      exporters: [debug, span_metrics, otlp_grpc/weaver]
+    metrics:
+      exporters: [debug, otlp_grpc/weaver]
