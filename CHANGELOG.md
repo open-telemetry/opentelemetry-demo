@@ -10,6 +10,18 @@ the release.
 * [shipping] Fix floating-point truncation in `create_quote_from_float` and
   add two-digit zero padding to `fmt::Display for Quote`
   ([#3877](https://github.com/open-telemetry/opentelemetry-demo/issues/3877))
+* [load-generator] Revert #3564: replace k6 with the pre-k6 Locust-based load
+  generator, removing the now-unused `loadGeneratorTraffic` and
+  `loadGeneratorVUs` feature flags along with it
+  ([#3873](https://github.com/open-telemetry/opentelemetry-demo/pull/3873))
+* [react-native-app] Catch errors from `placeOrder` in the Cart screen and
+  show an error toast so payment failures are visible to the user instead of
+  being silently dropped
+  ([#3760](https://github.com/open-telemetry/opentelemetry-demo/issues/3760))
+* [checkout, product-catalog] Bump `go.opentelemetry.io/contrib` to the
+  v1.46.0/v0.71.0 release line, picking up otelgrpc recording `error.type`
+  on RPC duration metrics for failed calls
+  ([#3901](https://github.com/open-telemetry/opentelemetry-demo/issues/3901))
 * [collector] Add a data redaction/deletion example: delete, hash, and partially
   mask sensitive attributes with the transform processor, plus a documented
   redaction-processor fallback
