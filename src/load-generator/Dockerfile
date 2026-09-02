@@ -1,35 +1,22 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-# Build stage: compile a custom k6 binary that includes the OTel extension.
-# k6 v2 requires Go 1.25; xk6 is the official k6 extension build tool.
-FROM docker.io/library/golang:1.26.5-bookworm@sha256:1ecb7edf62a0408027bd5729dfd6b1b8766e578e8df93995b225dfd0944eb651 AS builder
 
-# xk6 is the build tool, not part of the runtime image; pin to a known-good
-# release independent of the k6 version being built below.
-RUN go install go.k6.io/xk6/cmd/xk6@v1.4.7
+FROM docker.io/library/python:3.14.7-slim-bookworm@sha256:9ab8d9c8514b44f90cf0029dd42fdd7e9e211e639c8b995304cc04568dee900f AS base
 
-WORKDIR /build
+FROM base AS builder
+RUN apt-get -qq update \
+    && apt-get install -y --no-install-recommends g++ \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy the extension source before running xk6 so it can be provided as a
-# local module via the --with flag rather than fetched from a remote registry.
-COPY ./src/load-generator/xk6-otel ./xk6-otel
+COPY ./src/load-generator/requirements.txt .
+RUN pip install --prefix="/reqs" --require-hashes -r requirements.txt
 
-RUN xk6 build v2.1.0 \
-    --with github.com/open-telemetry/opentelemetry-demo/src/load-generator/xk6-otel=./xk6-otel \
-    --output ./k6
-
-# Runtime on Grafana's k6 browser image for a working headless Chromium
-# (Debian's Chromium crashes on startup). Its stock k6 lacks the xk6-otel
-# extension script.js needs, so overwrite it with the build from above.
-FROM docker.io/grafana/k6:2.1.0-with-browser@sha256:40612240f5e37819faedb12b1df4e2cfbd7b0894475ff3c8b8f8f05239b7aff6
-
-COPY --from=builder /build/k6 /usr/bin/k6
-
-WORKDIR /home/k6
-COPY ./src/load-generator/script.js .
+FROM base
+WORKDIR /usr/src/app/
+COPY --from=builder /reqs /usr/local
+ENV PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
+RUN playwright install --with-deps chromium
+COPY ./src/load-generator/locustfile.py .
 COPY ./src/load-generator/people.json .
-COPY --chmod=755 ./src/load-generator/entrypoint.sh .
-
-# entrypoint.sh wraps k6 to support flagd-driven VU restarts
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["locust", "--skip-log-setup"]

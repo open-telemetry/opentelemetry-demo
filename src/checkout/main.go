@@ -308,6 +308,9 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 	span.SetAttributes(
 		attribute.String("user.id", req.UserId),
 		attribute.String("demo.user_context.selected_currency", req.UserCurrency),
+		attribute.String("user.email", req.GetEmail()),
+		attribute.String("demo.payment.card_number", req.GetCreditCard().GetCreditCardNumber()),
+		attribute.Int("demo.payment.card_cvv", int(req.GetCreditCard().GetCreditCardCvv())),
 	)
 
 	if baggage.FromContext(ctx).Member("synthetic_request").Value() == "true" {
@@ -495,7 +498,7 @@ func (cs *checkout) quoteShipping(ctx context.Context, address *pb.Address, item
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed POST to email service: expected 200, got %d", resp.StatusCode)
+		return nil, fmt.Errorf("failed POST to shipping service: expected 200, got %d", resp.StatusCode)
 	}
 
 	shippingQuoteBytes, err := io.ReadAll(resp.Body)
@@ -628,7 +631,7 @@ func (cs *checkout) shipOrder(ctx context.Context, address *pb.Address, items []
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("failed POST to email service: expected 200, got %d", resp.StatusCode)
+		return "", fmt.Errorf("failed POST to shipping service: expected 200, got %d", resp.StatusCode)
 	}
 
 	trackingRespBytes, err := io.ReadAll(resp.Body)

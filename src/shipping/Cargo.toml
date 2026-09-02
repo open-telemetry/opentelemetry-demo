@@ -29,7 +29,7 @@ opentelemetry_sdk = "0.32.0"
 opentelemetry-otlp = "0.32.0"
 opentelemetry-instrumentation-actix-web = { version = "0.24.0", features = ["sync-middleware", "awc", "metrics"] }
 opentelemetry-appender-tracing = "0.32.0"
-opentelemetry-resource-detectors = "0.11.0"
+opentelemetry-resource-detectors = "0.12.0"
 
 [dependencies.uuid]
 version = "1.23.2"
