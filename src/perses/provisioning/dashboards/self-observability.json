@@ -1,0 +1,1473 @@
+{
+  "kind": "Dashboard",
+  "metadata": {
+    "name": "self-observability",
+    "project": "opentelemetry-demo"
+  },
+  "spec": {
+    "display": {
+      "name": "Self-Observability"
+    },
+    "variables": [
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "Metrics",
+            "description": "OpenTelemetry metrics (Prometheus).",
+            "hidden": false
+          },
+          "defaultValue": "webstore-metrics",
+          "allowAllValue": false,
+          "allowMultiple": false,
+          "plugin": {
+            "kind": "DatasourceVariable",
+            "spec": {
+              "datasourcePluginKind": "PrometheusDatasource"
+            }
+          },
+          "name": "prometheus_datasource"
+        }
+      },
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "Service",
+            "description": "Services emitting OpenTelemetry SDK self-observability metrics. Any new service that opts in appears here automatically.",
+            "hidden": false
+          },
+          "defaultValue": [
+            "$__all"
+          ],
+          "allowAllValue": true,
+          "allowMultiple": true,
+          "customAllValue": ".*",
+          "sort": "alphabetical-asc",
+          "plugin": {
+            "kind": "PrometheusLabelValuesVariable",
+            "spec": {
+              "labelName": "service_name",
+              "matchers": [
+                "{__name__=~\"otel_sdk_.+\"}"
+              ]
+            }
+          },
+          "name": "service_name"
+        }
+      }
+    ],
+    "panels": {
+      "0_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Services reporting",
+            "description": "Number of services currently emitting OpenTelemetry SDK self-observability metrics."
+          },
+          "plugin": {
+            "kind": "StatChart",
+            "spec": {
+              "calculation": "last-number",
+              "colorMode": "value",
+              "format": {
+                "unit": "decimal"
+              },
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "#5794f2",
+                    "value": 0
+                  }
+                ]
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "instant": true,
+                    "query": "count(group by (service_name) ({__name__=~\"otel_sdk_.+\",service_name=~\"$service_name\"}))",
+                    "seriesNameFormat": "Services"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_1": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Spans exported",
+            "description": "Rate of spans that finished exporting successfully (`error_type` empty) across the selected services. See \"Export errors\" for the failed portion of the same counter."
+          },
+          "plugin": {
+            "kind": "StatChart",
+            "spec": {
+              "calculation": "last-number",
+              "colorMode": "value",
+              "sparkline": {},
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "#5794f2",
+                    "value": 0
+                  }
+                ]
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "instant": false,
+                    "query": "sum(rate(otel_sdk_exporter_span_exported_total{service_name=~\"$service_name\",error_type=\"\"}[$__rate_interval]))",
+                    "seriesNameFormat": "Spans exported"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_2": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Metric data points exported",
+            "description": "Rate of metric data points that finished exporting successfully (`error_type` empty) across the selected services. See \"Export errors\" for the failed portion of the same counter."
+          },
+          "plugin": {
+            "kind": "StatChart",
+            "spec": {
+              "calculation": "last-number",
+              "colorMode": "value",
+              "sparkline": {},
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "#b877d9",
+                    "value": 0
+                  }
+                ]
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "instant": false,
+                    "query": "sum(rate(otel_sdk_exporter_metric_data_point_exported_total{service_name=~\"$service_name\",error_type=\"\"}[$__rate_interval]))",
+                    "seriesNameFormat": "Data points exported"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_3": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "LogRecords exported",
+            "description": "Rate of LogRecords that finished exporting successfully (`error_type` empty) across the selected services. See \"Export errors\" for the failed portion of the same counter."
+          },
+          "plugin": {
+            "kind": "StatChart",
+            "spec": {
+              "calculation": "last-number",
+              "colorMode": "value",
+              "sparkline": {},
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "#73bf69",
+                    "value": 0
+                  }
+                ]
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "instant": false,
+                    "query": "sum(rate(otel_sdk_exporter_log_exported_total{service_name=~\"$service_name\",error_type=\"\"}[$__rate_interval]))",
+                    "seriesNameFormat": "LogRecords exported"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_4": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Export errors",
+            "description": "Rate of spans, LogRecords, and metric data points whose export attempt finished with `error_type` set (the failed complement of the three \"exported\" panels above). A non-zero value means the exporter could not deliver telemetry to the collector/backend."
+          },
+          "plugin": {
+            "kind": "StatChart",
+            "spec": {
+              "calculation": "last-number",
+              "colorMode": "value",
+              "sparkline": {},
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "#73bf69",
+                    "value": 0
+                  },
+                  {
+                    "color": "#f2495c",
+                    "value": 0.001
+                  }
+                ]
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "instant": false,
+                    "query": "sum(rate(otel_sdk_exporter_span_exported_total{service_name=~\"$service_name\",error_type!=\"\"}[$__rate_interval])) + sum(rate(otel_sdk_exporter_log_exported_total{service_name=~\"$service_name\",error_type!=\"\"}[$__rate_interval])) + sum(rate(otel_sdk_exporter_metric_data_point_exported_total{service_name=~\"$service_name\",error_type!=\"\"}[$__rate_interval]))",
+                    "seriesNameFormat": "Export errors"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_5": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Items in-flight",
+            "description": "Telemetry items (spans, LogRecords, and metric data points) currently passed to an exporter but not yet exported (in-flight), summed across all signals."
+          },
+          "plugin": {
+            "kind": "StatChart",
+            "spec": {
+              "calculation": "last-number",
+              "colorMode": "value",
+              "format": {
+                "unit": "decimal"
+              },
+              "sparkline": {},
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "#ff9830",
+                    "value": 0
+                  }
+                ]
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "instant": false,
+                    "query": "sum(otel_sdk_exporter_span_inflight{service_name=~\"$service_name\"}) + sum(otel_sdk_exporter_log_inflight{service_name=~\"$service_name\"}) + sum(otel_sdk_exporter_metric_data_point_inflight{service_name=~\"$service_name\"})",
+                    "seriesNameFormat": "In-flight"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_6": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Processing errors (spans + LogRecords)",
+            "description": "Rate of spans and LogRecords DROPPED by their processor's queue before ever reaching the exporter (spans + LogRecords only -- metrics have no processor stage). A non-zero value means `queue_full` or `already_shutdown` drops are happening; see the per-signal \"processed error rate\" panels in the Span pipeline / Log pipeline rows below for the breakdown."
+          },
+          "plugin": {
+            "kind": "StatChart",
+            "spec": {
+              "calculation": "last-number",
+              "colorMode": "value",
+              "sparkline": {},
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "#73bf69",
+                    "value": 0
+                  },
+                  {
+                    "color": "#f2495c",
+                    "value": 0.001
+                  }
+                ]
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "instant": false,
+                    "query": "sum(rate(otel_sdk_processor_span_processed_total{service_name=~\"$service_name\",error_type!=\"\"}[$__rate_interval])) + sum(rate(otel_sdk_processor_log_processed_total{service_name=~\"$service_name\",error_type!=\"\"}[$__rate_interval]))",
+                    "seriesNameFormat": "Processing errors (spans + LogRecords)"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "1_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Spans started rate",
+            "description": "Rate of spans started by the SDK (`otel.sdk.span.started`). Includes non-recording spans."
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "table",
+                "position": "bottom",
+                "values": [
+                  "last-number"
+                ]
+              },
+              "visual": {
+                "areaOpacity": 0.1,
+                "display": "line",
+                "lineWidth": 1
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "query": "sum by (service_name) (rate(otel_sdk_span_started_total{service_name=~\"$service_name\"}[$__rate_interval]))",
+                    "seriesNameFormat": "{{service_name}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "1_1": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Live spans",
+            "description": "Number of live (started but not yet ended) recording spans (`otel.sdk.span.live`)."
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "table",
+                "position": "bottom",
+                "values": [
+                  "last-number"
+                ]
+              },
+              "visual": {
+                "areaOpacity": 0.1,
+                "display": "line",
+                "lineWidth": 1
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "decimal"
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "query": "sum by (service_name) (otel_sdk_span_live{service_name=~\"$service_name\"})",
+                    "seriesNameFormat": "{{service_name}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "1_2": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Span processor queue utilization",
+            "description": "Batch span processor queue utilization: current queue size as a fraction of capacity (`otel.sdk.processor.span.queue.size` / `otel.sdk.processor.span.queue.capacity`). At 100% the queue is full and the processor starts dropping new spans (reported as `error_type=\"queue_full\"` in the \"Spans processed error rate\" panel below)."
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "table",
+                "position": "bottom",
+                "values": [
+                  "last-number",
+                  "max"
+                ]
+              },
+              "visual": {
+                "areaOpacity": 0.1,
+                "display": "line",
+                "lineWidth": 1
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "percent-decimal"
+                },
+                "max": 1,
+                "min": 0
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "query": "sum by (service_name, otel_component_name) (otel_sdk_processor_span_queue_size{service_name=~\"$service_name\"}) / sum by (service_name, otel_component_name) (otel_sdk_processor_span_queue_capacity{service_name=~\"$service_name\"})",
+                    "seriesNameFormat": "{{service_name}} / {{otel_component_name}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "1_3": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Spans processed error rate (by error type)",
+            "description": "Rate of spans that were DROPPED by the span processor (never reached the exporter), broken down by `error.type` (this panel excludes the success case -- see \"Spans started rate\" for total volume). `error_type` is `queue_full` (the processor's queue was full) or `already_shutdown` (submitted after the processor was shut down). Should be flat zero in a healthy system."
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "table",
+                "position": "bottom",
+                "values": [
+                  "last-number"
+                ]
+              },
+              "visual": {
+                "areaOpacity": 0.1,
+                "display": "line",
+                "lineWidth": 1,
+                "stack": "all"
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "query": "sum by (service_name, error_type) (rate(otel_sdk_processor_span_processed_total{service_name=~\"$service_name\",error_type!=\"\"}[$__rate_interval]))",
+                    "seriesNameFormat": "{{service_name}} {{error_type}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "1_4": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Spans exported error rate (by error type)",
+            "description": "Rate of FAILED span export operations, broken down by `error.type` (this panel excludes the success case -- see \"Spans exported\" in the Overview row for the success rate). A non-zero value means the export call itself failed, e.g. `timeout` or a connection error -- distinct from processor-side `queue_full` drops shown in \"Spans processed error rate\" above. Should be flat zero in a healthy system."
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "table",
+                "position": "bottom",
+                "values": [
+                  "last-number"
+                ]
+              },
+              "visual": {
+                "areaOpacity": 0.1,
+                "display": "line",
+                "lineWidth": 1,
+                "stack": "all"
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "query": "sum by (service_name, error_type) (rate(otel_sdk_exporter_span_exported_total{service_name=~\"$service_name\",error_type!=\"\"}[$__rate_interval]))",
+                    "seriesNameFormat": "{{service_name}} {{error_type}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "1_5": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Spans in-flight",
+            "description": "Spans passed to an exporter but not yet exported (`otel.sdk.exporter.span.inflight`)."
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "table",
+                "position": "bottom",
+                "values": [
+                  "last-number",
+                  "max"
+                ]
+              },
+              "visual": {
+                "areaOpacity": 0.1,
+                "display": "line",
+                "lineWidth": 1
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "decimal"
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "query": "sum by (service_name) (otel_sdk_exporter_span_inflight{service_name=~\"$service_name\"})",
+                    "seriesNameFormat": "{{service_name}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "1_6": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Span export operation duration (avg)",
+            "description": "Average duration of the span exporter's export call (`otel.sdk.exporter.operation.duration`, filtered to span exporters). Distinct from \"Spans exported error rate\", which measures success/failure, not latency. Shown as an average (sum/count) rather than a percentile because the SDK currently reports this histogram with a single `+Inf` bucket, which makes `histogram_quantile` always return NaN."
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "table",
+                "position": "bottom",
+                "values": [
+                  "last-number",
+                  "max"
+                ]
+              },
+              "visual": {
+                "areaOpacity": 0.1,
+                "display": "line",
+                "lineWidth": 1
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "seconds"
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "query": "sum by (service_name, otel_component_type) (rate(otel_sdk_exporter_operation_duration_seconds_sum{service_name=~\"$service_name\",otel_component_type=~\".*span_exporter\"}[$__rate_interval])) / sum by (service_name, otel_component_type) (rate(otel_sdk_exporter_operation_duration_seconds_count{service_name=~\"$service_name\",otel_component_type=~\".*span_exporter\"}[$__rate_interval]))",
+                    "seriesNameFormat": "{{service_name}} {{otel_component_type}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "2_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "LogRecords created rate",
+            "description": "Rate of LogRecords submitted to enabled SDK loggers (`otel.sdk.log.created`)."
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "table",
+                "position": "bottom",
+                "values": [
+                  "last-number"
+                ]
+              },
+              "visual": {
+                "areaOpacity": 0.1,
+                "display": "line",
+                "lineWidth": 1
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "query": "sum by (service_name) (rate(otel_sdk_log_created_total{service_name=~\"$service_name\"}[$__rate_interval]))",
+                    "seriesNameFormat": "{{service_name}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "2_1": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "LogRecords exported error rate (by error type)",
+            "description": "Rate of FAILED LogRecord export operations, broken down by `error.type` (this panel excludes the success case -- see \"LogRecords exported\" in the Overview row for the success rate). A non-zero value means the export call itself failed, e.g. `timeout` or a connection error. Should be flat zero in a healthy system."
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "table",
+                "position": "bottom",
+                "values": [
+                  "last-number"
+                ]
+              },
+              "visual": {
+                "areaOpacity": 0.1,
+                "display": "line",
+                "lineWidth": 1,
+                "stack": "all"
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "query": "sum by (service_name, error_type) (rate(otel_sdk_exporter_log_exported_total{service_name=~\"$service_name\",error_type!=\"\"}[$__rate_interval]))",
+                    "seriesNameFormat": "{{service_name}} {{error_type}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "2_2": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Log processor queue utilization",
+            "description": "Batch LogRecord processor queue utilization: current queue size as a fraction of capacity (`otel.sdk.processor.log.queue.size` / `otel.sdk.processor.log.queue.capacity`). At 100% the queue is full and the processor starts dropping new LogRecords (reported as `error_type=\"queue_full\"` in the \"LogRecords processed error rate\" panel below)."
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "table",
+                "position": "bottom",
+                "values": [
+                  "last-number",
+                  "max"
+                ]
+              },
+              "visual": {
+                "areaOpacity": 0.1,
+                "display": "line",
+                "lineWidth": 1
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "percent-decimal"
+                },
+                "max": 1,
+                "min": 0
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "query": "sum by (service_name, otel_component_name) (otel_sdk_processor_log_queue_size{service_name=~\"$service_name\"}) / sum by (service_name, otel_component_name) (otel_sdk_processor_log_queue_capacity{service_name=~\"$service_name\"})",
+                    "seriesNameFormat": "{{service_name}} / {{otel_component_name}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "2_3": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "LogRecords processed error rate (by error type)",
+            "description": "Rate of LogRecords that were DROPPED by the log processor (never reached the exporter), broken down by `error.type` (this panel excludes the success case -- see \"LogRecords created rate\" for total volume). `error_type` is `queue_full` (the processor's queue was full) or `already_shutdown` (submitted after the processor was shut down). Should be flat zero in a healthy system."
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "table",
+                "position": "bottom",
+                "values": [
+                  "last-number"
+                ]
+              },
+              "visual": {
+                "areaOpacity": 0.1,
+                "display": "line",
+                "lineWidth": 1,
+                "stack": "all"
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "query": "sum by (service_name, error_type) (rate(otel_sdk_processor_log_processed_total{service_name=~\"$service_name\",error_type!=\"\"}[$__rate_interval]))",
+                    "seriesNameFormat": "{{service_name}} {{error_type}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "2_4": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "LogRecords in-flight",
+            "description": "LogRecords passed to an exporter but not yet exported (`otel.sdk.exporter.log.inflight`)."
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "table",
+                "position": "bottom",
+                "values": [
+                  "last-number",
+                  "max"
+                ]
+              },
+              "visual": {
+                "areaOpacity": 0.1,
+                "display": "line",
+                "lineWidth": 1
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "decimal"
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "query": "sum by (service_name) (otel_sdk_exporter_log_inflight{service_name=~\"$service_name\"})",
+                    "seriesNameFormat": "{{service_name}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "2_5": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "LogRecord export operation duration (avg)",
+            "description": "Average duration of the LogRecord exporter's export call (`otel.sdk.exporter.operation.duration`, filtered to log exporters). Distinct from \"LogRecords exported error rate\", which measures success/failure, not latency. Shown as an average (sum/count) rather than a percentile because the SDK currently reports this histogram with a single `+Inf` bucket, which makes `histogram_quantile` always return NaN."
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "table",
+                "position": "bottom",
+                "values": [
+                  "last-number",
+                  "max"
+                ]
+              },
+              "visual": {
+                "areaOpacity": 0.1,
+                "display": "line",
+                "lineWidth": 1
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "seconds"
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "query": "sum by (service_name, otel_component_type) (rate(otel_sdk_exporter_operation_duration_seconds_sum{service_name=~\"$service_name\",otel_component_type=~\".*log_exporter\"}[$__rate_interval])) / sum by (service_name, otel_component_type) (rate(otel_sdk_exporter_operation_duration_seconds_count{service_name=~\"$service_name\",otel_component_type=~\".*log_exporter\"}[$__rate_interval]))",
+                    "seriesNameFormat": "{{service_name}} {{otel_component_type}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "3_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Metric data points exported error rate (by error type)",
+            "description": "Rate of FAILED metric data point export operations, broken down by `error.type` (this panel excludes the success case -- see \"Metric data points exported\" in the Overview row for the success rate). A non-zero value means the export call itself failed, e.g. `timeout` or a connection error. Should be flat zero in a healthy system."
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "table",
+                "position": "bottom",
+                "values": [
+                  "last-number"
+                ]
+              },
+              "visual": {
+                "areaOpacity": 0.1,
+                "display": "line",
+                "lineWidth": 1,
+                "stack": "all"
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "query": "sum by (service_name, error_type) (rate(otel_sdk_exporter_metric_data_point_exported_total{service_name=~\"$service_name\",error_type!=\"\"}[$__rate_interval]))",
+                    "seriesNameFormat": "{{service_name}} {{error_type}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "3_1": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Metric data points in-flight",
+            "description": "Metric data points passed to an exporter but not yet exported (`otel.sdk.exporter.metric_data_point.inflight`)."
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "table",
+                "position": "bottom",
+                "values": [
+                  "last-number",
+                  "max"
+                ]
+              },
+              "visual": {
+                "areaOpacity": 0.1,
+                "display": "line",
+                "lineWidth": 1
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "decimal"
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "query": "sum by (service_name) (otel_sdk_exporter_metric_data_point_inflight{service_name=~\"$service_name\"})",
+                    "seriesNameFormat": "{{service_name}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "3_2": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Metric collect duration (avg)",
+            "description": "Average duration of the metric reader's collect step (`otel.sdk.metric_reader.collection.duration`). This is metric-pipeline specific. Shown as an average (sum/count) rather than a percentile because the SDK currently reports this histogram with a single `+Inf` bucket, which makes `histogram_quantile` always return NaN."
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "table",
+                "position": "bottom",
+                "values": [
+                  "last-number",
+                  "max"
+                ]
+              },
+              "visual": {
+                "areaOpacity": 0.1,
+                "display": "line",
+                "lineWidth": 1
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "seconds"
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "query": "sum by (service_name) (rate(otel_sdk_metric_reader_collection_duration_seconds_sum{service_name=~\"$service_name\"}[$__rate_interval])) / sum by (service_name) (rate(otel_sdk_metric_reader_collection_duration_seconds_count{service_name=~\"$service_name\"}[$__rate_interval]))",
+                    "seriesNameFormat": "{{service_name}} reader collect"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "3_3": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Metric export operation duration (avg)",
+            "description": "Average duration of the metric exporter's export call (`otel.sdk.exporter.operation.duration`, filtered to metric exporters), if the SDK reports it. Distinct from \"Metric collect duration\" (the reader's collect step) and from \"Metric data points exported error rate\" (success/failure, not latency). Shown as an average (sum/count) rather than a percentile because the SDK currently reports this histogram with a single `+Inf` bucket, which makes `histogram_quantile` always return NaN."
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "table",
+                "position": "bottom",
+                "values": [
+                  "last-number",
+                  "max"
+                ]
+              },
+              "visual": {
+                "areaOpacity": 0.1,
+                "display": "line",
+                "lineWidth": 1
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "seconds"
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "query": "sum by (service_name, otel_component_type) (rate(otel_sdk_exporter_operation_duration_seconds_sum{service_name=~\"$service_name\",otel_component_type=~\".*metric_exporter\"}[$__rate_interval])) / sum by (service_name, otel_component_type) (rate(otel_sdk_exporter_operation_duration_seconds_count{service_name=~\"$service_name\",otel_component_type=~\".*metric_exporter\"}[$__rate_interval]))",
+                    "seriesNameFormat": "{{service_name}} {{otel_component_type}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "3_4": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "SDK components reporting",
+            "description": "SDK components (exporters, processors, metric readers) reporting self-observability, per service. Derived from `otel.component.type` / `otel.component.name`."
+          },
+          "plugin": {
+            "kind": "Table",
+            "spec": {
+              "columnSettings": [
+                {
+                  "header": "Service",
+                  "name": "service_name"
+                },
+                {
+                  "header": "Component type",
+                  "name": "otel_component_type"
+                },
+                {
+                  "header": "Component name",
+                  "name": "otel_component_name"
+                },
+                {
+                  "hide": true,
+                  "name": "timestamp"
+                },
+                {
+                  "hide": true,
+                  "name": "value"
+                },
+                {
+                  "hide": true,
+                  "name": "__name__"
+                },
+                {
+                  "hide": true,
+                  "name": "job"
+                },
+                {
+                  "hide": true,
+                  "name": "instance"
+                }
+              ],
+              "density": "compact"
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "instant": true,
+                    "query": "group by (service_name, otel_component_type, otel_component_name) ({__name__=~\"otel_sdk_.+\",otel_component_type!=\"\",service_name=~\"$service_name\"})"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "layouts": [
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "Overview",
+            "collapse": {
+              "open": true
+            }
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 1,
+              "width": 8,
+              "height": 4,
+              "content": {
+                "$ref": "#/spec/panels/0_0"
+              }
+            },
+            {
+              "x": 8,
+              "y": 1,
+              "width": 8,
+              "height": 4,
+              "content": {
+                "$ref": "#/spec/panels/0_1"
+              }
+            },
+            {
+              "x": 0,
+              "y": 5,
+              "width": 8,
+              "height": 4,
+              "content": {
+                "$ref": "#/spec/panels/0_2"
+              }
+            },
+            {
+              "x": 16,
+              "y": 1,
+              "width": 8,
+              "height": 4,
+              "content": {
+                "$ref": "#/spec/panels/0_3"
+              }
+            },
+            {
+              "x": 8,
+              "y": 5,
+              "width": 8,
+              "height": 4,
+              "content": {
+                "$ref": "#/spec/panels/0_4"
+              }
+            },
+            {
+              "x": 16,
+              "y": 5,
+              "width": 8,
+              "height": 4,
+              "content": {
+                "$ref": "#/spec/panels/0_5"
+              }
+            },
+            {
+              "x": 0,
+              "y": 9,
+              "width": 8,
+              "height": 4,
+              "content": {
+                "$ref": "#/spec/panels/0_6"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "Span pipeline",
+            "collapse": {
+              "open": true
+            }
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 14,
+              "width": 8,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/1_0"
+              }
+            },
+            {
+              "x": 8,
+              "y": 14,
+              "width": 8,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/1_1"
+              }
+            },
+            {
+              "x": 16,
+              "y": 14,
+              "width": 8,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/1_2"
+              }
+            },
+            {
+              "x": 0,
+              "y": 22,
+              "width": 8,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/1_3"
+              }
+            },
+            {
+              "x": 8,
+              "y": 22,
+              "width": 8,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/1_4"
+              }
+            },
+            {
+              "x": 16,
+              "y": 22,
+              "width": 8,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/1_5"
+              }
+            },
+            {
+              "x": 0,
+              "y": 30,
+              "width": 8,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/1_6"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "Log pipeline",
+            "collapse": {
+              "open": true
+            }
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 39,
+              "width": 8,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/2_0"
+              }
+            },
+            {
+              "x": 8,
+              "y": 39,
+              "width": 8,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/2_1"
+              }
+            },
+            {
+              "x": 16,
+              "y": 39,
+              "width": 8,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/2_2"
+              }
+            },
+            {
+              "x": 0,
+              "y": 47,
+              "width": 8,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/2_3"
+              }
+            },
+            {
+              "x": 8,
+              "y": 47,
+              "width": 8,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/2_4"
+              }
+            },
+            {
+              "x": 16,
+              "y": 47,
+              "width": 8,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/2_5"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "Metric pipeline",
+            "collapse": {
+              "open": true
+            }
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 56,
+              "width": 8,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/3_0"
+              }
+            },
+            {
+              "x": 8,
+              "y": 56,
+              "width": 8,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/3_1"
+              }
+            },
+            {
+              "x": 16,
+              "y": 56,
+              "width": 8,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/3_2"
+              }
+            },
+            {
+              "x": 0,
+              "y": 64,
+              "width": 8,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/3_3"
+              }
+            },
+            {
+              "x": 0,
+              "y": 72,
+              "width": 24,
+              "height": 7,
+              "content": {
+                "$ref": "#/spec/panels/3_4"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "duration": "30m",
+    "refreshInterval": "30s"
+  }
+}

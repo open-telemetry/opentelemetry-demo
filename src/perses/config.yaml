@@ -1,0 +1,27 @@
+database:
+  file:
+    folder: "/perses"
+    extension: "json"
+    case_sensitive: false
+
+provisioning:
+  folders:
+    - "/etc/perses/provisioning"
+
+ephemeral_dashboard:
+  enable: true
+  cleanup_interval: "1h"
+
+frontend:
+  explorer:
+    enable: true
+
+plugin:
+  disabled:
+    - "VictoriaLogs"
+    - "GreptimeDB"
+    - "Tempo"
+    - "Loki"
+    - "ClickHouse"
+    - "Splunk"
+    - "Pyroscope"

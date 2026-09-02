@@ -1,0 +1,19 @@
+kind: "GlobalDatasource"
+metadata:
+  name: "webstore-traces"
+spec:
+  default: true
+  plugin:
+    kind: "JaegerDatasource"
+    spec:
+      proxy:
+        kind: "HTTPProxy"
+        spec:
+          allowedEndpoints:
+            - endpointPattern: "/api/traces"
+              method: "GET"
+            - endpointPattern: "/api/services"
+              method: "GET"
+            - endpointPattern: "/api/operations"
+              method: "GET"
+          url: "http://jaeger:16686/jaeger/ui"

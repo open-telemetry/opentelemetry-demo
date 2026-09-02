@@ -39,6 +39,28 @@ services:
         max-size: "5m"
         max-file: "2"
 
+  perses:
+    image: ${PERSES_IMAGE}
+    container_name: perses
+    deploy:
+      resources:
+        limits:
+          memory: 175M
+    restart: unless-stopped
+    command:
+      - "--config=/etc/perses/config.yaml"
+      - "--web.listen-address=:${PERSES_PORT}"
+    volumes:
+      - ./src/perses/config.yaml:/etc/perses/config.yaml
+      - ./src/perses/provisioning/:/etc/perses/provisioning/
+    ports:
+      - "${PERSES_PORT}"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
   # Grafana
   grafana:
     image: ${GRAFANA_IMAGE}

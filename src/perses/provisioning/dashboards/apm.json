@@ -1,0 +1,1295 @@
+{
+  "kind": "Dashboard",
+  "metadata": {
+    "name": "apm",
+    "project": "opentelemetry-demo"
+  },
+  "spec": {
+    "display": {
+      "name": "APM Dashboard (Jaeger, Prometheus, OpenSearch)"
+    },
+    "variables": [
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "Metrics",
+            "description": "OpenTelemetry metrics. \nSend metrics using the Prometheus OTLP endpoint activating `keep_identifying_resource_attributes` and resource attribute promotion (aka `promote_resource_attributes`) including `service.name`, service.namespace`, `service.instance.id`, and `deployment.environment.name`",
+            "hidden": false
+          },
+          "defaultValue": "webstore-metrics",
+          "allowAllValue": false,
+          "allowMultiple": false,
+          "plugin": {
+            "kind": "DatasourceVariable",
+            "spec": {
+              "datasourcePluginKind": "PrometheusDatasource"
+            }
+          },
+          "name": "prometheus_datasource"
+        }
+      },
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "Traces",
+            "description": "OpenTelemetry traces",
+            "hidden": false
+          },
+          "defaultValue": "webstore-traces",
+          "allowAllValue": false,
+          "allowMultiple": false,
+          "plugin": {
+            "kind": "DatasourceVariable",
+            "spec": {
+              "datasourcePluginKind": "JaegerDatasource"
+            }
+          },
+          "name": "jaeger_datasource"
+        }
+      },
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "Logs",
+            "description": "OpenTelemetry logs.",
+            "hidden": false
+          },
+          "defaultValue": "webstore-logs",
+          "allowAllValue": false,
+          "allowMultiple": false,
+          "plugin": {
+            "kind": "DatasourceVariable",
+            "spec": {
+              "datasourcePluginKind": "OpenSearchDatasource"
+            }
+          },
+          "name": "opensearch_datasource"
+        }
+      },
+      {
+        "kind": "TextVariable",
+        "spec": {
+          "display": {
+            "name": "Environment",
+            "description": "Waiting to implement support of the optional value of `deployment.environment.name` in the OpenSearch and Jager panels, hide variable.",
+            "hidden": true
+          },
+          "value": ".*",
+          "constant": true,
+          "name": "deployment_environment_name"
+        }
+      },
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "Namespace",
+            "description": "Service namespace.\nResource attribute `service.namespace` via `target_info`",
+            "hidden": false
+          },
+          "defaultValue": "opentelemetry-demo",
+          "allowAllValue": false,
+          "allowMultiple": false,
+          "sort": "alphabetical-asc",
+          "plugin": {
+            "kind": "PrometheusLabelValuesVariable",
+            "spec": {
+              "labelName": "service_namespace",
+              "matchers": [
+                "target_info{deployment_environment_name=~\"$deployment_environment_name\"}"
+              ]
+            }
+          },
+          "name": "service_namespace"
+        }
+      },
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "Name",
+            "description": "Service name.\nResource attribute `service.name` via `target_info`.",
+            "hidden": false
+          },
+          "defaultValue": "checkout",
+          "allowAllValue": false,
+          "allowMultiple": false,
+          "sort": "alphabetical-asc",
+          "plugin": {
+            "kind": "PrometheusLabelValuesVariable",
+            "spec": {
+              "labelName": "service_name",
+              "matchers": [
+                "target_info{service_namespace=~\"$service_namespace\", deployment_environment_name=~\"$deployment_environment_name\"}"
+              ]
+            }
+          },
+          "name": "service_name"
+        }
+      }
+    ],
+    "panels": {
+      "0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "description": "service.namespace=${service_namespace}, service.name=${service_name}, deployment.environment.name=${deployment_environment_name}"
+          },
+          "plugin": {
+            "kind": "Markdown",
+            "spec": {
+              "text": "<h1><img src=\"https://opentelemetry.io/img/logos/opentelemetry-logo-nav.png\" alt=\"OpenTelemetry Icon\" width=\"25\" height=\"\"> Service ${service_namespace}/${service_name}</h1>\n"
+            }
+          }
+        }
+      },
+      "1": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Latest metrics received",
+            "description": "Shows the timestamp of the latest metrics received in the past 24h."
+          },
+          "plugin": {
+            "kind": "StatChart",
+            "spec": {
+              "calculation": "last-number",
+              "colorMode": "background_solid",
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "#73bf69",
+                    "value": 0
+                  },
+                  {
+                    "color": "#f2495c",
+                    "value": 80
+                  }
+                ]
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "minStep": "60s",
+                    "query": "timestamp(sum by (deployment_environment_name, service_namespace, service_name) (target_info{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}) or absent{})\n"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "2_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Duration",
+            "description": "HTTP & RPC endpoints aggregation on the `http.server.request.duration` & `rpc.server.duration` metrics.\n\nSee https://opentelemetry.io/docs/specs/semconv/http/http-metrics/#metric-httpserverrequestduration and https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#metric-rpcserverduration"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "list",
+                "position": "bottom"
+              },
+              "visual": {
+                "areaOpacity": 0,
+                "connectNulls": false,
+                "display": "line",
+                "lineWidth": 1
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "seconds"
+                },
+                "min": 0
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "minStep": "60s",
+                    "query": "histogram_quantile(\n  0.95,\n  sum by (le, deployment_environment_name, service_namespace, service_name) (\n    rate(\n      http_server_request_duration_seconds_bucket{\n        deployment_environment_name=~\"$deployment_environment_name\",\n        service_namespace=~\"$service_namespace\",\n        service_name=\"$service_name\"\n      }[$__rate_interval]\n    )\n  )\n)",
+                    "seriesNameFormat": "HTTP p95"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "minStep": "60s",
+                    "query": "avg by (deployment_environment_name, service_namespace, service_name) (\n  rate(\n    http_server_request_duration_seconds_sum{\n      deployment_environment_name=~\"$deployment_environment_name\",\n      service_namespace=~\"$service_namespace\",\n      service_name=\"$service_name\"\n    }[$__rate_interval]\n  )\n)\n/\navg by (deployment_environment_name, service_namespace, service_name) (\n  rate(\n    http_server_request_duration_seconds_count{\n      deployment_environment_name=~\"$deployment_environment_name\",\n      service_namespace=~\"$service_namespace\",\n      service_name=\"$service_name\"\n    }[$__rate_interval]\n  )\n)",
+                    "seriesNameFormat": "HTTP avg"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "instant": false,
+                    "minStep": "60s",
+                    "query": "histogram_quantile(\n  0.95,\n  sum by (le, deployment_environment_name, service_namespace, service_name) (\n    rate(\n      rpc_server_duration_milliseconds_bucket{\n        deployment_environment_name=~\"$deployment_environment_name\",\n        service_namespace=~\"$service_namespace\",\n        service_name=\"$service_name\"\n      }[$__rate_interval]\n    ) / 1000\n  )\n)",
+                    "seriesNameFormat": "RPC p95"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "instant": false,
+                    "minStep": "60s",
+                    "query": "avg by (deployment_environment_name, service_namespace, service_name) (\n  rate(\n    rpc_server_duration_milliseconds_sum{\n      deployment_environment_name=~\"$deployment_environment_name\",\n      service_namespace=~\"$service_namespace\",\n      service_name=\"$service_name\"\n    }[$__rate_interval]\n  ) / 1000\n)\n/\navg by (deployment_environment_name, service_namespace, service_name) (\n  rate(\n    rpc_server_duration_milliseconds_count{\n      deployment_environment_name=~\"$deployment_environment_name\",\n      service_namespace=~\"$service_namespace\",\n      service_name=\"$service_name\"\n    }[$__rate_interval]\n  )\n)",
+                    "seriesNameFormat": "RPC avg"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "2_1": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Error",
+            "description": "HTTP and RPC endpoints aggregation on the `http.server.request.duration` and `rpc.server.duration` metrics. \n\nErrors are identified by : \n* `http.response.status_code=~\"5..\"`\n* `rpc.grpc.status_code!=\"0\"`\n\nSee https://opentelemetry.io/docs/specs/semconv/http/http-metrics/#metric-httpserverrequestduration\n"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "list",
+                "position": "bottom"
+              },
+              "visual": {
+                "areaOpacity": 0,
+                "connectNulls": false,
+                "display": "line",
+                "lineWidth": 1
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "percent"
+                },
+                "max": 100,
+                "min": 0
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "instant": false,
+                    "minStep": "60s",
+                    "query": "(\n    (sum by(deployment_environment_name, service_namespace, service_name) (rate(http_server_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval])) * 100) \n    / \n    sum by(deployment_environment_name, service_namespace, service_name) (rate(http_server_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]))\n)\nor\n(\n    0\n    * \n    sum by(deployment_environment_name, service_namespace, service_name) (rate(http_server_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]))\n)",
+                    "seriesNameFormat": "HTTP 5xx errors"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "instant": false,
+                    "minStep": "60s",
+                    "query": "((sum without (rpc_grpc_status_code, instance) (rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", rpc_grpc_status_code!=\"0\"}[$__rate_interval])) * 100) / sum without (rpc_grpc_status_code, instance) (rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])))\nor\n(0 * sum without (rpc_grpc_status_code, instance) (rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])))",
+                    "seriesNameFormat": "RPC errors"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "2_2": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Request Rate",
+            "description": "HTTP & RPC endpoints aggregation on the `http.server.request.duration` & `rpc.server.duration` metrics.\n\nSee https://opentelemetry.io/docs/specs/semconv/http/http-metrics/#metric-httpserverrequestduration"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "list",
+                "position": "bottom"
+              },
+              "visual": {
+                "areaOpacity": 0,
+                "connectNulls": false,
+                "display": "line",
+                "lineWidth": 1
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "requests/sec"
+                },
+                "min": 0
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "instant": false,
+                    "minStep": "60s",
+                    "query": "(sum(rate(http_server_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])) by (deployment_environment_name, service_namespace, service_name)) ",
+                    "seriesNameFormat": "HTTP requests"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "instant": false,
+                    "minStep": "60s",
+                    "query": "(sum(rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])) by (deployment_environment_name, service_namespace, service_name)) * $__interval_ms / 1000",
+                    "seriesNameFormat": "RPC requests"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "2_4": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "HTTP Operations",
+            "description": "Inbound HTTP operations of the service (aka HTTP endpoints) based on the `http.server.request.duration` metric.\n\nErrors are identified by `http.response.status_code=~\"5..\"`.\n\nSee https://opentelemetry.io/docs/specs/semconv/http/http-metrics/#metric-httpserverrequestduration"
+          },
+          "plugin": {
+            "kind": "Table",
+            "spec": {
+              "columnSettings": [
+                {
+                  "header": "Operation",
+                  "name": "operation"
+                },
+                {
+                  "format": {
+                    "unit": "seconds"
+                  },
+                  "header": "Duration (p99)",
+                  "name": "Trend #Duration"
+                },
+                {
+                  "format": {
+                    "unit": "percent-decimal"
+                  },
+                  "header": "Error",
+                  "name": "Trend #ERR_PCT"
+                },
+                {
+                  "format": {
+                    "unit": "requests/sec"
+                  },
+                  "header": "Rate",
+                  "name": "Trend #RPS",
+                  "width": 219
+                }
+              ],
+              "density": "compact",
+              "transforms": [
+                {
+                  "kind": "JoinByColumnValue",
+                  "spec": {
+                    "columns": [
+                      "operation"
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "minStep": "60s",
+                    "query": "\n        sum by (operation) (\n            label_join(\n                rate(http_server_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n    ",
+                    "seriesNameFormat": "{{operation}}"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "instant": false,
+                    "minStep": "60s",
+                    "query": "(\n        sum by (operation) (\n            label_join(\n                rate(http_server_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n     / \n        sum by (operation) (\n            label_join(\n                rate(http_server_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n    ) or (0 * \n        sum by (operation) (\n            label_join(\n                rate(http_server_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n    )",
+                    "seriesNameFormat": "{{operation}}"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "instant": false,
+                    "minStep": "60s",
+                    "query": "\n        histogram_quantile(\n            0.99,\n            sum by (le, operation) (\n                label_join(\n                rate(http_server_request_duration_seconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[5m]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n                )\n            )\n        )\n    ",
+                    "seriesNameFormat": "{{operation}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "2_5": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "gRPC Operations",
+            "description": "Inbound gRPC operations of the service (aka gRPC endpoints) based on the `rpc.server.request.duration` metric.\n\nErrors are identified by `rpc.grpc.status_code != 0` which make the panel specific to the gRPC protocol.\n\nhttps://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#metric-rpcserverduration"
+          },
+          "plugin": {
+            "kind": "Table",
+            "spec": {
+              "columnSettings": [
+                {
+                  "header": "Operation",
+                  "name": "operation"
+                },
+                {
+                  "format": {
+                    "unit": "milliseconds"
+                  },
+                  "header": "Duration (p99)",
+                  "name": "Trend #Duration"
+                },
+                {
+                  "format": {
+                    "unit": "percent-decimal"
+                  },
+                  "header": "Error",
+                  "name": "Trend #ERR_PCT"
+                },
+                {
+                  "format": {
+                    "unit": "requests/sec"
+                  },
+                  "header": "Rate",
+                  "name": "Trend #RPS"
+                }
+              ],
+              "density": "compact",
+              "transforms": [
+                {
+                  "kind": "JoinByColumnValue",
+                  "spec": {
+                    "columns": [
+                      "operation"
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "minStep": "60s",
+                    "query": "\nsum by (operation) (\n    label_join(\n        rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n        \"operation\",\n        \"/\",\n        \"rpc_service\",\n        \"rpc_method\"\n    )\n)\n    "
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "instant": false,
+                    "minStep": "60s",
+                    "query": "(\n        sum by (operation) (\n            label_join(\n                rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", rpc_grpc_status_code!=\"0\"}[$__rate_interval]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n     / \n        sum by (operation) (\n            label_join(\n                rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    ) or (0 * \n        sum by (operation) (\n            label_join(\n                rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    )\n    "
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "instant": false,
+                    "minStep": "60s",
+                    "query": "\n        histogram_quantile(\n            0.99,\n            sum by (le, operation) (\n                label_join(\n                rate(rpc_server_duration_milliseconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[5m]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n                )\n            )\n        )\n    ",
+                    "seriesNameFormat": "{{operation}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "3_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Outbound HTTP Services",
+            "description": "HTTP calls made by the service based on the `http.client.request.duration` metric.\n\nCalls broken done by remote `server.address` and by `http.request.method`.\n\nSee https://opentelemetry.io/docs/specs/semconv/http/http-metrics/#metric-httpclientrequestduration"
+          },
+          "plugin": {
+            "kind": "Table",
+            "spec": {
+              "columnSettings": [
+                {
+                  "header": "Service",
+                  "name": "outbound_service"
+                },
+                {
+                  "format": {
+                    "unit": "seconds"
+                  },
+                  "header": "Duration (P99)",
+                  "name": "Trend #DURATION"
+                },
+                {
+                  "format": {
+                    "unit": "percent-decimal"
+                  },
+                  "header": "Error",
+                  "name": "Trend #ERR_PCT"
+                },
+                {
+                  "format": {
+                    "unit": "requests/sec"
+                  },
+                  "header": "Rate",
+                  "name": "Trend #RPS"
+                },
+                {
+                  "header": "Duration (p99)",
+                  "name": "Trend #Duration"
+                },
+                {
+                  "header": "Operation",
+                  "name": "operation"
+                }
+              ],
+              "density": "compact",
+              "transforms": [
+                {
+                  "kind": "JoinByColumnValue",
+                  "spec": {
+                    "columns": [
+                      "outbound_service"
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "minStep": "60s",
+                    "query": "\n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    ",
+                    "seriesNameFormat": "{{server_address}} {{http_request_method}} {{url_template}}"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "instant": false,
+                    "minStep": "60s",
+                    "query": "(\n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n     / \n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    ) or (0 * \n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    )",
+                    "seriesNameFormat": "{{server_address}} {{http_request_method}} {{url_template}}"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "instant": false,
+                    "minStep": "60s",
+                    "query": "\nhistogram_quantile(\n    0.99,\n    sum by (le, outbound_service) (\n        label_join(\n        rate(http_client_request_duration_seconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[5m]),\n        \"outbound_service\",\n        \" \",\n        \"server_address\",\n        \"http_request_method\",\n        \"url_template\"\n        )\n    )\n)",
+                    "seriesNameFormat": "{{server_address}} {{http_request_method}} {{url_template}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "3_1": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Outbound Databases",
+            "description": "DB calls made by the service based on the `db.client.operation.duration` metric.\n\nCalls broken down by `server.address` and `db.namespace`.\n\nSee https://opentelemetry.io/docs/specs/semconv/database/database-metrics/#metric-dbclientoperationduration\n"
+          },
+          "plugin": {
+            "kind": "Table",
+            "spec": {
+              "columnSettings": [
+                {
+                  "header": "Database",
+                  "name": "database"
+                },
+                {
+                  "format": {
+                    "unit": "seconds"
+                  },
+                  "header": "Duration (P99)",
+                  "name": "Trend #DURATION"
+                },
+                {
+                  "format": {
+                    "unit": "percent-decimal"
+                  },
+                  "header": "Error",
+                  "name": "Trend #ERR_PCT"
+                },
+                {
+                  "format": {
+                    "unit": "requests/sec"
+                  },
+                  "header": "Rate",
+                  "name": "Trend #RPS"
+                },
+                {
+                  "header": "Duration (p99)",
+                  "name": "Trend #Duration"
+                },
+                {
+                  "header": "Database Operation",
+                  "name": "database_operation"
+                },
+                {
+                  "header": "Operation",
+                  "name": "operation"
+                },
+                {
+                  "header": "Service",
+                  "name": "outbound_service"
+                }
+              ],
+              "density": "compact",
+              "transforms": [
+                {
+                  "kind": "JoinByColumnValue",
+                  "spec": {
+                    "columns": [
+                      "database"
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "minStep": "60s",
+                    "query": "sum by (database) (\n    label_join(\n        rate(db_client_operation_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n        \"database\",\n        \"/\",\n        \"server_address\",\n        \"db_namespace\"\n    )\n)\n    ",
+                    "seriesNameFormat": "{{server_address}} {{db_namespace}}"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "instant": false,
+                    "minStep": "60s",
+                    "query": "(\n        sum by (database) (\n            label_join(\n                rate(db_client_operation_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"database\",\n                \"/\",\n                \"server_address\",\n                \"db_namespace\"\n            )\n        )\n     / \n        sum by (database) (\n            label_join(\n                rate(db_client_operation_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"database\",\n                \"/\",\n                \"server_address\",\n                \"db_namespace\"\n            )\n        )\n    ) or (0 * \n        sum by (database) (\n            label_join(\n                rate(db_client_operation_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"database\",\n                \"/\",\n                \"server_address\",\n                \"db_namespace\"\n            )\n        )\n    )",
+                    "seriesNameFormat": "{{server_address}} {{db_namespace}}"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "instant": false,
+                    "minStep": "60s",
+                    "query": "\nhistogram_quantile(\n    0.99,\n    sum by (le, database) (\n        label_join(\n        rate(db_client_operation_duration_seconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[5m]),\n            \"database\",\n            \"/\",\n            \"server_address\",\n            \"db_namespace\"\n        )\n    )\n)",
+                    "seriesNameFormat": "{{server_address}} {{db_namespace}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "3_2": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Outbound gRPC Services",
+            "description": "gRPC calls made by the service based on the `rpc.client.request.duration` metric.\n\nSpecific to gRPC due to the usage of the `grpc.status.code` attribute to identify errors.\n\nCalls broken down by `server.address`, `rpc.service`, and `rpc.method`.\n\nSee https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#rpc-client\n\n"
+          },
+          "plugin": {
+            "kind": "Table",
+            "spec": {
+              "columnSettings": [
+                {
+                  "header": "Service Method",
+                  "name": "outbound_service"
+                },
+                {
+                  "format": {
+                    "unit": "milliseconds"
+                  },
+                  "header": "Duration (P99)",
+                  "name": "Trend #DURATION"
+                },
+                {
+                  "format": {
+                    "unit": "percent-decimal"
+                  },
+                  "header": "Error",
+                  "name": "Trend #ERR_PCT"
+                },
+                {
+                  "format": {
+                    "unit": "requests/sec"
+                  },
+                  "header": "Rate",
+                  "name": "Trend #RPS"
+                },
+                {
+                  "header": "Duration (p99)",
+                  "name": "Trend #Duration"
+                },
+                {
+                  "header": "Operation",
+                  "name": "operation"
+                }
+              ],
+              "density": "compact",
+              "transforms": [
+                {
+                  "kind": "JoinByColumnValue",
+                  "spec": {
+                    "columns": [
+                      "outbound_service"
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "minStep": "60s",
+                    "query": "\n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    "
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${prometheus_datasource}",
+                    "instant": false,
+                    "minStep": "60s",
+                    "query": "(\n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n     / \n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    ) or (0 * \n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    )"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "instant": false,
+                    "minStep": "60s",
+                    "query": "\nhistogram_quantile(\n    0.99,\n    sum by (le, outbound_service) (\n        label_join(\n        rate(rpc_client_duration_milliseconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[5m]),\n        \"outbound_service\",\n        \"/\",\n        \"server_address\",\n        \"rpc_service\",\n        \"rpc_method\"\n        )\n    )\n)"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "4_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Service instance / host"
+          },
+          "plugin": {
+            "kind": "Table",
+            "spec": {
+              "columnSettings": [
+                {
+                  "format": {
+                    "unit": "percent-decimal"
+                  },
+                  "header": "Host CPU",
+                  "name": "Trend #cpu_time_percentage"
+                },
+                {
+                  "format": {
+                    "unit": "percent-decimal"
+                  },
+                  "header": "Host Memory",
+                  "name": "Trend #memory_usage_pct"
+                },
+                {
+                  "header": "Instance / Host",
+                  "name": "service_instance_id_host_name"
+                }
+              ],
+              "density": "compact",
+              "transforms": [
+                {
+                  "kind": "JoinByColumnValue",
+                  "spec": {
+                    "columns": [
+                      "service_instance_id_host_name"
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "query": "sum by (service_instance_id_host_name) (\n  label_join(\n    (\n      sum by (service_instance_id, host_name) (\n         rate(system_cpu_time_seconds_total{job=\"\", state!=\"idle\"}[$__rate_interval])\n      )\n      * on(host_name) group_left(service_instance_id)\n      target_info{service_name=\"${service_name}\"}\n    ),\n    \"service_instance_id_host_name\",\n    \" / \",\n    \"service_instance_id\",\n    \"host_name\"\n  )\n)"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "instant": false,
+                    "query": "sum by (service_instance_id_host_name) (\n  label_join(\n    (\n      (\n        sum by (service_instance_id, host_name) (\n          system_memory_usage_bytes{job=\"\", state!=\"free\"}\n        )\n        /\n        sum by (service_instance_id, host_name) (\n          system_memory_usage_bytes{job=\"\"}\n        )\n      )\n      * on(host_name) group_left(service_instance_id) (\n        target_info{service_name=\"${service_name}\"}\n      )\n    ),\n    \"service_instance_id_host_name\",\n    \" / \",\n    \"service_instance_id\",\n    \"host_name\"\n  )\n)"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "5_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "description": "Logs of the service, filtered by `service.name`, `service.namespace`, and `deployment.environment.name`.\n\nTo explore the logs, open the menu clicking on the icon `\u22ee` of this panel and click on `Explore`."
+          },
+          "plugin": {
+            "kind": "LogsTable",
+            "spec": {
+              "showTime": true,
+              "enableDetails": true,
+              "allowWrap": true
+            }
+          },
+          "queries": [
+            {
+              "kind": "LogQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "OpenSearchLogQuery",
+                  "spec": {
+                    "query": "search source=otel-logs-* | where resource.service.name=\"$service_name\" and resource.service.namespace=\"$service_namespace\" | fields @timestamp, severity.text, body, instrumentationScope.name",
+                    "timestampField": "observedTimestamp",
+                    "messageField": "body",
+                    "datasource": "${opensearch_datasource}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "6_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "description": "Traces containing a span emitted by the service"
+          },
+          "plugin": {
+            "kind": "TraceTable",
+            "spec": {}
+          },
+          "queries": [
+            {
+              "kind": "TraceQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "JaegerTraceQuery",
+                  "spec": {
+                    "service": "$service_name",
+                    "tags": "service.namespace=\"$service_namespace\"",
+                    "datasource": "${jaeger_datasource}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "layouts": [
+      {
+        "kind": "Grid",
+        "spec": {
+          "items": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 10,
+              "height": 2,
+              "content": {
+                "$ref": "#/spec/panels/0"
+              }
+            },
+            {
+              "x": 10,
+              "y": 0,
+              "width": 3,
+              "height": 2,
+              "content": {
+                "$ref": "#/spec/panels/1"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "Server RED Metrics",
+            "collapse": {
+              "open": true
+            }
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 3,
+              "width": 5,
+              "height": 6,
+              "content": {
+                "$ref": "#/spec/panels/2_0"
+              }
+            },
+            {
+              "x": 5,
+              "y": 3,
+              "width": 5,
+              "height": 6,
+              "content": {
+                "$ref": "#/spec/panels/2_1"
+              }
+            },
+            {
+              "x": 10,
+              "y": 3,
+              "width": 5,
+              "height": 6,
+              "content": {
+                "$ref": "#/spec/panels/2_2"
+              }
+            },
+            {
+              "x": 0,
+              "y": 9,
+              "width": 12,
+              "height": 6,
+              "content": {
+                "$ref": "#/spec/panels/2_4"
+              }
+            },
+            {
+              "x": 12,
+              "y": 9,
+              "width": 12,
+              "height": 6,
+              "content": {
+                "$ref": "#/spec/panels/2_5"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "Outbound Services and Databases",
+            "collapse": {
+              "open": true
+            }
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 16,
+              "width": 12,
+              "height": 5,
+              "content": {
+                "$ref": "#/spec/panels/3_0"
+              }
+            },
+            {
+              "x": 12,
+              "y": 16,
+              "width": 12,
+              "height": 5,
+              "content": {
+                "$ref": "#/spec/panels/3_1"
+              }
+            },
+            {
+              "x": 0,
+              "y": 21,
+              "width": 12,
+              "height": 5,
+              "content": {
+                "$ref": "#/spec/panels/3_2"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "Service instances",
+            "collapse": {
+              "open": true
+            }
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 27,
+              "width": 24,
+              "height": 4,
+              "content": {
+                "$ref": "#/spec/panels/4_0"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "Logs",
+            "collapse": {
+              "open": true
+            }
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 32,
+              "width": 24,
+              "height": 15,
+              "content": {
+                "$ref": "#/spec/panels/5_0"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "Traces",
+            "collapse": {
+              "open": false
+            }
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 58,
+              "width": 15,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/6_0"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "duration": "30m",
+    "refreshInterval": "30s"
+  }
+}

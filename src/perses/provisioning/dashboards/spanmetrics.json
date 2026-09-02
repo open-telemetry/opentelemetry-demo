@@ -1,0 +1,584 @@
+{
+  "kind": "Dashboard",
+  "metadata": {
+    "name": "spanmetrics",
+    "project": "opentelemetry-demo"
+  },
+  "spec": {
+    "display": {
+      "name": "Spanmetrics Demo Dashboard"
+    },
+    "variables": [
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "hidden": false
+          },
+          "defaultValue": "$__all",
+          "allowAllValue": true,
+          "allowMultiple": true,
+          "customAllValue": ".*",
+          "sort": "alphabetical-asc",
+          "plugin": {
+            "kind": "PrometheusPromQLVariable",
+            "spec": {
+              "expr": "count by (service_name)(count_over_time(traces_span_metrics_calls_total[$__range]))",
+              "labelName": "service_name"
+            }
+          },
+          "name": "service"
+        }
+      },
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "hidden": false
+          },
+          "defaultValue": "$__all",
+          "allowAllValue": true,
+          "allowMultiple": true,
+          "customAllValue": ".*",
+          "plugin": {
+            "kind": "PrometheusPromQLVariable",
+            "spec": {
+              "expr": "sum ({__name__=~\".*traces_span_metrics_calls_total\",service_name=~\"$service\"})  by (span_name)",
+              "labelName": "span_name"
+            }
+          },
+          "name": "span_name"
+        }
+      }
+    ],
+    "panels": {
+      "0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {},
+          "plugin": {
+            "kind": "Markdown",
+            "spec": {
+              "text": "This dashboard uses RED metrics generated for all services by the spanmetrics connector configured in the OpenTelemetry Collector.\n<br>\nChart panels may require 5 minutes after the Demo is started before rendering data."
+            }
+          }
+        }
+      },
+      "1_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Top 3x3 - Service Latency - quantile95"
+          },
+          "plugin": {
+            "kind": "GaugeChart",
+            "spec": {
+              "calculation": "last-number",
+              "format": {
+                "unit": "milliseconds"
+              },
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "#5794f2",
+                    "value": 0
+                  },
+                  {
+                    "color": "#73bf69",
+                    "value": 2
+                  },
+                  {
+                    "color": "#EAB839",
+                    "value": 64
+                  },
+                  {
+                    "color": "#ff9830",
+                    "value": 128
+                  },
+                  {
+                    "color": "#f2495c",
+                    "value": 256
+                  }
+                ]
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "instant": true,
+                    "minStep": "",
+                    "query": "topk(7,histogram_quantile(0.95, sum(rate(traces_span_metrics_duration_milliseconds_bucket{service_name=~\"$service\", span_name=~\"$span_name\"}[$__range])) by (le,service_name)))",
+                    "seriesNameFormat": "{{service_name}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "1_1": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Top 7 Services Mean Rate over Range"
+          },
+          "plugin": {
+            "kind": "BarChart",
+            "spec": {
+              "calculation": "mean",
+              "format": {
+                "decimalPlaces": 2,
+                "unit": "requests/sec"
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "instant": true,
+                    "minStep": "",
+                    "query": "topk(7,sum by (service_name) (rate(traces_span_metrics_calls_total{service_name=~\"$service\", span_name=~\"$span_name\"}[$__range])))",
+                    "seriesNameFormat": "{{service_name}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "1_2": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Top 7 Services Mean ERROR Rate over Range"
+          },
+          "plugin": {
+            "kind": "BarChart",
+            "spec": {
+              "calculation": "mean",
+              "format": {
+                "decimalPlaces": 4,
+                "unit": "requests/sec"
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "instant": true,
+                    "minStep": "",
+                    "query": "topk(7,sum(rate(traces_span_metrics_calls_total{status_code=\"STATUS_CODE_ERROR\",service_name=~\"$service\", span_name=~\"$span_name\"}[$__range])) by (service_name))",
+                    "seriesNameFormat": "{{service_name}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "2_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Top 7 span_names and Errors  (APM Table)"
+          },
+          "plugin": {
+            "kind": "Table",
+            "spec": {
+              "columnSettings": [
+                {
+                  "header": "span_name Name",
+                  "name": "span_name"
+                },
+                {
+                  "hide": true,
+                  "name": "Rate"
+                },
+                {
+                  "header": "Rate",
+                  "hide": false,
+                  "name": "bRate"
+                },
+                {
+                  "header": "Error Rate",
+                  "name": "eRate"
+                },
+                {
+                  "hide": true,
+                  "name": "Error Rate"
+                },
+                {
+                  "header": "Service",
+                  "name": "Rate in Service",
+                  "width": "auto"
+                },
+                {
+                  "name": "Error Rate in Service"
+                },
+                {
+                  "header": "Error Rate",
+                  "name": "value #2",
+                  "width": 663
+                },
+                {
+                  "header": "Rate",
+                  "name": "value #1",
+                  "width": 667
+                },
+                {
+                  "hide": true,
+                  "name": "Time 1"
+                },
+                {
+                  "hide": true,
+                  "name": "Time 2"
+                },
+                {
+                  "header": "Rate in Service",
+                  "name": "service_name 1"
+                },
+                {
+                  "header": "Error Rate in Service",
+                  "name": "service_name 2"
+                }
+              ],
+              "density": "compact"
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "instant": true,
+                    "minStep": "",
+                    "query": "topk(7, sum(rate(traces_span_metrics_calls_total{service_name=~\"$service\", span_name=~\"$span_name\"}[$__range])) by (span_name,service_name)) ",
+                    "seriesNameFormat": ""
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "instant": true,
+                    "minStep": "",
+                    "query": "topk(7, sum(rate(traces_span_metrics_calls_total{status_code=\"STATUS_CODE_ERROR\",service_name=~\"$service\", span_name=~\"$span_name\"}[$__range])) by (span_name,service_name))",
+                    "seriesNameFormat": ""
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "3_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Top 3x3 - span_name Latency - quantile95"
+          },
+          "plugin": {
+            "kind": "GaugeChart",
+            "spec": {
+              "calculation": "last-number",
+              "format": {
+                "unit": "milliseconds"
+              },
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "#73bf69",
+                    "value": 2
+                  },
+                  {
+                    "color": "#EAB839",
+                    "value": 64
+                  },
+                  {
+                    "color": "#ff9830",
+                    "value": 128
+                  },
+                  {
+                    "color": "#f2495c",
+                    "value": 256
+                  }
+                ]
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "instant": true,
+                    "minStep": "",
+                    "query": "topk(7,histogram_quantile(0.95, sum(rate(traces_span_metrics_duration_milliseconds_bucket{service_name=~\"$service\", span_name=~\"$span_name\"}[$__range])) by (le,span_name)))",
+                    "seriesNameFormat": "{{span_name}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "3_1": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Top 7 Highest Endpoint Latencies  Mean Over Range "
+          },
+          "plugin": {
+            "kind": "BarChart",
+            "spec": {
+              "calculation": "mean",
+              "format": {
+                "decimalPlaces": 2,
+                "unit": "milliseconds"
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "instant": true,
+                    "minStep": "",
+                    "query": "topk(7, sum by (span_name,service_name)(increase(traces_span_metrics_duration_milliseconds_sum{service_name=~\"${service}\", span_name=~\"$span_name\"}[5m]) / increase(traces_span_metrics_duration_milliseconds_count{service_name=~\"${service}\",span_name=~\"$span_name\"}[5m\n])))",
+                    "seriesNameFormat": "{{span_name}} [{{service_name}}]"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "3_2": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Top 7 Latencies Over Range "
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "table",
+                "position": "bottom",
+                "values": [
+                  "mean",
+                  "max"
+                ]
+              },
+              "visual": {
+                "areaOpacity": 0.15,
+                "connectNulls": false,
+                "display": "line",
+                "lineWidth": 1
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "milliseconds"
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "instant": false,
+                    "minStep": "",
+                    "query": "topk(7,sum by (span_name,service_name)(increase(traces_span_metrics_duration_milliseconds_sum{service_name=~\"$service\", span_name=~\"$span_name\"}[$__rate_interval]) / increase(traces_span_metrics_duration_milliseconds_count{service_name=~\"$service\", span_name=~\"$span_name\"}[$__rate_interval])))",
+                    "seriesNameFormat": "[{{service_name}}]  {{span_name}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "layouts": [
+      {
+        "kind": "Grid",
+        "spec": {
+          "items": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 24,
+              "height": 2,
+              "content": {
+                "$ref": "#/spec/panels/0"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "Service Level - Throughput and Latencies",
+            "collapse": {
+              "open": true
+            }
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 3,
+              "width": 12,
+              "height": 20,
+              "content": {
+                "$ref": "#/spec/panels/1_0"
+              }
+            },
+            {
+              "x": 12,
+              "y": 3,
+              "width": 12,
+              "height": 13,
+              "content": {
+                "$ref": "#/spec/panels/1_1"
+              }
+            },
+            {
+              "x": 12,
+              "y": 16,
+              "width": 12,
+              "height": 7,
+              "content": {
+                "$ref": "#/spec/panels/1_2"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "span_names Level - Throughput",
+            "collapse": {
+              "open": true
+            }
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 24,
+              "width": 24,
+              "height": 11,
+              "content": {
+                "$ref": "#/spec/panels/2_0"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "span_name Level - Latencies",
+            "collapse": {
+              "open": true
+            }
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 36,
+              "width": 12,
+              "height": 13,
+              "content": {
+                "$ref": "#/spec/panels/3_0"
+              }
+            },
+            {
+              "x": 12,
+              "y": 36,
+              "width": 12,
+              "height": 13,
+              "content": {
+                "$ref": "#/spec/panels/3_1"
+              }
+            },
+            {
+              "x": 0,
+              "y": 49,
+              "width": 24,
+              "height": 12,
+              "content": {
+                "$ref": "#/spec/panels/3_2"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "duration": "15m",
+    "refreshInterval": "5m"
+  }
+}

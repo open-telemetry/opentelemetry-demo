@@ -334,6 +334,8 @@ services:
       - LOCUST_WEB_PORT
       - GRAFANA_PORT
       - GRAFANA_HOST
+      - PERSES_PORT
+      - PERSES_HOST
       - JAEGER_UI_PORT
       - JAEGER_HOST
       - OPAMP_SERVER_HOST

@@ -1,0 +1,624 @@
+{
+  "kind": "Dashboard",
+  "metadata": {
+    "name": "postgresql",
+    "project": "opentelemetry-demo"
+  },
+  "spec": {
+    "display": {
+      "name": "PostgreSQL"
+    },
+    "variables": [
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "Data Source",
+            "hidden": false
+          },
+          "defaultValue": "webstore-metrics",
+          "allowAllValue": false,
+          "allowMultiple": false,
+          "plugin": {
+            "kind": "DatasourceVariable",
+            "spec": {
+              "datasourcePluginKind": "PrometheusDatasource"
+            }
+          },
+          "name": "datasource"
+        }
+      },
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "K8s Cluster",
+            "description": "When deploying PostgreSQL on Kubernetes, name of the Kubernetes cluster.  \nFor other deployments, select \"All\". ",
+            "hidden": false
+          },
+          "defaultValue": "$__all",
+          "allowAllValue": true,
+          "allowMultiple": true,
+          "customAllValue": ".*",
+          "sort": "alphabetical-asc",
+          "plugin": {
+            "kind": "PrometheusLabelValuesVariable",
+            "spec": {
+              "labelName": "k8s_cluster_name",
+              "matchers": [
+                "postgresql_table_count"
+              ]
+            }
+          },
+          "name": "k8s_cluster_name"
+        }
+      },
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "K8s Statefulset",
+            "description": "When deploying on Kubernetes, name of the `StatefulSet` of the PostgreSQL deployment (e.g. `my-pg-cluster`).\nFor other deployments, select \"All\". ",
+            "hidden": false
+          },
+          "defaultValue": null,
+          "allowAllValue": true,
+          "allowMultiple": true,
+          "customAllValue": ".*",
+          "plugin": {
+            "kind": "PrometheusLabelValuesVariable",
+            "spec": {
+              "labelName": "k8s_statefulset_name",
+              "matchers": [
+                "postgresql_table_count{k8s_cluster_name=~\"$k8s_cluster_name\"}"
+              ]
+            }
+          },
+          "name": "k8s_statefulset_name"
+        }
+      },
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "Host",
+            "description": "When deploying PostgreSQL on VMs, name on the host on which the database is deployed.\nFor other deployments, select \"All\". ",
+            "hidden": false
+          },
+          "defaultValue": [
+            "$__all"
+          ],
+          "allowAllValue": true,
+          "allowMultiple": true,
+          "customAllValue": ".+",
+          "sort": "alphabetical-asc",
+          "plugin": {
+            "kind": "PrometheusLabelValuesVariable",
+            "spec": {
+              "labelName": "host_name",
+              "matchers": [
+                "postgresql_table_count{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\"}"
+              ]
+            }
+          },
+          "name": "host_name"
+        }
+      },
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "Database",
+            "hidden": false
+          },
+          "defaultValue": "$__all",
+          "allowAllValue": true,
+          "allowMultiple": false,
+          "customAllValue": ".+",
+          "plugin": {
+            "kind": "PrometheusLabelValuesVariable",
+            "spec": {
+              "labelName": "postgresql_database_name",
+              "matchers": [
+                "postgresql_table_count{host_name=~\"$host_name\", postgresql_database_name!~\"template.*|postgres\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\"}"
+              ]
+            }
+          },
+          "name": "db"
+        }
+      }
+    ],
+    "panels": {
+      "0_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "QPS",
+            "description": "Queries per seconds. Queries being commits or rollbacks.\n"
+          },
+          "plugin": {
+            "kind": "StatChart",
+            "spec": {
+              "calculation": "mean",
+              "colorMode": "none",
+              "format": {
+                "decimalPlaces": 0,
+                "unit": "decimal"
+              },
+              "mappings": [
+                {
+                  "kind": "Misc",
+                  "spec": {
+                    "result": {
+                      "value": "N/A"
+                    },
+                    "value": "null"
+                  }
+                }
+              ],
+              "sparkline": {},
+              "thresholds": {
+                "steps": []
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "query": "sum(irate(postgresql_commits_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval])) + sum(irate(postgresql_rollbacks_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_1": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Rows",
+            "description": "See [pg_stat_database / `tup_fetched`](https://www.postgresql.org/docs/current/monitoring-stats.html#MONITORING-PG-STAT-DATABASE-VIEW)"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "table",
+                "position": "right"
+              },
+              "visual": {
+                "areaOpacity": 0.1,
+                "connectNulls": true,
+                "display": "line",
+                "lineWidth": 1
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "decimal"
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "query": "sum(irate(postgresql_tup_fetched_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
+                    "seriesNameFormat": "fetched"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${datasource}",
+                    "query": "sum(irate(postgresql_tup_returned_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
+                    "seriesNameFormat": "returned"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "query": "sum(irate(postgresql_tup_inserted_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
+                    "seriesNameFormat": "inserted"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${datasource}",
+                    "query": "sum(irate(postgresql_tup_updated_total{dpostgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
+                    "seriesNameFormat": "updated"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "query": "sum(irate(postgresql_tup_deleted_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
+                    "seriesNameFormat": "deleted"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_2": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Buffers"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "table",
+                "position": "right"
+              },
+              "visual": {
+                "areaOpacity": 0.1,
+                "connectNulls": true,
+                "display": "line",
+                "lineWidth": 1
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "decimal"
+                },
+                "min": 0
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "query": "irate(postgresql_bgwriter_buffers_allocated_total{host_name=~\"$host_name\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\"}[$__rate_interval])",
+                    "seriesNameFormat": "buffers allocated"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${datasource}",
+                    "instant": false,
+                    "minStep": "",
+                    "query": "irate(postgresql_bgwriter_buffers_writes_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__interval])",
+                    "seriesNameFormat": "buffers write {{source}}"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "query": "irate(pg_stat_bgwriter_buffers_backend_total{job=~\"$job\",cluster=~\"$cluster\",instance=~\"$instance\"}[$__rate_interval])",
+                    "seriesNameFormat": "buffers_backend"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${datasource}",
+                    "query": "irate(pg_stat_bgwriter_buffers_clean_total{job=~\"$job\",cluster=~\"$cluster\",instance=~\"$instance\"}[$__rate_interval])",
+                    "seriesNameFormat": "buffers_clean"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "query": "irate(postgresql_bgwriter_checkpoint_count_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval])",
+                    "seriesNameFormat": "checkpoint {{type}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_3": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Conflicts/Deadlocks"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "list",
+                "position": "bottom"
+              },
+              "querySettings": [
+                {
+                  "colorMode": "fixed",
+                  "colorValue": "#ff7383",
+                  "queryIndex": 0
+                }
+              ],
+              "visual": {
+                "areaOpacity": 0.1,
+                "connectNulls": true,
+                "display": "line",
+                "lineWidth": 2
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "decimal"
+                },
+                "min": 0
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "query": "sum(postgresql_deadlocks_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"})",
+                    "seriesNameFormat": "deadlocks"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${datasource}",
+                    "query": "sum(postgresql_conflicts_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"})",
+                    "seriesNameFormat": "conflicts"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_4": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Cache hit ratio"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "list",
+                "position": "bottom"
+              },
+              "visual": {
+                "areaOpacity": 0.1,
+                "connectNulls": true,
+                "display": "line",
+                "lineWidth": 2
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "percent"
+                },
+                "max": 100,
+                "min": 0
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${datasource}",
+                    "query": "round(\n  sum by (postgresql_database_name) (\n    rate(\n      postgresql_blks_hit_total{\n        postgresql_database_name=~\"$db\",\n        k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",\n        host_name=~\"$host_name\"\n      }[$__rate_interval]\n    )\n  )\n  /\n  (\n    sum by (postgresql_database_name) (\n      rate(\n        postgresql_blks_hit_total{\n          postgresql_database_name=~\"$db\",\n          k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",\n          host_name=~\"$host_name\"\n        }[$__rate_interval]\n      )\n    )\n    +\n    sum by (postgresql_database_name) (\n      rate(\n        postgresql_blks_read_total{\n          postgresql_database_name=~\"$db\",\n          k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",\n          host_name=~\"$host_name\"\n        }[$__rate_interval]\n      )\n    )\n  ) * 100,\n  0.001\n)",
+                    "seriesNameFormat": "{{postgresql_database_name}} - cache hit ratio"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_5": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Number of active connections"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "list",
+                "position": "bottom"
+              },
+              "visual": {
+                "areaOpacity": 0.1,
+                "connectNulls": true,
+                "display": "line",
+                "lineWidth": 2
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "decimal"
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${datasource}",
+                    "query": "postgresql_backends{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}",
+                    "seriesNameFormat": "{{postgresql_database_name}} - connections"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "layouts": [
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "PostgreSQL Overview",
+            "collapse": {
+              "open": true
+            }
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 1,
+              "width": 4,
+              "height": 7,
+              "content": {
+                "$ref": "#/spec/panels/0_0"
+              }
+            },
+            {
+              "x": 4,
+              "y": 1,
+              "width": 20,
+              "height": 7,
+              "content": {
+                "$ref": "#/spec/panels/0_1"
+              }
+            },
+            {
+              "x": 0,
+              "y": 8,
+              "width": 12,
+              "height": 7,
+              "content": {
+                "$ref": "#/spec/panels/0_2"
+              }
+            },
+            {
+              "x": 12,
+              "y": 8,
+              "width": 12,
+              "height": 7,
+              "content": {
+                "$ref": "#/spec/panels/0_3"
+              }
+            },
+            {
+              "x": 0,
+              "y": 15,
+              "width": 12,
+              "height": 7,
+              "content": {
+                "$ref": "#/spec/panels/0_4"
+              }
+            },
+            {
+              "x": 12,
+              "y": 15,
+              "width": 12,
+              "height": 7,
+              "content": {
+                "$ref": "#/spec/panels/0_5"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "duration": "30m",
+    "refreshInterval": "30s"
+  }
+}

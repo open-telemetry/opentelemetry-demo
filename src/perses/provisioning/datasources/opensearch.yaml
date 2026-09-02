@@ -1,0 +1,12 @@
+kind: "GlobalDatasource"
+metadata:
+  name: "webstore-logs"
+spec:
+  default: true
+  plugin:
+    kind: "OpenSearchDatasource"
+    spec:
+      proxy:
+        kind: "HTTPProxy"
+        spec:
+          url: "http://opensearch:9200/"

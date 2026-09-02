@@ -1,0 +1,1598 @@
+{
+  "kind": "Dashboard",
+  "metadata": {
+    "name": "linux",
+    "project": "opentelemetry-demo"
+  },
+  "spec": {
+    "display": {
+      "name": "Linux"
+    },
+    "variables": [
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "Data Source",
+            "hidden": false
+          },
+          "defaultValue": "webstore-metrics",
+          "allowAllValue": false,
+          "allowMultiple": false,
+          "plugin": {
+            "kind": "DatasourceVariable",
+            "spec": {
+              "datasourcePluginKind": "PrometheusDatasource"
+            }
+          },
+          "name": "DS_PROMETHEUS"
+        }
+      },
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "K8s Cluster",
+            "description": "When deploying PostgreSQL on Kubernetes, name of the Kubernetes cluster.  \nFor other deployments, select \"All\". ",
+            "hidden": false
+          },
+          "defaultValue": "$__all",
+          "allowAllValue": true,
+          "allowMultiple": true,
+          "customAllValue": ".*",
+          "sort": "alphabetical-asc",
+          "plugin": {
+            "kind": "PrometheusLabelValuesVariable",
+            "spec": {
+              "labelName": "k8s_cluster_name",
+              "matchers": [
+                "otelcol_process_uptime"
+              ]
+            }
+          },
+          "name": "k8s_cluster_name"
+        }
+      },
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "K8s node",
+            "description": "When monitoring Kubernetes, name of the K8s node.\nFor other deployments, select \"All\". ",
+            "hidden": false
+          },
+          "defaultValue": "$__all",
+          "allowAllValue": true,
+          "allowMultiple": false,
+          "customAllValue": ".*",
+          "sort": "alphabetical-asc",
+          "plugin": {
+            "kind": "PrometheusLabelValuesVariable",
+            "spec": {
+              "labelName": "k8s_node_name",
+              "matchers": [
+                "otelcol_process_uptime{k8s_cluster_name=~\"$k8s_cluster_name\"}"
+              ]
+            }
+          },
+          "name": "node_name"
+        }
+      },
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "Host",
+            "hidden": false
+          },
+          "defaultValue": "docker-desktop",
+          "allowAllValue": true,
+          "allowMultiple": false,
+          "customAllValue": ".*",
+          "sort": "alphabetical-ci-asc",
+          "plugin": {
+            "kind": "PrometheusLabelValuesVariable",
+            "spec": {
+              "labelName": "host_name",
+              "matchers": [
+                "otelcol_process_uptime_seconds_total"
+              ]
+            }
+          },
+          "name": "host_name"
+        }
+      }
+    ],
+    "panels": {
+      "0_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Host Metadata",
+            "description": "Host and OS metadata from resourcedetection processor"
+          },
+          "plugin": {
+            "kind": "Table",
+            "spec": {
+              "columnSettings": [
+                {
+                  "header": "Hostname",
+                  "name": "host_name"
+                },
+                {
+                  "header": "Architecture",
+                  "name": "host_arch"
+                },
+                {
+                  "header": "OS Type",
+                  "name": "os_type"
+                },
+                {
+                  "header": "OS Description",
+                  "name": "os_description"
+                }
+              ],
+              "density": "compact"
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "instant": true,
+                    "query": "target_info{service_name=\"otelcol-contrib\", host_name=~\"$host_name\"}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_1": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "CPU Metadata",
+            "description": "CPU metadata from resourcedetection processor"
+          },
+          "plugin": {
+            "kind": "Table",
+            "spec": {
+              "columnSettings": [
+                {
+                  "header": "CPU Vendor",
+                  "name": "host_cpu_vendor_id"
+                },
+                {
+                  "header": "CPU Family",
+                  "name": "host_cpu_family"
+                },
+                {
+                  "header": "Model ID",
+                  "name": "host_cpu_model_id"
+                },
+                {
+                  "header": "Model Name",
+                  "name": "host_cpu_model_name"
+                },
+                {
+                  "header": "L2 Cache",
+                  "name": "host_cpu_cache_l2_size"
+                },
+                {
+                  "header": "Stepping",
+                  "name": "host_cpu_stepping"
+                }
+              ],
+              "density": "compact"
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "instant": true,
+                    "query": "target_info{service_name=\"otelcol-contrib\", host_name=~\"$host_name\"}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_10": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "SWAP Total",
+            "description": "Total SWAP"
+          },
+          "plugin": {
+            "kind": "StatChart",
+            "spec": {
+              "calculation": "last-number",
+              "colorMode": "none",
+              "format": {
+                "decimalPlaces": 0,
+                "unit": "bytes"
+              },
+              "mappings": [
+                {
+                  "kind": "Misc",
+                  "spec": {
+                    "result": {
+                      "value": "N/A"
+                    },
+                    "value": "null"
+                  }
+                }
+              ],
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "#f2495c",
+                    "value": 80
+                  }
+                ]
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "instant": true,
+                    "query": "sum(system_paging_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"})"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_11": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "FS Total",
+            "description": "Total FS\n\nhttps://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/hostmetricsreceiver/internal/scraper/filesystemscraper/documentation.md"
+          },
+          "plugin": {
+            "kind": "StatChart",
+            "spec": {
+              "calculation": "last-number",
+              "colorMode": "none",
+              "format": {
+                "decimalPlaces": 0,
+                "unit": "bytes"
+              },
+              "mappings": [
+                {
+                  "kind": "Misc",
+                  "spec": {
+                    "result": {
+                      "value": "N/A"
+                    },
+                    "value": "null"
+                  }
+                }
+              ],
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "rgba(237, 129, 40, 0.89)",
+                    "value": 70
+                  },
+                  {
+                    "color": "rgba(245, 54, 54, 0.9)",
+                    "value": 90
+                  }
+                ]
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "instant": true,
+                    "query": "sum(system_filesystem_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"})"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_12": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Uptime",
+            "description": "System uptime"
+          },
+          "plugin": {
+            "kind": "StatChart",
+            "spec": {
+              "calculation": "last-number",
+              "colorMode": "none",
+              "format": {
+                "decimalPlaces": 1,
+                "unit": "seconds"
+              },
+              "mappings": [
+                {
+                  "kind": "Misc",
+                  "spec": {
+                    "result": {
+                      "value": "N/A"
+                    },
+                    "value": "null"
+                  }
+                }
+              ],
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "#f2495c",
+                    "value": 80
+                  }
+                ]
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "instant": true,
+                    "query": "system_uptime_seconds{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_2": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "CPU Busy",
+            "description": "Busy state of all CPU cores together\n\nhttps://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/hostmetricsreceiver/internal/scraper/cpuscraper/documentation.md"
+          },
+          "plugin": {
+            "kind": "GaugeChart",
+            "spec": {
+              "calculation": "last-number",
+              "format": {
+                "decimalPlaces": 1,
+                "unit": "percent-decimal"
+              },
+              "max": 100,
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "rgba(237, 129, 40, 0.89)",
+                    "value": 85
+                  },
+                  {
+                    "color": "rgba(245, 54, 54, 0.9)",
+                    "value": 95
+                  }
+                ]
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "instant": false,
+                    "query": "sum(system_cpu_utilization_ratio{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", job=\"\", state!=\"idle\"})"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_3": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "RAM Used",
+            "description": "Non available RAM memory\n\nhttps://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/hostmetricsreceiver/internal/scraper/memoryscraper/documentation.md"
+          },
+          "plugin": {
+            "kind": "GaugeChart",
+            "spec": {
+              "calculation": "last-number",
+              "format": {
+                "decimalPlaces": 1,
+                "unit": "percent-decimal"
+              },
+              "max": 100,
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "rgba(237, 129, 40, 0.89)",
+                    "value": 80
+                  },
+                  {
+                    "color": "rgba(245, 54, 54, 0.9)",
+                    "value": 90
+                  }
+                ]
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "instant": false,
+                    "query": "system_memory_utilization_ratio{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"$node_name\", host_name=~\"$host_name\", job=\"\", state=\"used\"}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_4": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "FS Used",
+            "description": "Used FS\n\nhttps://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/hostmetricsreceiver#collecting-host-metrics-from-inside-a-container-linux-only"
+          },
+          "plugin": {
+            "kind": "GaugeChart",
+            "spec": {
+              "calculation": "last-number",
+              "format": {
+                "decimalPlaces": 1,
+                "unit": "percent-decimal"
+              },
+              "max": 100,
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "rgba(237, 129, 40, 0.89)",
+                    "value": 80
+                  },
+                  {
+                    "color": "rgba(245, 54, 54, 0.9)",
+                    "value": 90
+                  }
+                ]
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "instant": false,
+                    "query": "1 \n-\nsum(system_filesystem_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"free\"}) \n/ \nsum(system_filesystem_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"})"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_5": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Sys Load (5m avg)",
+            "description": "Busy state of all CPU cores together (5 min average)\n\nhttps://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/hostmetricsreceiver/internal/scraper/loadscraper/documentation.md"
+          },
+          "plugin": {
+            "kind": "GaugeChart",
+            "spec": {
+              "calculation": "last-number",
+              "format": {
+                "decimalPlaces": 1,
+                "unit": "percent"
+              },
+              "max": 100,
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "rgba(237, 129, 40, 0.89)",
+                    "value": 85
+                  },
+                  {
+                    "color": "rgba(245, 54, 54, 0.9)",
+                    "value": 95
+                  }
+                ]
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "instant": true,
+                    "query": "system_cpu_load_average_5m{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"} "
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_6": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Sys Load (15m avg)",
+            "description": "Busy state of all CPU cores together (15 min average)\n\nhttps://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/hostmetricsreceiver/internal/scraper/loadscraper/documentation.md"
+          },
+          "plugin": {
+            "kind": "GaugeChart",
+            "spec": {
+              "calculation": "last-number",
+              "format": {
+                "decimalPlaces": 1,
+                "unit": "percent"
+              },
+              "max": 100,
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "rgba(237, 129, 40, 0.89)",
+                    "value": 85
+                  },
+                  {
+                    "color": "rgba(245, 54, 54, 0.9)",
+                    "value": 95
+                  }
+                ]
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "instant": true,
+                    "query": "system_cpu_load_average_15m{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"} "
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_7": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "SWAP Used",
+            "description": "Used Swap\n\nhttps://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/hostmetricsreceiver/internal/scraper/pagingscraper/documentation.md"
+          },
+          "plugin": {
+            "kind": "GaugeChart",
+            "spec": {
+              "calculation": "last-number",
+              "format": {
+                "decimalPlaces": 1,
+                "unit": "percent"
+              },
+              "max": 100,
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "rgba(237, 129, 40, 0.89)",
+                    "value": 10
+                  },
+                  {
+                    "color": "rgba(245, 54, 54, 0.9)",
+                    "value": 25
+                  }
+                ]
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "instant": true,
+                    "query": "sum(system_paging_usage_bytes { k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"used\" })\n/\nsum(system_paging_usage_bytes { k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"})"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_8": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "CPU Cores",
+            "description": "Total number of CPU cores"
+          },
+          "plugin": {
+            "kind": "StatChart",
+            "spec": {
+              "calculation": "last-number",
+              "colorMode": "none",
+              "format": {
+                "unit": "decimal"
+              },
+              "mappings": [
+                {
+                  "kind": "Misc",
+                  "spec": {
+                    "result": {
+                      "value": "N/A"
+                    },
+                    "value": "null"
+                  }
+                }
+              ],
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "#f2495c",
+                    "value": 80
+                  }
+                ]
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "query": "system_cpu_logical_count{ k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"used\" }"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_9": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "RAM Total",
+            "description": "Total RAM"
+          },
+          "plugin": {
+            "kind": "StatChart",
+            "spec": {
+              "calculation": "last-number",
+              "colorMode": "none",
+              "format": {
+                "decimalPlaces": 0,
+                "unit": "bytes"
+              },
+              "mappings": [
+                {
+                  "kind": "Misc",
+                  "spec": {
+                    "result": {
+                      "value": "N/A"
+                    },
+                    "value": "null"
+                  }
+                }
+              ],
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "#f2495c",
+                    "value": 80
+                  }
+                ]
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "instant": true,
+                    "query": "system_memory_limit_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "1_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "CPU"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "list",
+                "position": "bottom"
+              },
+              "querySettings": [
+                {
+                  "colorMode": "fixed",
+                  "colorValue": "#890F02",
+                  "queryIndex": 0
+                },
+                {
+                  "colorMode": "fixed",
+                  "colorValue": "#5794f2",
+                  "queryIndex": 1
+                },
+                {
+                  "colorMode": "fixed",
+                  "colorValue": "#fade2a",
+                  "queryIndex": 2
+                },
+                {
+                  "colorMode": "fixed",
+                  "colorValue": "#fff899",
+                  "queryIndex": 3
+                },
+                {
+                  "colorMode": "fixed",
+                  "colorValue": "#ffb357",
+                  "queryIndex": 4
+                },
+                {
+                  "colorMode": "fixed",
+                  "colorValue": "#73bf69",
+                  "queryIndex": 5
+                }
+              ],
+              "visual": {
+                "areaOpacity": 0.4,
+                "connectNulls": false,
+                "display": "line",
+                "lineWidth": 1,
+                "stack": "all"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "percent-decimal"
+                },
+                "min": 0
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "query": "sum (irate(system_cpu_time_seconds_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"system\"}[$__rate_interval])) \n/\nsum ((irate(system_cpu_time_seconds_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}[$__rate_interval])))",
+                    "seriesNameFormat": "Busy System"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "query": "sum (irate(system_cpu_time_seconds_total{kk8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"user\"}[$__rate_interval])) \n/ \nsum ((irate(system_cpu_time_seconds_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}[$__rate_interval])))",
+                    "seriesNameFormat": "Busy User"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "query": "sum(irate(system_cpu_time_seconds_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"wait\"}[$__rate_interval])) \n/ \nsum ((irate(system_cpu_time_seconds_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}[$__rate_interval])))",
+                    "seriesNameFormat": "Busy Wait"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "query": "sum (irate(system_cpu_time_seconds_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=~\".*irq\"}[$__rate_interval])) \n/\nsum((irate(system_cpu_time_seconds_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}[$__rate_interval])))",
+                    "seriesNameFormat": "Busy IRQs"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "query": "sum(irate(system_cpu_time_seconds_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state!~\".*irq\", state!=\"idle\", state!=\"user\", state!=\"wait\", state!=\"system\"}[$__rate_interval]))\n/\nsum ((irate(system_cpu_time_seconds_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}[$__rate_interval])))",
+                    "seriesNameFormat": "Busy Other"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "query": "sum by(host_name) (irate(system_cpu_time_seconds_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"idle\"}[$__rate_interval])) \n/ \non(host_name) group_left sum by (host_name)((irate(system_cpu_time_seconds_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}[$__rate_interval])))",
+                    "seriesNameFormat": "Idle"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "1_1": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Memory"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "list",
+                "position": "bottom"
+              },
+              "querySettings": [
+                {
+                  "areaOpacity": 0,
+                  "colorMode": "fixed",
+                  "colorValue": "#DEDAF7",
+                  "queryIndex": 0
+                },
+                {
+                  "colorMode": "fixed",
+                  "colorValue": "#7EB26D",
+                  "queryIndex": 1
+                },
+                {
+                  "colorMode": "fixed",
+                  "colorValue": "#052B51",
+                  "queryIndex": 2
+                }
+              ],
+              "visual": {
+                "areaOpacity": 0.4,
+                "connectNulls": false,
+                "display": "line",
+                "lineWidth": 1,
+                "stack": "all"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "bytes"
+                },
+                "min": 0
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "query": "sum(system_memory_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"})",
+                    "seriesNameFormat": "Available"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "query": "sum(system_memory_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"free\"})",
+                    "seriesNameFormat": "RAM Free"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "query": "sum(system_memory_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=~\"cached|buffered\"})",
+                    "seriesNameFormat": "RAM Cache + Buffer"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "instant": false,
+                    "query": "sum(system_memory_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"used\"})",
+                    "seriesNameFormat": "Used"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "1_2": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Network Traffic"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "list",
+                "position": "bottom"
+              },
+              "querySettings": [
+                {
+                  "negativeY": true,
+                  "queryIndex": 0
+                }
+              ],
+              "visual": {
+                "areaOpacity": 0.4,
+                "display": "line",
+                "lineWidth": 1
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "decbytes/sec"
+                },
+                "label": "Receive (-) / Transmit (+)"
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "query": "sum (rate(system_network_io_bytes_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", direction=\"receive\", job=\"\"}[$__rate_interval]))",
+                    "seriesNameFormat": "Receive"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "query": "sum (rate(system_network_io_bytes_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", direction=\"transmit\", job=\"\"}[$__rate_interval]))",
+                    "seriesNameFormat": "Transmit"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "1_3": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "I/O Usage Read / Write"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "mode": "list",
+                "position": "bottom"
+              },
+              "querySettings": [
+                {
+                  "negativeY": true,
+                  "queryIndex": 0
+                }
+              ],
+              "visual": {
+                "areaOpacity": 0.4,
+                "connectNulls": false,
+                "display": "line",
+                "lineWidth": 1
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "bytes/sec"
+                },
+                "label": "Read (-) / Write (+)"
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "query": "sum(irate(system_disk_io_bytes_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", direction=\"read\"}[$__rate_interval]))",
+                    "seriesNameFormat": "Read"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": "${DS_PROMETHEUS}",
+                    "query": "sum(irate(system_disk_io_bytes_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", direction=\"write\"}[$__rate_interval]))",
+                    "seriesNameFormat": "Write"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "1_4": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Network traffic"
+          },
+          "plugin": {
+            "kind": "Table",
+            "spec": {
+              "columnSettings": [
+                {
+                  "header": "Interface",
+                  "name": "device"
+                },
+                {
+                  "format": {
+                    "unit": "decbytes/sec"
+                  },
+                  "header": "Transmit",
+                  "name": "Trend #transmit_bytes"
+                },
+                {
+                  "format": {
+                    "unit": "packets/sec"
+                  },
+                  "header": "Transmit dropped",
+                  "name": "Trend #transmit_dropped_packets"
+                },
+                {
+                  "format": {
+                    "unit": "packets/sec"
+                  },
+                  "header": "Transmit err",
+                  "name": "Trend #receive_errors"
+                },
+                {
+                  "format": {
+                    "unit": "decbytes/sec"
+                  },
+                  "header": "Receive",
+                  "name": "Trend #receive_bytes"
+                },
+                {
+                  "format": {
+                    "unit": "packets/sec"
+                  },
+                  "header": "Receive dropped",
+                  "name": "Trend #receive_dropped_packets"
+                },
+                {
+                  "format": {
+                    "unit": "packets/sec"
+                  },
+                  "header": "Receive err",
+                  "name": "Trend #transmit_errors"
+                },
+                {
+                  "header": "Receive",
+                  "name": "Trend #receive"
+                },
+                {
+                  "header": "Transmit",
+                  "name": "Trend #transmit"
+                }
+              ],
+              "density": "compact",
+              "transforms": [
+                {
+                  "kind": "JoinByColumnValue",
+                  "spec": {
+                    "columns": [
+                      "device"
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "instant": false,
+                    "query": "sum by(device) (rate(system_network_io_bytes_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", job=\"\", direction=\"transmit\"}[$__rate_interval]))"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "instant": false,
+                    "query": "sum by(device) (rate(system_network_io_bytes_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", job=\"\", direction=\"receive\"}[$__rate_interval]))"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "instant": false,
+                    "query": "sum by(device) (rate(system_network_dropped_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", job=\"\",direction=\"receive\"}[$__rate_interval]))"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "instant": false,
+                    "query": "sum by(device) (rate(system_network_dropped_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", job=\"\",direction=\"transmit\"}[$__rate_interval]))"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "instant": false,
+                    "query": "sum by(device) (rate(system_network_errors_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", job=\"\",direction=\"receive\"}[$__rate_interval]))"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "instant": false,
+                    "query": "sum by(device) (rate(system_network_errors_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", job=\"\",direction=\"transmit\"}[$__rate_interval]))"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "1_5": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Disk usage"
+          },
+          "plugin": {
+            "kind": "Table",
+            "spec": {
+              "columnSettings": [
+                {
+                  "format": {
+                    "unit": "percent-decimal"
+                  },
+                  "header": "Used %",
+                  "name": "Used %"
+                },
+                {
+                  "header": "Free",
+                  "name": "Value #free (lastNotNull)",
+                  "width": 80
+                },
+                {
+                  "header": "Total",
+                  "name": "Value #total (lastNotNull)",
+                  "width": 80
+                },
+                {
+                  "header": "Used",
+                  "name": "used",
+                  "width": 78
+                },
+                {
+                  "header": "Mount",
+                  "name": "mountpoint",
+                  "width": 200
+                }
+              ],
+              "density": "compact",
+              "transforms": [
+                {
+                  "kind": "MergeSeries",
+                  "spec": {}
+                }
+              ]
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "instant": true,
+                    "query": "sum by(mountpoint) (system_filesystem_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"free\"})"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "webstore-metrics"
+                    },
+                    "instant": true,
+                    "query": "sum by(mountpoint) (system_filesystem_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"})"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "layouts": [
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "overview\u3010 $host_name\u3011",
+            "collapse": {
+              "open": true
+            }
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 1,
+              "width": 12,
+              "height": 4,
+              "content": {
+                "$ref": "#/spec/panels/0_0"
+              }
+            },
+            {
+              "x": 12,
+              "y": 1,
+              "width": 12,
+              "height": 4,
+              "content": {
+                "$ref": "#/spec/panels/0_1"
+              }
+            },
+            {
+              "x": 0,
+              "y": 5,
+              "width": 3,
+              "height": 4,
+              "content": {
+                "$ref": "#/spec/panels/0_2"
+              }
+            },
+            {
+              "x": 3,
+              "y": 5,
+              "width": 3,
+              "height": 4,
+              "content": {
+                "$ref": "#/spec/panels/0_3"
+              }
+            },
+            {
+              "x": 6,
+              "y": 5,
+              "width": 3,
+              "height": 4,
+              "content": {
+                "$ref": "#/spec/panels/0_4"
+              }
+            },
+            {
+              "x": 9,
+              "y": 5,
+              "width": 3,
+              "height": 4,
+              "content": {
+                "$ref": "#/spec/panels/0_5"
+              }
+            },
+            {
+              "x": 12,
+              "y": 5,
+              "width": 3,
+              "height": 4,
+              "content": {
+                "$ref": "#/spec/panels/0_6"
+              }
+            },
+            {
+              "x": 15,
+              "y": 5,
+              "width": 3,
+              "height": 4,
+              "content": {
+                "$ref": "#/spec/panels/0_7"
+              }
+            },
+            {
+              "x": 18,
+              "y": 5,
+              "width": 2,
+              "height": 2,
+              "content": {
+                "$ref": "#/spec/panels/0_8"
+              }
+            },
+            {
+              "x": 20,
+              "y": 5,
+              "width": 2,
+              "height": 2,
+              "content": {
+                "$ref": "#/spec/panels/0_9"
+              }
+            },
+            {
+              "x": 22,
+              "y": 5,
+              "width": 2,
+              "height": 2,
+              "content": {
+                "$ref": "#/spec/panels/0_10"
+              }
+            },
+            {
+              "x": 18,
+              "y": 7,
+              "width": 2,
+              "height": 2,
+              "content": {
+                "$ref": "#/spec/panels/0_11"
+              }
+            },
+            {
+              "x": 20,
+              "y": 7,
+              "width": 4,
+              "height": 2,
+              "content": {
+                "$ref": "#/spec/panels/0_12"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "Basic",
+            "collapse": {
+              "open": true
+            }
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 10,
+              "width": 6,
+              "height": 7,
+              "content": {
+                "$ref": "#/spec/panels/1_0"
+              }
+            },
+            {
+              "x": 6,
+              "y": 10,
+              "width": 5,
+              "height": 7,
+              "content": {
+                "$ref": "#/spec/panels/1_1"
+              }
+            },
+            {
+              "x": 11,
+              "y": 10,
+              "width": 6,
+              "height": 7,
+              "content": {
+                "$ref": "#/spec/panels/1_2"
+              }
+            },
+            {
+              "x": 17,
+              "y": 10,
+              "width": 7,
+              "height": 7,
+              "content": {
+                "$ref": "#/spec/panels/1_3"
+              }
+            },
+            {
+              "x": 0,
+              "y": 18,
+              "width": 15,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/1_4"
+              }
+            },
+            {
+              "x": 15,
+              "y": 18,
+              "width": 9,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/1_5"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "duration": "30m"
+  }
+}
