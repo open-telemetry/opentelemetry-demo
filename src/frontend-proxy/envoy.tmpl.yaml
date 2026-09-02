@@ -278,6 +278,19 @@ static_resources:
                     socket_address:
                       address: ${GRAFANA_HOST}
                       port_value: ${GRAFANA_PORT}
+    - name: perses
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      typed_dns_resolver_config: *dns_resolver
+      load_assignment:
+        cluster_name: perses
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: ${PERSES_HOST}
+                      port_value: ${PERSES_PORT}
     - name: jaeger
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
