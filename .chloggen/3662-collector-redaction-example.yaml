@@ -1,0 +1,7 @@
+change_type: enhancement
+
+component: collector
+
+note: "Add a data redaction/deletion example: delete, hash, and partially mask sensitive attributes with the transform processor, plus a documented redaction-processor fallback"
+
+issues: [3662]

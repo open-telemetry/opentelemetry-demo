@@ -1,0 +1,7 @@
+change_type: enhancement
+
+component: chatbot
+
+note: "Report health to the demo's OpAMP server when running with the agentic and observability stacks"
+
+issues: [3808]

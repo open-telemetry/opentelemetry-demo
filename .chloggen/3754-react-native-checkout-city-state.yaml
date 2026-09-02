@@ -1,0 +1,7 @@
+change_type: bug_fix
+
+component: react-native-app
+
+note: "Render missing `City` and `State` input fields in `CheckoutForm`"
+
+issues: [3754]

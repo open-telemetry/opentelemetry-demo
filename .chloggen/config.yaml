@@ -1,0 +1,13 @@
+# chloggen configuration.
+# Use an ASCII summary template so generated CHANGELOG.md sections pass the
+# repository's ASCII-only sanity check (internal/tools/sanitycheck.py).
+summary_template: .chloggen/summary.tmpl
+
+# Single changelog, matching chloggen's built-in defaults. These must be set
+# explicitly here: when a config file is passed, chloggen v0.30.0 does not
+# backfill them (an omitted 'change_logs' also drops entries that have no
+# explicit 'change_logs' field).
+change_logs:
+  default: CHANGELOG.md
+default_change_logs:
+  - default
