@@ -54,6 +54,7 @@ using opentelemetry::logs::EventId;
 namespace
 {
   constexpr auto shutdown_timeout = std::chrono::seconds(9);
+  constexpr auto server_shutdown_timeout = std::chrono::seconds(4);
 
   struct ServerShutdownResult
   {
@@ -61,7 +62,7 @@ namespace
     std::chrono::steady_clock::time_point deadline;
   };
 
-  ServerShutdownResult serverShutdownResult(bool succeeded)
+  ServerShutdownResult makeServerShutdownResult(bool succeeded)
   {
     return {succeeded, std::chrono::steady_clock::now() + shutdown_timeout};
   }
@@ -303,7 +304,7 @@ ServerShutdownResult RunServer(uint16_t port, const sigset_t& shutdown_signals)
   std::unique_ptr<Server> server(builder.BuildAndStart());
   if (server == nullptr) {
     std::cerr << "Failed to start Currency Server\n";
-    return serverShutdownResult(false);
+    return makeServerShutdownResult(false);
   }
 
   logger->Info(eventName("currency.server.started"),
@@ -322,9 +323,8 @@ ServerShutdownResult RunServer(uint16_t port, const sigset_t& shutdown_signals)
     logger->Info(eventName("currency.server.stopping"), shutdown_message);
   }
 
-  const auto result = serverShutdownResult(signal_error == 0);
-  server->Shutdown(std::chrono::system_clock::now() +
-                   remainingShutdownTimeout(result.deadline));
+  const auto result = makeServerShutdownResult(signal_error == 0);
+  server->Shutdown(std::chrono::system_clock::now() + server_shutdown_timeout);
   server->Wait();
   return result;
 }
