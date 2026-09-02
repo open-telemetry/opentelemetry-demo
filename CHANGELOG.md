@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [shipping] Fix floating-point truncation in `create_quote_from_float` and
+  add two-digit zero padding to `fmt::Display for Quote`
+  ([#3877](https://github.com/open-telemetry/opentelemetry-demo/issues/3877))
 * [load-generator] Revert #3564: replace k6 with the pre-k6 Locust-based load
   generator, removing the now-unused `loadGeneratorTraffic` and
   `loadGeneratorVUs` feature flags along with it
