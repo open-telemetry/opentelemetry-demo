@@ -145,6 +145,34 @@ jobs:
             "${WEAVER_IMAGE}" \
             registry check -r source
 
+  cart-unit-tests:
+    name: Cart unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Start Valkey
+        run: |
+          VALKEY_IMAGE=$(grep -oP '(?<=^VALKEY_IMAGE=)\S*' .env)
+          docker run -d --rm --name valkey -p 6379:6379 "${VALKEY_IMAGE}"
+          for i in {1..30}; do
+            if docker exec valkey valkey-cli ping 2>/dev/null | grep -q PONG; then
+              break
+            fi
+            sleep 1
+          done
+      - name: Set up .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68  # v6.0.0
+        with:
+          dotnet-version: '10.0.x'
+      - name: Run cart unit tests
+        working-directory: src/cart
+        env:
+          VALKEY_ADDR: localhost:6379
+        run: dotnet test tests/cart.tests.csproj
+
   check-react-native-changes:
     name: Check React Native changes
     runs-on: ubuntu-latest
@@ -190,6 +218,7 @@ jobs:
       sanity,
       checklicense,
       weaver-check,
+      cart-unit-tests,
       react-native-build,
       codeql-analysis
     ]
