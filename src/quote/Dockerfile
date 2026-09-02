@@ -4,7 +4,7 @@
 
 FROM ghcr.io/mlocati/php-extension-installer:2.11.12@sha256:b6d3fa381b9ba5cf051117c1c601d6a523b590e534bf3d56eb4fbe352949c138 AS installer
 
-FROM docker.io/library/composer:2.10.2@sha256:d020706319701a44468968321dccd0fce6620190159a7a9ec195d78e6e971c71 AS vendor
+FROM docker.io/library/composer:2.10.3@sha256:4d045ea9f71d5d111a95e608400da61d187e487adf9eaf2dfe068998a8d4f584 AS vendor
 
 WORKDIR /tmp/
 
@@ -18,7 +18,7 @@ RUN composer install \
     --no-dev \
     --prefer-dist
 
-FROM docker.io/library/php:8.6.0beta2-cli-alpine3.24@sha256:efe45eef99bcf358fa3e26dc51631207fcebb394f50aefcb824c0ebd66163207
+FROM docker.io/library/php:8.5.10-cli-alpine3.24@sha256:73d221fe605785e5b4c62b42dc54b0e87405367572da330d133844721de0bf22
 
 COPY --from=installer /usr/bin/install-php-extensions /usr/local/bin/
 
