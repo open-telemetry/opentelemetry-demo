@@ -37,9 +37,10 @@ SIGNAL_MATRIX = {
 
 # Services excluded from minimal scope:
 # - accounting, fraud-detection, kafka: require Kafka (not in minimal compose)
-# - frontend-web: browser-originated telemetry only appears while k6's browser
-#   scenario (K6_BROWSER_ENABLED) drives the frontend; its single browser VU
-#   generates it too slowly to assert reliably within the minimal test timeout
+# - frontend-web: LOCUST_BROWSER_TRAFFIC_ENABLED is on in every scope, but
+#   LOCUST_BROWSER_USER_WEIGHT (1) is low relative to LOCUST_HTTP_USER_WEIGHT
+#   (9), so browser-driven traces are too infrequent to reliably land within
+#   the test timeout
 FULL_ONLY_SERVICES = {"accounting", "fraud-detection", "frontend-web", "kafka"}
 
 # Services that only run when compose.agent.yaml is included (make start-agentic).

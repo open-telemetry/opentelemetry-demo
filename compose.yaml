@@ -330,6 +330,8 @@ services:
     environment:
       - FRONTEND_PORT
       - FRONTEND_HOST
+      - LOCUST_WEB_HOST
+      - LOCUST_WEB_PORT
       - GRAFANA_PORT
       - GRAFANA_HOST
       - JAEGER_UI_PORT
@@ -366,6 +368,8 @@ services:
     depends_on:
       frontend:
         condition: service_healthy
+      load-generator:
+        condition: service_started
       flagd-ui:
         condition: service_healthy
       telemetry-docs:
@@ -417,34 +421,36 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 1500M
     restart: unless-stopped
+    ports:
+      - "${LOCUST_WEB_PORT}"
     environment:
-      - LOAD_GENERATOR_VUS
-      - K6_TARGET_URL
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
-      - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+      - LOCUST_WEB_PORT
+      - LOCUST_USERS
+      - LOCUST_HOST
+      - LOCUST_HEADLESS
+      - LOCUST_AUTOSTART
+      - LOCUST_BROWSER_TRAFFIC_ENABLED=true
+      - LOCUST_HTTP_USER_WEIGHT
+      - LOCUST_BROWSER_USER_WEIGHT
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
       - OTEL_SERVICE_NAME=load-generator
+      - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+      - LOCUST_WEB_HOST=0.0.0.0
       - FLAGD_HOST
       - FLAGD_PORT
       - FLAGD_OFREP_PORT
-      - K6_OTEL_EXPORTER_PROTOCOL=http/protobuf
-      - K6_OTEL_HTTP_EXPORTER_ENDPOINT=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
-      - K6_OTEL_HTTP_EXPORTER_INSECURE=true
-      - K6_BROWSER_ENABLED=true
-      - K6_BROWSER_ARGS=no-sandbox,disable-dev-shm-usage
-      - K6_OTEL_METRIC_PREFIX=k6.
     healthcheck:
-      test: ["CMD-SHELL", "pgrep k6"]
-      start_period: 10s
+      test: ["CMD", "python3", "-c", "import socket; s=socket.create_connection(('localhost',${LOCUST_WEB_PORT}),2); s.close()"]
+      start_period: 30s
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 20
     depends_on:
       frontend:
-        condition: service_healthy
-      frontend-proxy:
         condition: service_healthy
       flagd:
         condition: service_started
