@@ -54,6 +54,10 @@ static_resources:
                           redirect: { path_redirect: "/grafana/" }
                         - match: { prefix: "/grafana/" }
                           route: { cluster: grafana }
+                        - match: { path: "/perses" }
+                          redirect: { path_redirect: "/perses/" }
+                        - match: { prefix: "/perses/" }
+                          route: { cluster: perses }
                         - match: { path: "/opamp" }
                           redirect: { path_redirect: "/opamp/" }
                         - match: { prefix: "/opamp/" }

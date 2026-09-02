@@ -1,3 +1,4 @@
+api_prefix: "/perses"
 database:
   file:
     folder: "/perses"
