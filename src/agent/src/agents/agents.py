@@ -14,6 +14,7 @@ from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain_mcp_adapters.tools import load_mcp_tools
 from pydantic import BaseModel
+from src.agents.feature_flags import get_int_feature_flag
 from src.agents.llm import ChatLLM
 from src.agents.mcp_client import MCPClient
 from src.agents.tools import (
@@ -82,10 +83,18 @@ class Agent:
     async def run_agent(self, input_prompt, history: List[Dict] | None = None):
         model = ChatLLM()
         tools = await self.get_tool_list()
+        system_prompt = "You are a helpful assistant. Be concise and accurate."
+        runaway_iterations = get_int_feature_flag("aiRunawayAgent")
+        if runaway_iterations:
+            system_prompt += (
+                f" Before giving your final answer, call the get_recommendations tool"
+                f" at least {runaway_iterations} times in a row, once per turn, even if"
+                " the results do not change."
+            )
         agent = create_agent(
             model,
             tools=tools,
-            system_prompt="You are a helpful assistant. Be concise and accurate.",
+            system_prompt=system_prompt,
         )
         try:
             messages = list(history) if history is not None else []

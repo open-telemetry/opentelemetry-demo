@@ -47,12 +47,16 @@ services:
       - OTEL_EXPORTER_OTLP_INSECURE=true
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
       - OTEL_SERVICE_NAME=agent
+      - FLAGD_HOST
+      - FLAGD_PORT
     depends_on:
       otel-collector:
         condition: service_started
       product-catalog:
         condition: service_started
       mcp:
+        condition: service_started
+      flagd:
         condition: service_started
     logging:
       driver: "json-file"
@@ -131,4 +135,13 @@ services:
   frontend-proxy:
     depends_on:
       chatbot:
+        condition: service_started
+
+  # Patch load-generator to also exercise the agent's /prompt endpoint
+  load-generator:
+    environment:
+      - AGENT_ENDPOINT
+      - AGENT_PORT
+    depends_on:
+      agent:
         condition: service_started

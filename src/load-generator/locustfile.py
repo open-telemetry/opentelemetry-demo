@@ -110,6 +110,17 @@ products = [
 people_file = open('people.json')
 people = json.load(people_file)
 
+# Prompts the AstronomyShopAgent's bundled VCR fixtures
+# (src/agent/fixtures/vcr_cassettes) have canned responses for, so
+# USE_VCR=True replays cleanly without a real LLM.
+agent_prompts = [
+    "Show all available products in the store.",
+    "What currencies are supported by the Astronomy Shop?",
+    "What current promotions are available on binoculars?",
+]
+agent_endpoint = os.environ.get("AGENT_ENDPOINT", "agent")
+agent_port = os.environ.get("AGENT_PORT", "8010")
+
 class WebsiteUser(HttpUser):
     weight = int(os.environ.get("LOCUST_HTTP_USER_WEIGHT", "9"))
     wait_time = between(1, 10)
@@ -206,6 +217,16 @@ class WebsiteUser(HttpUser):
                 logging.info(f"User flooding homepage {flood_count} times")
                 for _ in range(0, flood_count):
                     self.client.get("/")
+
+    @task(3)
+    def ask_agent(self):
+        prompt = random.choice(agent_prompts)
+        with self.tracer.start_as_current_span("user_ask_agent", context=context.get_current(), attributes={"gen_ai.input.prompt": prompt}):
+            logging.info(f"User asking agent: {prompt}")
+            self.client.post(
+                f"http://{agent_endpoint}:{agent_port}/prompt",
+                json={"message": prompt},
+            )
 
     def on_start(self):
         session_id = str(uuid.uuid4())
