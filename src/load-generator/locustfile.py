@@ -38,23 +38,34 @@ from openfeature.contrib.hook.opentelemetry import TracingHook
 
 from playwright.async_api import Route, Request
 
-# Configure metrics before other providers so SDK component metrics are
-# registered against the real meter provider.
 metric_exporter = OTLPMetricExporter(insecure=True)
-set_meter_provider(MeterProvider([PeriodicExportingMetricReader(metric_exporter)]))
+meter_provider = MeterProvider(
+    [PeriodicExportingMetricReader(metric_exporter)]
+)
+set_meter_provider(meter_provider)
 
 # Configure tracer provider first (needed for trace context in logs)
-tracer_provider = TracerProvider()
+tracer_provider = TracerProvider(meter_provider=meter_provider)
 trace.set_tracer_provider(tracer_provider)
-tracer_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter(insecure=True)))
+tracer_provider.add_span_processor(
+    BatchSpanProcessor(
+        OTLPSpanExporter(insecure=True),
+        meter_provider=meter_provider,
+    )
+)
 
 # Configure logger provider with the same resource
-logger_provider = LoggerProvider()
+logger_provider = LoggerProvider(meter_provider=meter_provider)
 set_logger_provider(logger_provider)
 
 # Set up log exporter and processor
 log_exporter = OTLPLogExporter(insecure=True)
-logger_provider.add_log_record_processor(BatchLogRecordProcessor(log_exporter))
+logger_provider.add_log_record_processor(
+    BatchLogRecordProcessor(
+        log_exporter,
+        meter_provider=meter_provider,
+    )
+)
 
 # Create logging handler that will include trace context
 handler = LoggingHandler(level=logging.INFO, logger_provider=logger_provider)
