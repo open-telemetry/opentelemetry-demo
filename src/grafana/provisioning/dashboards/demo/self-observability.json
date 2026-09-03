@@ -331,7 +331,7 @@
           "refId": "A"
         }
       ],
-      "title": "Spans processed",
+      "title": "Spans processed successfully",
       "type": "stat"
     },
     {
@@ -369,7 +369,7 @@
           "refId": "A"
         }
       ],
-      "title": "LogRecords processed",
+      "title": "LogRecords processed successfully",
       "type": "stat"
     },
     {
