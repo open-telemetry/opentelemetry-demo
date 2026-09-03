@@ -16,7 +16,7 @@
           "plugin": {
             "kind": "Markdown",
             "spec": {
-              "text": "This dashboard shows the latency histograms of the cart service.\nThe Grafana version of this dashboard also shows metric exemplars, which Perses does not support yet.\n<br>\nChart panels may require 5 minutes after the Demo is started before rendering data."
+              "text": "This dashboard shows the latency histograms of the cart service.<br>\nChart panels may require 5 minutes after the Demo is started before rendering data."
             }
           }
         }

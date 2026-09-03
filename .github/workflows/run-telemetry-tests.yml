@@ -108,7 +108,7 @@ jobs:
       - name: Save demo images to an artifact tarball
         run: |
           # Only the images we build (demo:latest-*) need shipping; third-party
-          # images (jaeger, prometheus, grafana, ...) are pulled from their own
+          # images (jaeger, prometheus, perses, ...) are pulled from their own
           # registries by each test job, so leave them out to keep the tarball small.
           IMAGES=$(docker images 'ghcr.io/open-telemetry/demo:latest-*' --format '{{.Repository}}:{{.Tag}}')
           echo "Saving images:"; echo "$IMAGES"

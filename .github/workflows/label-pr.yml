@@ -39,7 +39,7 @@ jobs:
               - '.env'
               - 'compose*.yaml'
               - 'src/flagd/**'
-              - 'src/grafana/**'
+              - 'src/perses/**'
               - 'src/jaeger/**'
               - 'src/otel-collector/**'
               - 'src/postgresql/**'
