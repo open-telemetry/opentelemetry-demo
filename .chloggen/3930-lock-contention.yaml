@@ -1,0 +1,7 @@
+change_type: enhancement
+
+component: product-catalog
+
+note: "Add productCatalogLockContention flag to simulate database lock contention"
+
+issues: [3930]
