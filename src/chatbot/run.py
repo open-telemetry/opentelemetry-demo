@@ -8,10 +8,15 @@ import asyncio
 import logging
 
 from dotenv import load_dotenv
-from opentelemetry import trace
+from opentelemetry import metrics, trace
+from opentelemetry.exporter.otlp.proto.http.metric_exporter import (
+    OTLPMetricExporter,
+)
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
+from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from src.chat_interface.chat_interface import ChatAgentUI, get_chat_ui_config
@@ -22,16 +27,23 @@ logging.basicConfig(level=logging.INFO)
 load_dotenv()
 
 
-def _configure_tracing() -> None:
-    provider = TracerProvider()
-    provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
-    trace.set_tracer_provider(provider)
+def _configure_telemetry() -> None:
+    meter_provider = MeterProvider(
+        metric_readers=[
+            PeriodicExportingMetricReader(OTLPMetricExporter()),
+        ],
+    )
+    metrics.set_meter_provider(meter_provider)
+
+    tracer_provider = TracerProvider(meter_provider=meter_provider)
+    tracer_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
+    trace.set_tracer_provider(tracer_provider)
 
     RequestsInstrumentor().instrument()
     HTTPXClientInstrumentor().instrument()
 
 
-_configure_tracing()
+_configure_telemetry()
 
 
 async def start_servers():

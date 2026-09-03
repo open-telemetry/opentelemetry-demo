@@ -38,6 +38,11 @@ from openfeature.contrib.hook.opentelemetry import TracingHook
 
 from playwright.async_api import Route, Request
 
+# Configure metrics before other providers so SDK component metrics are
+# registered against the real meter provider.
+metric_exporter = OTLPMetricExporter(insecure=True)
+set_meter_provider(MeterProvider([PeriodicExportingMetricReader(metric_exporter)]))
+
 # Configure tracer provider first (needed for trace context in logs)
 tracer_provider = TracerProvider()
 trace.set_tracer_provider(tracer_provider)
@@ -58,10 +63,6 @@ handler = LoggingHandler(level=logging.INFO, logger_provider=logger_provider)
 root_logger = logging.getLogger()
 root_logger.addHandler(handler)
 root_logger.setLevel(logging.INFO)
-
-# Configure metrics
-metric_exporter = OTLPMetricExporter(insecure=True)
-set_meter_provider(MeterProvider([PeriodicExportingMetricReader(metric_exporter)]))
 
 # Instrument logging to automatically inject trace context
 LoggingInstrumentor().instrument(set_logging_format=True)
