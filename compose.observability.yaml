@@ -1,7 +1,7 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-# Observability stack layer: adds Jaeger, Prometheus, OpenSearch, Grafana, and
+# Observability stack layer: adds Jaeger, Prometheus, OpenSearch, Perses, and
 # an OpAMP server, and patches the otel-collector to export to or report to them.
 #
 # Usage:
@@ -39,22 +39,22 @@ services:
         max-size: "5m"
         max-file: "2"
 
-  # Grafana
-  grafana:
-    image: ${GRAFANA_IMAGE}
-    container_name: grafana
+  perses:
+    image: ${PERSES_IMAGE}
+    container_name: perses
     deploy:
       resources:
         limits:
           memory: 175M
     restart: unless-stopped
-    environment:
-      - "GF_INSTALL_PLUGINS=grafana-opensearch-datasource"
+    command:
+      - "--config=/etc/perses/config.yaml"
+      - "--web.listen-address=:${PERSES_PORT}"
     volumes:
-      - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
-      - ./src/grafana/provisioning/:/etc/grafana/provisioning/
+      - ./src/perses/config.yaml:/etc/perses/config.yaml
+      - ./src/perses/provisioning/:/etc/perses/provisioning/
     ports:
-      - "${GRAFANA_PORT}"
+      - "${PERSES_PORT}"
     logging:
       driver: "json-file"
       options:
@@ -170,7 +170,7 @@ services:
     depends_on:
       jaeger:
         condition: service_started
-      grafana:
+      perses:
         condition: service_started
       opamp-server:
         condition: service_healthy

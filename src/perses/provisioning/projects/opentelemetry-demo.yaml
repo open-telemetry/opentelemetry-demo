@@ -1,0 +1,6 @@
+kind: "Project"
+metadata:
+  name: "opentelemetry-demo"
+spec:
+  display:
+    name: "OpenTelemetry Demo"

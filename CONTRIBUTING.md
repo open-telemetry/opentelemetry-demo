@@ -115,7 +115,7 @@ Once the images are built and containers are started, visit:
 
 - **Webstore**: [http://localhost:8080/](http://localhost:8080/)
 - **Jaeger**: [http://localhost:8080/jaeger/ui/](http://localhost:8080/jaeger/ui/)
-- **Grafana**: [http://localhost:8080/grafana/](http://localhost:8080/grafana/)
+- **Perses**: [http://localhost:8080/perses/](http://localhost:8080/perses/)
 - **OpAMP**: [http://localhost:8080/opamp/](http://localhost:8080/opamp/)
 - **Feature Flags UI**: [http://localhost:8080/feature/](http://localhost:8080/feature/)
 - **Load Generator UI**: [http://localhost:8080/loadgen/](http://localhost:8080/loadgen/)
@@ -294,7 +294,7 @@ make start
 ```
 
 Verify the change using the path that matches what you changed: the Webstore UI,
-direct service endpoints, container logs, Jaeger traces, Grafana dashboards, or
+direct service endpoints, container logs, Jaeger traces, Perses dashboards, or
 other telemetry views as appropriate.
 
 Update the relevant [documentation][docs] and [Changelog](./CHANGELOG.md) before

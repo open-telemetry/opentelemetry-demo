@@ -1,0 +1,158 @@
+{
+  "kind": "Dashboard",
+  "metadata": {
+    "name": "events-by-name",
+    "project": "opentelemetry-demo"
+  },
+  "spec": {
+    "display": {
+      "name": "Events by Name"
+    },
+    "variables": [
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "name": "service",
+          "display": {
+            "name": "Service",
+            "hidden": false
+          },
+          "allowAllValue": true,
+          "allowMultiple": true,
+          "sort": "alphabetical-asc",
+          "plugin": {
+            "kind": "PrometheusLabelValuesVariable",
+            "spec": {
+              "labelName": "service_name",
+              "matchers": [
+                "traces_span_metrics_calls_total"
+              ]
+            }
+          },
+          "defaultValue": [
+            "$__all"
+          ]
+        }
+      },
+      {
+        "kind": "TextVariable",
+        "spec": {
+          "name": "event_name",
+          "display": {
+            "name": "Event name",
+            "description": "Exact event name to filter on, empty for all events",
+            "hidden": false
+          },
+          "value": ""
+        }
+      },
+      {
+        "kind": "TextVariable",
+        "spec": {
+          "name": "severity",
+          "display": {
+            "name": "Severity",
+            "description": "Exact severity text to filter on, empty for all severities",
+            "hidden": false
+          },
+          "value": ""
+        }
+      }
+    ],
+    "panels": {
+      "0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Top Event Names by Volume",
+            "description": "Events grouped by their EventName, ordered by volume."
+          },
+          "plugin": {
+            "kind": "LogsTable",
+            "spec": {
+              "showTime": false,
+              "enableDetails": true,
+              "allowWrap": true
+            }
+          },
+          "queries": [
+            {
+              "kind": "LogQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "OpenSearchLogQuery",
+                  "spec": {
+                    "query": "source=otel-logs-*\n| where eventName != ''\n| where resource.service.name in (${service:singlequote})\n| where (eventName = '${event_name}' or '${event_name}' = '')\n| where (severity.text = '${severity}' or '${severity}' = '')\n| stats count() as log_count by eventName\n| sort - log_count\n| head 20",
+                    "timestampField": "observedTimestamp",
+                    "messageField": "body"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "1": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Event Volume Over Time (per minute)",
+            "description": "Event volume over time, split by the top Event Names."
+          },
+          "plugin": {
+            "kind": "LogsTable",
+            "spec": {
+              "showTime": false,
+              "enableDetails": true,
+              "allowWrap": true
+            }
+          },
+          "queries": [
+            {
+              "kind": "LogQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "OpenSearchLogQuery",
+                  "spec": {
+                    "query": "source=otel-logs-*\n| where eventName != ''\n| where resource.service.name in (${service:singlequote})\n| where (eventName = '${event_name}' or '${event_name}' = '')\n| where (severity.text = '${severity}' or '${severity}' = '')\n| stats count() as log_count by span(observedTimestamp, 1m) as time, eventName\n| sort - time",
+                    "timestampField": "observedTimestamp",
+                    "messageField": "body"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "layouts": [
+      {
+        "kind": "Grid",
+        "spec": {
+          "items": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 10,
+              "height": 9,
+              "content": {
+                "$ref": "#/spec/panels/0"
+              }
+            },
+            {
+              "x": 10,
+              "y": 0,
+              "width": 14,
+              "height": 9,
+              "content": {
+                "$ref": "#/spec/panels/1"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "duration": "15m",
+    "refreshInterval": "30s"
+  }
+}

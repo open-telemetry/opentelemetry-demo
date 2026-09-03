@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+* [perses] Add Perses as an alternative to Grafana for the observability visualization.
+  ([#3928](https://github.com/open-telemetry/opentelemetry-demo/pull/3928))
 * [shipping] Fix floating-point truncation in `create_quote_from_float` and
   add two-digit zero padding to `fmt::Display for Quote`
   ([#3877](https://github.com/open-telemetry/opentelemetry-demo/issues/3877))
