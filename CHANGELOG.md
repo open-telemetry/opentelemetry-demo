@@ -408,9 +408,7 @@ version section directly below the marker and deletes them.
   metrics emitted by the OpenTelemetry SDKs themselves (experimental
   `otel.sdk.*` semantic conventions), and opt the `ad`, `fraud-detection` and
   `kafka` (Java) services in to SDK self-monitoring via
-  `OTEL_EXPERIMENTAL_SDK_TELEMETRY_VERSION=latest`. The `agent`, `chatbot`,
-  `load-generator`, `mcp` and `recommendation` (Python) services opt in via
-  `OTEL_PYTHON_SDK_INTERNAL_METRICS_ENABLED=true`.
+  `OTEL_EXPERIMENTAL_SDK_TELEMETRY_VERSION=latest`.
   The dashboard is driven by a `Service` template variable, so any additional
   service that opts in appears automatically.
   ([#3620](https://github.com/open-telemetry/opentelemetry-demo/pull/3620),
