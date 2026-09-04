@@ -25,6 +25,7 @@ COPY ./src/payment/charge.js charge.js
 COPY ./src/payment/index.js index.js
 COPY ./src/payment/logger.js logger.js
 
+ARG PAYMENT_PORT=50051
 EXPOSE ${PAYMENT_PORT}
 
 CMD ["index.js"]

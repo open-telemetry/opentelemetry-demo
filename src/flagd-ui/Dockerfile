@@ -106,6 +106,7 @@ ENV MIX_ENV="prod"
 # Only copy the final release from the build stage
 COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/flagd_ui ./
 
+ARG FLAGD_UI_PORT=4000
 EXPOSE ${FLAGD_UI_PORT}
 
 # If using an environment that doesn't automatically reap zombie processes, it is

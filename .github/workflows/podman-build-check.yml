@@ -1,0 +1,90 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+name: Podman build check
+
+on:
+ pull_request:
+  paths:
+  - 'src/**'
+  - '.github/workflows/podman-build-check.yml'
+
+permissions:
+ contents: read
+
+concurrency:
+ group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+ cancel-in-progress: true
+
+jobs:
+ podman_build:
+  name: Podman build
+  runs-on: ubuntu-latest
+  steps:
+  - name: Checkout code
+    uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+    with:
+     persist-credentials: false
+
+  - name: Load build args from .env
+    run: |
+      if [ -f .env ]; then
+        grep -vE '^\s*#|^\s*$' .env | while read -r line; do
+          echo "$line" >> "$GITHUB_ENV"
+        done
+      else
+        echo ".env file not found!"
+        exit 1
+      fi
+
+  - name: Build all images with podman (buildah)
+    run: |
+      set -u
+      dockerfiles="
+       ./src/accounting/Dockerfile
+       ./src/ad/Dockerfile
+       ./src/agent/Dockerfile
+       ./src/cart/src/Dockerfile
+       ./src/chatbot/Dockerfile
+       ./src/checkout/Dockerfile
+       ./src/currency/Dockerfile
+       ./src/email/Dockerfile
+       ./src/flagd-ui/Dockerfile
+       ./src/fraud-detection/Dockerfile
+       ./src/frontend/Dockerfile
+       ./src/frontend-proxy/Dockerfile
+       ./src/image-provider/Dockerfile
+       ./src/kafka/Dockerfile
+       ./src/load-generator/Dockerfile
+       ./src/opamp-server/Dockerfile
+       ./src/mcp/Dockerfile
+       ./src/opensearch/Dockerfile
+       ./src/payment/Dockerfile
+       ./src/product-catalog/Dockerfile
+       ./src/quote/Dockerfile
+       ./src/recommendation/Dockerfile
+       ./src/shipping/Dockerfile
+       ./src/telemetry-docs/Dockerfile
+      "
+      failed=""
+      for f in $dockerfiles; do
+        echo "::group::podman build $f"
+        if podman build \
+          --platform linux/amd64 \
+          --build-arg OTEL_JAVA_AGENT_VERSION="${OTEL_JAVA_AGENT_VERSION}" \
+          --build-arg OPENTELEMETRY_CPP_VERSION="${OPENTELEMETRY_CPP_VERSION}" \
+          --build-arg OPAMP_GO_REF="${OPAMP_GO_REF}" \
+          -f "$f" -t "demo:$(basename "$(dirname "$f")")" . ; then
+         echo "OK: $f"
+        else
+         echo "FAILED: $f"
+         failed="$failed $f"
+        fi
+        echo "::endgroup::"
+      done
+      if [ -n "$failed" ]; then
+        echo "The following images failed to build under podman:"
+        for f in $failed; do echo "  - $f"; done
+        exit 1
+      fi
+      echo "All images built successfully under podman."
