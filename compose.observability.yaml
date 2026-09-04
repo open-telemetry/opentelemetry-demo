@@ -209,3 +209,11 @@ services:
     depends_on:
       opamp-server:
         condition: service_healthy
+
+  product-catalog:
+    environment:
+      - OPAMP_SERVER_ENDPOINT=wss://${OPAMP_SERVER_HOST}:4320/v1/opamp
+      - OPAMP_SERVER_TLS_INSECURE_SKIP_VERIFY=true
+    depends_on:
+      opamp-server:
+        condition: service_healthy
