@@ -297,6 +297,82 @@
       "type": "stat"
     },
     {
+      "datasource": { "type": "prometheus", "uid": "${prometheus_datasource}" },
+      "description": "Rate of spans successfully accepted by span processors (`error_type` empty). This measures processor throughput, not successful export.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "blue" },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "blue", "value": 0 } ] },
+          "unit": "items/sec"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 8, "x": 8, "y": 9 },
+      "id": 70,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": [ "lastNotNull" ], "fields": "", "values": false },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.1",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${prometheus_datasource}" },
+          "editorMode": "code",
+          "expr": "sum(rate(otel_sdk_processor_span_processed_total{service_name=~\"$service_name\",error_type=\"\"}[$__rate_interval]))",
+          "instant": false,
+          "legendFormat": "Spans processed",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Spans processed successfully",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${prometheus_datasource}" },
+      "description": "Rate of LogRecords successfully accepted by log processors (`error_type` empty). This measures processor throughput, not successful export.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "green" },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": 0 } ] },
+          "unit": "items/sec"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 9 },
+      "id": 71,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": [ "lastNotNull" ], "fields": "", "values": false },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.1",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${prometheus_datasource}" },
+          "editorMode": "code",
+          "expr": "sum(rate(otel_sdk_processor_log_processed_total{service_name=~\"$service_name\",error_type=\"\"}[$__rate_interval]))",
+          "instant": false,
+          "legendFormat": "LogRecords processed",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "LogRecords processed successfully",
+      "type": "stat"
+    },
+    {
       "collapsed": false,
       "gridPos": { "h": 1, "w": 24, "x": 0, "y": 13 },
       "id": 20,
