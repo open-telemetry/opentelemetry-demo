@@ -3,10 +3,13 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
+import asyncio
 import os
+import time
 
 import httpx
 from langchain_openai import ChatOpenAI
+from src.agents.feature_flags import get_int_feature_flag
 from src.agents.patch_vcr import VCR
 
 
@@ -34,12 +37,18 @@ class ChatLLM(ChatOpenAI):
         object.__setattr__(self, "_cassette_name", cassette_name)
 
     def _generate(self, messages, stop=None, run_manager=None, **kwargs):
+        delay_ms = get_int_feature_flag("aiSlowResponse")
+        if delay_ms:
+            time.sleep(delay_ms / 1000)
         if getattr(self, "_use_vcr", False):
             with VCR.use_cassette(self._cassette_name):
                 return super()._generate(messages, stop, run_manager, **kwargs)
         return super()._generate(messages, stop, run_manager, **kwargs)
 
     async def _agenerate(self, messages, stop=None, run_manager=None, **kwargs):
+        delay_ms = get_int_feature_flag("aiSlowResponse")
+        if delay_ms:
+            await asyncio.sleep(delay_ms / 1000)
         if getattr(self, "_use_vcr", False):
             with VCR.use_cassette(self._cassette_name):
                 return await super()._agenerate(messages, stop, run_manager, **kwargs)

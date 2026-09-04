@@ -11,6 +11,7 @@ import os
 from dotenv import load_dotenv
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
+from opentelemetry.instrumentation.openai import OpenAIInstrumentor
 from src.agents.agents import Agent
 from traceloop.sdk import Traceloop
 
@@ -23,6 +24,9 @@ Traceloop.init(
 )
 
 HTTPXClientInstrumentor().instrument()
+
+if not OpenAIInstrumentor().is_instrumented_by_opentelemetry:
+    OpenAIInstrumentor().instrument()
 
 
 async def start_servers():
