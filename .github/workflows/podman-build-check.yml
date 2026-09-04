@@ -3,81 +3,84 @@
 
 name: Podman build check
 
-# Verifies every service image builds under Podman/buildah, which is stricter
-# than Docker BuildKit (e.g. EXPOSE with undeclared ARG, WORKDIR ownership).
 on:
  pull_request:
-   paths:
-     - 'src/**'
-     - '.github/workflows/podman-build.yml'
+  paths:
+  - 'src/**'
+  - '.github/workflows/podman-build-check.yml'
 
 permissions:
  contents: read
 
 jobs:
  podman_build:
-   name: Podman build ${{ matrix.tag_suffix }}
-   runs-on: ubuntu-latest
-   strategy:
-     fail-fast: false
-     matrix:
-       include:
-         - { file: ./src/accounting/Dockerfile,       tag_suffix: accounting }
-         - { file: ./src/ad/Dockerfile,               tag_suffix: ad }
-         - { file: ./src/agent/Dockerfile,            tag_suffix: agent }
-         - { file: ./src/cart/src/Dockerfile,         tag_suffix: cart }
-         - { file: ./src/chatbot/Dockerfile,          tag_suffix: chatbot }
-         - { file: ./src/checkout/Dockerfile,         tag_suffix: checkout }
-         - { file: ./src/currency/Dockerfile,         tag_suffix: currency }
-         - { file: ./src/email/Dockerfile,            tag_suffix: email }
-         - { file: ./src/flagd-ui/Dockerfile,         tag_suffix: flagd-ui }
-         - { file: ./src/fraud-detection/Dockerfile,  tag_suffix: fraud-detection }
-         - { file: ./src/frontend/Dockerfile,         tag_suffix: frontend }
-         - { file: ./src/frontend-proxy/Dockerfile,   tag_suffix: frontend-proxy }
-         - { file: ./src/image-provider/Dockerfile,   tag_suffix: image-provider }
-         - { file: ./src/kafka/Dockerfile,            tag_suffix: kafka }
-         - { file: ./src/load-generator/Dockerfile,   tag_suffix: load-generator }
-         - { file: ./src/opamp-server/Dockerfile,     tag_suffix: opamp-server }
-         - { file: ./src/mcp/Dockerfile,              tag_suffix: mcp }
-         - { file: ./src/opensearch/Dockerfile,       tag_suffix: opensearch }
-         - { file: ./src/payment/Dockerfile,          tag_suffix: payment }
-         - { file: ./src/product-catalog/Dockerfile,  tag_suffix: product-catalog }
-         - { file: ./src/quote/Dockerfile,            tag_suffix: quote }
-         - { file: ./src/recommendation/Dockerfile,   tag_suffix: recommendation }
-         - { file: ./src/shipping/Dockerfile,         tag_suffix: shipping }
-         - { file: ./src/telemetry-docs/Dockerfile,   tag_suffix: telemetry-docs }
+  name: Podman build
+  runs-on: ubuntu-latest
+  steps:
+  - name: Checkout code
+    uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+    with:
+     persist-credentials: false
 
-   steps:
-     - name: Checkout code
-       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-       with:
-         persist-credentials: false
+  - name: Load build args from .env
+    run: |
+      if [ -f .env ]; then
+        grep -vE '^\s*#|^\s*$' .env | while read -r line; do
+          echo "$line" >> "$GITHUB_ENV"
+        done
+      else
+        echo ".env file not found!"
+        exit 1
+      fi
 
-     - name: Load build args from .env
-       run: |
-         if [ -f .env ]; then
-           grep -vE '^\s*#|^\s*$' .env | while read -r line; do
-             echo "$line" >> "$GITHUB_ENV"
-           done
-         else
-           echo ".env file not found!"
-           exit 1
-         fi
-
-     - name: Show podman/buildah version
-       run: podman version
-
-     - name: Build image with podman (rootless buildah)
-       env:
-         DOCKERFILE: ${{ matrix.file }}
-         TAG_SUFFIX: ${{ matrix.tag_suffix }}
-       run: |
-         podman build \
-           --platform linux/amd64 \
-           --build-arg OTEL_JAVA_AGENT_VERSION="${OTEL_JAVA_AGENT_VERSION}" \
-           --build-arg OPENTELEMETRY_CPP_VERSION="${OPENTELEMETRY_CPP_VERSION}" \
-           --build-arg OPAMP_GO_REF="${OPAMP_GO_REF}" \
-           -f "${DOCKERFILE}" \
-           -t "demo:${TAG_SUFFIX}" \
-           .
-
+  - name: Build all images with podman (buildah)
+    run: |
+      set -u
+      dockerfiles="
+       ./src/accounting/Dockerfile
+       ./src/ad/Dockerfile
+       ./src/agent/Dockerfile
+       ./src/cart/src/Dockerfile
+       ./src/chatbot/Dockerfile
+       ./src/checkout/Dockerfile
+       ./src/currency/Dockerfile
+       ./src/email/Dockerfile
+       ./src/flagd-ui/Dockerfile
+       ./src/fraud-detection/Dockerfile
+       ./src/frontend/Dockerfile
+       ./src/frontend-proxy/Dockerfile
+       ./src/image-provider/Dockerfile
+       ./src/kafka/Dockerfile
+       ./src/load-generator/Dockerfile
+       ./src/opamp-server/Dockerfile
+       ./src/mcp/Dockerfile
+       ./src/opensearch/Dockerfile
+       ./src/payment/Dockerfile
+       ./src/product-catalog/Dockerfile
+       ./src/quote/Dockerfile
+       ./src/recommendation/Dockerfile
+       ./src/shipping/Dockerfile
+       ./src/telemetry-docs/Dockerfile
+      "
+      failed=""
+      for f in $dockerfiles; do
+        echo "::group::podman build $f"
+        if podman build \
+          --platform linux/amd64 \
+          --build-arg OTEL_JAVA_AGENT_VERSION="${OTEL_JAVA_AGENT_VERSION}" \
+          --build-arg OPENTELEMETRY_CPP_VERSION="${OPENTELEMETRY_CPP_VERSION}" \
+          --build-arg OPAMP_GO_REF="${OPAMP_GO_REF}" \
+          -f "$f" -t "demo:$(basename "$(dirname "$f")")" . ; then
+         echo "OK: $f"
+        else
+         echo "FAILED: $f"
+         failed="$failed $f"
+        fi
+        echo "::endgroup::"
+      done
+      if [ -n "$failed" ]; then
+        echo "The following images failed to build under podman:"
+        for f in $failed; do echo "  - $f"; done
+        exit 1
+      fi
+      echo "All images built successfully under podman."
