@@ -1,0 +1,7 @@
+change_type: bug_fix
+
+component: react-native-app
+
+note: "Catch errors from `placeOrder` in the Cart screen and show an error toast so payment failures are visible to the user instead of being silently dropped"
+
+issues: [3760]
