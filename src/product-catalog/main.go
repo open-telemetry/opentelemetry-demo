@@ -102,7 +102,7 @@ func initDatabase() error {
 func main() {
 	ctx := context.Background()
 
-	opampIdentity, err := prepareOpAmpIdentity()
+	opAMPIdentity, err := prepareOpAMPIdentity()
 	if err != nil {
 		logger.Error(fmt.Sprintf("Failed to prepare OpAMP identity: %v", err))
 	}
@@ -165,12 +165,14 @@ func main() {
 		logger.Error(err.Error())
 	}
 
-	opampClient, err := startOpAmpClient(context.Background(), opampIdentity)
+	opAMPClient, err := startOpAMPClient(context.Background(), opAMPIdentity)
 	if err != nil {
 		logger.Error(fmt.Sprintf("Failed to start OpAMP client: %v", err))
-	} else if opampClient != nil {
+	} else if opAMPClient != nil {
 		defer func() {
-			if err := opampClient.Stop(context.Background()); err != nil {
+			shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+			if err := opAMPClient.Stop(shutdownCtx); err != nil {
 				logger.Error(fmt.Sprintf("Error stopping OpAMP client: %v", err))
 			} else {
 				logger.Info("Stopped OpAMP client")
