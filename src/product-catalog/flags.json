@@ -5,6 +5,11 @@
       "defaultValue": false,
       "description": "simulates a potential product catalog failure scenario",
       "flagType": "boolean"
+    },
+    "productCatalogLockContention": {
+      "defaultValue": false,
+      "description": "simulates lock contention on the product catalog database",
+      "flagType": "boolean"
     }
   }
 }
