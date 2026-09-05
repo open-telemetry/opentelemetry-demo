@@ -49,6 +49,15 @@ the release.
   The server bound to the port but was never started to accept connections, causing
   the service to fail its health checks.
   ([#3844](https://github.com/open-telemetry/opentelemetry-demo/pull/3844))
+Changelog entries are managed with individual fragment files under
+[`.chloggen`](./.chloggen), one per pull request. The unreleased changes are
+the set of fragment files currently in that directory. Do not edit released
+sections by hand; add a fragment instead (see the
+[contributing guide](./CONTRIBUTING.md#adding-a-changelog-entry)). At release
+time, `make chlog-update VERSION=x.x.x` folds those fragments into a new
+version section directly below the marker and deletes them.
+
+<!-- next version -->
 
 ## 3.0.0
 

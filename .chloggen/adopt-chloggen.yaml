@@ -1,0 +1,12 @@
+change_type: enhancement
+
+component: repo
+
+note: Manage the changelog with per-PR `.chloggen` fragment files (chloggen) instead of hand-editing the shared `CHANGELOG.md` Unreleased section, eliminating changelog merge conflicts
+
+issues: [3926]
+
+subtext: |-
+  Contributors now run `make chlog-new` to add a fragment; fragments are folded
+  into CHANGELOG.md at release time with `make chlog-update VERSION=x.x.x`. See
+  CONTRIBUTING.md for the workflow.

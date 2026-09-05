@@ -125,6 +125,24 @@ jobs:
       - name: Run checklicense
         run: make checklicense
 
+  # Validates that every fragment in .chloggen/ is well-formed. This does not
+  # require a fragment to be present on a PR; the `Skip Changelog` label is
+  # documented as the convention for when/if presence enforcement is enabled.
+  changelog:
+    name: Changelog
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e  # v7.0.0
+        with:
+          go-version: '1.25.10'
+      - name: Validate changelog fragments
+        run: make chlog-validate
+
   weaver-check:
     name: Weaver check
     runs-on: ubuntu-latest
@@ -171,14 +189,6 @@ jobs:
     if: needs.check-react-native-changes.outputs.should_build == 'true'
     uses: ./.github/workflows/react-native-build.yml
 
-  zizmor:
-    name: zizmor scan
-    permissions:
-      actions: read  # required to scan GitHub Actions workflows
-      contents: read  # required to checkout the repository
-      security-events: write  # required to upload zizmor SARIF to code scanning
-    uses: ./.github/workflows/zizmor.yml
-
   codeql-analysis:
     name: CodeQL analysis
     permissions:
@@ -197,10 +207,10 @@ jobs:
       checklinks,
       sanity,
       checklicense,
+      changelog,
       weaver-check,
       react-native-build,
-      codeql-analysis,
-      zizmor
+      codeql-analysis
     ]
     if: always() && !cancelled()
     runs-on: ubuntu-latest

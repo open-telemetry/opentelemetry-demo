@@ -1,0 +1,7 @@
+change_type: enhancement
+
+component: "checkout, product-catalog"
+
+note: "Bump `go.opentelemetry.io/contrib` to the v1.46.0/v0.71.0 release line, picking up otelgrpc recording `error.type` on RPC duration metrics for failed calls"
+
+issues: [3901]

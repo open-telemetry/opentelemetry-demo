@@ -1,0 +1,68 @@
+{{- define "entry" -}}
+- `{{ .Component }}`: {{ .Note }} (
+{{- range $i, $issue := .Issues }}
+{{- if $i }}, {{ end -}}
+#{{ $issue }}
+{{- end -}}
+)
+
+{{- if .SubText }}
+{{ .SubText | indent 2 }}
+{{- end }}
+{{- end }}
+## {{ .Version }}
+
+{{- if .BreakingChanges }}
+
+### Breaking changes
+
+{{- range $i, $change := .BreakingChanges }}
+{{- if eq $i 0}}
+{{end}}
+{{ template "entry" $change }}
+{{- end }}
+{{- end }}
+
+{{- if .Deprecations }}
+
+### Deprecations
+
+{{- range $i, $change := .Deprecations }}
+{{- if eq $i 0}}
+{{end}}
+{{ template "entry" $change }}
+{{- end }}
+{{- end }}
+
+{{- if .NewComponents }}
+
+### New components
+
+{{- range $i, $change := .NewComponents }}
+{{- if eq $i 0}}
+{{end}}
+{{ template "entry" $change }}
+{{- end }}
+{{- end }}
+
+{{- if .Enhancements }}
+
+### Enhancements
+
+{{- range $i, $change := .Enhancements }}
+{{- if eq $i 0}}
+{{end}}
+{{ template "entry" $change }}
+{{- end }}
+{{- end }}
+
+{{- if .BugFixes }}
+
+### Bug fixes
+
+{{- range $i, $change := .BugFixes }}
+{{- if eq $i 0}}
+{{end}}
+{{ template "entry" $change }}
+{{- end }}
+{{- end }}
