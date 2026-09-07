@@ -1,11 +1,11 @@
 requests==2.34.2
 traceloop-sdk==0.62.3
-python-dotenv==1.2.2
+python-dotenv==1.2.3
 httpx==0.28.1
-langchain_openai==1.5.1
-langchain==1.3.15
+langchain_openai==1.6.0
+langchain==1.3.18
 langgraph-prebuilt==1.1.0
-mcp==1.29.0
+mcp==1.29.1
 fastmcp==3.4.7
 langchain_mcp_adapters==0.3.2
 fastapi==0.141.1

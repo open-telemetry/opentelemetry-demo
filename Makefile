@@ -45,6 +45,15 @@ endif
 SEMCONVGEN_VERSION=0.11.0
 YAMLLINT_VERSION=1.30.0
 
+# Changelog fragment tooling (chloggen). Pinned to match the OpenTelemetry
+# Collector. Invoked from the repo root, which has no go.mod, so `go run` runs
+# the pinned tool without touching any local Go module.
+CHLOGGEN_VERSION=0.30.0
+CHLOGGEN_CONFIG=.chloggen/config.yaml
+CHLOGGEN=go run go.opentelemetry.io/build-tools/chloggen@v$(CHLOGGEN_VERSION)
+# Default changelog fragment filename is derived from the current branch name.
+FILENAME?=$(shell git branch --show-current | sed 's/[^a-zA-Z0-9]/_/g')
+
 .PHONY: all
 all: install-tools markdownlint misspell yamllint
 
@@ -87,6 +96,7 @@ checklicense:	$(ADDLICENSE)
 		-ignore node_modules/** \
 		-ignore .expo/** \
 		-ignore Pods/** \
+		-ignore ".chloggen/**" \
 		-ignore **/extras/** \
 		-ignore **/vendor/** \
 		-ignore **/.venv/** \
@@ -105,6 +115,7 @@ addlicense:	$(ADDLICENSE)
 		-ignore node_modules/** \
 		-ignore .expo/** \
 		-ignore Pods/** \
+		-ignore ".chloggen/**" \
 		-ignore **/extras/** \
 		-ignore **/vendor/** \
 		-ignore **/.venv/** \
@@ -123,13 +134,37 @@ checklinks:
 
 # Run all checks in order of speed / likely failure.
 .PHONY: check
-check: misspell markdownlint checklicense checklinks
+check: misspell markdownlint checklicense checklinks chlog-validate
 	@echo "All checks complete"
 
 # Attempt to fix issues / regenerate tables.
 .PHONY: fix
 fix: misspell-correction
 	@echo "All autofixes complete"
+
+# Changelog fragments (chloggen). See CONTRIBUTING.md for the workflow.
+# Create a new fragment for the current branch (edit the generated file after):
+#   make chlog-new
+.PHONY: chlog-new
+chlog-new:
+	$(CHLOGGEN) new --config $(CHLOGGEN_CONFIG) --filename $(FILENAME)
+
+# Validate that every fragment in .chloggen/ is well-formed. Run in CI.
+.PHONY: chlog-validate
+chlog-validate:
+	$(CHLOGGEN) validate --config $(CHLOGGEN_CONFIG)
+
+# Preview the CHANGELOG.md that the current fragments would produce.
+.PHONY: chlog-preview
+chlog-preview:
+	$(CHLOGGEN) update --config $(CHLOGGEN_CONFIG) --dry
+
+# Fold all fragments into CHANGELOG.md under the given version and delete them.
+# Run during the release process:
+#   make chlog-update VERSION=1.13.0
+.PHONY: chlog-update
+chlog-update:
+	$(CHLOGGEN) update --config $(CHLOGGEN_CONFIG) --version $(VERSION)
 
 .PHONY: install-tools
 install-tools: $(MISSPELL) $(ADDLICENSE)
@@ -283,6 +318,7 @@ start:
 	@echo "Go to http://localhost:8080 for the demo UI."
 	@echo "Go to http://localhost:8080/jaeger/ui for the Jaeger UI."
 	@echo "Go to http://localhost:8080/grafana/ for the Grafana UI."
+	@echo "Go to http://localhost:8080/loadgen/ for the Load Generator UI."
 	@echo "Go to http://localhost:8080/feature/ to change feature flags."
 	@echo "Go to http://localhost:8080/telemetry/ for the Weaver generated telemetry documentation."
 
@@ -294,6 +330,7 @@ start-minimal:
 	@echo "Go to http://localhost:8080 for the demo UI."
 	@echo "Go to http://localhost:8080/jaeger/ui for the Jaeger UI."
 	@echo "Go to http://localhost:8080/grafana/ for the Grafana UI."
+	@echo "Go to http://localhost:8080/loadgen/ for the Load Generator UI."
 	@echo "Go to http://localhost:8080/feature/ to change feature flags."
 	@echo "Go to http://localhost:8080/telemetry/ for the Weaver generated telemetry documentation."
 
@@ -303,6 +340,7 @@ start-no-o11y:
 	@echo ""
 	@echo "OpenTelemetry Demo is running (no observability stack)."
 	@echo "Go to http://localhost:8080 for the demo UI."
+	@echo "Go to http://localhost:8080/loadgen/ for the Load Generator UI."
 	@echo "Go to http://localhost:8080/feature/ to change feature flags."
 	@echo "Go to http://localhost:8080/telemetry/ for the Weaver generated telemetry documentation."
 
@@ -312,6 +350,7 @@ start-minimal-no-o11y:
 	@echo ""
 	@echo "OpenTelemetry Demo in minimal mode is running (no observability stack)."
 	@echo "Go to http://localhost:8080 for the demo UI."
+	@echo "Go to http://localhost:8080/loadgen/ for the Load Generator UI."
 	@echo "Go to http://localhost:8080/feature/ to change feature flags."
 	@echo "Go to http://localhost:8080/telemetry/ for the Weaver generated telemetry documentation."
 
@@ -323,6 +362,7 @@ start-profiling:
 	@echo "Go to http://localhost:8080 for the demo UI."
 	@echo "Go to http://localhost:8080/jaeger/ui for the Jaeger UI."
 	@echo "Go to http://localhost:8080/grafana/ for the Grafana UI."
+	@echo "Go to http://localhost:8080/loadgen/ for the Load Generator UI."
 	@echo "Go to http://localhost:8080/profiles/ for the Firepit UI."
 	@echo "Go to http://localhost:8080/telemetry/ for the Weaver generated telemetry documentation."
 
@@ -334,6 +374,7 @@ start-agentic:
 	@echo "Go to http://localhost:8080 for the demo UI."
 	@echo "Go to http://localhost:8080/jaeger/ui for the Jaeger UI."
 	@echo "Go to http://localhost:8080/grafana/ for the Grafana UI."
+	@echo "Go to http://localhost:8080/loadgen/ for the Load Generator UI."
 	@echo "Go to http://localhost:8080/feature/ to change feature flags."
 	@echo "Go to http://localhost:8080/telemetry/ for the Weaver generated telemetry documentation."
 	@echo "Go to http://localhost:8080/chatbot/ for interacting with demo application using an agent."

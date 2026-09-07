@@ -1,0 +1,7 @@
+change_type: enhancement
+
+component: load-generator
+
+note: "Revert #3564: replace k6 with the pre-k6 Locust-based load generator, removing the now-unused `loadGeneratorTraffic` and `loadGeneratorVUs` feature flags along with it"
+
+issues: [3873]

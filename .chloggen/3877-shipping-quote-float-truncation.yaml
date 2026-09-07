@@ -1,0 +1,7 @@
+change_type: bug_fix
+
+component: shipping
+
+note: "Fix floating-point truncation in `create_quote_from_float` and add two-digit zero padding to `fmt::Display for Quote`"
+
+issues: [3877]

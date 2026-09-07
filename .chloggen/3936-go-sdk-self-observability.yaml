@@ -1,0 +1,9 @@
+change_type: enhancement
+
+component: checkout, product-catalog
+
+note: Enable Go SDK self-observability metrics.
+
+issues: [3936]
+
+subtext:
