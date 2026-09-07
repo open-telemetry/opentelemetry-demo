@@ -68,7 +68,7 @@ signals it emits:
 | checkout         | yes    | yes     | yes   | minimal |
 | currency         | yes    | yes     | yes   | minimal |
 | email            | yes    | yes     | yes   | minimal |
-| frontend         | yes    | yes     | no    | minimal |
+| frontend         | yes    | yes     | yes   | minimal |
 | frontend-proxy   | yes    | yes     | yes   | minimal |
 | frontend-web     | yes    | yes     | no    | full    |
 | image-provider   | yes    | yes     | no    | minimal |
