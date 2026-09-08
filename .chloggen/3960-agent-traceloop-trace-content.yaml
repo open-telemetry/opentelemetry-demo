@@ -1,0 +1,7 @@
+change_type: enhancement
+
+component: agent
+
+note: "Enable TRACELOOP_TRACE_CONTENT so LLM prompt/response content is captured in traces"
+
+issues: [3960]
