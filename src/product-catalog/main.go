@@ -478,5 +478,8 @@ func triggerLockContention(ctx context.Context) {
 	}
 
 	logger.Info("lock contention scenario active: holding ACCESS EXCLUSIVE lock on catalog.products")
-	time.Sleep(30 * time.Second)
+	select {
+	case <-ctx.Done():
+	case <-time.After(30 * time.Second):
+	}
 }
