@@ -148,6 +148,15 @@
         "on": true
       }
     },
+    "productCatalogLockContention": {
+      "defaultVariant": "off",
+      "description": "Trigger lock contention on the product catalog database",
+      "state": "ENABLED",
+      "variants": {
+        "off": false,
+        "on": true
+      }
+    },
     "recommendationCacheFailure": {
       "defaultVariant": "off",
       "description": "Fail recommendation service cache",
