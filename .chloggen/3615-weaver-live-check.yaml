@@ -2,10 +2,10 @@ change_type: enhancement
 
 component: testing
 
-note: Add a report-only Weaver live check for Demo trace and metric telemetry.
+note: Validate expected Demo trace and metric telemetry with Weaver live check.
 
 issues: [3615]
 
 subtext: |-
-  The check validates the integrated, Collector-processed telemetry stream
-  against the Demo telemetry schema.
+  A deterministic checkout contract verifies that selected attributes and
+  metrics are emitted after Collector processing.
