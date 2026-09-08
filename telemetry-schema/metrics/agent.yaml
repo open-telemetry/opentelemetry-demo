@@ -1,0 +1,20 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+metrics:
+  - name: demo.tool.calls
+    brief: Astronomy Shop tool call counter
+    instrument: counter
+    unit: "{call}"
+    stability: stable
+    requirement_level: recommended
+    note: >
+      Counts Astronomy Shop tool invocations. Emitted by both the agent
+      service (when calling its local tools directly) and the mcp service
+      (when the agent proxies tool calls through MCP).
+    annotations:
+      service: agent, mcp
+    attributes:
+      - ref: gen_ai.tool.name
+        requirement_level: required
