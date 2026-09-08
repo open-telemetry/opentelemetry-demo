@@ -1,4 +1,4 @@
-FROM cypress/included:15.21.1@sha256:8d874a8e5457459c7b8f185f797e46c299f7d0584c9fbda0b0ca23b3e85be749
+FROM cypress/included:16.0.0@sha256:49c58ea4e365f78e46589e066f1d9136d86a41f0e82226f5b6d5e55dafe0c8b2
 
 WORKDIR /app
 
