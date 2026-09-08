@@ -297,11 +297,54 @@ Verify the change using the path that matches what you changed: the Webstore UI,
 direct service endpoints, container logs, Jaeger traces, Grafana dashboards, or
 other telemetry views as appropriate.
 
-Update the relevant [documentation][docs] and [Changelog](./CHANGELOG.md) before
-opening the PR for user-visible behavior, telemetry, configuration, or workflow
-changes.
+Update the relevant [documentation][docs] before opening the PR for user-visible
+behavior, telemetry, configuration, or workflow changes.
+
+#### Adding a changelog entry
+
+The `CHANGELOG.md` is generated from individual fragment files under
+[`.chloggen`](./.chloggen), one per pull request, using
+[chloggen](https://github.com/open-telemetry/opentelemetry-go-build-tools/tree/main/chloggen).
+Because each PR adds its own file instead of editing a shared section, changelog
+merge conflicts are avoided.
+
+For any user-visible behavior, telemetry, configuration, or workflow change:
+
+1. Create a fragment for your branch: `make chlog-new`. This copies
+   [`.chloggen/TEMPLATE.yaml`](./.chloggen/TEMPLATE.yaml) to
+   `.chloggen/<your-branch>.yaml`.
+2. Fill in `change_type`, `component`, `note`, and `issues` (use your PR number
+   if there is no separate issue).
+3. Validate it: `make chlog-validate`. You can preview the rendered changelog
+   with `make chlog-preview`.
+4. Commit the fragment as part of your PR.
+
 Trivial typo, cosmetic, and purely internal cleanup changes may not need a
-changelog entry.
+changelog entry. If your PR does not require one, add the `Skip Changelog` label
+to indicate the omission is intentional.
+
+#### How fragments become the changelog at release time
+
+The fragments that accumulate in `.chloggen/` between releases are the
+"unreleased" changelog. During a release a maintainer runs
+`make chlog-update VERSION=x.x.x` (see [Making a new release](#making-a-new-release)),
+which collects every fragment, groups the entries by `change_type`, inserts a
+new `## x.x.x` section into `CHANGELOG.md` directly below the
+`<!-- next version -->` marker, and then deletes the consumed fragment files
+(leaving `TEMPLATE.yaml`). The marker stays in place for the next cycle.
+
+Within the new version section, entries are rendered under these fixed headings,
+in this order, and only headings that have entries appear:
+
+- `Breaking changes` (`breaking`)
+- `Deprecations` (`deprecation`)
+- `New components` (`new_component`)
+- `Enhancements` (`enhancement`)
+- `Bug fixes` (`bug_fix`)
+
+Each entry renders as `` - `component`: note (#issue) `` with any `subtext`
+indented beneath it. Run `make chlog-preview` at any time to see exactly what the
+next release section will look like without modifying any files.
 
 Open a pull request against the main `opentelemetry-demo` repo.
 
@@ -409,8 +452,14 @@ Maintainers can create a new release when desired by following these steps.
    generate release notes. Prepend a summary of the major changes to the release
    notes.
 3. After images for the new release are built and published, create a new Pull
-   Request that updates the `CHANGELOG.md` with the new version leaving the
-   `Unreleased` section for the next release. Merge the Pull Request.
+   Request that folds the changelog fragments into `CHANGELOG.md`. Optionally
+   run `make chlog-preview` first to review the generated notes, then run
+   `make chlog-update VERSION=x.x.x`. This inserts a new `## x.x.x` section
+   directly below the `<!-- next version -->` marker (entries grouped by
+   `change_type`) and deletes the consumed fragment files, leaving `.chloggen/`
+   empty aside from `TEMPLATE.yaml` for the next release. See
+   [How fragments become the changelog at release time](#how-fragments-become-the-changelog-at-release-time)
+   for the grouping details. Merge the Pull Request.
 4. Create a new Pull Request to update the deployment of the demo in the
    [OpenTelemetry Helm
    Charts](https://github.com/open-telemetry/opentelemetry-helm-charts) repo.

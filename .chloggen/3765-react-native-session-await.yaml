@@ -1,0 +1,7 @@
+change_type: bug_fix
+
+component: react-native-app
+
+note: "Fix `SessionGateway.setSessionValue` to await `getSession()`, preventing stored session corruption and loss of `userId`"
+
+issues: [3765]

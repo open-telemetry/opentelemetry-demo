@@ -89,15 +89,16 @@ async fn request_quote(count: u32) -> Result<f64, anyhow::Error> {
 }
 
 pub fn create_quote_from_float(value: f64) -> Quote {
+    let total_cents = (value * 100_f64).round() as u64;
     Quote {
-        dollars: value.floor() as u64,
-        cents: ((value * 100_f64) as u32) % 100,
+        dollars: total_cents / 100,
+        cents: (total_cents % 100) as u32,
     }
 }
 
 impl fmt::Display for Quote {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}.{}", self.dollars, self.cents)
+        write!(f, "{}.{:02}", self.dollars, self.cents)
     }
 }
 
@@ -110,6 +111,18 @@ mod tests {
         let quote = create_quote_from_float(10.99);
         assert_eq!(quote.dollars, 10);
         assert_eq!(quote.cents, 99);
+
+        let quote = create_quote_from_float(8.99);
+        assert_eq!(quote.dollars, 8);
+        assert_eq!(quote.cents, 99);
+
+        let quote = create_quote_from_float(35.96);
+        assert_eq!(quote.dollars, 35);
+        assert_eq!(quote.cents, 96);
+
+        let quote = create_quote_from_float(71.92);
+        assert_eq!(quote.dollars, 71);
+        assert_eq!(quote.cents, 92);
 
         let quote = create_quote_from_float(0.01);
         assert_eq!(quote.dollars, 0);
@@ -132,6 +145,18 @@ mod tests {
             dollars: 0,
             cents: 1,
         };
-        assert_eq!(format!("{}", quote), "0.1");
+        assert_eq!(format!("{}", quote), "0.01");
+
+        let quote = Quote {
+            dollars: 10,
+            cents: 5,
+        };
+        assert_eq!(format!("{}", quote), "10.05");
+
+        let quote = Quote {
+            dollars: 100,
+            cents: 0,
+        };
+        assert_eq!(format!("{}", quote), "100.00");
     }
 }

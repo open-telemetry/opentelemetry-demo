@@ -23,12 +23,12 @@
     "@opentelemetry/semantic-conventions": "^1.43.0",
     "@react-native-async-storage/async-storage": "3.1.1",
     "@tanstack/react-query": "^5.101.4",
-    "expo": "~57.0.13",
-    "expo-constants": "~57.0.3",
-    "expo-font": "~57.0.0",
-    "expo-linking": "~57.0.6",
-    "expo-router": "~57.0.13",
-    "expo-splash-screen": "~57.0.6",
+    "expo": "~57.0.19",
+    "expo-constants": "~57.0.17",
+    "expo-font": "~57.0.3",
+    "expo-linking": "~57.0.9",
+    "expo-router": "~57.0.18",
+    "expo-splash-screen": "~57.0.8",
     "expo-web-browser": "~57.0.2",
     "react": "19.2.8",
     "react-dom": "19.2.8",
@@ -48,13 +48,16 @@
     "@types/react": "~19.2.18",
     "@types/react-native-get-random-values": "^1.8.2",
     "eslint": "^9.39.5",
-    "eslint-config-expo": "~57.0.1",
+    "eslint-config-expo": "~57.0.2",
     "eslint-import-resolver-typescript": "^3.10.1",
     "ts-proto": "^2.12.0",
     "typescript": "~6.0.3"
   },
   "overrides": {
     "postcss": "8.5.23",
+    "query-string": {
+      "decode-uri-component": "0.5.0"
+    },
     "xcode": {
       "uuid": "14.0.0"
     }

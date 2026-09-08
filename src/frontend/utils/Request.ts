@@ -25,10 +25,21 @@ const request = async <T>({
   });
 
   const responseText = await response.text();
+  let data;
+  try {
+    data = responseText ? JSON.parse(responseText) : undefined;
+  } catch (err) {
+    if (response.ok) {
+      throw err;
+    }
+    data = undefined;
+  }
 
-  if (!!responseText) return JSON.parse(responseText);
+  if (!response.ok) {
+    throw new Error(data?.error || `Request failed with status ${response.status}`);
+  }
 
-  return undefined as unknown as T;
+  return data as T;
 };
 
 export default request;
