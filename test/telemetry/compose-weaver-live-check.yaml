@@ -6,10 +6,6 @@ services:
     environment:
       - OTEL_METRIC_EXPORT_INTERVAL=5000
 
-  load-generator:
-    volumes:
-      - ./test/telemetry/weaver-checkout.js:/home/k6/weaver-checkout.js:ro
-
   otel-collector:
     command:
       - "--config=/etc/otelcol-config.yml"

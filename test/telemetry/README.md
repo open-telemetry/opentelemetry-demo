@@ -179,3 +179,10 @@ Weaver findings. A small report check guards against a vacuous result by
 requiring at least one span, one observed registry attribute, and one observed
 registry metric. A green result confirms that some registered telemetry was
 observed, not full service coverage or a report without violations.
+
+This integration check complements the
+[Semantic Conventions Conformance](https://github.com/open-telemetry/semantic-conventions-conformance)
+suite. That project validates isolated instrumentation implementations against
+upstream semantic-convention contracts. The Demo check instead validates its
+custom registry and the telemetry produced by the integrated application after
+Collector processing.
