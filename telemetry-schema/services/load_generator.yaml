@@ -16,3 +16,4 @@ attribute_groups:
       - ref: demo.product.quantity
       - ref: demo.ad.category
       - ref: demo.cart.items.count
+      - ref: gen_ai.input.prompt
