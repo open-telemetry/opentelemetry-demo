@@ -5,6 +5,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import type { ServiceError } from '@grpc/grpc-js';
 import { context, Exception, SpanStatusCode, trace } from '@opentelemetry/api';
 import InstrumentationMiddleware from '../../utils/telemetry/InstrumentationMiddleware';
+import logger from '../../utils/telemetry/logger';
 import CheckoutGateway from '../../gateways/rpc/Checkout.gateway';
 import { Empty, PlaceOrderRequest, PlaceOrderResponse } from '../../protos/demo';
 import { IProductCheckoutItem, IProductCheckout } from '../../types/Cart';
@@ -34,6 +35,7 @@ const handler = async ({ method, body, query }: NextApiRequest, res: NextApiResp
 
         if (details.startsWith(PAYMENT_FAILURE_PREFIX)) {
           if (!details.includes('code = Unavailable') && !details.includes('code = Internal')) {
+            logger.info({ details }, 'Checkout payment declined');
             return res.status(422).json({
               error: 'Your payment could not be processed. Please check your card details and try again.',
               code: 'PAYMENT_FAILED',
@@ -41,6 +43,7 @@ const handler = async ({ method, body, query }: NextApiRequest, res: NextApiResp
           }
         }
 
+        logger.error({ err: error }, 'Checkout failed to place order');
         return res.status(500).json({ error: 'Failed to place order.' });
       }
 
@@ -61,6 +64,7 @@ const handler = async ({ method, body, query }: NextApiRequest, res: NextApiResp
         })
       );
 
+      logger.info({ 'demo.order.id': placeOrderResponse.order?.orderId }, 'Order placed successfully');
       return res.status(200).json({ ...order, items: productList });
     }
 
