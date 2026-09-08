@@ -233,7 +233,8 @@ class WebsiteUser(HttpUser):
     @task(3)
     def ask_agent(self):
         prompt = random.choice(agent_prompts)
-        with self.tracer.start_as_current_span("user_ask_agent", context=context.get_current(), attributes={"gen_ai.input.prompt": prompt}):
+        input_messages = json.dumps([{"role": "user", "parts": [{"type": "text", "content": prompt}]}])
+        with self.tracer.start_as_current_span("user_ask_agent", context=context.get_current(), attributes={"gen_ai.input.messages": input_messages}):
             logging.info(f"User asking agent: {prompt}")
             self.client.post(
                 f"http://{agent_endpoint}:{agent_port}/prompt",
