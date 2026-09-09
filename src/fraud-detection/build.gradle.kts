@@ -21,8 +21,8 @@ group = "io.opentelemetry"
 version = "1.0"
 
 
-val grpcVersion = "1.83.1"
-val protobufVersion = "4.36.0"
+val grpcVersion = "1.84.0"
+val protobufVersion = "4.36.1"
 
 
 repositories {
@@ -37,7 +37,7 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation(kotlin("script-runtime"))
     implementation("org.apache.kafka:kafka-clients:4.3.1")
-    implementation("com.google.api.grpc:proto-google-common-protos:2.75.0")
+    implementation("com.google.api.grpc:proto-google-common-protos:2.76.0")
     implementation("io.grpc:grpc-protobuf:${grpcVersion}")
     implementation("io.grpc:grpc-stub:${grpcVersion}")
     implementation("io.grpc:grpc-netty:${grpcVersion}")
@@ -46,7 +46,7 @@ dependencies {
     implementation("io.opentelemetry:opentelemetry-sdk:1.65.0")
     implementation("io.opentelemetry:opentelemetry-extension-annotations:1.18.0")
     implementation("org.apache.logging.log4j:log4j-core:2.26.1")
-    implementation("org.slf4j:slf4j-api:2.0.18")
+    implementation("org.slf4j:slf4j-api:2.0.19")
     implementation("com.google.protobuf:protobuf-kotlin:${protobufVersion}")
     implementation("dev.openfeature:sdk:1.22.1")
     implementation("dev.openfeature.contrib.providers:flagd:0.14.1")

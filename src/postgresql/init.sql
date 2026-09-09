@@ -74,7 +74,10 @@ CREATE TABLE catalog.products (
 );
 
 -- Product Catalog Service: grant permission to schema
-GRANT SELECT ON ALL TABLES IN SCHEMA catalog TO astronomy_user;
+-- UPDATE is required to acquire the ACCESS EXCLUSIVE lock used by the
+-- productCatalogLockContention fault-injection flag; the service otherwise
+-- only reads from this schema.
+GRANT SELECT, UPDATE ON ALL TABLES IN SCHEMA catalog TO astronomy_user;
 
 -- Product Catalog Service: add product data
 INSERT INTO catalog.products (id, name, description, picture, price_currency_code, price_units, price_nanos, categories)

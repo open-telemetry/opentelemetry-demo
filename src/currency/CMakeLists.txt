@@ -7,6 +7,7 @@ project(currency)
 find_package(Protobuf CONFIG REQUIRED)
 find_package(gRPC CONFIG REQUIRED)
 find_package(opentelemetry-cpp CONFIG REQUIRED)
+find_package(Threads REQUIRED)
 
 set(GENERATED_PROTOBUF_PATH "${CMAKE_BINARY_DIR}/generated/proto")
 
@@ -18,6 +19,6 @@ add_executable(currency src/server.cpp)
 add_dependencies(currency demo-proto)
 target_link_libraries(
     currency demo-proto protobuf::libprotobuf
-     ${OPENTELEMETRY_CPP_LIBRARIES} gRPC::grpc++)
+     ${OPENTELEMETRY_CPP_LIBRARIES} gRPC::grpc++ Threads::Threads)
 
 install(TARGETS currency DESTINATION bin)

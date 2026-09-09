@@ -9,4 +9,4 @@ opentelemetry-opamp-client==0.3b0
 opentelemetry-exporter-otlp-proto-http==1.44.0
 opentelemetry-instrumentation-requests==0.65b0
 opentelemetry-instrumentation-httpx==0.65b0
-websocket-client==1.9.0
+websocket-client==1.9.2
