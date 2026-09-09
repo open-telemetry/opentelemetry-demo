@@ -6,7 +6,8 @@ name: Podman build check
 on:
  pull_request:
   paths:
-  - 'src/**'
+  - '**/Dockerfile'
+  - '**/Dockerfile.*'
   - '.github/workflows/podman-build-check.yml'
 
 permissions:
