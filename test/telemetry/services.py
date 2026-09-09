@@ -15,7 +15,7 @@ SIGNAL_MATRIX = {
     "checkout": {"traces": True, "metrics": True, "logs": True},
     "currency": {"traces": True, "metrics": True, "logs": True},
     "email": {"traces": True, "metrics": True, "logs": True},
-    "frontend": {"traces": True, "metrics": True, "logs": False},
+    "frontend": {"traces": True, "metrics": True, "logs": True},
     "frontend-proxy": {"traces": True, "metrics": True, "logs": True},
     "frontend-web": {"traces": True, "metrics": True, "logs": False},
     "image-provider": {"traces": True, "metrics": True, "logs": False},
