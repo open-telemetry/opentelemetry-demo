@@ -77,9 +77,6 @@ version section directly below the marker and deletes them.
   from `opamp-go` (improved agent list, agent uptime on the agent page, and
   startup logging of the OpAMP/admin UI addresses).
   ([#3685](https://github.com/open-telemetry/opentelemetry-demo/pull/3685))
-* [docker] fix `compose.yaml` to allow
-  OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION to be overridden by
-  .env.override.
 * [compose] Run `checkout`, `product-catalog`, and `shipping` with a
   read-only root filesystem (`read_only: true` plus a `/tmp` tmpfs mount),
   for container platforms that prohibit writable root filesystems. Limited
