@@ -204,7 +204,8 @@ public final class AdService {
         CPULoad cpuload = CPULoad.getInstance();
         cpuload.execute(ffClient.getBooleanValue(AD_HIGH_CPU_FEATURE_FLAG, false, evaluationContext));
 
-        span.setAttribute("demo.ad.context_keys", req.getContextKeysList().toString());
+        span.setAttribute(
+            "demo.ad.context_keys.values", String.join(",", req.getContextKeysList()));
         span.setAttribute("demo.ad.context_keys.count", req.getContextKeysCount());
         if (req.getContextKeysCount() > 0) {
           logger.info("Targeted ad request received for " + req.getContextKeysList());

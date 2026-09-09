@@ -7,7 +7,9 @@ def init_metrics(meter):
 
     # Recommendations counter
     recommendation_requests = meter.create_counter(
-        'demo.recommendation.requests', unit='recommendations', description="Counts the total number of given recommendations"
+        'demo.recommendation.requests',
+        unit='{recommendation}',
+        description="Counts the total number of given recommendations",
     )
 
     rec_svc_metrics = {

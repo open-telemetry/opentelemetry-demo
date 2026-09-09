@@ -15,7 +15,7 @@ attributes:
     stability: stable
     note: The count of advertisements returned or served in a request
     examples: [1, 2, 5]
-  - key: demo.ad.context_keys
+  - key: demo.ad.context_keys.values
     type: string
     brief: Context keys for ad targeting
     stability: stable

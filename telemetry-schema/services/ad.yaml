@@ -8,7 +8,7 @@ attribute_groups:
     brief: Ad service attributes
     stability: stable
     attributes:
-      - ref: demo.ad.context_keys
+      - ref: demo.ad.context_keys.values
       - ref: demo.ad.context_keys.count
       - ref: demo.ad.count
       - ref: demo.ad.request_type
