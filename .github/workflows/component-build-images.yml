@@ -186,7 +186,7 @@ jobs:
           if [ -f .env ]; then
             # Filter out comments and empty lines, then add each variable to $GITHUB_ENV
             grep -vE '^\s*#|^\s*$' .env | while read -r line; do
-              echo "$line" >> $GITHUB_ENV
+              echo "$line" >> "$GITHUB_ENV"
             done
           else
             echo ".env file not found!"
@@ -261,27 +261,21 @@ jobs:
 
           FILES_CHANGED=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- "$DOCKERFILE_DIR")
 
-          ENV_KEYS=""
+          # Keep this list in sync with build arguments sourced from .env.
+          ENV_KEYS=()
           case "${DOCKERFILE}" in
-            ./src/ad/Dockerfile|./src/fraud-detection/Dockerfile|./src/kafka/Dockerfile)
-              ENV_KEYS="OTEL_JAVA_AGENT_VERSION"
-              ;;
-            ./src/currency/Dockerfile)
-              ENV_KEYS="OPENTELEMETRY_CPP_VERSION"
-              ;;
             ./src/opamp-server/Dockerfile)
-              ENV_KEYS="OPAMP_GO_REF"
+              ENV_KEYS=(OPAMP_GO_REF)
               ;;
             ./src/otel-collector/Dockerfile)
-              ENV_KEYS="COLLECTOR_CONTRIB_IMAGE OPAMP_SUPERVISOR_IMAGE"
+              ENV_KEYS=(COLLECTOR_CONTRIB_IMAGE OPAMP_SUPERVISOR_IMAGE)
               ;;
           esac
 
-          if [ -n "$ENV_KEYS" ] && git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- .env | grep -q '^.env$'; then
-            for key in $ENV_KEYS; do
+          if [ "${#ENV_KEYS[@]}" -gt 0 ] && git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- .env | grep -q '^\.env$'; then
+            for key in "${ENV_KEYS[@]}"; do
               if git diff -U0 "$BASE_SHA" "$HEAD_SHA" -- .env | grep -qE "^[+-]${key}="; then
-                FILES_CHANGED="${FILES_CHANGED}
-.env:${key}"
+                FILES_CHANGED="${FILES_CHANGED} .env:${key}"
                 break
               fi
             done

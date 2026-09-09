@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 server:
-  endpoint: wss://opamp-server:4320/v1/opamp
+  endpoint: wss://${env:OPAMP_SERVER_HOST}:4320/v1/opamp
   tls:
     insecure_skip_verify: true
 

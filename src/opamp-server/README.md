@@ -22,7 +22,8 @@ machine running the browser, and Compose binds that endpoint to
 `127.0.0.1:4321` on the demo host. To push config with this reference UI, run
 the browser on the demo host and open `http://localhost:8080/opamp/`; remote
 viewers can inspect the UI at `http://<demo-host>:8080/opamp/`, but their Save
-button would post to their own loopback address. Do not expose port `4321`.
+button would post to their own loopback address. The other mutating endpoints
+from the reference UI are disabled. Do not expose port `4321`.
 
 Production OpAMP control planes should provide authentication, authorization,
 auditing, and scoped permissions before accepting remote configuration.
