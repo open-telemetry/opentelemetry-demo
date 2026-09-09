@@ -1,12 +1,11 @@
-change_type: breaking
+change_type: bug_fix
 
-component: ad, recommendation
+component: recommendation
 
-note: Fix telemetry that violates the Demo's Weaver registry.
+note: Align the recommendation request metric unit with its telemetry schema.
 
 issues: [3615]
 
 subtext: |-
-  Rename `demo.ad.context_keys` to `demo.ad.context_keys.values` to avoid a
-  namespace collision with `demo.ad.context_keys.count`. Align the
-  `demo.recommendation.requests` unit with its schema.
+  Change the emitted `demo.recommendation.requests` unit from
+  `recommendations` to `{recommendation}`.
