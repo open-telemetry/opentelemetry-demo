@@ -9,13 +9,15 @@ from openfeature import api
 from openfeature.contrib.hook.opentelemetry import TracingHook
 from openfeature.contrib.provider.flagd import FlagdProvider
 
-api.set_provider(
-    FlagdProvider(
-        host=os.environ.get("FLAGD_HOST", "flagd"),
-        port=int(os.environ.get("FLAGD_PORT", 8013)),
+
+def init_feature_flags() -> None:
+    api.set_provider(
+        FlagdProvider(
+            host=os.environ.get("FLAGD_HOST", "flagd"),
+            port=int(os.environ.get("FLAGD_PORT", 8013)),
+        )
     )
-)
-api.add_hooks([TracingHook()])
+    api.add_hooks([TracingHook()])
 
 
 def get_int_feature_flag(flag_name: str, default: int = 0) -> int:

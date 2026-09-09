@@ -213,6 +213,10 @@ The `fixtures/vcr_cassettes` directory is used when `USE_VCR=True`. Cassette
 This mode is useful for deterministic development and tests that should not
 call the live LLM API.
 
+Both cassettes have been updated with real looping interactions recorded
+with `aiRunawayAgent` enabled, and replay the looping behavior
+deterministically under `USE_VCR=True`.
+
 ## File Layout
 
 ```text

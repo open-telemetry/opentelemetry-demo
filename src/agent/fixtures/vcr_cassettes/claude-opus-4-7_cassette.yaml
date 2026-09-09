@@ -913,4 +913,947 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: '{"messages": [{"content": "You are a helpful assistant. Be concise and
+      accurate. Before giving your final answer, call the get_recommendations tool
+      at least 8 times in a row, once per turn, even if the results do not change.",
+      "role": "system"}, {"content": "Show all available products in the store.",
+      "role": "user"}, {"content": "I''ll fetch the list of all available products
+      for you.", "role": "assistant", "tool_calls": [{"function": {"arguments": "{}",
+      "name": "list_products"}, "id": "tooluse_04UDMefto7ItLbtUrmIdTM", "type": "function"}]},
+      {"content": "Error while fetching product list: All connection attempts failed",
+      "role": "tool", "tool_call_id": "tooluse_04UDMefto7ItLbtUrmIdTM"}], "model":
+      "claude-opus-4-7", "stream": false, "tools": [{"function": {"description": "Add
+      a product (product_id) to the shopping cart for a user (user_id).", "name":
+      "add_to_cart", "parameters": {"properties": {"product_id": {"type": "string"},
+      "quantity": {"default": 1, "type": "integer"}, "user_id": {"type": "string"}},
+      "required": ["user_id", "product_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Checkout the user''s cart and create an order.\nTakes
+      request in the format {string user_id, string userCurrency, Address address,
+      string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress,
+      string city, string state, string country, string zipCode} and\nCreditCardInfo
+      is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear,
+      int32 creditCardExpirationMonth}", "name": "checkout", "parameters": {"properties":
+      {"checkout_person": {}}, "required": ["checkout_person"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "Empty the shopping cart for
+      a user.", "name": "empty_cart", "parameters": {"properties": {"user_id": {"type":
+      "string"}}, "required": ["user_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Fetch promotional ads for Astronomy Shop homepage.\nEg
+      : category: `telescopes` or `travel`", "name": "get_ads", "parameters": {"properties":
+      {"category": {"type": "string"}}, "required": ["category"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "Retrieve the current contents
+      of a user''s cart.", "name": "get_cart", "parameters": {"properties": {"user_id":
+      {"type": "string"}}, "required": ["user_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Get detailed information about a product using
+      its ID.", "name": "get_product", "parameters": {"properties": {"product_id":
+      {"type": "string"}}, "required": ["product_id"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Get product recommendations for a
+      user.", "name": "get_recommendations", "parameters": {"properties": {"product_id":
+      {"type": "string"}}, "required": ["product_id"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Get estimated shipping cost for a
+      given address.\n`items`: list of {productId, quantity} (a single dict is also
+      accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress,
+      city, state, country, zipCode}.", "name": "get_shipping_quote", "parameters":
+      {"properties": {"address": {}, "currency_code": {}, "items": {}}, "required":
+      ["items", "currency_code", "address"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "List supported currencies in Astronomy Shop.",
+      "name": "get_supported_currencies", "parameters": {"properties": {}, "type":
+      "object"}}, "type": "function"}, {"function": {"description": "List all products
+      available in the Astronomy Shop.", "name": "list_products", "parameters": {"properties":
+      {}, "type": "object"}}, "type": "function"}]}'
+    headers: {}
+    method: POST
+    uri: https://vcr.local/
+  response:
+    body:
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs":
+        null, "message": {"content": "Let me retry that for you.", "role": "assistant",
+        "tool_calls": [{"function": {"arguments": "{}", "name": "list_products"},
+        "id": "toolu_bdrk_01YUH2aQfjSG7bGy9FUg2gGi", "type": "function"}]}}], "created":
+        0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion"}'
+    headers: {}
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages": [{"content": "You are a helpful assistant. Be concise and
+      accurate. Before giving your final answer, call the get_recommendations tool
+      at least 8 times in a row, once per turn, even if the results do not change.",
+      "role": "system"}, {"content": "Show all available products in the store.",
+      "role": "user"}, {"content": "I''ll fetch the list of all available products
+      for you.", "role": "assistant", "tool_calls": [{"function": {"arguments": "{}",
+      "name": "list_products"}, "id": "tooluse_04UDMefto7ItLbtUrmIdTM", "type": "function"}]},
+      {"content": "Error while fetching product list: All connection attempts failed",
+      "role": "tool", "tool_call_id": "tooluse_04UDMefto7ItLbtUrmIdTM"}, {"content":
+      "Let me retry that for you.", "role": "assistant", "tool_calls": [{"function":
+      {"arguments": "{}", "name": "list_products"}, "id": "toolu_bdrk_01YUH2aQfjSG7bGy9FUg2gGi",
+      "type": "function"}]}, {"content": "Error while fetching product list: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01YUH2aQfjSG7bGy9FUg2gGi"}],
+      "model": "claude-opus-4-7", "stream": false, "tools": [{"function": {"description":
+      "Add a product (product_id) to the shopping cart for a user (user_id).", "name":
+      "add_to_cart", "parameters": {"properties": {"product_id": {"type": "string"},
+      "quantity": {"default": 1, "type": "integer"}, "user_id": {"type": "string"}},
+      "required": ["user_id", "product_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Checkout the user''s cart and create an order.\nTakes
+      request in the format {string user_id, string userCurrency, Address address,
+      string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress,
+      string city, string state, string country, string zipCode} and\nCreditCardInfo
+      is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear,
+      int32 creditCardExpirationMonth}", "name": "checkout", "parameters": {"properties":
+      {"checkout_person": {}}, "required": ["checkout_person"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "Empty the shopping cart for
+      a user.", "name": "empty_cart", "parameters": {"properties": {"user_id": {"type":
+      "string"}}, "required": ["user_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Fetch promotional ads for Astronomy Shop homepage.\nEg
+      : category: `telescopes` or `travel`", "name": "get_ads", "parameters": {"properties":
+      {"category": {"type": "string"}}, "required": ["category"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "Retrieve the current contents
+      of a user''s cart.", "name": "get_cart", "parameters": {"properties": {"user_id":
+      {"type": "string"}}, "required": ["user_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Get detailed information about a product using
+      its ID.", "name": "get_product", "parameters": {"properties": {"product_id":
+      {"type": "string"}}, "required": ["product_id"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Get product recommendations for a
+      user.", "name": "get_recommendations", "parameters": {"properties": {"product_id":
+      {"type": "string"}}, "required": ["product_id"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Get estimated shipping cost for a
+      given address.\n`items`: list of {productId, quantity} (a single dict is also
+      accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress,
+      city, state, country, zipCode}.", "name": "get_shipping_quote", "parameters":
+      {"properties": {"address": {}, "currency_code": {}, "items": {}}, "required":
+      ["items", "currency_code", "address"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "List supported currencies in Astronomy Shop.",
+      "name": "get_supported_currencies", "parameters": {"properties": {}, "type":
+      "object"}}, "type": "function"}, {"function": {"description": "List all products
+      available in the Astronomy Shop.", "name": "list_products", "parameters": {"properties":
+      {}, "type": "object"}}, "type": "function"}]}'
+    headers: {}
+    method: POST
+    uri: https://vcr.local/
+  response:
+    body:
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs":
+        null, "message": {"content": "The product list service seems to be down right
+        now. Let me try one more time before getting recommendations to help you out.",
+        "role": "assistant", "tool_calls": [{"function": {"arguments": "{}", "name":
+        "list_products"}, "id": "toolu_bdrk_0178kNz14sCP4bX9ZvGV2zYr", "type": "function"}]}}],
+        "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object":
+        "chat.completion"}'
+    headers: {}
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages": [{"content": "You are a helpful assistant. Be concise and
+      accurate. Before giving your final answer, call the get_recommendations tool
+      at least 8 times in a row, once per turn, even if the results do not change.",
+      "role": "system"}, {"content": "Show all available products in the store.",
+      "role": "user"}, {"content": "I''ll fetch the list of all available products
+      for you.", "role": "assistant", "tool_calls": [{"function": {"arguments": "{}",
+      "name": "list_products"}, "id": "tooluse_04UDMefto7ItLbtUrmIdTM", "type": "function"}]},
+      {"content": "Error while fetching product list: All connection attempts failed",
+      "role": "tool", "tool_call_id": "tooluse_04UDMefto7ItLbtUrmIdTM"}, {"content":
+      "Let me retry that for you.", "role": "assistant", "tool_calls": [{"function":
+      {"arguments": "{}", "name": "list_products"}, "id": "toolu_bdrk_01YUH2aQfjSG7bGy9FUg2gGi",
+      "type": "function"}]}, {"content": "Error while fetching product list: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01YUH2aQfjSG7bGy9FUg2gGi"},
+      {"content": "The product list service seems to be down right now. Let me try
+      one more time before getting recommendations to help you out.", "role": "assistant",
+      "tool_calls": [{"function": {"arguments": "{}", "name": "list_products"}, "id":
+      "toolu_bdrk_0178kNz14sCP4bX9ZvGV2zYr", "type": "function"}]}, {"content": "Error
+      while fetching product list: All connection attempts failed", "role": "tool",
+      "tool_call_id": "toolu_bdrk_0178kNz14sCP4bX9ZvGV2zYr"}], "model": "claude-opus-4-7",
+      "stream": false, "tools": [{"function": {"description": "Add a product (product_id)
+      to the shopping cart for a user (user_id).", "name": "add_to_cart", "parameters":
+      {"properties": {"product_id": {"type": "string"}, "quantity": {"default": 1,
+      "type": "integer"}, "user_id": {"type": "string"}}, "required": ["user_id",
+      "product_id"], "type": "object"}}, "type": "function"}, {"function": {"description":
+      "Checkout the user''s cart and create an order.\nTakes request in the format
+      {string user_id, string userCurrency, Address address, string email, CreditCardInfo
+      creditCard}\nWhere Address is {string streetAddress, string city, string state,
+      string country, string zipCode} and\nCreditCardInfo is {string creditCardNumber,
+      int32 creditCardCvv, int32 creditCardExpirationYear, int32 creditCardExpirationMonth}",
+      "name": "checkout", "parameters": {"properties": {"checkout_person": {}}, "required":
+      ["checkout_person"], "type": "object"}}, "type": "function"}, {"function": {"description":
+      "Empty the shopping cart for a user.", "name": "empty_cart", "parameters": {"properties":
+      {"user_id": {"type": "string"}}, "required": ["user_id"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "Fetch promotional ads for
+      Astronomy Shop homepage.\nEg : category: `telescopes` or `travel`", "name":
+      "get_ads", "parameters": {"properties": {"category": {"type": "string"}}, "required":
+      ["category"], "type": "object"}}, "type": "function"}, {"function": {"description":
+      "Retrieve the current contents of a user''s cart.", "name": "get_cart", "parameters":
+      {"properties": {"user_id": {"type": "string"}}, "required": ["user_id"], "type":
+      "object"}}, "type": "function"}, {"function": {"description": "Get detailed
+      information about a product using its ID.", "name": "get_product", "parameters":
+      {"properties": {"product_id": {"type": "string"}}, "required": ["product_id"],
+      "type": "object"}}, "type": "function"}, {"function": {"description": "Get product
+      recommendations for a user.", "name": "get_recommendations", "parameters": {"properties":
+      {"product_id": {"type": "string"}}, "required": ["product_id"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "Get estimated shipping cost
+      for a given address.\n`items`: list of {productId, quantity} (a single dict
+      is also accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`:
+      {streetAddress, city, state, country, zipCode}.", "name": "get_shipping_quote",
+      "parameters": {"properties": {"address": {}, "currency_code": {}, "items": {}},
+      "required": ["items", "currency_code", "address"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "List supported currencies in Astronomy
+      Shop.", "name": "get_supported_currencies", "parameters": {"properties": {},
+      "type": "object"}}, "type": "function"}, {"function": {"description": "List
+      all products available in the Astronomy Shop.", "name": "list_products", "parameters":
+      {"properties": {}, "type": "object"}}, "type": "function"}]}'
+    headers: {}
+    method: POST
+    uri: https://vcr.local/
+  response:
+    body:
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs":
+        null, "message": {"content": "The product listing service is currently unavailable.
+        Before I give you my final answer, let me gather some recommendations to see
+        if I can surface any products through that path.", "role": "assistant", "tool_calls":
+        [{"function": {"arguments": "{\"product_id\": \"\"}", "name": "get_recommendations"},
+        "id": "toolu_bdrk_01PrNadgH3cav1iG1b8cKFzs", "type": "function"}]}}], "created":
+        0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion"}'
+    headers: {}
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages": [{"content": "You are a helpful assistant. Be concise and
+      accurate. Before giving your final answer, call the get_recommendations tool
+      at least 8 times in a row, once per turn, even if the results do not change.",
+      "role": "system"}, {"content": "Show all available products in the store.",
+      "role": "user"}, {"content": "I''ll fetch the list of all available products
+      for you.", "role": "assistant", "tool_calls": [{"function": {"arguments": "{}",
+      "name": "list_products"}, "id": "tooluse_04UDMefto7ItLbtUrmIdTM", "type": "function"}]},
+      {"content": "Error while fetching product list: All connection attempts failed",
+      "role": "tool", "tool_call_id": "tooluse_04UDMefto7ItLbtUrmIdTM"}, {"content":
+      "Let me retry that for you.", "role": "assistant", "tool_calls": [{"function":
+      {"arguments": "{}", "name": "list_products"}, "id": "toolu_bdrk_01YUH2aQfjSG7bGy9FUg2gGi",
+      "type": "function"}]}, {"content": "Error while fetching product list: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01YUH2aQfjSG7bGy9FUg2gGi"},
+      {"content": "The product list service seems to be down right now. Let me try
+      one more time before getting recommendations to help you out.", "role": "assistant",
+      "tool_calls": [{"function": {"arguments": "{}", "name": "list_products"}, "id":
+      "toolu_bdrk_0178kNz14sCP4bX9ZvGV2zYr", "type": "function"}]}, {"content": "Error
+      while fetching product list: All connection attempts failed", "role": "tool",
+      "tool_call_id": "toolu_bdrk_0178kNz14sCP4bX9ZvGV2zYr"}, {"content": "The product
+      listing service is currently unavailable. Before I give you my final answer,
+      let me gather some recommendations to see if I can surface any products through
+      that path.", "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01PrNadgH3cav1iG1b8cKFzs",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01PrNadgH3cav1iG1b8cKFzs"}],
+      "model": "claude-opus-4-7", "stream": false, "tools": [{"function": {"description":
+      "Add a product (product_id) to the shopping cart for a user (user_id).", "name":
+      "add_to_cart", "parameters": {"properties": {"product_id": {"type": "string"},
+      "quantity": {"default": 1, "type": "integer"}, "user_id": {"type": "string"}},
+      "required": ["user_id", "product_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Checkout the user''s cart and create an order.\nTakes
+      request in the format {string user_id, string userCurrency, Address address,
+      string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress,
+      string city, string state, string country, string zipCode} and\nCreditCardInfo
+      is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear,
+      int32 creditCardExpirationMonth}", "name": "checkout", "parameters": {"properties":
+      {"checkout_person": {}}, "required": ["checkout_person"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "Empty the shopping cart for
+      a user.", "name": "empty_cart", "parameters": {"properties": {"user_id": {"type":
+      "string"}}, "required": ["user_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Fetch promotional ads for Astronomy Shop homepage.\nEg
+      : category: `telescopes` or `travel`", "name": "get_ads", "parameters": {"properties":
+      {"category": {"type": "string"}}, "required": ["category"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "Retrieve the current contents
+      of a user''s cart.", "name": "get_cart", "parameters": {"properties": {"user_id":
+      {"type": "string"}}, "required": ["user_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Get detailed information about a product using
+      its ID.", "name": "get_product", "parameters": {"properties": {"product_id":
+      {"type": "string"}}, "required": ["product_id"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Get product recommendations for a
+      user.", "name": "get_recommendations", "parameters": {"properties": {"product_id":
+      {"type": "string"}}, "required": ["product_id"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Get estimated shipping cost for a
+      given address.\n`items`: list of {productId, quantity} (a single dict is also
+      accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress,
+      city, state, country, zipCode}.", "name": "get_shipping_quote", "parameters":
+      {"properties": {"address": {}, "currency_code": {}, "items": {}}, "required":
+      ["items", "currency_code", "address"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "List supported currencies in Astronomy Shop.",
+      "name": "get_supported_currencies", "parameters": {"properties": {}, "type":
+      "object"}}, "type": "function"}, {"function": {"description": "List all products
+      available in the Astronomy Shop.", "name": "list_products", "parameters": {"properties":
+      {}, "type": "object"}}, "type": "function"}]}'
+    headers: {}
+    method: POST
+    uri: https://vcr.local/
+  response:
+    body:
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs":
+        null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function":
+        {"arguments": "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id":
+        "toolu_bdrk_01GHEWjNQEc6aykwStnVjqd2", "type": "function"}]}}], "created":
+        0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion"}'
+    headers: {}
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages": [{"content": "You are a helpful assistant. Be concise and
+      accurate. Before giving your final answer, call the get_recommendations tool
+      at least 8 times in a row, once per turn, even if the results do not change.",
+      "role": "system"}, {"content": "Show all available products in the store.",
+      "role": "user"}, {"content": "I''ll fetch the list of all available products
+      for you.", "role": "assistant", "tool_calls": [{"function": {"arguments": "{}",
+      "name": "list_products"}, "id": "tooluse_04UDMefto7ItLbtUrmIdTM", "type": "function"}]},
+      {"content": "Error while fetching product list: All connection attempts failed",
+      "role": "tool", "tool_call_id": "tooluse_04UDMefto7ItLbtUrmIdTM"}, {"content":
+      "Let me retry that for you.", "role": "assistant", "tool_calls": [{"function":
+      {"arguments": "{}", "name": "list_products"}, "id": "toolu_bdrk_01YUH2aQfjSG7bGy9FUg2gGi",
+      "type": "function"}]}, {"content": "Error while fetching product list: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01YUH2aQfjSG7bGy9FUg2gGi"},
+      {"content": "The product list service seems to be down right now. Let me try
+      one more time before getting recommendations to help you out.", "role": "assistant",
+      "tool_calls": [{"function": {"arguments": "{}", "name": "list_products"}, "id":
+      "toolu_bdrk_0178kNz14sCP4bX9ZvGV2zYr", "type": "function"}]}, {"content": "Error
+      while fetching product list: All connection attempts failed", "role": "tool",
+      "tool_call_id": "toolu_bdrk_0178kNz14sCP4bX9ZvGV2zYr"}, {"content": "The product
+      listing service is currently unavailable. Before I give you my final answer,
+      let me gather some recommendations to see if I can surface any products through
+      that path.", "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01PrNadgH3cav1iG1b8cKFzs",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01PrNadgH3cav1iG1b8cKFzs"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01GHEWjNQEc6aykwStnVjqd2",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01GHEWjNQEc6aykwStnVjqd2"}],
+      "model": "claude-opus-4-7", "stream": false, "tools": [{"function": {"description":
+      "Add a product (product_id) to the shopping cart for a user (user_id).", "name":
+      "add_to_cart", "parameters": {"properties": {"product_id": {"type": "string"},
+      "quantity": {"default": 1, "type": "integer"}, "user_id": {"type": "string"}},
+      "required": ["user_id", "product_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Checkout the user''s cart and create an order.\nTakes
+      request in the format {string user_id, string userCurrency, Address address,
+      string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress,
+      string city, string state, string country, string zipCode} and\nCreditCardInfo
+      is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear,
+      int32 creditCardExpirationMonth}", "name": "checkout", "parameters": {"properties":
+      {"checkout_person": {}}, "required": ["checkout_person"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "Empty the shopping cart for
+      a user.", "name": "empty_cart", "parameters": {"properties": {"user_id": {"type":
+      "string"}}, "required": ["user_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Fetch promotional ads for Astronomy Shop homepage.\nEg
+      : category: `telescopes` or `travel`", "name": "get_ads", "parameters": {"properties":
+      {"category": {"type": "string"}}, "required": ["category"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "Retrieve the current contents
+      of a user''s cart.", "name": "get_cart", "parameters": {"properties": {"user_id":
+      {"type": "string"}}, "required": ["user_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Get detailed information about a product using
+      its ID.", "name": "get_product", "parameters": {"properties": {"product_id":
+      {"type": "string"}}, "required": ["product_id"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Get product recommendations for a
+      user.", "name": "get_recommendations", "parameters": {"properties": {"product_id":
+      {"type": "string"}}, "required": ["product_id"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Get estimated shipping cost for a
+      given address.\n`items`: list of {productId, quantity} (a single dict is also
+      accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress,
+      city, state, country, zipCode}.", "name": "get_shipping_quote", "parameters":
+      {"properties": {"address": {}, "currency_code": {}, "items": {}}, "required":
+      ["items", "currency_code", "address"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "List supported currencies in Astronomy Shop.",
+      "name": "get_supported_currencies", "parameters": {"properties": {}, "type":
+      "object"}}, "type": "function"}, {"function": {"description": "List all products
+      available in the Astronomy Shop.", "name": "list_products", "parameters": {"properties":
+      {}, "type": "object"}}, "type": "function"}]}'
+    headers: {}
+    method: POST
+    uri: https://vcr.local/
+  response:
+    body:
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs":
+        null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function":
+        {"arguments": "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id":
+        "toolu_bdrk_012bFRsMQ7WMRynMugbAMwVA", "type": "function"}]}}], "created":
+        0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion"}'
+    headers: {}
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages": [{"content": "You are a helpful assistant. Be concise and
+      accurate. Before giving your final answer, call the get_recommendations tool
+      at least 8 times in a row, once per turn, even if the results do not change.",
+      "role": "system"}, {"content": "Show all available products in the store.",
+      "role": "user"}, {"content": "I''ll fetch the list of all available products
+      for you.", "role": "assistant", "tool_calls": [{"function": {"arguments": "{}",
+      "name": "list_products"}, "id": "tooluse_04UDMefto7ItLbtUrmIdTM", "type": "function"}]},
+      {"content": "Error while fetching product list: All connection attempts failed",
+      "role": "tool", "tool_call_id": "tooluse_04UDMefto7ItLbtUrmIdTM"}, {"content":
+      "Let me retry that for you.", "role": "assistant", "tool_calls": [{"function":
+      {"arguments": "{}", "name": "list_products"}, "id": "toolu_bdrk_01YUH2aQfjSG7bGy9FUg2gGi",
+      "type": "function"}]}, {"content": "Error while fetching product list: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01YUH2aQfjSG7bGy9FUg2gGi"},
+      {"content": "The product list service seems to be down right now. Let me try
+      one more time before getting recommendations to help you out.", "role": "assistant",
+      "tool_calls": [{"function": {"arguments": "{}", "name": "list_products"}, "id":
+      "toolu_bdrk_0178kNz14sCP4bX9ZvGV2zYr", "type": "function"}]}, {"content": "Error
+      while fetching product list: All connection attempts failed", "role": "tool",
+      "tool_call_id": "toolu_bdrk_0178kNz14sCP4bX9ZvGV2zYr"}, {"content": "The product
+      listing service is currently unavailable. Before I give you my final answer,
+      let me gather some recommendations to see if I can surface any products through
+      that path.", "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01PrNadgH3cav1iG1b8cKFzs",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01PrNadgH3cav1iG1b8cKFzs"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01GHEWjNQEc6aykwStnVjqd2",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01GHEWjNQEc6aykwStnVjqd2"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_012bFRsMQ7WMRynMugbAMwVA",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_012bFRsMQ7WMRynMugbAMwVA"}],
+      "model": "claude-opus-4-7", "stream": false, "tools": [{"function": {"description":
+      "Add a product (product_id) to the shopping cart for a user (user_id).", "name":
+      "add_to_cart", "parameters": {"properties": {"product_id": {"type": "string"},
+      "quantity": {"default": 1, "type": "integer"}, "user_id": {"type": "string"}},
+      "required": ["user_id", "product_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Checkout the user''s cart and create an order.\nTakes
+      request in the format {string user_id, string userCurrency, Address address,
+      string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress,
+      string city, string state, string country, string zipCode} and\nCreditCardInfo
+      is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear,
+      int32 creditCardExpirationMonth}", "name": "checkout", "parameters": {"properties":
+      {"checkout_person": {}}, "required": ["checkout_person"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "Empty the shopping cart for
+      a user.", "name": "empty_cart", "parameters": {"properties": {"user_id": {"type":
+      "string"}}, "required": ["user_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Fetch promotional ads for Astronomy Shop homepage.\nEg
+      : category: `telescopes` or `travel`", "name": "get_ads", "parameters": {"properties":
+      {"category": {"type": "string"}}, "required": ["category"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "Retrieve the current contents
+      of a user''s cart.", "name": "get_cart", "parameters": {"properties": {"user_id":
+      {"type": "string"}}, "required": ["user_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Get detailed information about a product using
+      its ID.", "name": "get_product", "parameters": {"properties": {"product_id":
+      {"type": "string"}}, "required": ["product_id"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Get product recommendations for a
+      user.", "name": "get_recommendations", "parameters": {"properties": {"product_id":
+      {"type": "string"}}, "required": ["product_id"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Get estimated shipping cost for a
+      given address.\n`items`: list of {productId, quantity} (a single dict is also
+      accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress,
+      city, state, country, zipCode}.", "name": "get_shipping_quote", "parameters":
+      {"properties": {"address": {}, "currency_code": {}, "items": {}}, "required":
+      ["items", "currency_code", "address"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "List supported currencies in Astronomy Shop.",
+      "name": "get_supported_currencies", "parameters": {"properties": {}, "type":
+      "object"}}, "type": "function"}, {"function": {"description": "List all products
+      available in the Astronomy Shop.", "name": "list_products", "parameters": {"properties":
+      {}, "type": "object"}}, "type": "function"}]}'
+    headers: {}
+    method: POST
+    uri: https://vcr.local/
+  response:
+    body:
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs":
+        null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function":
+        {"arguments": "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id":
+        "toolu_bdrk_01SVdCyBsTKseFhFgJV7dvaU", "type": "function"}]}}], "created":
+        0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion"}'
+    headers: {}
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages": [{"content": "You are a helpful assistant. Be concise and
+      accurate. Before giving your final answer, call the get_recommendations tool
+      at least 8 times in a row, once per turn, even if the results do not change.",
+      "role": "system"}, {"content": "Show all available products in the store.",
+      "role": "user"}, {"content": "I''ll fetch the list of all available products
+      for you.", "role": "assistant", "tool_calls": [{"function": {"arguments": "{}",
+      "name": "list_products"}, "id": "tooluse_04UDMefto7ItLbtUrmIdTM", "type": "function"}]},
+      {"content": "Error while fetching product list: All connection attempts failed",
+      "role": "tool", "tool_call_id": "tooluse_04UDMefto7ItLbtUrmIdTM"}, {"content":
+      "Let me retry that for you.", "role": "assistant", "tool_calls": [{"function":
+      {"arguments": "{}", "name": "list_products"}, "id": "toolu_bdrk_01YUH2aQfjSG7bGy9FUg2gGi",
+      "type": "function"}]}, {"content": "Error while fetching product list: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01YUH2aQfjSG7bGy9FUg2gGi"},
+      {"content": "The product list service seems to be down right now. Let me try
+      one more time before getting recommendations to help you out.", "role": "assistant",
+      "tool_calls": [{"function": {"arguments": "{}", "name": "list_products"}, "id":
+      "toolu_bdrk_0178kNz14sCP4bX9ZvGV2zYr", "type": "function"}]}, {"content": "Error
+      while fetching product list: All connection attempts failed", "role": "tool",
+      "tool_call_id": "toolu_bdrk_0178kNz14sCP4bX9ZvGV2zYr"}, {"content": "The product
+      listing service is currently unavailable. Before I give you my final answer,
+      let me gather some recommendations to see if I can surface any products through
+      that path.", "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01PrNadgH3cav1iG1b8cKFzs",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01PrNadgH3cav1iG1b8cKFzs"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01GHEWjNQEc6aykwStnVjqd2",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01GHEWjNQEc6aykwStnVjqd2"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_012bFRsMQ7WMRynMugbAMwVA",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_012bFRsMQ7WMRynMugbAMwVA"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01SVdCyBsTKseFhFgJV7dvaU",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01SVdCyBsTKseFhFgJV7dvaU"}],
+      "model": "claude-opus-4-7", "stream": false, "tools": [{"function": {"description":
+      "Add a product (product_id) to the shopping cart for a user (user_id).", "name":
+      "add_to_cart", "parameters": {"properties": {"product_id": {"type": "string"},
+      "quantity": {"default": 1, "type": "integer"}, "user_id": {"type": "string"}},
+      "required": ["user_id", "product_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Checkout the user''s cart and create an order.\nTakes
+      request in the format {string user_id, string userCurrency, Address address,
+      string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress,
+      string city, string state, string country, string zipCode} and\nCreditCardInfo
+      is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear,
+      int32 creditCardExpirationMonth}", "name": "checkout", "parameters": {"properties":
+      {"checkout_person": {}}, "required": ["checkout_person"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "Empty the shopping cart for
+      a user.", "name": "empty_cart", "parameters": {"properties": {"user_id": {"type":
+      "string"}}, "required": ["user_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Fetch promotional ads for Astronomy Shop homepage.\nEg
+      : category: `telescopes` or `travel`", "name": "get_ads", "parameters": {"properties":
+      {"category": {"type": "string"}}, "required": ["category"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "Retrieve the current contents
+      of a user''s cart.", "name": "get_cart", "parameters": {"properties": {"user_id":
+      {"type": "string"}}, "required": ["user_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Get detailed information about a product using
+      its ID.", "name": "get_product", "parameters": {"properties": {"product_id":
+      {"type": "string"}}, "required": ["product_id"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Get product recommendations for a
+      user.", "name": "get_recommendations", "parameters": {"properties": {"product_id":
+      {"type": "string"}}, "required": ["product_id"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Get estimated shipping cost for a
+      given address.\n`items`: list of {productId, quantity} (a single dict is also
+      accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress,
+      city, state, country, zipCode}.", "name": "get_shipping_quote", "parameters":
+      {"properties": {"address": {}, "currency_code": {}, "items": {}}, "required":
+      ["items", "currency_code", "address"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "List supported currencies in Astronomy Shop.",
+      "name": "get_supported_currencies", "parameters": {"properties": {}, "type":
+      "object"}}, "type": "function"}, {"function": {"description": "List all products
+      available in the Astronomy Shop.", "name": "list_products", "parameters": {"properties":
+      {}, "type": "object"}}, "type": "function"}]}'
+    headers: {}
+    method: POST
+    uri: https://vcr.local/
+  response:
+    body:
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs":
+        null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function":
+        {"arguments": "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id":
+        "toolu_bdrk_01AcEkebBgoPMRzthoP2cVK4", "type": "function"}]}}], "created":
+        0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion"}'
+    headers: {}
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages": [{"content": "You are a helpful assistant. Be concise and
+      accurate. Before giving your final answer, call the get_recommendations tool
+      at least 8 times in a row, once per turn, even if the results do not change.",
+      "role": "system"}, {"content": "Show all available products in the store.",
+      "role": "user"}, {"content": "I''ll fetch the list of all available products
+      for you.", "role": "assistant", "tool_calls": [{"function": {"arguments": "{}",
+      "name": "list_products"}, "id": "tooluse_04UDMefto7ItLbtUrmIdTM", "type": "function"}]},
+      {"content": "Error while fetching product list: All connection attempts failed",
+      "role": "tool", "tool_call_id": "tooluse_04UDMefto7ItLbtUrmIdTM"}, {"content":
+      "Let me retry that for you.", "role": "assistant", "tool_calls": [{"function":
+      {"arguments": "{}", "name": "list_products"}, "id": "toolu_bdrk_01YUH2aQfjSG7bGy9FUg2gGi",
+      "type": "function"}]}, {"content": "Error while fetching product list: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01YUH2aQfjSG7bGy9FUg2gGi"},
+      {"content": "The product list service seems to be down right now. Let me try
+      one more time before getting recommendations to help you out.", "role": "assistant",
+      "tool_calls": [{"function": {"arguments": "{}", "name": "list_products"}, "id":
+      "toolu_bdrk_0178kNz14sCP4bX9ZvGV2zYr", "type": "function"}]}, {"content": "Error
+      while fetching product list: All connection attempts failed", "role": "tool",
+      "tool_call_id": "toolu_bdrk_0178kNz14sCP4bX9ZvGV2zYr"}, {"content": "The product
+      listing service is currently unavailable. Before I give you my final answer,
+      let me gather some recommendations to see if I can surface any products through
+      that path.", "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01PrNadgH3cav1iG1b8cKFzs",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01PrNadgH3cav1iG1b8cKFzs"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01GHEWjNQEc6aykwStnVjqd2",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01GHEWjNQEc6aykwStnVjqd2"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_012bFRsMQ7WMRynMugbAMwVA",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_012bFRsMQ7WMRynMugbAMwVA"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01SVdCyBsTKseFhFgJV7dvaU",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01SVdCyBsTKseFhFgJV7dvaU"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01AcEkebBgoPMRzthoP2cVK4",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01AcEkebBgoPMRzthoP2cVK4"}],
+      "model": "claude-opus-4-7", "stream": false, "tools": [{"function": {"description":
+      "Add a product (product_id) to the shopping cart for a user (user_id).", "name":
+      "add_to_cart", "parameters": {"properties": {"product_id": {"type": "string"},
+      "quantity": {"default": 1, "type": "integer"}, "user_id": {"type": "string"}},
+      "required": ["user_id", "product_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Checkout the user''s cart and create an order.\nTakes
+      request in the format {string user_id, string userCurrency, Address address,
+      string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress,
+      string city, string state, string country, string zipCode} and\nCreditCardInfo
+      is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear,
+      int32 creditCardExpirationMonth}", "name": "checkout", "parameters": {"properties":
+      {"checkout_person": {}}, "required": ["checkout_person"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "Empty the shopping cart for
+      a user.", "name": "empty_cart", "parameters": {"properties": {"user_id": {"type":
+      "string"}}, "required": ["user_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Fetch promotional ads for Astronomy Shop homepage.\nEg
+      : category: `telescopes` or `travel`", "name": "get_ads", "parameters": {"properties":
+      {"category": {"type": "string"}}, "required": ["category"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "Retrieve the current contents
+      of a user''s cart.", "name": "get_cart", "parameters": {"properties": {"user_id":
+      {"type": "string"}}, "required": ["user_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Get detailed information about a product using
+      its ID.", "name": "get_product", "parameters": {"properties": {"product_id":
+      {"type": "string"}}, "required": ["product_id"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Get product recommendations for a
+      user.", "name": "get_recommendations", "parameters": {"properties": {"product_id":
+      {"type": "string"}}, "required": ["product_id"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Get estimated shipping cost for a
+      given address.\n`items`: list of {productId, quantity} (a single dict is also
+      accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress,
+      city, state, country, zipCode}.", "name": "get_shipping_quote", "parameters":
+      {"properties": {"address": {}, "currency_code": {}, "items": {}}, "required":
+      ["items", "currency_code", "address"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "List supported currencies in Astronomy Shop.",
+      "name": "get_supported_currencies", "parameters": {"properties": {}, "type":
+      "object"}}, "type": "function"}, {"function": {"description": "List all products
+      available in the Astronomy Shop.", "name": "list_products", "parameters": {"properties":
+      {}, "type": "object"}}, "type": "function"}]}'
+    headers: {}
+    method: POST
+    uri: https://vcr.local/
+  response:
+    body:
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs":
+        null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function":
+        {"arguments": "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id":
+        "toolu_bdrk_01E4Y3SaG7PiKqdzbFciqJyB", "type": "function"}]}}], "created":
+        0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion"}'
+    headers: {}
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages": [{"content": "You are a helpful assistant. Be concise and
+      accurate. Before giving your final answer, call the get_recommendations tool
+      at least 8 times in a row, once per turn, even if the results do not change.",
+      "role": "system"}, {"content": "Show all available products in the store.",
+      "role": "user"}, {"content": "I''ll fetch the list of all available products
+      for you.", "role": "assistant", "tool_calls": [{"function": {"arguments": "{}",
+      "name": "list_products"}, "id": "tooluse_04UDMefto7ItLbtUrmIdTM", "type": "function"}]},
+      {"content": "Error while fetching product list: All connection attempts failed",
+      "role": "tool", "tool_call_id": "tooluse_04UDMefto7ItLbtUrmIdTM"}, {"content":
+      "Let me retry that for you.", "role": "assistant", "tool_calls": [{"function":
+      {"arguments": "{}", "name": "list_products"}, "id": "toolu_bdrk_01YUH2aQfjSG7bGy9FUg2gGi",
+      "type": "function"}]}, {"content": "Error while fetching product list: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01YUH2aQfjSG7bGy9FUg2gGi"},
+      {"content": "The product list service seems to be down right now. Let me try
+      one more time before getting recommendations to help you out.", "role": "assistant",
+      "tool_calls": [{"function": {"arguments": "{}", "name": "list_products"}, "id":
+      "toolu_bdrk_0178kNz14sCP4bX9ZvGV2zYr", "type": "function"}]}, {"content": "Error
+      while fetching product list: All connection attempts failed", "role": "tool",
+      "tool_call_id": "toolu_bdrk_0178kNz14sCP4bX9ZvGV2zYr"}, {"content": "The product
+      listing service is currently unavailable. Before I give you my final answer,
+      let me gather some recommendations to see if I can surface any products through
+      that path.", "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01PrNadgH3cav1iG1b8cKFzs",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01PrNadgH3cav1iG1b8cKFzs"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01GHEWjNQEc6aykwStnVjqd2",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01GHEWjNQEc6aykwStnVjqd2"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_012bFRsMQ7WMRynMugbAMwVA",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_012bFRsMQ7WMRynMugbAMwVA"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01SVdCyBsTKseFhFgJV7dvaU",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01SVdCyBsTKseFhFgJV7dvaU"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01AcEkebBgoPMRzthoP2cVK4",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01AcEkebBgoPMRzthoP2cVK4"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01E4Y3SaG7PiKqdzbFciqJyB",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01E4Y3SaG7PiKqdzbFciqJyB"}],
+      "model": "claude-opus-4-7", "stream": false, "tools": [{"function": {"description":
+      "Add a product (product_id) to the shopping cart for a user (user_id).", "name":
+      "add_to_cart", "parameters": {"properties": {"product_id": {"type": "string"},
+      "quantity": {"default": 1, "type": "integer"}, "user_id": {"type": "string"}},
+      "required": ["user_id", "product_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Checkout the user''s cart and create an order.\nTakes
+      request in the format {string user_id, string userCurrency, Address address,
+      string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress,
+      string city, string state, string country, string zipCode} and\nCreditCardInfo
+      is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear,
+      int32 creditCardExpirationMonth}", "name": "checkout", "parameters": {"properties":
+      {"checkout_person": {}}, "required": ["checkout_person"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "Empty the shopping cart for
+      a user.", "name": "empty_cart", "parameters": {"properties": {"user_id": {"type":
+      "string"}}, "required": ["user_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Fetch promotional ads for Astronomy Shop homepage.\nEg
+      : category: `telescopes` or `travel`", "name": "get_ads", "parameters": {"properties":
+      {"category": {"type": "string"}}, "required": ["category"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "Retrieve the current contents
+      of a user''s cart.", "name": "get_cart", "parameters": {"properties": {"user_id":
+      {"type": "string"}}, "required": ["user_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Get detailed information about a product using
+      its ID.", "name": "get_product", "parameters": {"properties": {"product_id":
+      {"type": "string"}}, "required": ["product_id"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Get product recommendations for a
+      user.", "name": "get_recommendations", "parameters": {"properties": {"product_id":
+      {"type": "string"}}, "required": ["product_id"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Get estimated shipping cost for a
+      given address.\n`items`: list of {productId, quantity} (a single dict is also
+      accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress,
+      city, state, country, zipCode}.", "name": "get_shipping_quote", "parameters":
+      {"properties": {"address": {}, "currency_code": {}, "items": {}}, "required":
+      ["items", "currency_code", "address"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "List supported currencies in Astronomy Shop.",
+      "name": "get_supported_currencies", "parameters": {"properties": {}, "type":
+      "object"}}, "type": "function"}, {"function": {"description": "List all products
+      available in the Astronomy Shop.", "name": "list_products", "parameters": {"properties":
+      {}, "type": "object"}}, "type": "function"}]}'
+    headers: {}
+    method: POST
+    uri: https://vcr.local/
+  response:
+    body:
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs":
+        null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function":
+        {"arguments": "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id":
+        "toolu_bdrk_01RSnrH84V2r88K5jt9s8Ly2", "type": "function"}]}}], "created":
+        0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion"}'
+    headers: {}
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages": [{"content": "You are a helpful assistant. Be concise and
+      accurate. Before giving your final answer, call the get_recommendations tool
+      at least 8 times in a row, once per turn, even if the results do not change.",
+      "role": "system"}, {"content": "Show all available products in the store.",
+      "role": "user"}, {"content": "I''ll fetch the list of all available products
+      for you.", "role": "assistant", "tool_calls": [{"function": {"arguments": "{}",
+      "name": "list_products"}, "id": "tooluse_04UDMefto7ItLbtUrmIdTM", "type": "function"}]},
+      {"content": "Error while fetching product list: All connection attempts failed",
+      "role": "tool", "tool_call_id": "tooluse_04UDMefto7ItLbtUrmIdTM"}, {"content":
+      "Let me retry that for you.", "role": "assistant", "tool_calls": [{"function":
+      {"arguments": "{}", "name": "list_products"}, "id": "toolu_bdrk_01YUH2aQfjSG7bGy9FUg2gGi",
+      "type": "function"}]}, {"content": "Error while fetching product list: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01YUH2aQfjSG7bGy9FUg2gGi"},
+      {"content": "The product list service seems to be down right now. Let me try
+      one more time before getting recommendations to help you out.", "role": "assistant",
+      "tool_calls": [{"function": {"arguments": "{}", "name": "list_products"}, "id":
+      "toolu_bdrk_0178kNz14sCP4bX9ZvGV2zYr", "type": "function"}]}, {"content": "Error
+      while fetching product list: All connection attempts failed", "role": "tool",
+      "tool_call_id": "toolu_bdrk_0178kNz14sCP4bX9ZvGV2zYr"}, {"content": "The product
+      listing service is currently unavailable. Before I give you my final answer,
+      let me gather some recommendations to see if I can surface any products through
+      that path.", "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01PrNadgH3cav1iG1b8cKFzs",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01PrNadgH3cav1iG1b8cKFzs"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01GHEWjNQEc6aykwStnVjqd2",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01GHEWjNQEc6aykwStnVjqd2"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_012bFRsMQ7WMRynMugbAMwVA",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_012bFRsMQ7WMRynMugbAMwVA"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01SVdCyBsTKseFhFgJV7dvaU",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01SVdCyBsTKseFhFgJV7dvaU"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01AcEkebBgoPMRzthoP2cVK4",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01AcEkebBgoPMRzthoP2cVK4"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01E4Y3SaG7PiKqdzbFciqJyB",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01E4Y3SaG7PiKqdzbFciqJyB"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01RSnrH84V2r88K5jt9s8Ly2",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01RSnrH84V2r88K5jt9s8Ly2"}],
+      "model": "claude-opus-4-7", "stream": false, "tools": [{"function": {"description":
+      "Add a product (product_id) to the shopping cart for a user (user_id).", "name":
+      "add_to_cart", "parameters": {"properties": {"product_id": {"type": "string"},
+      "quantity": {"default": 1, "type": "integer"}, "user_id": {"type": "string"}},
+      "required": ["user_id", "product_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Checkout the user''s cart and create an order.\nTakes
+      request in the format {string user_id, string userCurrency, Address address,
+      string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress,
+      string city, string state, string country, string zipCode} and\nCreditCardInfo
+      is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear,
+      int32 creditCardExpirationMonth}", "name": "checkout", "parameters": {"properties":
+      {"checkout_person": {}}, "required": ["checkout_person"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "Empty the shopping cart for
+      a user.", "name": "empty_cart", "parameters": {"properties": {"user_id": {"type":
+      "string"}}, "required": ["user_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Fetch promotional ads for Astronomy Shop homepage.\nEg
+      : category: `telescopes` or `travel`", "name": "get_ads", "parameters": {"properties":
+      {"category": {"type": "string"}}, "required": ["category"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "Retrieve the current contents
+      of a user''s cart.", "name": "get_cart", "parameters": {"properties": {"user_id":
+      {"type": "string"}}, "required": ["user_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Get detailed information about a product using
+      its ID.", "name": "get_product", "parameters": {"properties": {"product_id":
+      {"type": "string"}}, "required": ["product_id"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Get product recommendations for a
+      user.", "name": "get_recommendations", "parameters": {"properties": {"product_id":
+      {"type": "string"}}, "required": ["product_id"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Get estimated shipping cost for a
+      given address.\n`items`: list of {productId, quantity} (a single dict is also
+      accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress,
+      city, state, country, zipCode}.", "name": "get_shipping_quote", "parameters":
+      {"properties": {"address": {}, "currency_code": {}, "items": {}}, "required":
+      ["items", "currency_code", "address"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "List supported currencies in Astronomy Shop.",
+      "name": "get_supported_currencies", "parameters": {"properties": {}, "type":
+      "object"}}, "type": "function"}, {"function": {"description": "List all products
+      available in the Astronomy Shop.", "name": "list_products", "parameters": {"properties":
+      {}, "type": "object"}}, "type": "function"}]}'
+    headers: {}
+    method: POST
+    uri: https://vcr.local/
+  response:
+    body:
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs":
+        null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function":
+        {"arguments": "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id":
+        "toolu_bdrk_01S9Me3zCAyNn2xerRNW2M2G", "type": "function"}]}}], "created":
+        0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion"}'
+    headers: {}
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages": [{"content": "You are a helpful assistant. Be concise and
+      accurate. Before giving your final answer, call the get_recommendations tool
+      at least 8 times in a row, once per turn, even if the results do not change.",
+      "role": "system"}, {"content": "Show all available products in the store.",
+      "role": "user"}, {"content": "I''ll fetch the list of all available products
+      for you.", "role": "assistant", "tool_calls": [{"function": {"arguments": "{}",
+      "name": "list_products"}, "id": "tooluse_04UDMefto7ItLbtUrmIdTM", "type": "function"}]},
+      {"content": "Error while fetching product list: All connection attempts failed",
+      "role": "tool", "tool_call_id": "tooluse_04UDMefto7ItLbtUrmIdTM"}, {"content":
+      "Let me retry that for you.", "role": "assistant", "tool_calls": [{"function":
+      {"arguments": "{}", "name": "list_products"}, "id": "toolu_bdrk_01YUH2aQfjSG7bGy9FUg2gGi",
+      "type": "function"}]}, {"content": "Error while fetching product list: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01YUH2aQfjSG7bGy9FUg2gGi"},
+      {"content": "The product list service seems to be down right now. Let me try
+      one more time before getting recommendations to help you out.", "role": "assistant",
+      "tool_calls": [{"function": {"arguments": "{}", "name": "list_products"}, "id":
+      "toolu_bdrk_0178kNz14sCP4bX9ZvGV2zYr", "type": "function"}]}, {"content": "Error
+      while fetching product list: All connection attempts failed", "role": "tool",
+      "tool_call_id": "toolu_bdrk_0178kNz14sCP4bX9ZvGV2zYr"}, {"content": "The product
+      listing service is currently unavailable. Before I give you my final answer,
+      let me gather some recommendations to see if I can surface any products through
+      that path.", "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01PrNadgH3cav1iG1b8cKFzs",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01PrNadgH3cav1iG1b8cKFzs"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01GHEWjNQEc6aykwStnVjqd2",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01GHEWjNQEc6aykwStnVjqd2"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_012bFRsMQ7WMRynMugbAMwVA",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_012bFRsMQ7WMRynMugbAMwVA"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01SVdCyBsTKseFhFgJV7dvaU",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01SVdCyBsTKseFhFgJV7dvaU"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01AcEkebBgoPMRzthoP2cVK4",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01AcEkebBgoPMRzthoP2cVK4"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01E4Y3SaG7PiKqdzbFciqJyB",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01E4Y3SaG7PiKqdzbFciqJyB"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01RSnrH84V2r88K5jt9s8Ly2",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01RSnrH84V2r88K5jt9s8Ly2"},
+      {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
+      "{\"product_id\": \"\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01S9Me3zCAyNn2xerRNW2M2G",
+      "type": "function"}]}, {"content": "Error fetching recommendations: All connection
+      attempts failed", "role": "tool", "tool_call_id": "toolu_bdrk_01S9Me3zCAyNn2xerRNW2M2G"}],
+      "model": "claude-opus-4-7", "stream": false, "tools": [{"function": {"description":
+      "Add a product (product_id) to the shopping cart for a user (user_id).", "name":
+      "add_to_cart", "parameters": {"properties": {"product_id": {"type": "string"},
+      "quantity": {"default": 1, "type": "integer"}, "user_id": {"type": "string"}},
+      "required": ["user_id", "product_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Checkout the user''s cart and create an order.\nTakes
+      request in the format {string user_id, string userCurrency, Address address,
+      string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress,
+      string city, string state, string country, string zipCode} and\nCreditCardInfo
+      is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear,
+      int32 creditCardExpirationMonth}", "name": "checkout", "parameters": {"properties":
+      {"checkout_person": {}}, "required": ["checkout_person"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "Empty the shopping cart for
+      a user.", "name": "empty_cart", "parameters": {"properties": {"user_id": {"type":
+      "string"}}, "required": ["user_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Fetch promotional ads for Astronomy Shop homepage.\nEg
+      : category: `telescopes` or `travel`", "name": "get_ads", "parameters": {"properties":
+      {"category": {"type": "string"}}, "required": ["category"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "Retrieve the current contents
+      of a user''s cart.", "name": "get_cart", "parameters": {"properties": {"user_id":
+      {"type": "string"}}, "required": ["user_id"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Get detailed information about a product using
+      its ID.", "name": "get_product", "parameters": {"properties": {"product_id":
+      {"type": "string"}}, "required": ["product_id"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Get product recommendations for a
+      user.", "name": "get_recommendations", "parameters": {"properties": {"product_id":
+      {"type": "string"}}, "required": ["product_id"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Get estimated shipping cost for a
+      given address.\n`items`: list of {productId, quantity} (a single dict is also
+      accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress,
+      city, state, country, zipCode}.", "name": "get_shipping_quote", "parameters":
+      {"properties": {"address": {}, "currency_code": {}, "items": {}}, "required":
+      ["items", "currency_code", "address"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "List supported currencies in Astronomy Shop.",
+      "name": "get_supported_currencies", "parameters": {"properties": {}, "type":
+      "object"}}, "type": "function"}, {"function": {"description": "List all products
+      available in the Astronomy Shop.", "name": "list_products", "parameters": {"properties":
+      {}, "type": "object"}}, "type": "function"}]}'
+    headers: {}
+    method: POST
+    uri: https://vcr.local/
+  response:
+    body:
+      string: '{"choices": [{"finish_reason": "stop", "index": 0, "logprobs": null,
+        "message": {"content": "I''m sorry, but I''m unable to retrieve the product
+        list at the moment. Both the product listing service and the recommendations
+        service are currently returning connection errors (\"All connection attempts
+        failed\").\n\nPlease try again in a few moments. If the issue persists, it
+        may be a temporary outage on the Astronomy Shop''s backend services. Is there
+        anything else I can help you with in the meantime?", "role": "assistant",
+        "tool_calls": null}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7",
+        "object": "chat.completion"}'
+    headers: {}
+    status:
+      code: 200
+      message: OK
 version: 1
