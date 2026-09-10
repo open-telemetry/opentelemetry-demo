@@ -85,7 +85,18 @@ make start
 ### Using Podman Instead of Docker
 
 The demo supports both Docker and Podman. Docker is the default container
-runtime. To use Podman instead, set the following environment variables:
+runtime. To use Podman instead, first set the `DOCKER_SOCK` to use podman,
+in `.env.override` uncomment `# DOCKER_SOCK=/run/user/1000/podman/podman.sock`
+This is needed for the otel-collector to work correctly. For example, you should
+have:
+
+```sh
+# Rootless podman: use the podman Docker-compatible API socket so the collector's
+# docker resource detector and docker_stats receiver can connect.
+DOCKER_SOCK=/run/user/1000/podman/podman.sock
+```
+
+Next you can run podman with:
 
 ```sh
 DOCKER_COMPOSE_CMD="podman compose" make start

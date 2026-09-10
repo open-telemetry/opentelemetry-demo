@@ -19,6 +19,7 @@ COPY src/agent/src src
 COPY src/shared/tools.py src/agents
 COPY src/agent/run.py .
 
+ARG AGENT_PORT=8010
 EXPOSE ${AGENT_PORT}
 
 CMD ["python", "run.py"]

@@ -42,6 +42,7 @@ WORKDIR /app
 COPY --from=builder /app/target/release/shipping shipping
 COPY --from=builder /app/target/release/healthcheck healthcheck
 
+ARG SHIPPING_PORT=50050
 EXPOSE ${SHIPPING_PORT}
 
 CMD ["./shipping"]
