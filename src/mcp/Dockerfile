@@ -1,7 +1,7 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-FROM python:3.14-slim@sha256:656d12e70054d5fda18a045e2494c96701e9792dd1445f95b3d038df954f57e9
+FROM python:3.14-slim@sha256:cad9a2c871761c413caa6fdd6441c783451e740a48aaeba60ae62a8b53525ef6
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
@@ -19,6 +19,7 @@ COPY src/mcp/src src
 COPY src/shared/tools.py src/mcp_server
 COPY src/mcp/run.py .
 
+ARG MCP_PORT=8011
 EXPOSE ${MCP_PORT}
 
 CMD ["python", "run.py"]

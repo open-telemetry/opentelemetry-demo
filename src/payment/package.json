@@ -21,6 +21,6 @@
     "uuid": "14.0.2"
   },
   "devDependencies": {
-    "@opentelemetry/auto-instrumentations-node": "0.79.0"
+    "@opentelemetry/auto-instrumentations-node": "0.80.0"
   }
 }
