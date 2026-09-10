@@ -18,4 +18,4 @@ jobs:
       contents: read  # required by the component-build-images reusable workflow
       packages: write  # required to push built images to GHCR
     if: ${{ !github.event.repository.fork }}
-    uses: ./.github/workflows/component-build-images.yml
+    uses: $/.github/workflows/component-build-images.yml
