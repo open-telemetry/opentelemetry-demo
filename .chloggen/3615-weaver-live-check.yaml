@@ -1,0 +1,11 @@
+change_type: enhancement
+
+component: testing
+
+note: Validate expected Demo trace and metric telemetry with Weaver live check.
+
+issues: [3615]
+
+subtext: |-
+  A deterministic checkout contract verifies that selected attributes and
+  metrics are emitted after Collector processing.

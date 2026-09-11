@@ -1,0 +1,18 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+[expected]
+attributes = [
+  "demo.product.id",
+  "demo.product.quantity",
+  "demo.cart.items.count",
+  "demo.order.id",
+  "demo.payment.transaction.id",
+  "demo.shipping.tracking.id",
+]
+metrics = [
+  "demo.cart.add_item.latency",
+  "demo.cart.get_cart.latency",
+  "demo.payment.transactions",
+  "demo.notification.confirmations",
+]
