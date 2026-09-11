@@ -1,0 +1,54 @@
+name: Podman Build Check
+
+on:
+  pull_request:
+    paths:
+      - '**/Dockerfile'
+      - '**/Dockerfile.*'
+      - '.github/workflows/podman-build-check.yml'
+
+jobs:
+  podman-build:
+    name: Build changed Dockerfiles with Podman
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Install Podman
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y podman
+
+      - name: Find changed Dockerfiles
+        id: changed-dockerfiles
+        run: |
+          git diff --name-only \
+            --diff-filter=ACMRT \
+            "${{ github.event.pull_request.base.sha }}" \
+            "${{ github.event.pull_request.head.sha }}" \
+            | grep -E '(^|/)Dockerfile(\..*)?$' > changed-dockerfiles.txt || true
+
+          echo "Changed Dockerfiles:"
+          cat changed-dockerfiles.txt
+
+      - name: Build changed Dockerfiles
+        run: |
+          while IFS= read -r dockerfile; do
+            [ -z "$dockerfile" ] && continue
+
+            echo "::group::Building $dockerfile"
+            echo "Build context: ."
+
+            podman build \
+              --file "$dockerfile" \
+              .
+
+            echo "::endgroup::"
+          done < changed-dockerfiles.txt
