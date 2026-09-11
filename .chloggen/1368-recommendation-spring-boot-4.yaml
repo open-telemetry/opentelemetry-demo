@@ -1,0 +1,11 @@
+change_type: enhancement
+
+component: recommendation
+
+note: Rewrite the recommendation service in Java with Spring Boot 4, instrumented with Micrometer and the Spring Boot OpenTelemetry starter instead of the Java agent.
+
+issues: [1368]
+
+subtext: |-
+  The service no longer sends the OpenTelemetry SDK self-observability metrics (otel_sdk_*) the Python
+  version did, so it does not appear on the self-observability dashboard.

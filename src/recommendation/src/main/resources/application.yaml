@@ -1,0 +1,21 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+# Export endpoints, resource attributes and the service name come from the standard OTEL_*
+# environment variables, which Spring Boot maps onto its own properties
+# (management.opentelemetry.map-environment-variables).
+spring:
+  application:
+    name: recommendation
+  grpc:
+    server:
+      port: ${RECOMMENDATION_PORT:9001}
+    client:
+      channel:
+        product-catalog:
+          target: ${PRODUCT_CATALOG_ADDR:localhost:3550}
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
