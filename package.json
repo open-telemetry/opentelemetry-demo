@@ -3,5 +3,8 @@
   "private": true,
   "devDependencies": {
     "markdownlint-cli": "^0.49.1"
+  },
+  "overrides": {
+    "smol-toml": "1.7.1"
   }
 }

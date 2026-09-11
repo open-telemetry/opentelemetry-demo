@@ -70,6 +70,7 @@
   "overrides": {
     "@cypress/request": "4.0.0",
     "postcss": "8.5.23",
-    "qs": "6.16.0"
+    "qs": "6.16.0",
+    "js-yaml": "4.3.2"
   }
 }
