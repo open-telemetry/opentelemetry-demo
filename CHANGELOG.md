@@ -10,6 +10,47 @@ version section directly below the marker and deletes them.
 
 <!-- next version -->
 
+## 3.1.0
+
+### Enhancements
+
+- `cart`: Report health to the demo's OpAMP server when running with the observability stack (#3656)
+- `chatbot`: Report health to the demo's OpAMP server when running with the agentic and observability stacks (#3808)
+- `checkout, product-catalog`: Enable Go SDK self-observability metrics. (#3936)
+- `checkout, product-catalog`: Bump `go.opentelemetry.io/contrib` to the v1.46.0/v0.71.0 release line, picking up otelgrpc recording `error.type` on RPC duration metrics for failed calls (#3901)
+- `collector`: Add a data redaction/deletion example: delete, hash, and partially mask sensitive attributes with the transform processor, plus a documented redaction-processor fallback (#3662)
+- `flagd-ui`: Add a scheduler that periodically activates randomly picked feature flags for a random duration, so failure scenarios appear and disappear on their own without external tooling (#2375)
+  Configurable interval, minimum and maximum hold duration, how many flags run
+  at once, per variant flag selection, and an optional seed for reproducible
+  patterns.
+- `grafana`: Show service names in the event volume table. (#3937)
+- `grafana`: Add SDK processor throughput panels to the self-observability dashboard. (#3935)
+- `load-generator`: Revert #3564: replace k6 with the pre-k6 Locust-based load generator, removing the now-unused `loadGeneratorTraffic` and `loadGeneratorVUs` feature flags along with it (#3873)
+- `payment`: Add `error.type` attribute to error spans in `charge.js` and `index.js` to align with OpenTelemetry Semantic Conventions for errors (#3758)
+- `product-catalog`: Add productCatalogLockContention flag to simulate database lock contention (#3930)
+- `product-catalog`: Report health to the demo's OpAMP server when running with the observability stack. (#3807)
+- `python`: Enable SDK self-observability metrics for the agent, chatbot, load-generator, MCP, and recommendation services (#3932)
+- `repo`: Manage the changelog with per-PR `.chloggen` fragment files (chloggen) instead of hand-editing the shared `CHANGELOG.md` Unreleased section, eliminating changelog merge conflicts (#3926)
+  Contributors now run `make chlog-new` to add a fragment; fragments are folded
+  into CHANGELOG.md at release time with `make chlog-update VERSION=x.x.x`. See
+  CONTRIBUTING.md for the workflow.
+
+### Bug fixes
+
+- `checkout`: Bound order confirmation email requests so an unavailable email service cannot block orders until the caller deadline. (#3879)
+- `checkout`: Fix synchronous srv.Serve call blocking signal handler registration, enabling graceful SIGTERM shutdown and preventing OpenTelemetry telemetry drops. (#3865)
+- `payment`: Fix gRPC server not starting by calling `server.start()` after `bindAsnc()` (#3844)
+  The server bound to the port but was never started to accept connections,
+  causing the service to fail its health checks.
+- `podman`: This work updates all dockerfiles to make them compatible with podman build (#3880)
+  Podman's buildah is stricter compared to Dockers buildkit. For example using EXPOSE
+  in Dockerfiles without specifing a ARG will work fine in Docker but in Podman this fails.
+  
+- `react-native-app`: Fix `SessionGateway.setSessionValue` to await `getSession()`, preventing stored session corruption and loss of `userId` (#3765)
+- `react-native-app`: Catch errors from `placeOrder` in the Cart screen and show an error toast so payment failures are visible to the user instead of being silently dropped (#3760)
+- `react-native-app`: Render missing `City` and `State` input fields in `CheckoutForm` (#3754)
+- `shipping`: Fix floating-point truncation in `create_quote_from_float` and add two-digit zero padding to `fmt::Display for Quote` (#3877)
+
 ## 3.0.0
 
 * [react-native-app] Fix `ProductCard` price calculation where `nanos` was
