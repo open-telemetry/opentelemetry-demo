@@ -44,8 +44,8 @@ version section directly below the marker and deletes them.
   causing the service to fail its health checks.
 - `podman`: This work updates all dockerfiles to make them compatible with podman build (#3880)
   Podman's buildah is stricter compared to Dockers buildkit. For example using EXPOSE
-  in Dockerfiles without specifing a ARG will work fine in Docker but in Podman this fails.
-  
+  in Dockerfiles without specifying a ARG will work fine in Docker but in Podman this fails.
+
 - `react-native-app`: Fix `SessionGateway.setSessionValue` to await `getSession()`, preventing stored session corruption and loss of `userId` (#3765)
 - `react-native-app`: Catch errors from `placeOrder` in the Cart screen and show an error toast so payment failures are visible to the user instead of being silently dropped (#3760)
 - `react-native-app`: Render missing `City` and `State` input fields in `CheckoutForm` (#3754)
