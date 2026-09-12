@@ -28,6 +28,25 @@
         "on": true
       }
     },
+    "aiRunawayAgent": {
+      "defaultVariant": "off",
+      "description": "forces the agent to keep looping tool calls until it hits its recursion limit",
+      "state": "ENABLED",
+      "variants": {
+        "off": 0,
+        "on": 20
+      }
+    },
+    "aiSlowResponse": {
+      "defaultVariant": "off",
+      "description": "slow LLM responses in the agent service",
+      "state": "ENABLED",
+      "variants": {
+        "10sec": 10000,
+        "5sec": 5000,
+        "off": 0
+      }
+    },
     "cartFailure": {
       "defaultVariant": "off",
       "description": "Fail cart service n% of the time",
