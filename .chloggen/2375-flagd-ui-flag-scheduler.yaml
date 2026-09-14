@@ -1,0 +1,12 @@
+change_type: enhancement
+
+component: flagd-ui
+
+note: "Add a scheduler that periodically activates randomly picked feature flags for a random duration, so failure scenarios appear and disappear on their own without external tooling"
+
+issues: [2375]
+
+subtext: |-
+  Configurable interval, minimum and maximum hold duration, how many flags run
+  at once, per variant flag selection, and an optional seed for reproducible
+  patterns.

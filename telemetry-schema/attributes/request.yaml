@@ -12,3 +12,9 @@ attributes:
       This helps distinguish production traffic from test traffic in observability systems.
       Also propagated as synthetic_request baggage.
     examples: ["true", "false"]
+  - key: demo.request.flood.count
+    type: int
+    brief: Number of repeated requests sent in a flood
+    stability: stable
+    note: The number of times a single synthetic request scenario repeats a request against the same endpoint
+    examples: [10, 50, 100]

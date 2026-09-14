@@ -1,0 +1,9 @@
+change_type: enhancement
+
+component: grafana
+
+note: Show service names in the event volume table.
+
+issues: [3937]
+
+subtext:

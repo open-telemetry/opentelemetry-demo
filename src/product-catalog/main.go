@@ -17,6 +17,7 @@ import (
 	"os"
 	"os/signal"
 	"strings"
+	"sync/atomic"
 	"syscall"
 	"time"
 
@@ -102,6 +103,11 @@ func initDatabase() error {
 func main() {
 	ctx := context.Background()
 
+	opAMPIdentity, err := prepareOpAMPIdentity()
+	if err != nil {
+		logger.Error(fmt.Sprintf("Failed to prepare OpAMP identity: %v", err))
+	}
+
 	// Initialize OpenTelemetry SDK with otelconf
 	sdk, err := otelconf.NewSDK(otelconf.WithContext(ctx))
 	if err != nil {
@@ -155,9 +161,26 @@ func main() {
 	}
 	defer openfeature.Shutdown()
 
+	go triggerLockContentionLoop(ctx)
+
 	err = runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
 	if err != nil {
 		logger.Error(err.Error())
+	}
+
+	opAMPClient, err := startOpAMPClient(context.Background(), opAMPIdentity)
+	if err != nil {
+		logger.Error(fmt.Sprintf("Failed to start OpAMP client: %v", err))
+	} else if opAMPClient != nil {
+		defer func() {
+			shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+			if err := opAMPClient.Stop(shutdownCtx); err != nil {
+				logger.Error(fmt.Sprintf("Error stopping OpAMP client: %v", err))
+			} else {
+				logger.Info("Stopped OpAMP client")
+			}
+		}()
 	}
 
 	svc := &productCatalog{}
@@ -184,7 +207,7 @@ func main() {
 	healthcheck := health.NewServer()
 	healthpb.RegisterHealthServer(srv, healthcheck)
 
-	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGKILL)
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer cancel()
 
 	go func() {
@@ -418,4 +441,45 @@ func (p *productCatalog) SearchProducts(ctx context.Context, req *pb.SearchProdu
 
 func (p *productCatalog) checkProductFailure(ctx context.Context, id string) bool {
 	return flags.ProductCatalogFailure.Value(ctx, openfeature.NewTargetlessEvaluationContext(map[string]any{"product_id": id}))
+}
+
+func triggerLockContentionLoop(ctx context.Context) {
+	ticker := time.NewTicker(10 * time.Second)
+	defer ticker.Stop()
+
+	var locking atomic.Bool
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-ticker.C:
+			enabled := flags.ProductCatalogLockContention.Value(ctx, openfeature.NewTargetlessEvaluationContext(nil))
+			if enabled && locking.CompareAndSwap(false, true) {
+				go func() {
+					defer locking.Store(false)
+					triggerLockContention(ctx)
+				}()
+			}
+		}
+	}
+}
+
+func triggerLockContention(ctx context.Context) {
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		logger.Error("failed to begin lock contention transaction", slog.Any("error", err))
+		return
+	}
+	defer tx.Rollback()
+
+	if _, err := tx.ExecContext(ctx, "LOCK TABLE catalog.products IN ACCESS EXCLUSIVE MODE"); err != nil {
+		logger.Error("failed to acquire lock for lock contention scenario", slog.Any("error", err))
+		return
+	}
+
+	logger.Info("lock contention scenario active: holding ACCESS EXCLUSIVE lock on catalog.products")
+	select {
+	case <-ctx.Done():
+	case <-time.After(30 * time.Second):
+	}
 }

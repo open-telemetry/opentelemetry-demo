@@ -30,9 +30,8 @@ Each interval the scheduler activates up to a configured number of distinct
 randomly picked flags. Every activation gets its own hold duration between the
 configured minimum and maximum, and its own offset, so that the whole activation
 fits inside the interval. When a hold expires that flag is set back to its
-resting variant, the flag's own configured default. That is `off` for most
-failure scenarios, but `on` for `loadGeneratorTraffic` and `5` for
-`loadGeneratorVUs`.
+resting variant, the flag's own configured default, which is `off` for every
+failure scenario.
 
 The following can be configured:
 

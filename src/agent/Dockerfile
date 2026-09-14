@@ -1,7 +1,7 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-FROM python:3.14-slim@sha256:ce40764625a4ff50df3548277632e7f96c4e77fe75fa848aae9885476e7df5a4
+FROM python:3.14-slim@sha256:cad9a2c871761c413caa6fdd6441c783451e740a48aaeba60ae62a8b53525ef6
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
@@ -19,6 +19,7 @@ COPY src/agent/src src
 COPY src/shared/tools.py src/agents
 COPY src/agent/run.py .
 
+ARG AGENT_PORT=8010
 EXPOSE ${AGENT_PORT}
 
 CMD ["python", "run.py"]

@@ -1,0 +1,5 @@
+change_type: bug_fix
+component: checkout
+note: Fix synchronous srv.Serve call blocking signal handler registration, enabling graceful SIGTERM shutdown and preventing OpenTelemetry telemetry drops.
+issues: [3865]
+subtext:

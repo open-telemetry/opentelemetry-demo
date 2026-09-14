@@ -32,6 +32,7 @@ const nextConfig = {
   compiler: {
     styledComponents: true,
   },
+  serverExternalPackages: ['pino'],
   // Turbopack configuration (Next.js 16 default bundler)
   // Turbopack automatically handles Node.js polyfills for client bundles
   turbopack: {

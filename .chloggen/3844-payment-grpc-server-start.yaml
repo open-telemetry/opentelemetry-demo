@@ -1,0 +1,11 @@
+change_type: bug_fix
+
+component: payment
+
+note: "Fix gRPC server not starting by calling `server.start()` after `bindAsnc()`"
+
+issues: [3844]
+
+subtext: |-
+  The server bound to the port but was never started to accept connections,
+  causing the service to fail its health checks.

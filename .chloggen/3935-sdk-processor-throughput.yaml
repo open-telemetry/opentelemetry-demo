@@ -1,0 +1,9 @@
+change_type: enhancement
+
+component: grafana
+
+note: Add SDK processor throughput panels to the self-observability dashboard.
+
+issues: [3935]
+
+subtext:

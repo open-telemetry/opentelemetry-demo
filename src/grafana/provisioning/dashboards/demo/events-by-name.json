@@ -26,7 +26,7 @@
         "type": "grafana-opensearch-datasource",
         "uid": "webstore-logs"
       },
-      "description": "Events grouped by their EventName, ordered by volume.",
+      "description": "Events grouped by service and EventName, ordered by volume.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -79,7 +79,7 @@
             "uid": "webstore-logs"
           },
           "format": "table",
-          "query": "source=otel-logs-*\n| where eventName != ''\n| where resource.service.name in (${service:singlequote})\n| where eventName in (${event_name:singlequote})\n| where severity.text in (${severity:singlequote})\n| stats count() as log_count by eventName\n| sort - log_count\n| head 20",
+          "query": "source=otel-logs-*\n| where eventName != ''\n| where resource.service.name in (${service:singlequote})\n| where eventName in (${event_name:singlequote})\n| where severity.text in (${severity:singlequote})\n| stats count() as log_count by resource.service.name, eventName\n| sort - log_count\n| head 20",
           "queryType": "PPL",
           "refId": "A",
           "timeField": "observedTimestamp"
@@ -93,10 +93,12 @@
             "excludeByName": {},
             "includeByName": {},
             "indexByName": {
-              "eventName": 0,
-              "log_count": 1
+              "resource.service.name": 0,
+              "eventName": 1,
+              "log_count": 2
             },
             "renameByName": {
+              "resource.service.name": "Service",
               "eventName": "Event Name",
               "log_count": "Events"
             }

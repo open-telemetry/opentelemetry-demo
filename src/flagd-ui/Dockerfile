@@ -12,9 +12,9 @@
 #   - https://hub.docker.com/r/hexpm/elixir/tags - for the build image
 #   - https://hub.docker.com/_/debian/tags?name=bookworm-20250610-slim - for the release image
 #   - https://pkgs.org/ - resource for finding needed packages
-#   - Ex: docker.io/hexpm/elixir:1.20.1-erlang-28.4-debian-bullseye-20260610-slim
+#   - Ex: docker.io/hexpm/elixir:1.20.1-erlang-28.5-debian-trixie-20260610-slim
 #
-FROM docker.io/hexpm/elixir:1.20.1-erlang-28.4-debian-bullseye-20260610-slim@sha256:ec29c781c91c98bd0d887fa5c41e75bd1b6ced83fc4a695af3371a577e500d58 AS base
+FROM docker.io/hexpm/elixir:1.20.1-erlang-28.5-debian-trixie-20260610-slim@sha256:d80ab56d5f111c4285f20ea22ade8deafd00968f37722e7c8515070dfe86f98a AS base
 
 # install build dependencies
 RUN apt-get update \
@@ -83,10 +83,10 @@ RUN mix release
 
 # start a new build stage so that the final image will only contain
 # the compiled release and other runtime necessities
-FROM docker.io/debian:bullseye-20260610-slim@sha256:ff4b13408ab702565720c6b23582ebda7bfdddfe9ce2b8c5b49e6d40430fdb05 AS final
+FROM docker.io/debian:trixie-20260824-slim@sha256:d7e12182ce18b85b93007c1dedf31f2d29e01ccf3182cc4017c709b6259bc132 AS final
 
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends libstdc++6 openssl libncurses5 locales ca-certificates \
+  && apt-get install -y --no-install-recommends libstdc++6 openssl locales ca-certificates \
   && rm -rf /var/lib/apt/lists/*
 
 # Set the locale
@@ -106,6 +106,7 @@ ENV MIX_ENV="prod"
 # Only copy the final release from the build stage
 COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/flagd_ui ./
 
+ARG FLAGD_UI_PORT=4000
 EXPOSE ${FLAGD_UI_PORT}
 
 # If using an environment that doesn't automatically reap zombie processes, it is

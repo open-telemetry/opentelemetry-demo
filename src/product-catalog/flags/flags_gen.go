@@ -47,3 +47,25 @@ var ProductCatalogFailure = struct {
 		return client.BooleanValueDetails(ctx, "productCatalogFailure", false, evalCtx)
 	},
 }
+
+// ProductCatalogLockContention returns the value of the "productCatalogLockContention" feature flag.
+// simulates lock contention on the product catalog database
+//
+// The flag is a type of boolean and defaults to false.
+var ProductCatalogLockContention = struct {
+	fmt.Stringer
+	// Value returns the value of the [ProductCatalogLockContention] flag.
+	Value evaluationValue[bool]
+
+	// ValueWithDetails returns the evaluation details of the [ProductCatalogLockContention] flag
+	// and the evaluation error, if any.
+	ValueWithDetails evaluationDetails[bool]
+}{
+	Stringer: stringer("productCatalogLockContention"),
+	Value: func(ctx context.Context, evalCtx openfeature.EvaluationContext) bool {
+		return client.Boolean(ctx, "productCatalogLockContention", false, evalCtx)
+	},
+	ValueWithDetails: func(ctx context.Context, evalCtx openfeature.EvaluationContext) (openfeature.GenericEvaluationDetails[bool], error) {
+		return client.BooleanValueDetails(ctx, "productCatalogLockContention", false, evalCtx)
+	},
+}

@@ -70,7 +70,7 @@ public:
   ServerContext *context_;
 };
 
-void initTracer()
+std::shared_ptr<opentelemetry::sdk::trace::TracerProvider> initTracer()
 {
   auto exporter = opentelemetry::exporter::otlp::OtlpGrpcExporterFactory::Create();
   auto processor =
@@ -80,16 +80,19 @@ void initTracer()
 
   auto context =
       opentelemetry::sdk::trace::TracerContextFactory::Create(std::move(processors));
-  std::shared_ptr<opentelemetry::trace::TracerProvider> provider =
+  std::shared_ptr<opentelemetry::sdk::trace::TracerProvider> provider =
       opentelemetry::sdk::trace::TracerProviderFactory::Create(std::move(context));
+  std::shared_ptr<opentelemetry::trace::TracerProvider> api_provider = provider;
 
   // Set the global trace provider
-  opentelemetry::trace::Provider::SetTracerProvider(provider);
+  opentelemetry::trace::Provider::SetTracerProvider(api_provider);
 
   // set global propagator
   opentelemetry::context::propagation::GlobalTextMapPropagator::SetGlobalPropagator(
       opentelemetry::nostd::shared_ptr<opentelemetry::context::propagation::TextMapPropagator>(
           new opentelemetry::trace::propagation::HttpTraceContext()));
+
+  return provider;
 }
 
 opentelemetry::nostd::shared_ptr<opentelemetry::trace::Tracer> get_tracer(std::string tracer_name)

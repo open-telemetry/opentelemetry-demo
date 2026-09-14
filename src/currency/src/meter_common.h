@@ -16,7 +16,7 @@ namespace otlp_exporter = opentelemetry::exporter::otlp;
 
 namespace
 {
-  void initMeter() 
+  std::shared_ptr<metric_sdk::MeterProvider> initMeter()
   {
     // Build MetricExporter
     otlp_exporter::OtlpGrpcMetricExporterOptions otlpOptions;
@@ -26,10 +26,11 @@ namespace
     metric_sdk::PeriodicExportingMetricReaderOptions options;
     std::unique_ptr<metric_sdk::MetricReader> reader{
         new metric_sdk::PeriodicExportingMetricReader(std::move(exporter), options) };
-    auto provider = std::shared_ptr<metrics_api::MeterProvider>(new metric_sdk::MeterProvider());
-    auto p = std::static_pointer_cast<metric_sdk::MeterProvider>(provider);
-    p->AddMetricReader(std::move(reader));
-    metrics_api::Provider::SetMeterProvider(provider);
+    auto provider = std::make_shared<metric_sdk::MeterProvider>();
+    provider->AddMetricReader(std::move(reader));
+    std::shared_ptr<metrics_api::MeterProvider> api_provider = provider;
+    metrics_api::Provider::SetMeterProvider(api_provider);
+    return provider;
   }
 
   nostd::unique_ptr<metrics_api::Counter<uint64_t>> initIntCounter(std::string name, std::string version)

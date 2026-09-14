@@ -1,0 +1,9 @@
+change_type: enhancement
+
+component: product-catalog
+
+note: Report health to the demo's OpAMP server when running with the observability stack.
+
+issues: [3807]
+
+subtext:

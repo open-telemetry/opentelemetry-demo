@@ -1,0 +1,7 @@
+change_type: enhancement
+
+component: python
+
+note: "Enable SDK self-observability metrics for the agent, chatbot, load-generator, MCP, and recommendation services"
+
+issues: [3932]

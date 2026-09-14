@@ -1,0 +1,7 @@
+change_type: enhancement
+
+component: payment
+
+note: "Add `error.type` attribute to error spans in `charge.js` and `index.js` to align with OpenTelemetry Semantic Conventions for errors"
+
+issues: [3758]

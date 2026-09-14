@@ -47,6 +47,7 @@ services:
       - OTEL_EXPORTER_OTLP_INSECURE=true
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
       - OTEL_SERVICE_NAME=agent
+      - OTEL_PYTHON_SDK_INTERNAL_METRICS_ENABLED=true
     depends_on:
       otel-collector:
         condition: service_started
@@ -82,6 +83,7 @@ services:
       - APPLICATION_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
       - OTEL_SERVICE_NAME=mcp
+      - OTEL_PYTHON_SDK_INTERNAL_METRICS_ENABLED=true
     depends_on:
       frontend:
         condition: service_started
@@ -114,6 +116,7 @@ services:
       - OTEL_SERVICE_NAME=chatbot
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_INSECURE=true
+      - OTEL_PYTHON_SDK_INTERNAL_METRICS_ENABLED=true
       - OPAMP_SERVER_ENDPOINT=https://${OPAMP_SERVER_HOST}:4320/v1/opamp
       - OPAMP_SERVER_TLS_INSECURE_SKIP_VERIFY=true
     depends_on:

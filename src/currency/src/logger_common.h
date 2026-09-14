@@ -17,15 +17,18 @@ namespace logs_sdk  = opentelemetry::sdk::logs;
 
 namespace
 {
-  void initLogger() {
+  std::shared_ptr<logs_sdk::LoggerProvider> initLogger() {
     otlp::OtlpGrpcLogRecordExporterOptions loggerOptions;
     auto exporter  = otlp::OtlpGrpcLogRecordExporterFactory::Create(loggerOptions);
     auto processor = logs_sdk::BatchLogRecordProcessorFactory::Create(std::move(exporter), {});
     std::vector<std::unique_ptr<logs_sdk::LogRecordProcessor>> processors;
     processors.push_back(std::move(processor));
     auto context = logs_sdk::LoggerContextFactory::Create(std::move(processors));
-    std::shared_ptr<logs::LoggerProvider> provider = logs_sdk::LoggerProviderFactory::Create(std::move(context));
-    opentelemetry::logs::Provider::SetLoggerProvider(provider);
+    std::shared_ptr<logs_sdk::LoggerProvider> provider =
+        logs_sdk::LoggerProviderFactory::Create(std::move(context));
+    std::shared_ptr<logs::LoggerProvider> api_provider = provider;
+    opentelemetry::logs::Provider::SetLoggerProvider(api_provider);
+    return provider;
   }
 
   nostd::shared_ptr<opentelemetry::logs::Logger> getLogger(std::string name){

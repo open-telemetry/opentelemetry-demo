@@ -32,15 +32,17 @@ load_dotenv()
 
 
 def _configure_telemetry() -> None:
-    provider = TracerProvider()
-    provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
-    trace.set_tracer_provider(provider)
-
     meter_provider = MeterProvider(
-        metric_readers=[PeriodicExportingMetricReader(OTLPMetricExporter())],
+        metric_readers=[
+            PeriodicExportingMetricReader(OTLPMetricExporter()),
+        ],
     )
     metrics.set_meter_provider(meter_provider)
     init_metrics(metrics.get_meter(__name__))
+
+    tracer_provider = TracerProvider(meter_provider=meter_provider)
+    tracer_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
+    trace.set_tracer_provider(tracer_provider)
 
     RequestsInstrumentor().instrument()
     HTTPXClientInstrumentor().instrument()
