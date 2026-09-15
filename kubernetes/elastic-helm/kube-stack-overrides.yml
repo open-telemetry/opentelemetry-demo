@@ -1,6 +1,21 @@
 collectors:
   gateway:
     config:
+      exporters:
+        # [OTLP/HTTP exporter](https://github.com/open-telemetry/opentelemetry-collector/tree/main/exporter/otlphttpexporter)
+        # Elasticsearch exposes OTLP over HTTP only (no gRPC) at <es_endpoint>/_otlp.
+        # The exporter appends the signal path (/v1/metrics) to the configured endpoint.
+        # Mirrors the change from elastic-agent PR#16610.
+        otlp_http/ingest_metrics:
+          endpoint: ${env:ELASTIC_ENDPOINT}/_otlp
+          headers:
+            Authorization: ApiKey ${env:ELASTIC_API_KEY}
+          sending_queue:
+            enabled: true
+            sizer: bytes
+            queue_size: 50000000 # 50MB uncompressed
+            block_on_overflow: true
+          timeout: 15s
       processors:
         transform/sanitize_spans:
           error_mode: ignore
@@ -80,7 +95,11 @@ collectors:
                   span.attributes["http.method"] != nil
       service:
         pipelines:
+          metrics:
+            receivers: [otlp]
+            processors: [batch/metrics]
+            exporters: [debug, otlp_http/ingest_metrics]
           traces:
             receivers: [otlp]
-            processors: [transform/sanitize_spans]
-            exporters: [debug, otlp/ingest_metrics_traces]
+            processors: [batch, elasticapm, transform/sanitize_spans]
+            exporters: [debug, elasticapm, elasticsearch/otel]

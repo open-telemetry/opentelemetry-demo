@@ -3,7 +3,7 @@
 set -eu
 
 # Constants
-ELASTIC_STACK_VERSION="9.3.0"
+ELASTIC_STACK_VERSION="9.5.3"
 ENV_OVERRIDE_FILE=".env.override"
 NAMESPACE="opentelemetry-operator-system"
 HELM_REPO_NAME="open-telemetry"
@@ -16,7 +16,7 @@ DEMO_HELM_VERSION='0.40.7'
 KUBE_STACK_RELEASE="opentelemetry-kube-stack"
 KUBE_STACK_CHART="open-telemetry/opentelemetry-kube-stack"
 KUBE_STACK_VERSION='0.14.12'
-KUBE_STACK_VALUES_URL='https://raw.githubusercontent.com/elastic/elastic-agent/refs/tags/v'$ELASTIC_STACK_VERSION'/deploy/helm/edot-collector/kube-stack/managed_otlp/values.yaml'
+KUBE_STACK_VALUES_URL='https://raw.githubusercontent.com/elastic/elastic-agent/refs/tags/v'$ELASTIC_STACK_VERSION'/deploy/helm/edot-collector/kube-stack/values.yaml'
 SECRET_NAME='elastic-secret-otel'
 
 DOCKER_COLLECTOR_CONFIG='./src/otel-collector/otelcol-elastic-config.yaml'
@@ -218,7 +218,7 @@ apply_k8s_secret() {
   ensure_env_values
   kubectl create secret generic "$SECRET_NAME" \
     --namespace "$NAMESPACE" \
-    --from-literal=elastic_otlp_endpoint="$elastic_otlp_endpoint" \
+    --from-literal=elastic_endpoint="$elastic_otlp_endpoint" \
     --from-literal=elastic_api_key="$elastic_otlp_api_key" \
     --dry-run=client -o yaml | kubectl apply -f -
 }
