@@ -9,7 +9,7 @@ import com.google.protobuf.gradle.*
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    kotlin("jvm") version "2.4.10"
+    kotlin("jvm") version "2.4.20"
     application
     id("java")
     id("idea")
@@ -42,8 +42,8 @@ dependencies {
     implementation("io.grpc:grpc-stub:${grpcVersion}")
     implementation("io.grpc:grpc-netty:${grpcVersion}")
     implementation("io.grpc:grpc-services:${grpcVersion}")
-    implementation("io.opentelemetry:opentelemetry-api:1.65.0")
-    implementation("io.opentelemetry:opentelemetry-sdk:1.65.0")
+    implementation("io.opentelemetry:opentelemetry-api:1.66.0")
+    implementation("io.opentelemetry:opentelemetry-sdk:1.66.0")
     implementation("io.opentelemetry:opentelemetry-extension-annotations:1.18.0")
     implementation("org.apache.logging.log4j:log4j-core:2.26.1")
     implementation("org.slf4j:slf4j-api:2.0.19")
