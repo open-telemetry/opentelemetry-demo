@@ -339,13 +339,13 @@ googleapis-common-protos==1.75.0 \
     --hash=sha256:53a062ff3c32552fbd62c11fe23768b78e4ddf0494d5e5fd97d3f4689c75fbbd \
     --hash=sha256:961ed60399c457ceb0ee8f285a84c870aabc9c6a832b9d37bb281b5bebde43ed
     # via opentelemetry-exporter-otlp-proto-http
-gradio==6.26.0 \
-    --hash=sha256:54c5c4bfe7782e1773c2b7d7be128036df8b0dd6ca303c186ad6443280e1063b \
-    --hash=sha256:f2a6a65580ce480ed51c0caacf79f159da000a954c54b1518716826f78bfb558
+gradio==6.27.0 \
+    --hash=sha256:6f4b9057c4a771283caa35a80dfdb3f599b5732108591fe9dcc32689cda17b68 \
+    --hash=sha256:b7212b021c2a7a2f6f1e31341783ba7ab2679bbd286e2956f7e6c701348daf92
     # via -r requirements.in
-gradio-client==2.6.1 \
-    --hash=sha256:0e605bf8683a27583868b933a083e84706b974404815d9795370ef8a62584f4e \
-    --hash=sha256:df3752925fbaaa56f7bfeeb0064ae23591ec3976432443748dd663a9729ef23b
+gradio-client==2.7.0 \
+    --hash=sha256:1eccee1d2b387dc63b9b59124dd07e39cbe0ca7c90cc52ac4525074570b6365e \
+    --hash=sha256:212c88f7f6a212c973b4429ec450b35efba7805a34aee53f0892535ceee194ae
     # via
     #   gradio
     #   hf-gradio
