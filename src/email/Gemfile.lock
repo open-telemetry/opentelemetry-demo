@@ -2,7 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     base64 (0.3.0)
-    bigdecimal (4.1.2)
+    bigdecimal (4.1.3)
     date (3.5.1)
     google-protobuf (4.36.1-aarch64-linux-musl)
       bigdecimal
@@ -39,7 +39,7 @@ GEM
       net-smtp
     mini_mime (1.1.5)
     mustermann (3.1.1)
-    net-imap (0.6.6)
+    net-imap (0.6.7)
       date
       net-protocol
     net-pop (0.1.2)
@@ -57,13 +57,18 @@ GEM
       logger
     opentelemetry-common (0.25.1)
       opentelemetry-api (~> 1.0)
-    opentelemetry-exporter-otlp (0.35.1)
+    opentelemetry-exporter-otlp (0.36.0)
       google-protobuf (>= 3.18)
       googleapis-common-protos-types (~> 1.3)
       opentelemetry-api (~> 1.1)
       opentelemetry-common (~> 0.20)
+      opentelemetry-exporter-otlp-common
       opentelemetry-sdk (~> 1.10)
       opentelemetry-semantic_conventions
+    opentelemetry-exporter-otlp-common (0.2.0)
+      google-protobuf (>= 3.18)
+      googleapis-common-protos-types (~> 1.3)
+      opentelemetry-api (~> 1.1)
     opentelemetry-exporter-otlp-logs (0.5.1)
       google-protobuf (>= 3.18)
       googleapis-common-protos-types (~> 1.3)
@@ -73,7 +78,7 @@ GEM
       opentelemetry-logs-sdk (~> 0.1)
       opentelemetry-sdk
       opentelemetry-semantic_conventions
-    opentelemetry-exporter-otlp-metrics (0.11.0)
+    opentelemetry-exporter-otlp-metrics (0.12.0)
       google-protobuf (>= 3.18, < 5.0)
       googleapis-common-protos-types (~> 1.3)
       opentelemetry-api (~> 1.1)
@@ -172,19 +177,19 @@ GEM
       opentelemetry-instrumentation-rack (~> 0.29)
     opentelemetry-instrumentation-graphql (0.32.0)
       opentelemetry-instrumentation-base (~> 0.25)
-    opentelemetry-instrumentation-grpc (0.5.2)
+    opentelemetry-instrumentation-grpc (0.5.3)
       opentelemetry-instrumentation-base (~> 0.25)
-    opentelemetry-instrumentation-gruf (0.6.2)
+    opentelemetry-instrumentation-gruf (0.6.3)
       opentelemetry-instrumentation-base (~> 0.25)
     opentelemetry-instrumentation-http (0.30.0)
       opentelemetry-instrumentation-base (~> 0.25)
-    opentelemetry-instrumentation-http_client (0.29.0)
+    opentelemetry-instrumentation-http_client (0.29.1)
       opentelemetry-instrumentation-base (~> 0.25)
     opentelemetry-instrumentation-httpx (0.8.0)
       opentelemetry-instrumentation-base (~> 0.25)
     opentelemetry-instrumentation-koala (0.24.0)
       opentelemetry-instrumentation-base (~> 0.25)
-    opentelemetry-instrumentation-lmdb (0.26.0)
+    opentelemetry-instrumentation-lmdb (0.26.1)
       opentelemetry-instrumentation-base (~> 0.25)
     opentelemetry-instrumentation-mongo (0.26.0)
       opentelemetry-instrumentation-base (~> 0.25)
@@ -244,7 +249,7 @@ GEM
       opentelemetry-sdk (~> 1.3)
     opentelemetry-metrics-api (0.7.0)
       opentelemetry-api (~> 1.0)
-    opentelemetry-metrics-sdk (0.17.0)
+    opentelemetry-metrics-sdk (0.18.0)
       opentelemetry-api (~> 1.1)
       opentelemetry-metrics-api (~> 0.2)
       opentelemetry-sdk (~> 1.13.0)
@@ -296,12 +301,12 @@ DEPENDENCIES
   openfeature-flagd-provider (~> 0.1)
   openfeature-sdk (~> 0.6)
   opentelemetry-common (~> 0.25)
-  opentelemetry-exporter-otlp (~> 0.35)
+  opentelemetry-exporter-otlp (~> 0.36)
   opentelemetry-exporter-otlp-logs (~> 0.5)
-  opentelemetry-exporter-otlp-metrics (~> 0.11)
+  opentelemetry-exporter-otlp-metrics (~> 0.12)
   opentelemetry-instrumentation-all (~> 0.96)
   opentelemetry-logs-sdk (~> 0.6)
-  opentelemetry-metrics-sdk (~> 0.17)
+  opentelemetry-metrics-sdk (~> 0.18)
   opentelemetry-sdk (~> 1.13)
   ostruct
   pony (~> 1.13)

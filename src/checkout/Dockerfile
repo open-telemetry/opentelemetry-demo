@@ -28,5 +28,6 @@ WORKDIR /usr/src/app/
 COPY --from=builder /usr/src/app/checkout/ ./
 COPY --from=grpc-health-probe /ko-app/grpc-health-probe /bin/grpc_health_probe
 
+ARG CHECKOUT_PORT=5050
 EXPOSE ${CHECKOUT_PORT}
 ENTRYPOINT [ "./checkout" ]

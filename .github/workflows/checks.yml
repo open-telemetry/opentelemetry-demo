@@ -24,7 +24,7 @@ jobs:
     permissions:  # required by the reusable workflow
       contents: read  # required by the component-build-images reusable workflow
       packages: write  # required to push built images to GHCR
-    uses: ./.github/workflows/component-build-images.yml
+    uses: $/.github/workflows/component-build-images.yml
     with:
       push: ${{ github.event_name == 'push' }}
       force_build: ${{ github.event_name == 'push' }}
@@ -187,7 +187,7 @@ jobs:
   react-native-build:
     needs: check-react-native-changes
     if: needs.check-react-native-changes.outputs.should_build == 'true'
-    uses: ./.github/workflows/react-native-build.yml
+    uses: $/.github/workflows/react-native-build.yml
 
   codeql-analysis:
     name: CodeQL analysis
@@ -195,7 +195,7 @@ jobs:
       actions: read  # required to scan GitHub Actions workflows
       contents: read  # required to checkout the repository
       security-events: write  # required to upload CodeQL SARIF to code scanning
-    uses: ./.github/workflows/codeql-analysis.yml
+    uses: $/.github/workflows/codeql-analysis.yml
 
   build-test:
     name: build-test
