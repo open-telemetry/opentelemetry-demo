@@ -19,6 +19,7 @@ COPY src/mcp/src src
 COPY src/shared/tools.py src/mcp_server
 COPY src/mcp/run.py .
 
+ARG MCP_PORT=8011
 EXPOSE ${MCP_PORT}
 
 CMD ["python", "run.py"]

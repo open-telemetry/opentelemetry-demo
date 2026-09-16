@@ -271,15 +271,13 @@ func main() {
 	healthcheck := health.NewServer()
 	healthpb.RegisterHealthServer(srv, healthcheck)
 	logger.Info(fmt.Sprintf("starting to listen on tcp: %q", lis.Addr().String()))
-	err = srv.Serve(lis)
-	logger.Error(err.Error())
 
-	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGKILL)
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer cancel()
 
 	go func() {
 		if err := srv.Serve(lis); err != nil {
-			logger.Error(err.Error())
+			logger.Error("Failed to serve gRPC server", slog.Any("error", err))
 		}
 	}()
 
@@ -310,10 +308,15 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 	span.SetAttributes(
 		attribute.String("user.id", req.UserId),
 		attribute.String("demo.user_context.selected_currency", req.UserCurrency),
-		attribute.String("user.email", req.GetEmail()),
-		attribute.String("demo.payment.card_number", req.GetCreditCard().GetCreditCardNumber()),
-		attribute.Int("demo.payment.card_cvv", int(req.GetCreditCard().GetCreditCardCvv())),
 	)
+
+	if flags.EmitRawPii.Value(ctx, openfeature.EvaluationContext{}) {
+		span.SetAttributes(
+			attribute.String("user.email", req.GetEmail()),
+			attribute.String("demo.payment.card_number", req.GetCreditCard().GetCreditCardNumber()),
+			attribute.Int("demo.payment.card_cvv", int(req.GetCreditCard().GetCreditCardCvv())),
+		)
+	}
 
 	if baggage.FromContext(ctx).Member("synthetic_request").Value() == "true" {
 		span.SetAttributes(attribute.String("user_agent.synthetic.type", "test"))

@@ -1,0 +1,21 @@
+# Use this changelog template to create an entry for release notes.
+
+# One of 'breaking', 'deprecation', 'new_component', 'enhancement', 'bug_fix'
+change_type: bug_fix
+
+# The name of the component, or a single word describing the area of concern, (e.g. frontend, checkout, collector, load-generator)
+component: podman
+
+# A brief description of the change. Surround your text with quotes ("") if it needs to start with a backtick (`).
+note: This work updates all dockerfiles to make them compatible with podman build
+
+# One or more tracking issues or pull requests related to the change. You can use the PR number here if no issue exists.
+issues: [3880]
+
+# (Optional) One or more lines of additional information to render under the primary note.
+# These lines will be padded with 2 spaces and then inserted directly into the document.
+# Use a strip-chomping block scalar (|-) for multiline entries so no trailing
+# whitespace is emitted into CHANGELOG.md.
+subtext: |
+  Podman's buildah is stricter compared to Dockers buildkit. For example using EXPOSE
+  in Dockerfiles without specifing a ARG will work fine in Docker but in Podman this fails.

@@ -1,6 +1,11 @@
 {
   "$schema": "https://raw.githubusercontent.com/open-feature/cli/refs/heads/main/schema/v0/flag-manifest.json",
   "flags": {
+    "emitRawPii": {
+      "defaultValue": false,
+      "description": "emits raw PII attributes (user.email, demo.payment.card_number, demo.payment.card_cvv) for the collector redaction example",
+      "flagType": "boolean"
+    },
     "kafkaQueueProblems": {
       "defaultValue": 0,
       "description": "simulates kafka queue problems",

@@ -61,21 +61,22 @@ keeping it up to date for you.
 
 |                           |                |                                  |
 |---------------------------|----------------|----------------------------------|
-| [AlibabaCloud LogService] | [Elastic]      | [Oracle]                         |
-| [Amazon Web Services]     | [Google Cloud] | [Parseable]                      |
-| [Apache Doris]            | [Grafana Labs] | [Sentry]                         |
-| [AppDynamics]             | [Guance]       | [ServiceNow Cloud Observability] |
-| [Aspecto]                 | [Honeycomb.io] | [SigNoz]                         |
-| [Axiom]                   | [Instana]      | [SolarWinds Observability]       |
-| [Axoflow]                 | [Kloudfuse]    | [Splunk]                         |
-| [Azure Data Explorer]     | [Kopai]        | [Sumo Logic]                     |
-| [Bronto]                  | [Last9]        | [TelemetryHub]                   |
-| [Causely]                 | [Liatrio]      | [Teletrace]                      |
-| [ClickStack]              | [Logz.io]      | [Tinybird]                       |
-| [Coralogix]               | [New Relic]    | [Tracetest]                      |
-| [Dash0]                   | [Oodle]        | [Tsuga]                          |
-| [Datadog]                 | [OpenObserve]  | [Uptrace]                        |
-| [Dynatrace]               | [OpenSearch]   | [VictoriaMetrics]                |
+| [AlibabaCloud LogService] | [Google Cloud] | [Rootprint]                      |
+| [Amazon Web Services]     | [Grafana Labs] | [Sentry]                         |
+| [Apache Doris]            | [Guance]       | [ServiceNow Cloud Observability] |
+| [AppDynamics]             | [Honeycomb.io] | [SigNoz]                         |
+| [Aspecto]                 | [Instana]      | [SolarWinds Observability]       |
+| [Axiom]                   | [Kloudfuse]    | [Splunk]                         |
+| [Axoflow]                 | [Kopai]        | [Sumo Logic]                     |
+| [Azure Data Explorer]     | [Last9]        | [TelemetryHub]                   |
+| [Bronto]                  | [Liatrio]      | [Teletrace]                      |
+| [Causely]                 | [Logz.io]      | [Tinybird]                       |
+| [ClickStack]              | [New Relic]    | [Tracetest]                      |
+| [Coralogix]               | [Oodle]        | [Tsuga]                          |
+| [Dash0]                   | [OpenObserve]  | [Uptrace]                        |
+| [Datadog]                 | [OpenSearch]   | [VictoriaMetrics]                |
+| [Dynatrace]               | [Oracle]       |                                  |
+| [Elastic]                 | [Parseable]    |                                  |
 
 ## Contributing
 
@@ -154,6 +155,7 @@ For more information about the emeritus role, see the [community repository](htt
 [OpenObserve]: https://openobserve.ai/blog/opentelemetry-astronomy-shop-demo/
 [Oracle]: https://github.com/oracle-quickstart/oci-o11y-solutions/blob/main/knowledge-content/opentelemetry-demo
 [Parseable]: https://www.parseable.com/blog/open-telemetry-demo-with-parseable-a-complete-observability-setup
+[Rootprint]: https://demo.rootprint.io
 [Sentry]: https://github.com/getsentry/opentelemetry-demo
 [ServiceNow Cloud Observability]: https://docs.lightstep.com/otel/quick-start-operator#send-data-from-the-opentelemetry-demo
 [SigNoz]: https://signoz.io/blog/opentelemetry-demo/

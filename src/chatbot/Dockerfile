@@ -18,6 +18,7 @@ RUN pip install --no-cache-dir --require-hashes -r requirements.txt
 COPY src/chatbot/src src
 COPY src/chatbot/run.py .
 
+ARG CHATBOT_PORT=7860
 EXPOSE ${CHATBOT_PORT}
 
 CMD ["python", "run.py"]

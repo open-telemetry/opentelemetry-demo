@@ -35,13 +35,14 @@ RUN if [ "${TARGETPLATFORM}" = "linux/arm64" ] && [ "${BUILDPLATFORM}" != "linux
     fi
 
 
-FROM gcr.io/distroless/cc-debian13:nonroot@sha256:c31ff9abcb1910f3ab25c7957bdaf0bfe12a01eb546e8df2282f1c8f682b606c
+FROM gcr.io/distroless/cc-debian13:nonroot@sha256:54df941ed0d06a1bd95ef5e0ce391fd8d9f94b64782dc9a60062727849ee3f97
 
 WORKDIR /app
 
 COPY --from=builder /app/target/release/shipping shipping
 COPY --from=builder /app/target/release/healthcheck healthcheck
 
+ARG SHIPPING_PORT=50050
 EXPOSE ${SHIPPING_PORT}
 
 CMD ["./shipping"]
