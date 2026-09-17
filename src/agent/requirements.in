@@ -13,9 +13,12 @@ opentelemetry-api==1.43.0
 opentelemetry-sdk==1.43.0
 opentelemetry-semantic-conventions==0.64b0
 opentelemetry-instrumentation-langchain==0.62.3
+opentelemetry-instrumentation-openai==0.62.3
 opentelemetry-instrumentation-fastapi==0.64b0
 opentelemetry-instrumentation-requests==0.64b0
 opentelemetry-instrumentation-httpx==0.64b0
 vcrpy==8.3.0
 aiohttp==3.14.3
 greenlet==3.5.5
+openfeature-hooks-opentelemetry==0.3.1
+openfeature-provider-flagd==0.5.2
