@@ -6,8 +6,7 @@
 #include <csignal>
 #include <cstdlib>
 #include <cstring>
-#include <iostream>
-#include <math.h>
+#include <cmath>
 #include <pthread.h>
 #include <demo.grpc.pb.h>
 #include <grpc/health/v1/health.grpc.pb.h>
@@ -173,29 +172,18 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
 
     logger->Info(eventName("currency.get_supported_currencies"), "GetSupportedCurrencies successful");
 
-    // Make sure to end your spans!
     span->End();
-  	return Status::OK;
+    return Status::OK;
   }
 
-  double getDouble(Money& money) {
-    auto units = money.units();
-    auto nanos = money.nanos();
-
-    double decimal = 0.0;
-    while (nanos != 0) {
-      double t = (double)(nanos%10)/10;
-      nanos = nanos/10;
-      decimal = decimal/10 + t;
-    }
-
-    return double(units) + decimal;
+  double getDouble(const Money& money) {
+    return static_cast<double>(money.units()) + static_cast<double>(money.nanos()) / 1e9;
   }
 
   void getUnitsAndNanos(Money& money, double value) {
-    long unit = (long)value;
-    double rem = value - unit;
-    long nano = rem * pow(10, 9);
+    long unit = static_cast<long>(value);
+    double rem = value - static_cast<double>(unit);
+    long nano = static_cast<long>(std::round(rem * 1e9));
     money.set_units(unit);
     money.set_nanos(nano);
   }
@@ -225,14 +213,27 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
     span->AddEvent("Processing currency conversion request");
 
     try {
-      // Do the conversion work
       Money from = request->from();
       string from_code = from.currency_code();
-      double rate = currency_conversion[from_code];
-      double one_euro = getDouble(from) / rate ;
+      auto from_it = currency_conversion.find(from_code);
+      if (from_it == currency_conversion.end() || from_it->second <= 0.0) {
+        span->AddEvent("Invalid source currency code");
+        span->SetStatus(StatusCode::kError);
+        span->End();
+        return Status(grpc::StatusCode::INVALID_ARGUMENT, "Unsupported source currency: " + from_code);
+      }
+      double rate = from_it->second;
+      double one_euro = getDouble(from) / rate;
 
       string to_code = request->to_code();
-      double to_rate = currency_conversion[to_code];
+      auto to_it = currency_conversion.find(to_code);
+      if (to_it == currency_conversion.end() || to_it->second <= 0.0) {
+        span->AddEvent("Invalid target currency code");
+        span->SetStatus(StatusCode::kError);
+        span->End();
+        return Status(grpc::StatusCode::INVALID_ARGUMENT, "Unsupported target currency: " + to_code);
+      }
+      double to_rate = to_it->second;
 
       double final = one_euro * to_rate;
       getUnitsAndNanos(*response, final);
@@ -251,8 +252,7 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
                    opentelemetry::common::MakeAttributes(
                        {{"currency.from", from_code.c_str()},
                         {"currency.to", to_code.c_str()}}));
-      
-      // End the span
+
       span->End();
       return Status::OK;
 
