@@ -1,0 +1,11 @@
+change_type: bug_fix
+
+component: recommendation
+
+note: Align the recommendation request metric unit with its telemetry schema.
+
+issues: [3615]
+
+subtext: |-
+  Change the emitted `demo.recommendation.requests` unit from
+  `recommendations` to `{recommendation}`.

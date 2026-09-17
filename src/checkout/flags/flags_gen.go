@@ -26,6 +26,28 @@ type (
 
 var client = openfeature.NewDefaultClient()
 
+// EmitRawPii returns the value of the "emitRawPii" feature flag.
+// emits raw PII attributes (user.email, demo.payment.card_number, demo.payment.card_cvv) for the collector redaction example
+//
+// The flag is a type of boolean and defaults to false.
+var EmitRawPii = struct {
+	fmt.Stringer
+	// Value returns the value of the [EmitRawPii] flag.
+	Value evaluationValue[bool]
+
+	// ValueWithDetails returns the evaluation details of the [EmitRawPii] flag
+	// and the evaluation error, if any.
+	ValueWithDetails evaluationDetails[bool]
+}{
+	Stringer: stringer("emitRawPii"),
+	Value: func(ctx context.Context, evalCtx openfeature.EvaluationContext) bool {
+		return client.Boolean(ctx, "emitRawPii", false, evalCtx)
+	},
+	ValueWithDetails: func(ctx context.Context, evalCtx openfeature.EvaluationContext) (openfeature.GenericEvaluationDetails[bool], error) {
+		return client.BooleanValueDetails(ctx, "emitRawPii", false, evalCtx)
+	},
+}
+
 // KafkaQueueProblems returns the value of the "kafkaQueueProblems" feature flag.
 // simulates kafka queue problems
 //

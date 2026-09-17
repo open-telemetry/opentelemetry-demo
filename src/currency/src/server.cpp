@@ -156,10 +156,9 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
     std::string span_name = "Currency/GetSupportedCurrencies";
     auto span =
         get_tracer("currency")->StartSpan(span_name,
-                                      {{semconv::rpc::kRpcSystem, "grpc"},
-                                       {semconv::rpc::kRpcService, "oteldemo.CurrencyService"},
-                                       {semconv::rpc::kRpcMethod, "GetSupportedCurrencies"},
-                                       {semconv::rpc::kRpcGrpcStatusCode, semconv::rpc::RpcGrpcStatusCodeValues::kOk}},
+                                      {{semconv::rpc::kRpcSystemName, semconv::rpc::RpcSystemNameValues::kGrpc},
+                                       {semconv::rpc::kRpcMethod, "oteldemo.CurrencyService/GetSupportedCurrencies"},
+                                       {semconv::rpc::kRpcResponseStatusCode, "OK"}},
                                       options);
     auto scope = get_tracer("currency")->WithActiveSpan(span);
 
@@ -217,10 +216,9 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
     std::string span_name = "Currency/Convert";
     auto span =
         get_tracer("currency")->StartSpan(span_name,
-                                      {{semconv::rpc::kRpcSystem, "grpc"},
-                                       {semconv::rpc::kRpcService, "oteldemo.CurrencyService"},
-                                       {semconv::rpc::kRpcMethod, "Convert"},
-                                       {semconv::rpc::kRpcGrpcStatusCode, semconv::rpc::RpcGrpcStatusCodeValues::kOk}},
+                                      {{semconv::rpc::kRpcSystemName, semconv::rpc::RpcSystemNameValues::kGrpc},
+                                       {semconv::rpc::kRpcMethod, "oteldemo.CurrencyService/Convert"},
+                                       {semconv::rpc::kRpcResponseStatusCode, "OK"}},
                                       options);
     auto scope = get_tracer("currency")->WithActiveSpan(span);
 
