@@ -6,8 +6,8 @@
 #include <csignal>
 #include <cstdlib>
 #include <cstring>
+#include <cmath>
 #include <iostream>
-#include <math.h>
 #include <pthread.h>
 #include <demo.grpc.pb.h>
 #include <grpc/health/v1/health.grpc.pb.h>
@@ -82,7 +82,7 @@ namespace
     return EventId{0, name};
   }
 
-  std::unordered_map<std::string, double> currency_conversion
+  const std::unordered_map<std::string, double> currency_conversion
   {
     {"EUR", 1.0},
     {"USD", 1.1305},
@@ -164,7 +164,7 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
 
     span->AddEvent("Processing supported currencies request");
 
-    for (auto &code : currency_conversion) {
+    for (const auto &code : currency_conversion) {
       response->add_currency_codes(code.first);
     }
 
@@ -173,31 +173,32 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
 
     logger->Info(eventName("currency.get_supported_currencies"), "GetSupportedCurrencies successful");
 
-    // Make sure to end your spans!
     span->End();
-  	return Status::OK;
+    return Status::OK;
   }
 
-  double getDouble(Money& money) {
-    auto units = money.units();
-    auto nanos = money.nanos();
-
-    double decimal = 0.0;
-    while (nanos != 0) {
-      double t = (double)(nanos%10)/10;
-      nanos = nanos/10;
-      decimal = decimal/10 + t;
-    }
-
-    return double(units) + decimal;
+  double getDouble(const Money& money) {
+    return static_cast<double>(money.units()) + static_cast<double>(money.nanos()) / 1e9;
   }
 
   void getUnitsAndNanos(Money& money, double value) {
-    long unit = (long)value;
-    double rem = value - unit;
-    long nano = rem * pow(10, 9);
-    money.set_units(unit);
-    money.set_nanos(nano);
+    long long total_nanos = std::llround(value * 1e9);
+    money.set_units(static_cast<int64_t>(total_nanos / 1000000000LL));
+    money.set_nanos(static_cast<int32_t>(total_nanos % 1000000000LL));
+  }
+
+  Status getRate(const std::string& code, const char* type, double& rate, Span* span) {
+    auto it = currency_conversion.find(code);
+    if (it == currency_conversion.end() || it->second <= 0.0) {
+      span->SetAttribute(semconv::rpc::kRpcResponseStatusCode, "INVALID_ARGUMENT");
+      span->AddEvent(std::string("Invalid ") + type + " currency code");
+      span->SetStatus(StatusCode::kError);
+      logger->Error(eventName("currency.conversion_failed"),
+                    std::string("unsupported ") + type + " currency: " + code);
+      return Status(grpc::StatusCode::INVALID_ARGUMENT, std::string("Unsupported ") + type + " currency: " + code);
+    }
+    rate = it->second;
+    return Status::OK;
   }
 
   Status Convert(ServerContext* context,
@@ -225,15 +226,22 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
     span->AddEvent("Processing currency conversion request");
 
     try {
-      // Do the conversion work
       Money from = request->from();
       string from_code = from.currency_code();
-      double rate = currency_conversion[from_code];
-      double one_euro = getDouble(from) / rate ;
-
       string to_code = request->to_code();
-      double to_rate = currency_conversion[to_code];
+      double rate = 0.0;
+      double to_rate = 0.0;
 
+      Status status = getRate(from_code, "source", rate, span.get());
+      if (status.ok()) {
+        status = getRate(to_code, "target", to_rate, span.get());
+      }
+      if (!status.ok()) {
+        span->End();
+        return status;
+      }
+
+      double one_euro = getDouble(from) / rate;
       double final = one_euro * to_rate;
       getUnitsAndNanos(*response, final);
       response->set_currency_code(to_code);
@@ -251,12 +259,12 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
                    opentelemetry::common::MakeAttributes(
                        {{"currency.from", from_code.c_str()},
                         {"currency.to", to_code.c_str()}}));
-      
-      // End the span
+
       span->End();
       return Status::OK;
 
     } catch(...) {
+      span->SetAttribute(semconv::rpc::kRpcResponseStatusCode, "CANCELLED");
       span->AddEvent("Conversion failed");
       span->SetStatus(StatusCode::kError);
 

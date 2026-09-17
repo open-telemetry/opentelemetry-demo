@@ -43,6 +43,12 @@ const handler = async ({ method, body, query }: NextApiRequest, res: NextApiResp
           }
         }
 
+        const grpcError = error as ServiceError;
+        if (grpcError?.code === 3) {
+          logger.warn({ details, err: error }, 'Checkout invalid argument');
+          return res.status(400).json({ error: details || 'Invalid argument for checkout.' });
+        }
+
         logger.error({ err: error }, 'Checkout failed to place order');
         return res.status(500).json({ error: 'Failed to place order.' });
       }

@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -343,6 +344,13 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 
 	prep, err := cs.prepareOrderItemsAndShippingQuoteFromCart(ctx, req.UserId, req.UserCurrency, req.Address)
 	if err != nil {
+		if st, ok := status.FromError(err); ok {
+			return nil, st.Err()
+		}
+		var se interface{ GRPCStatus() *status.Status }
+		if errors.As(err, &se) {
+			return nil, status.Errorf(se.GRPCStatus().Code(), "%s", err.Error())
+		}
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 	span.AddEvent("prepared")
@@ -437,19 +445,19 @@ func (cs *checkout) prepareOrderItemsAndShippingQuoteFromCart(ctx context.Contex
 	var out orderPrep
 	cartItems, err := cs.getUserCart(ctx, userID)
 	if err != nil {
-		return out, fmt.Errorf("cart failure: %+v", err)
+		return out, fmt.Errorf("cart failure: %w", err)
 	}
 	orderItems, err := cs.prepOrderItems(ctx, cartItems, userCurrency)
 	if err != nil {
-		return out, fmt.Errorf("failed to prepare order: %+v", err)
+		return out, fmt.Errorf("failed to prepare order: %w", err)
 	}
 	shippingUSD, err := cs.quoteShipping(ctx, address, cartItems)
 	if err != nil {
-		return out, fmt.Errorf("shipping quote failure: %+v", err)
+		return out, fmt.Errorf("shipping quote failure: %w", err)
 	}
 	shippingPrice, err := cs.convertCurrency(ctx, shippingUSD, userCurrency)
 	if err != nil {
-		return out, fmt.Errorf("failed to convert shipping cost to currency: %+v", err)
+		return out, fmt.Errorf("failed to convert shipping cost to currency: %w", err)
 	}
 
 	out.shippingCostLocalized = shippingPrice
@@ -549,7 +557,7 @@ func (cs *checkout) prepOrderItems(ctx context.Context, items []*pb.CartItem, us
 		}
 		price, err := cs.convertCurrency(ctx, product.GetPriceUsd(), userCurrency)
 		if err != nil {
-			return nil, fmt.Errorf("failed to convert price of %q to %s", item.GetProductId(), userCurrency)
+			return nil, fmt.Errorf("failed to convert price of %q to %s: %w", item.GetProductId(), userCurrency, err)
 		}
 		out[i] = &pb.OrderItem{
 			Item: item,
@@ -565,9 +573,9 @@ func (cs *checkout) convertCurrency(ctx context.Context, from *pb.Money, toCurre
 		ToCode: toCurrency,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("failed to convert currency: %+v", err)
+		return nil, fmt.Errorf("failed to convert currency: %w", err)
 	}
-	return result, err
+	return result, nil
 }
 
 func (cs *checkout) chargeCard(ctx context.Context, amount *pb.Money, paymentInfo *pb.CreditCardInfo) (string, error) {

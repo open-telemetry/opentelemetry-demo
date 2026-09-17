@@ -3,6 +3,7 @@
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 import InstrumentationMiddleware from '../../utils/telemetry/InstrumentationMiddleware';
+import logger from '../../utils/telemetry/logger';
 import ShippingGateway from '../../gateways/http/Shipping.gateway';
 import { Address, CartItem, Empty, Money } from '../../protos/demo';
 import CurrencyGateway from '../../gateways/rpc/Currency.gateway';
@@ -15,7 +16,14 @@ const handler = async ({ method, query }: NextApiRequest, res: NextApiResponse<T
       const { itemList = '', currencyCode = 'USD', address = '' } = query;
       const { costUsd } = await ShippingGateway.getShippingCost(JSON.parse(itemList as string) as CartItem[],
           JSON.parse(address as string) as Address);
-      const cost = await CurrencyGateway.convert(costUsd!, currencyCode as string);
+      let cost = costUsd;
+      if (!!currencyCode && (currencyCode as string) !== 'USD') {
+        try {
+          cost = await CurrencyGateway.convert(costUsd!, currencyCode as string);
+        } catch (error) {
+          logger.warn({ err: error, currencyCode }, 'Failed to convert shipping cost, falling back to base currency');
+        }
+      }
 
       return res.status(200).json(cost!);
     }

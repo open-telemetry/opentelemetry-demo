@@ -33,16 +33,26 @@ const CurrencyProvider = ({ children }: IProps) => {
   });
   const [selectedCurrency, setSelectedCurrency] = useState<string>('');
 
+  const onSelectCurrency = useCallback((currency: string) => {
+    setSelectedCurrency(currency);
+    SessionGateway.setSessionValue('currencyCode', currency);
+  }, []);
+
+  const currencyCodeList = useMemo(() => [...currencyCodeListUnsorted].sort(), [currencyCodeListUnsorted]);
+
   useEffect(() => {
-    setSelectedCurrency(currencyCode);
-  }, []);
-
-  const onSelectCurrency = useCallback((currencyCode: string) => {
-    setSelectedCurrency(currencyCode);
-    SessionGateway.setSessionValue('currencyCode', currencyCode);
-  }, []);
-
-  const currencyCodeList = currencyCodeListUnsorted.sort();
+    const sessionCurrency = currencyCode || 'USD';
+    if (currencyCodeList.length > 0) {
+      const activeCurrency = selectedCurrency || sessionCurrency;
+      if (!currencyCodeList.includes(activeCurrency)) {
+        onSelectCurrency('USD');
+      } else if (!selectedCurrency) {
+        setSelectedCurrency(sessionCurrency);
+      }
+    } else if (!selectedCurrency) {
+      setSelectedCurrency(sessionCurrency);
+    }
+  }, [currencyCodeList, selectedCurrency, onSelectCurrency]);
 
   const value = useMemo(
       () => ({
