@@ -1,0 +1,114 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
+
+plugins {
+    id 'java'
+    id 'idea'
+    id 'org.springframework.boot' version '4.1.1'
+    id 'com.google.protobuf' version '0.10.0'
+}
+
+repositories {
+    mavenCentral()
+}
+
+description = 'Recommendation Service'
+group = "recommendation"
+version = "0.1.0-SNAPSHOT"
+
+// protoc-gen-grpc-java, kept at the gRPC version the Spring Boot BOM manages for the runtime
+def grpcVersion = "1.83.1"
+def opentelemetryVersion = "1.65.0"
+def protocVersion = "4.36.1"
+def opentelemetryInstrumentationVersion = "2.31.1"
+def openFeatureSdkVersion = "1.22.1"
+def flagdProviderVersion = "0.14.1"
+def openFeatureOtelHookVersion = "3.3.1"
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 21
+}
+
+dependencies {
+    implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+    implementation platform("io.opentelemetry:opentelemetry-bom:${opentelemetryVersion}")
+
+    implementation "org.springframework.boot:spring-boot-starter-grpc-server",
+            "org.springframework.boot:spring-boot-starter-grpc-client",
+            "org.springframework.boot:spring-boot-starter-opentelemetry",
+            "io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:${opentelemetryInstrumentationVersion}-alpha",
+            "com.google.protobuf:protobuf-java:${protocVersion}",
+            "io.grpc:grpc-protobuf",
+            "io.grpc:grpc-stub",
+            "javax.annotation:javax.annotation-api:1.3.2",
+            "dev.openfeature:sdk:${openFeatureSdkVersion}",
+            "dev.openfeature.contrib.providers:flagd:${flagdProviderVersion}",
+            "dev.openfeature.contrib.hooks:otel:${openFeatureOtelHookVersion}"
+
+    testImplementation "org.springframework.boot:spring-boot-starter-grpc-server-test",
+            "org.springframework.boot:spring-boot-starter-opentelemetry-test",
+            "io.opentelemetry:opentelemetry-sdk-testing"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+// Default protoSourceDir is in /opentelemetry-demo/pb. Optionally override the
+// location for the docker build, which copies the protos to a different location.
+def protoSourceDir = findProperty('protoSourceDir') ?: project.projectDir.parentFile.parentFile.toPath().toString() + "/pb"
+def protoDestDir = layout.buildDirectory.dir("proto").get().asFile.toPath().toString()
+
+// Copy protos to the build directory
+tasks.register('copyProtos', Copy) {
+    from protoSourceDir
+    into protoDestDir
+}
+
+// Include the output directory of copyProtos in main source set so they are
+// picked up by the protobuf plugin
+sourceSets {
+    main {
+        proto {
+            srcDir(protoDestDir)
+        }
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:${protocVersion}"
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+        }
+    }
+    generateProtoTasks { task ->
+        all()*.plugins {
+            grpc {}
+        }
+        ofSourceSet('main')
+    }
+}
+
+afterEvaluate {
+    // Ensure protos are copied before classes are generated
+    tasks.getByName('processResources').dependsOn 'copyProtos'
+    tasks.getByName('generateProto').dependsOn 'copyProtos'
+    tasks.getByName('processProtoResources').dependsOn 'copyProtos'
+}
+
+// Downloads the dependencies during the Docker image build so that layer is cached and
+// later builds only compile.
+tasks.register('downloadRepos', Copy) {
+    from configurations.compileClasspath
+    from configurations.runtimeClasspath
+    into layout.buildDirectory.dir('dependencies')
+}
+
+tasks.named('bootJar') {
+    archiveFileName = 'recommendation.jar'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

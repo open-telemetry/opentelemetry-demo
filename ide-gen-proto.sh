@@ -40,13 +40,6 @@ gen_proto_js() {
   cd "$base_dir" || return
 }
 
-gen_proto_python() {
-  echo "Generating Python protobuf files for $1"
-  cd "$base_dir"/src/"$1" || return
-  python3 -m grpc_tools.protoc -I=../../pb --python_out=./ --grpc_python_out=./ ./../../pb/demo.proto
-  cd "$base_dir" || return
-}
-
 gen_proto_rust() {
   echo "Generating Rust protobuf files for $1"
   cd "$base_dir"/src/"$1" || return
@@ -76,5 +69,4 @@ gen_proto_ts react-native-app
 gen_proto_js payment
 gen_proto_go product-catalog
 # gen_proto_php quote
-gen_proto_python recommendation
 gen_proto_rust shipping
