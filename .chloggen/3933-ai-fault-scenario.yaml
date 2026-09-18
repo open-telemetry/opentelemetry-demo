@@ -1,0 +1,7 @@
+change_type: enhancement
+
+component: agent
+
+note: "Add aiSlowResponse and aiRunawayAgent feature flags to simulate LLM latency degradation and a runaway/looping agent"
+
+issues: [3933]
