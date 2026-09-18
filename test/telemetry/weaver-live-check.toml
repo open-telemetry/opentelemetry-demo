@@ -1,0 +1,19 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+[["live-check".finding_filters]]
+exclude = ["missing_attribute", "missing_metric"]
+
+[["live-check".finding_filters]]
+signal_type = "resource"
+exclude_samples = [
+  "service.name",
+  "service.instance.id",
+  "telemetry.sdk.language",
+  "telemetry.sdk.name",
+  "telemetry.sdk.version",
+  "telemetry.auto.version",
+]
+
+["live-check".otlp]
+grpc_address = "0.0.0.0"

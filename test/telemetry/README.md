@@ -143,9 +143,10 @@ make run-telemetry-tests-agentic   # Agentic scope (agent, mcp, chatbot)
 
 Two separate workflows handle telemetry tests:
 
-- **`.github/workflows/run-telemetry-tests.yml`** - two parallel jobs (full
-  and minimal). Triggered on every PR touching `src/`, `test/telemetry/`, or
-  core compose files.
+- **`.github/workflows/run-telemetry-tests.yml`** - full and minimal test jobs
+  sharing PR-built demo images. The full job also validates expected telemetry
+  with Weaver. Runs on dependabot PRs automatically; for human PRs it runs
+  after reviewer approval.
 - **`.github/workflows/run-agentic-telemetry-tests.yml`** - agentic scope.
   Runs on dependabot PRs automatically; for human PRs it runs after reviewer
   approval. Only fires when `src/agent/`, `src/mcp/`, `src/chatbot/`,
@@ -164,9 +165,54 @@ Two separate workflows handle telemetry tests:
 
 ## Relationship to Weaver
 
-Weaver validates the telemetry schema registry (correct attribute
-names, types, semantic conventions). These tests validate that
-telemetry flows end-to-end. They are complementary:
+Weaver live-check validates emitted telemetry against the schema registry.
+These tests validate that telemetry flows end-to-end. They are complementary:
 
-- **Weaver**: "Are the attribute definitions correct?" (static)
+- **Weaver live-check**: "Does selected emitted telemetry match its contract?"
 - **Telemetry tests**: "Is each service sending data?" (runtime)
+
+The full telemetry-test job branches selected spans and metrics from the
+Collector's normal processed pipelines to Weaver. The expected checkout
+telemetry is declared in `weaver-expected-telemetry.toml`. The job fails when
+an expected attribute or metric is absent, or when Weaver reports a violation
+for the selected telemetry. Findings are summarized in the job and the full
+report is uploaded as the `weaver-live-check-report` artifact.
+
+This integration check complements the
+[Semantic Conventions Conformance](https://github.com/open-telemetry/semantic-conventions-conformance)
+suite. That project validates isolated instrumentation implementations against
+upstream semantic-convention contracts. The Demo check instead validates its
+custom registry and the telemetry produced by the integrated application after
+Collector processing.
+
+### Adapting the pattern
+
+Applications that export directly through OTLP need only surround their
+integration test with Weaver's start and stop actions:
+
+```yaml
+- uses: open-telemetry/weaver/.github/actions/setup-weaver@<pinned-ref>
+  with:
+    version: <pinned-version>
+
+- id: weaver
+  uses: open-telemetry/weaver/.github/actions/weaver-live-check-start@<pinned-ref>
+  with:
+    registry: path/to/telemetry-schema
+
+- name: Run integration tests
+  env:
+    OTEL_EXPORTER_OTLP_ENDPOINT: ${{ steps.weaver.outputs.otlp-grpc-endpoint }}
+  run: ./run-integration-tests
+
+- if: always() && steps.weaver.outcome == 'success'
+  uses: open-telemetry/weaver/.github/actions/weaver-live-check-stop@<pinned-ref>
+  with:
+    fail-on: violation
+```
+
+The Demo uses the additional Collector configuration in
+`otelcol-config-weaver-live-check.yml` because it continues exporting to its
+normal backends and validates the post-Collector stream. New adopters can begin
+with `fail-on: none`, review the report, add narrowly justified finding filters,
+and then switch to `fail-on: violation`.

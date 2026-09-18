@@ -1,0 +1,47 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+exporters:
+  otlp_grpc/weaver:
+    endpoint: host.docker.internal:4317
+    compression: none
+    tls:
+      insecure: true
+
+processors:
+  filter/weaver:
+    error_mode: propagate
+    traces:
+      span:
+        - >-
+          attributes["demo.product.id"] == nil and
+          attributes["demo.product.quantity"] == nil and
+          attributes["demo.cart.items.count"] == nil and
+          attributes["demo.order.id"] == nil and
+          attributes["demo.payment.transaction.id"] == nil and
+          attributes["demo.shipping.tracking.id"] == nil
+    metrics:
+      metric:
+        - >-
+          name != "demo.cart.add_item.latency" and
+          name != "demo.cart.get_cart.latency" and
+          name != "demo.payment.transactions" and
+          name != "demo.notification.confirmations"
+
+connectors:
+  forward/weaver:
+
+service:
+  pipelines:
+    traces:
+      exporters: [debug, otlp_grpc/jaeger, span_metrics, forward/weaver]
+    metrics:
+      exporters: [debug, otlp_http/prometheus, forward/weaver]
+    traces/weaver:
+      receivers: [forward/weaver]
+      processors: [filter/weaver]
+      exporters: [otlp_grpc/weaver]
+    metrics/weaver:
+      receivers: [forward/weaver]
+      processors: [filter/weaver]
+      exporters: [otlp_grpc/weaver]
