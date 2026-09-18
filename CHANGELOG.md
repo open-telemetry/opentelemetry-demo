@@ -1,54 +1,5 @@
 # Changelog
 
-Please update changelog as part of any significant pull request. Place short
-description of your change into "Unreleased" section. As part of release
-process content of "Unreleased" section content will generate release notes for
-the release.
-
-## Unreleased
-
-* [react-native-app] Catch errors from `placeOrder` in the Cart screen and
-  show an error toast so payment failures are visible to the user instead of
-  being silently dropped
-  ([#3760](https://github.com/open-telemetry/opentelemetry-demo/issues/3760))
-* [checkout, product-catalog] Bump `go.opentelemetry.io/contrib` to the
-  v1.46.0/v0.71.0 release line, picking up otelgrpc recording `error.type`
-  on RPC duration metrics for failed calls
-  ([#3901](https://github.com/open-telemetry/opentelemetry-demo/issues/3901))
-* [collector] Add a data redaction/deletion example: delete, hash, and partially
-  mask sensitive attributes with the transform processor, plus a documented
-  redaction-processor fallback
-  ([#3662](https://github.com/open-telemetry/opentelemetry-demo/pull/3662))
-* [collector] Gate raw PII emission (`user.email`, `demo.payment.card_number`,
-  `demo.payment.card_cvv`) behind the new `emitRawPii` feature flag (off by
-  default) in checkout/payment, and layer the purpose-built `redaction`
-  processor alongside `transform/redact_sensitive_data` as a key-name safety
-  net
-  ([#3867](https://github.com/open-telemetry/opentelemetry-demo/issues/3867))
-* [flagd-ui] Add a scheduler that periodically activates randomly picked feature
-  flags for a random duration, so failure scenarios appear and disappear on
-  their own without external tooling. Configurable interval, minimum and maximum
-  hold duration, how many flags run at once, per variant flag selection, and an
-  optional seed for reproducible patterns
-  ([#2375](https://github.com/open-telemetry/opentelemetry-demo/issues/2375))
-* [react-native-app] Fix `SessionGateway.setSessionValue` to await `getSession()`,
-  preventing stored session corruption and loss of `userId`
-  ([#3765](https://github.com/open-telemetry/opentelemetry-demo/issues/3765))
-* [cart] Report health to the demo's OpAMP server when running with the
-  observability stack.
-  ([#3656](https://github.com/open-telemetry/opentelemetry-demo/pull/3656))
-* [chatbot] Report health to the demo's OpAMP server when running with the
-  agentic and observability stacks.
-  ([#3808](https://github.com/open-telemetry/opentelemetry-demo/pull/3808))
-* [payment] Add `error.type` attribute to error spans in `charge.js` and
-  `index.js` to align with OpenTelemetry Semantic Conventions for errors
-  ([#3758](https://github.com/open-telemetry/opentelemetry-demo/issues/3758))
-* [react-native-app] Render missing `City` and `State` input fields in `CheckoutForm`
-  ([#3754](https://github.com/open-telemetry/opentelemetry-demo/issues/3754))
-* [payment] Fix gRPC server not starting by calling `server.start()` after `bindAsnc()`.
-  The server bound to the port but was never started to accept connections, causing
-  the service to fail its health checks.
-  ([#3844](https://github.com/open-telemetry/opentelemetry-demo/pull/3844))
 Changelog entries are managed with individual fragment files under
 [`.chloggen`](./.chloggen), one per pull request. The unreleased changes are
 the set of fragment files currently in that directory. Do not edit released
@@ -61,13 +12,24 @@ version section directly below the marker and deletes them.
 
 ## 3.1.0
 
+### Breaking changes
+
+- `currency`: Bump `opentelemetry-cpp` to 1.28.0 and migrate the RPC span attributes it deprecates to the current semantic conventions (#3967)
+  `rpc.system` is replaced by `rpc.system.name`, `rpc.service` is folded into a
+  fully-qualified `rpc.method` (for example `oteldemo.CurrencyService/Convert`),
+  and the integer `rpc.grpc.status_code` is replaced by the string
+  `rpc.response.status_code`.
+
 ### Enhancements
 
+- `agent`: Add aiSlowResponse and aiRunawayAgent feature flags to simulate LLM latency degradation and a runaway/looping agent (#3933)
 - `cart`: Report health to the demo's OpAMP server when running with the observability stack (#3656)
 - `chatbot`: Report health to the demo's OpAMP server when running with the agentic and observability stacks (#3808)
 - `checkout, product-catalog`: Enable Go SDK self-observability metrics. (#3936)
 - `checkout, product-catalog`: Bump `go.opentelemetry.io/contrib` to the v1.46.0/v0.71.0 release line, picking up otelgrpc recording `error.type` on RPC duration metrics for failed calls (#3901)
 - `collector`: Add a data redaction/deletion example: delete, hash, and partially mask sensitive attributes with the transform processor, plus a documented redaction-processor fallback (#3662)
+- `collector`: Gate raw PII emission (`user.email`, `demo.payment.card_number`, `demo.payment.card_cvv`) behind the new `emitRawPii` feature flag (off by default) in checkout/payment, and layer the purpose-built `redaction` processor alongside `transform/redact_sensitive_data` as a key-name safety net (#3867)
+- `docker`: Add environment terms to `compose.yaml` to allow OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION to be overridden by .env.override. (#3961)
 - `flagd-ui`: Add a scheduler that periodically activates randomly picked feature flags for a random duration, so failure scenarios appear and disappear on their own without external tooling (#2375)
   Configurable interval, minimum and maximum hold duration, how many flags run
   at once, per variant flag selection, and an optional seed for reproducible
@@ -95,6 +57,9 @@ version section directly below the marker and deletes them.
   Podman's buildah is stricter compared to Dockers buildkit. For example using EXPOSE
   in Dockerfiles without specifying a ARG will work fine in Docker but in Podman this fails.
 
+- `recommendation`: Align the recommendation request metric unit with its telemetry schema. (#3615)
+  Change the emitted `demo.recommendation.requests` unit from
+  `recommendations` to `{recommendation}`.
 - `react-native-app`: Fix `SessionGateway.setSessionValue` to await `getSession()`, preventing stored session corruption and loss of `userId` (#3765)
 - `react-native-app`: Catch errors from `placeOrder` in the Cart screen and show an error toast so payment failures are visible to the user instead of being silently dropped (#3760)
 - `react-native-app`: Render missing `City` and `State` input fields in `CheckoutForm` (#3754)
