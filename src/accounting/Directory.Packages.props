@@ -11,5 +11,10 @@
     <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
     <PackageVersion Include="OpenTelemetry.AutoInstrumentation" Version="1.16.0" />
+    <!--
+      TODO: Remove this suppression when OpenTelemetry.AutoInstrumentation is updated to 1.17.0 or later.
+      This vulnerability affects macOS only, so it is safe for the accounting service to run in Docker.
+    -->
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-v8pv-4842-x354" />
   </ItemGroup>
 </Project>
