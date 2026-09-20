@@ -4,7 +4,9 @@
 # Default state for all rules
 default: true
 
-# allow long lines for tables and code blocks
-MD013:
-  code_blocks: false
-  tables: false
+# CHANGELOG.md mixes hand-written historical entries (asterisk bullets, short
+# lines) with chloggen-generated ones (dash bullets, unwrapped long lines);
+# disable these two rules rather than reformat history, matching upstream
+# opentelemetry-collector's markdownlint config.
+MD004: false
+MD013: false
