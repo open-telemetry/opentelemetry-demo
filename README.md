@@ -84,6 +84,10 @@ To get involved with the project see our [CONTRIBUTING](CONTRIBUTING.md)
 documentation. Our [SIG Calls](CONTRIBUTING.md#join-a-sig-call) are every other
 Wednesday at 8:30 AM PST and anyone is welcome.
 
+New to CNCF Slack? [Create an account](https://slack.cncf.io/) first, then join
+us in
+[`#otel-community-demo`](https://cloud-native.slack.com/archives/C03B4CWV4DA).
+
 ### Maintainers
 
 - [Cyrille Le Clerc](https://github.com/cyrille-leclerc), Datadog
