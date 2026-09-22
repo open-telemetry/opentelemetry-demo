@@ -15,14 +15,14 @@
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.19.1" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.19.1" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.19.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.GrpcNetClient" Version="1.18.0-beta.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.GrpcNetClient" Version="1.19.1-beta.1" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.19.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Process" Version="1.18.0-rc.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Process" Version="1.19.0-rc.1" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.19.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.StackExchangeRedis" Version="1.18.0-beta.3" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.StackExchangeRedis" Version="1.19.0-beta.1" />
     <PackageVersion Include="OpenTelemetry.OpAmp.Client" Version="0.7.0-alpha.2" />
-    <PackageVersion Include="OpenTelemetry.Resources.Container" Version="1.18.0-beta.1" />
-    <PackageVersion Include="OpenTelemetry.Resources.Host" Version="1.18.0-beta.1" />
+    <PackageVersion Include="OpenTelemetry.Resources.Container" Version="1.19.1-beta.1" />
+    <PackageVersion Include="OpenTelemetry.Resources.Host" Version="1.19.1-beta.1" />
     <PackageVersion Include="StackExchange.Redis" Version="3.3.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.0" />
