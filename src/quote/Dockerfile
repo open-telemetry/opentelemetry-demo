@@ -2,9 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM ghcr.io/mlocati/php-extension-installer:2.11.12@sha256:b6d3fa381b9ba5cf051117c1c601d6a523b590e534bf3d56eb4fbe352949c138 AS installer
+FROM ghcr.io/mlocati/php-extension-installer:2.11.27@sha256:38772e61ab498b8acaed7dea4042fe82fafffd741114819687c1cdfd4ecfd0bb AS installer
 
-FROM docker.io/library/composer:2.10.3@sha256:d8f6343d3fae98107426bc49163ccad46ef85aabd4a27d80a74401fab4aba332 AS vendor
+FROM docker.io/library/composer:2.10.3@sha256:a5f59b9fd2faf31218632be4809dc6491761085e8064c31dc3b84378c48c248b AS vendor
 
 WORKDIR /tmp/
 
