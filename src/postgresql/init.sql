@@ -14,6 +14,15 @@ CREATE DATABASE astronomy_db OWNER astronomy_user;
 CREATE USER monitoring_user WITH PASSWORD 'monitoring_password';
 GRANT pg_monitor TO monitoring_user;
 
+-- Grant schema access for postgresql receiver's top_query metric
+-- The receiver needs SELECT access to explain its own query samples
+GRANT USAGE ON SCHEMA catalog TO monitoring_user;
+GRANT SELECT ON ALL TABLES IN SCHEMA catalog TO monitoring_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA catalog GRANT SELECT ON TABLES TO monitoring_user;
+GRANT USAGE ON SCHEMA accounting TO monitoring_user;
+GRANT SELECT ON ALL TABLES IN SCHEMA accounting TO monitoring_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA accounting GRANT SELECT ON TABLES TO monitoring_user;
+
 -- Switch to the application database
 \connect astronomy_db
 
