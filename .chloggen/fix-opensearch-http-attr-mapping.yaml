@@ -22,4 +22,6 @@ subtext: |-
   scalar `http` log attribute. In OpenSearch ss4o storage that mapped
   attributes.http as text, after which frontend logs carrying the semconv
   http.request.method attribute were rejected with a mapper_parsing_exception,
-  dropping the frontend logs and failing the Telemetry Tests.
+  dropping the frontend logs and failing the Telemetry Tests. The telemetry
+  trace tests are also ported to the Jaeger v3 query API, since the Jaeger
+  2.21 bump removed the legacy /api/services and /api/traces endpoints.
