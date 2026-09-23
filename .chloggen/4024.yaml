@@ -1,4 +1,4 @@
 change_type: enhancement
 component: load-generator
 note: "Randomize product selection in browser load test to match HTTP traffic patterns"
-issues: [4024]
+issues: [4023]
