@@ -272,7 +272,14 @@ if browser_traffic_enabled:
                     await page.route('**/*', add_baggage_header)
                     await page.goto("/cart", wait_until="domcontentloaded")
                     await page.select_option('[name="currency_code"]', 'CHF')
-                    await page.wait_for_timeout(2000)  # giving the browser time to export the traces
+                    # Force visibilitychange so RUM agents flush Web Vitals beacons before context close
+                    await page.evaluate("""() => {
+                        Object.defineProperty(document, 'visibilityState', { get: () => 'hidden', configurable: true })
+                        Object.defineProperty(document, 'hidden', { get: () => true, configurable: true })
+                        document.dispatchEvent(new Event('visibilitychange'))
+                        window.dispatchEvent(new Event('pagehide'))
+                    }""")
+                    await page.wait_for_timeout(8000)  # give the RUM agent time to finalize/send beacons
                     logging.info("Currency changed to CHF")
                 except Exception as e:
                     logging.error(f"Error in change currency task: {str(e)}")
@@ -293,7 +300,14 @@ if browser_traffic_enabled:
                     await page.wait_for_selector('button:has-text("Add To Cart")', timeout=15000)
                     await page.click('button:has-text("Add To Cart")')
                     await page.wait_for_load_state("domcontentloaded")
-                    await page.wait_for_timeout(2000)
+                    # Force visibilitychange so RUM agents flush Web Vitals beacons before context close
+                    await page.evaluate("""() => {
+                        Object.defineProperty(document, 'visibilityState', { get: () => 'hidden', configurable: true })
+                        Object.defineProperty(document, 'hidden', { get: () => true, configurable: true })
+                        document.dispatchEvent(new Event('visibilitychange'))
+                        window.dispatchEvent(new Event('pagehide'))
+                    }""")
+                    await page.wait_for_timeout(8000)  # give the RUM agent time to finalize/send beacons
                     logging.info(f"Product {product_id} added to cart successfully")
                 except Exception as e:
                     logging.error(f"Error in add to cart task: {str(e)}")
