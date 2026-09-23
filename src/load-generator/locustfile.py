@@ -12,6 +12,11 @@ import logging
 from locust import HttpUser, task, between
 from locust_plugins.users.playwright import PlaywrightUser, pw, PageWithRetry, event
 
+# Workaround for gRPC/gevent incompatibility on shutdown (greenlet finalization crash).
+# Mark gevent as loaded before gRPC exporter imports to prevent C-extension cleanup conflicts.
+import grpc.experimental.gevent
+grpc.experimental.gevent.gevent_loaded = True
+
 from opentelemetry import context, baggage, trace
 from opentelemetry.context import Context
 from opentelemetry.metrics import set_meter_provider
