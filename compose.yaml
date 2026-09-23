@@ -627,6 +627,9 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=medium
       - OTEL_SERVICE_NAME=recommendation
+      # Opt in to experimental OTel SDK self-observability metrics (otel.sdk.*)
+      # feeding the "self-observability" Grafana dashboard.
+      - OTEL_EXPERIMENTAL_SDK_TELEMETRY_VERSION=latest
       # Workaround on OSX for https://bugs.openjdk.org/browse/JDK-8345296
       - _JAVA_OPTIONS
     healthcheck:

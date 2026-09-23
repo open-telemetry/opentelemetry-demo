@@ -4,8 +4,8 @@ This service provides recommendations for other products based on the currently
 selected product.
 
 It is a Spring Boot 4 application. The gRPC API is served with Spring gRPC, and
-the telemetry is produced with Micrometer and exported over OTLP by the Spring
-Boot OpenTelemetry starter, so no Java agent is involved.
+the telemetry comes from the OpenTelemetry Spring Boot starter plus the
+OpenTelemetry gRPC instrumentation library, so no Java agent is involved.
 
 ## Local Build
 

@@ -1178,7 +1178,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "sum by (service_name) (jvm_memory_used_bytes{area=\"heap\"} or jvm_memory_used_bytes{jvm_memory_type=\"heap\"})",
+          "expr": "sum by (service_name) (jvm_memory_used_bytes{jvm_memory_type=\"heap\"})",
           "legendFormat": "{{service_name}}",
           "range": true,
           "refId": "A"

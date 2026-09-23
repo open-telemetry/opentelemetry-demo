@@ -16,12 +16,13 @@ import io.grpc.BindableService;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
-import io.micrometer.core.instrument.MeterRegistry;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.sdk.autoconfigure.spi.AutoConfigurationCustomizerProvider;
+import io.opentelemetry.sdk.metrics.data.LongPointData;
+import io.opentelemetry.sdk.testing.exporter.InMemoryMetricReader;
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
-import io.opentelemetry.sdk.trace.SpanProcessor;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import java.util.HashMap;
@@ -35,7 +36,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.grpc.test.autoconfigure.AutoConfigureTestGrpcTransport;
-import org.springframework.boot.micrometer.tracing.test.autoconfigure.AutoConfigureTracing;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -49,9 +49,9 @@ import oteldemo.Demo.Product;
 import oteldemo.ProductCatalogServiceGrpc;
 import oteldemo.RecommendationServiceGrpc;
 
-@SpringBootTest
+@SpringBootTest(
+    properties = {"otel.traces.exporter=none", "otel.metrics.exporter=none", "otel.logs.exporter=none"})
 @AutoConfigureTestGrpcTransport
-@AutoConfigureTracing
 class RecommendationServiceTests {
 
   private static final String CACHE_FAILURE_FLAG = "recommendationCacheFailure";
@@ -61,7 +61,7 @@ class RecommendationServiceTests {
 
   @Autowired private GrpcChannelFactory channels;
   @Autowired private InMemorySpanExporter spans;
-  @Autowired private MeterRegistry meterRegistry;
+  @Autowired private InMemoryMetricReader metrics;
   @Autowired private InMemoryProvider featureFlags;
 
   @BeforeEach
@@ -125,7 +125,7 @@ class RecommendationServiceTests {
 
   @Test
   void recordsSpanAttributesAndCounter() {
-    double before = recommendationsCounted();
+    long before = recommendationsCounted();
 
     listRecommendations("66VCHSJNUP");
 
@@ -200,8 +200,13 @@ class RecommendationServiceTests {
         .findFirst();
   }
 
-  private double recommendationsCounted() {
-    return meterRegistry.get("demo.recommendation.requests").tag("recommendation.type", "catalog").counter().count();
+  private long recommendationsCounted() {
+    return metrics.collectAllMetrics().stream()
+        .filter(metric -> metric.getName().equals("demo.recommendation.requests"))
+        .flatMap(metric -> metric.getLongSumData().getPoints().stream())
+        .filter(point -> "catalog".equals(point.getAttributes().get(AttributeKey.stringKey("recommendation.type"))))
+        .mapToLong(LongPointData::getValue)
+        .sum();
   }
 
   private void setCacheFailureFlag(boolean enabled) {
@@ -225,8 +230,20 @@ class RecommendationServiceTests {
     }
 
     @Bean
-    SpanProcessor inMemorySpanProcessor(InMemorySpanExporter exporter) {
-      return SimpleSpanProcessor.create(exporter);
+    InMemoryMetricReader inMemoryMetricReader() {
+      return InMemoryMetricReader.create();
+    }
+
+    @Bean
+    AutoConfigurationCustomizerProvider inMemoryTelemetry(
+        InMemorySpanExporter spanExporter, InMemoryMetricReader metricReader) {
+      return customizer ->
+          customizer
+              .addTracerProviderCustomizer(
+                  (tracerProvider, config) ->
+                      tracerProvider.addSpanProcessor(SimpleSpanProcessor.create(spanExporter)))
+              .addMeterProviderCustomizer(
+                  (meterProvider, config) -> meterProvider.registerMetricReader(metricReader));
     }
 
     @Bean

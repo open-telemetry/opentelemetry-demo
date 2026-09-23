@@ -19,7 +19,6 @@ version = "0.1.0-SNAPSHOT"
 
 // protoc-gen-grpc-java, kept at the gRPC version the Spring Boot BOM manages for the runtime
 def grpcVersion = "1.83.1"
-def opentelemetryVersion = "1.65.0"
 def protocVersion = "4.36.1"
 def opentelemetryInstrumentationVersion = "2.31.1"
 def openFeatureSdkVersion = "1.22.1"
@@ -32,12 +31,12 @@ tasks.withType(JavaCompile).configureEach {
 
 dependencies {
     implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
-    implementation platform("io.opentelemetry:opentelemetry-bom:${opentelemetryVersion}")
+    implementation platform("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom:${opentelemetryInstrumentationVersion}")
 
     implementation "org.springframework.boot:spring-boot-starter-grpc-server",
             "org.springframework.boot:spring-boot-starter-grpc-client",
-            "org.springframework.boot:spring-boot-starter-opentelemetry",
-            "io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:${opentelemetryInstrumentationVersion}-alpha",
+            "io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter",
+            "io.opentelemetry.instrumentation:opentelemetry-grpc-1.6:${opentelemetryInstrumentationVersion}-alpha",
             "com.google.protobuf:protobuf-java:${protocVersion}",
             "io.grpc:grpc-protobuf",
             "io.grpc:grpc-stub",
@@ -47,7 +46,6 @@ dependencies {
             "dev.openfeature.contrib.hooks:otel:${openFeatureOtelHookVersion}"
 
     testImplementation "org.springframework.boot:spring-boot-starter-grpc-server-test",
-            "org.springframework.boot:spring-boot-starter-opentelemetry-test",
             "io.opentelemetry:opentelemetry-sdk-testing"
     testRuntimeOnly "org.junit.platform:junit-platform-launcher"
 }

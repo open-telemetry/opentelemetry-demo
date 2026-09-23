@@ -7,11 +7,14 @@ package oteldemo.recommendation;
 
 import dev.openfeature.sdk.Client;
 import io.grpc.stub.StreamObserver;
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.tracing.Span;
-import io.micrometer.tracing.Tracer;
+import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.metrics.LongCounter;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Scope;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -37,11 +40,13 @@ public class RecommendationService extends RecommendationServiceGrpc.Recommendat
   private static final int MAX_RESPONSES = 5;
   private static final AttributeKey<List<String>> FILTERED_LIST =
       AttributeKey.stringArrayKey("demo.product.filtered.list");
+  private static final Attributes CATALOG_RECOMMENDATION =
+      Attributes.of(AttributeKey.stringKey("recommendation.type"), "catalog");
 
   private final ProductCatalogServiceBlockingStub productCatalog;
   private final Client featureFlags;
   private final Tracer tracer;
-  private final Counter recommendations;
+  private final LongCounter recommendations;
 
   private final List<String> cachedIds = new ArrayList<>();
   private boolean firstRun = true;
@@ -49,17 +54,17 @@ public class RecommendationService extends RecommendationServiceGrpc.Recommendat
   public RecommendationService(
       ProductCatalogServiceBlockingStub productCatalog,
       Client featureFlags,
-      Tracer tracer,
-      MeterRegistry meterRegistry) {
+      OpenTelemetry openTelemetry) {
     this.productCatalog = productCatalog;
     this.featureFlags = featureFlags;
-    this.tracer = tracer;
+    this.tracer = openTelemetry.getTracer("recommendation");
     this.recommendations =
-        Counter.builder("demo.recommendation.requests")
-            .description("Counts the total number of given recommendations")
-            .baseUnit("{recommendation}")
-            .tag("recommendation.type", "catalog")
-            .register(meterRegistry);
+        openTelemetry
+            .getMeter("recommendation")
+            .counterBuilder("demo.recommendation.requests")
+            .setDescription("Counts the total number of given recommendations")
+            .setUnit("{recommendation}")
+            .build();
   }
 
   @Override
@@ -67,12 +72,9 @@ public class RecommendationService extends RecommendationServiceGrpc.Recommendat
       ListRecommendationsRequest request,
       StreamObserver<ListRecommendationsResponse> responseObserver) {
     List<String> productIds = getProductList(request.getProductIdsList());
-    Span span = tracer.currentSpan();
-    if (span != null) {
-      span.tag("demo.product.recommended.count", productIds.size());
-    }
+    Span.current().setAttribute("demo.product.recommended.count", productIds.size());
     logger.info("Receive ListRecommendations for product ids:{}", productIds);
-    recommendations.increment(productIds.size());
+    recommendations.add(productIds.size(), CATALOG_RECOMMENDATION);
 
     responseObserver.onNext(
         ListRecommendationsResponse.newBuilder().addAllProductIds(productIds).build());
@@ -80,32 +82,31 @@ public class RecommendationService extends RecommendationServiceGrpc.Recommendat
   }
 
   private List<String> getProductList(List<String> requestProductIds) {
-    Span span = tracer.nextSpan().name("get_product_list").start();
-    try (Tracer.SpanInScope ignored = tracer.withSpan(span)) {
+    Span span = tracer.spanBuilder("get_product_list").startSpan();
+    try (Scope ignored = span.makeCurrent()) {
       Products products;
       if (featureFlags.getBooleanValue(CACHE_FAILURE_FLAG, false)) {
-        span.tag("demo.feature_flag.recommendation_cache", true);
+        span.setAttribute("demo.feature_flag.recommendation_cache", true);
         products = getProductsFromLeakyCache(span);
       } else {
-        span.tag("demo.feature_flag.recommendation_cache", false);
+        span.setAttribute("demo.feature_flag.recommendation_cache", false);
         List<String> fresh = fetchProductIds();
         products = new Products(fresh.size(), new HashSet<>(fresh));
       }
-      span.tag("demo.product.count", products.count());
+      span.setAttribute("demo.product.count", products.count());
 
       List<String> filtered = new ArrayList<>(products.unique());
       filtered.removeAll(requestedIds(requestProductIds));
-      span.tag("demo.product.filtered.count", filtered.size());
+      span.setAttribute("demo.product.filtered.count", filtered.size());
 
       Collections.shuffle(filtered, ThreadLocalRandom.current());
       List<String> recommended =
           List.copyOf(filtered.subList(0, Math.min(MAX_RESPONSES, filtered.size())));
-      // Micrometer spans only take scalar tags, so the array attribute is set through the
-      // OpenTelemetry API on the same span.
-      io.opentelemetry.api.trace.Span.current().setAttribute(FILTERED_LIST, recommended);
+      span.setAttribute(FILTERED_LIST, recommended);
       return recommended;
     } catch (RuntimeException e) {
-      span.error(e);
+      span.recordException(e);
+      span.setStatus(StatusCode.ERROR);
       throw e;
     } finally {
       span.end();
@@ -133,7 +134,7 @@ public class RecommendationService extends RecommendationServiceGrpc.Recommendat
       firstRun = false;
     }
     if (miss) {
-      span.tag("demo.recommendation.cache_hit", false);
+      span.setAttribute("demo.recommendation.cache_hit", false);
       logger.info("get_product_list: cache miss");
       List<String> fresh = fetchProductIds();
       synchronized (cachedIds) {
@@ -142,7 +143,7 @@ public class RecommendationService extends RecommendationServiceGrpc.Recommendat
         return new Products(cachedIds.size(), new HashSet<>(cachedIds));
       }
     }
-    span.tag("demo.recommendation.cache_hit", true);
+    span.setAttribute("demo.recommendation.cache_hit", true);
     logger.info("get_product_list: cache hit");
     synchronized (cachedIds) {
       return new Products(cachedIds.size(), new HashSet<>(cachedIds));
