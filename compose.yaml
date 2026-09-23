@@ -102,7 +102,11 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=high
       - OTEL_SERVICE_NAME=cart
-      - ASPNETCORE_URLS=http://*:${CART_PORT}
+      # Set the port via HTTP_PORTS, not URLS. URLS overrides the default
+      # HTTP_PORTS and triggers Kestrel's "Overriding HTTP_PORTS" warning, whose
+      # scalar "http" log attribute collides with the semconv http.* fields in
+      # OpenSearch (mapper_parsing_exception on attributes.http).
+      - ASPNETCORE_HTTP_PORTS=${CART_PORT}
     depends_on:
       valkey-cart:
         condition: service_healthy
