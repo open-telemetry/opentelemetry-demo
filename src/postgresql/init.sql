@@ -99,5 +99,6 @@ GRANT USAGE ON SCHEMA catalog TO monitoring_user;
 GRANT SELECT ON ALL TABLES IN SCHEMA catalog TO monitoring_user;
 ALTER DEFAULT PRIVILEGES IN SCHEMA catalog GRANT SELECT ON TABLES TO monitoring_user;
 GRANT USAGE ON SCHEMA accounting TO monitoring_user;
-GRANT SELECT ON ALL TABLES IN SCHEMA accounting TO monitoring_user;
-ALTER DEFAULT PRIVILEGES IN SCHEMA accounting GRANT SELECT ON TABLES TO monitoring_user;
+-- Scope to non-PII tables only: shipping contains customer address data (street, city, state, country, zip)
+GRANT SELECT ON accounting."order" TO monitoring_user;
+GRANT SELECT ON accounting.orderitem TO monitoring_user;
