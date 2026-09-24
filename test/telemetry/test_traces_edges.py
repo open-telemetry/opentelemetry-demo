@@ -1,60 +1,41 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-import requests
-
-from conftest import poll_until
+from conftest import jaeger_resource_spans, poll_until
 
 
-def _trace_has_edge(trace, parent_service, child_service):
-    """Return True if `trace` contains a span whose process.serviceName is
-    `parent_service` and which has a direct child span whose process.serviceName
-    is `child_service`. Matches via CHILD_OF references (preferred) or the
-    legacy parentSpanID field."""
-    processes = trace.get("processes", {})
-    spans = trace.get("spans", [])
-    parent_span_ids = {
-        s["spanID"]
-        for s in spans
-        if processes.get(s.get("processID"), {}).get("serviceName") == parent_service
-    }
-    if not parent_span_ids:
-        return False
-    for s in spans:
-        parent_id = None
-        for ref in s.get("references", []):
-            if ref.get("refType") == "CHILD_OF":
-                parent_id = ref.get("spanID")
-                break
-        if parent_id is None:
-            parent_id = s.get("parentSpanID")
-        if parent_id and parent_id in parent_span_ids:
-            child_svc = processes.get(s.get("processID"), {}).get("serviceName")
-            if child_svc == child_service:
-                return True
-    return False
+def _resource_service_name(resource):
+    for attr in resource.get("attributes", []):
+        if attr.get("key") == "service.name":
+            return attr.get("value", {}).get("stringValue")
+    return None
+
+
+def _edge_exists(resource_spans, parent_service, child_service):
+    """Return True if a `child_service` span has a `parent_service` parent span
+    within the same trace, across the v3 resourceSpans (grouped per service)."""
+    span_service = {}
+    child_parents = []
+    for rs in resource_spans:
+        service = _resource_service_name(rs.get("resource", {}))
+        for scope_spans in rs.get("scopeSpans", []):
+            for span in scope_spans.get("spans", []):
+                trace_id = span.get("traceId")
+                span_service[(trace_id, span.get("spanId"))] = service
+                parent_span_id = span.get("parentSpanId")
+                if service == child_service and parent_span_id:
+                    child_parents.append((trace_id, parent_span_id))
+    return any(span_service.get(key) == parent_service for key in child_parents)
 
 
 def test_service_edge_exists(jaeger_url, service_edge):
     """Verify a directed parent->child span relationship appears in Jaeger."""
     parent, child = service_edge
 
-    # Query traces by the *child* service: any trace that has a child span will
-    # also contain the parent span context, since the child carries the parent
-    # ref. Querying by parent is unreliable because high-volume parent services
-    # (e.g. frontend) produce many traces that never reach a given child within
-    # the limit window. Use a generous limit because some parents (e.g. checkout
-    # -> product-catalog) call the child rarely compared to other parents.
+    # Query by the child service (traces carry the parent span too) with a
+    # generous limit so rarely-called edges still appear within the window.
     def check():
-        resp = requests.get(
-            f"{jaeger_url}/jaeger/ui/api/traces",
-            params={"service": child, "limit": 200, "lookback": "1h"},
-            timeout=10,
-        )
-        resp.raise_for_status()
-        for trace in resp.json().get("data", []):
-            if _trace_has_edge(trace, parent, child):
-                return True
-        return False
+        resource_spans = jaeger_resource_spans(jaeger_url, child, num_traces=200)
+        return _edge_exists(resource_spans, parent, child)
 
     poll_until(check, f"trace edge '{parent}->{child}' in Jaeger")
