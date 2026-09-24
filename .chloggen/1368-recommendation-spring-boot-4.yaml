@@ -1,0 +1,7 @@
+change_type: enhancement
+
+component: recommendation
+
+note: Rewrite the recommendation service in Java with Spring Boot 4, instrumented with the OpenTelemetry Spring Boot starter instead of the Java agent.
+
+issues: [1368]
