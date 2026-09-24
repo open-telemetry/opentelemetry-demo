@@ -4,6 +4,7 @@
 import os
 import time
 import uuid
+from datetime import datetime, timedelta, timezone
 
 import pytest
 import requests
@@ -14,6 +15,37 @@ from services import edges_for_scope, services_with_signal
 JAEGER_HOST = os.environ.get("JAEGER_HOST", "jaeger")
 JAEGER_UI_PORT = os.environ.get("JAEGER_UI_PORT", "16686")
 JAEGER_URL = os.environ.get("JAEGER_URL", f"http://{JAEGER_HOST}:{JAEGER_UI_PORT}")
+JAEGER_LOOKBACK_SECONDS = 3600
+
+
+def _jaeger_time_window():
+    now = datetime.now(timezone.utc)
+    fmt = "%Y-%m-%dT%H:%M:%SZ"
+    start = now - timedelta(seconds=JAEGER_LOOKBACK_SECONDS)
+    end = now + timedelta(seconds=60)
+    return start.strftime(fmt), end.strftime(fmt)
+
+
+def jaeger_service_names(jaeger_url):
+    resp = requests.get(f"{jaeger_url}/jaeger/ui/api/v3/services", timeout=5)
+    resp.raise_for_status()
+    return resp.json().get("services") or []
+
+
+def jaeger_resource_spans(jaeger_url, service, num_traces=1, timeout=10):
+    start, end = _jaeger_time_window()
+    resp = requests.get(
+        f"{jaeger_url}/jaeger/ui/api/v3/traces",
+        params={
+            "query.service_name": service,
+            "query.num_traces": num_traces,
+            "query.start_time_min": start,
+            "query.start_time_max": end,
+        },
+        timeout=timeout,
+    )
+    resp.raise_for_status()
+    return resp.json().get("result", {}).get("resourceSpans") or []
 
 PROMETHEUS_HOST = os.environ.get("PROMETHEUS_HOST", "prometheus")
 PROMETHEUS_PORT = os.environ.get("PROMETHEUS_PORT", "9090")
@@ -76,12 +108,15 @@ POLL_TIMEOUT = int(os.environ.get("POLL_TIMEOUT", "180"))
 
 def _jaeger_service_count():
     """Number of services Jaeger has seen at least one span from."""
-    resp = requests.get(f"{JAEGER_URL}/jaeger/ui/api/services", timeout=5)
+    try:
+        resp = requests.get(f"{JAEGER_URL}/jaeger/ui/api/v3/services", timeout=5)
+    except requests.RequestException:
+        return 0
     if resp.status_code != 200:
         return 0
-    # Jaeger returns {"data": null, ...} until the first span arrives, so coerce
+    # Jaeger returns {"services": null} until the first span arrives, so coerce
     # None -> [] before len().
-    return len(resp.json().get("data") or [])
+    return len(resp.json().get("services") or [])
 
 
 def _prometheus_service_count():
