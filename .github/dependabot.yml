@@ -408,6 +408,10 @@ updates:
     multi-ecosystem-group: "src-react-native-app"
     allow:
       - dependency-type: "all"
+    ignore:
+      - dependency-name: "json"
+        update-types:
+          - "version-update:semver-major"
   - package-ecosystem: "docker"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
     directories:
       - "/src/react-native-app/**"
