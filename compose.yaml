@@ -102,7 +102,7 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=high
       - OTEL_SERVICE_NAME=cart
-      - ASPNETCORE_URLS=http://*:${CART_PORT}
+      - ASPNETCORE_HTTP_PORTS=${CART_PORT}
     depends_on:
       valkey-cart:
         condition: service_healthy
