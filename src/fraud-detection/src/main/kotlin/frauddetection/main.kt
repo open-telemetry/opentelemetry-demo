@@ -45,6 +45,13 @@ fun main() {
     // "latest" silently drops those orders, so fraud-detection may emit no
     // telemetry on a quiet/cold start.
     props[AUTO_OFFSET_RESET_CONFIG] = "earliest"
+    // Bound the per-poll batch so a poll cycle stays under max.poll.interval.ms
+    // (default 5 min) even when kafkaQueueProblems throttles processing to seconds
+    // per record: 30 records * 5s (the max flag variant) = 150s, comfortably under
+    // the 300s limit. Without this the consumer overshoots the poll interval on a
+    // full 500-record batch, gets evicted, and rebalance-flaps (inflating fetch
+    // latency) instead of lagging cleanly.
+    props[MAX_POLL_RECORDS_CONFIG] = "30"
     val bootstrapServers = System.getenv("KAFKA_ADDR")
     if (bootstrapServers == null) {
         println("KAFKA_ADDR is not supplied")
@@ -54,18 +61,47 @@ fun main() {
     val consumer = KafkaConsumer<String, ByteArray>(props).apply {
         subscribe(listOf(topic))
     }
+    // Tracks whether we are currently a member of the consumer group. The
+    // kafkaConsumerDead scenario toggles this: unsubscribe() leaves the group
+    // (broker reports it Empty, members -> 0) while committed offsets persist so
+    // lag stays computable; re-subscribe() rejoins. See getBooleanFeatureFlagValue.
+    var subscribed = true
 
     var totalCount = 0L
 
     consumer.use {
         while (true) {
+            // kafkaConsumerDead scenario (detect_consumer_liveness): when on, leave
+            // the group and stop polling so members drops to 0 while checkout keeps
+            // producing -> lag accrues against a zero-member group. Reversible with a
+            // single flag toggle (re-subscribe on off).
+            if (getBooleanFeatureFlagValue("kafkaConsumerDead")) {
+                if (subscribed) {
+                    logger.info("FeatureFlag 'kafkaConsumerDead' is enabled, unsubscribing from '$topic' (group goes Empty, members -> 0)")
+                    consumer.unsubscribe()
+                    subscribed = false
+                }
+                // Do not poll while dead; sleep to avoid a busy loop.
+                Thread.sleep(1000)
+                continue
+            } else if (!subscribed) {
+                logger.info("FeatureFlag 'kafkaConsumerDead' is disabled, re-subscribing to '$topic' (rejoining group)")
+                consumer.subscribe(listOf(topic))
+                subscribed = true
+            }
+
             totalCount = consumer
                 .poll(ofMillis(100))
                 .fold(totalCount) { accumulator, record ->
                     val newCount = accumulator + 1
-                    if (getFeatureFlagValue("kafkaQueueProblems") > 0) {
-                        logger.info("FeatureFlag 'kafkaQueueProblems' is enabled, sleeping 1 second")
-                        Thread.sleep(1000)
+                    // kafkaQueueProblems scenario: the flag value is the per-record
+                    // sleep in milliseconds (0 = off). Throttling the consumer below
+                    // the producer's rate makes fraud-detection lag climb. Tunable
+                    // live from the flag UI (hot-reload) with no rebuild.
+                    val sleepMs = getFeatureFlagValue("kafkaQueueProblems")
+                    if (sleepMs > 0) {
+                        logger.info("FeatureFlag 'kafkaQueueProblems' is enabled, sleeping ${sleepMs}ms")
+                        Thread.sleep(sleepMs.toLong())
                     }
                     val orders = OrderResult.parseFrom(record.value())
                     logger.info("Consumed record with orderId: ${orders.orderId}, and updated total count to: $newCount")
@@ -91,4 +127,21 @@ fun getFeatureFlagValue(ff: String): Int {
     client.evaluationContext = ImmutableContext(clientAttrs)
     val intValue = client.getIntegerValue(ff, 0)
     return intValue
+}
+
+/**
+* Retrieves the boolean value of a feature flag from the Feature Flag service.
+*
+* @param ff The name of the feature flag to retrieve.
+* @return the flag's boolean value, or `false` on error / when unset.
+*/
+fun getBooleanFeatureFlagValue(ff: String): Boolean {
+    val client = OpenFeatureAPI.getInstance().client
+    // TODO: Plumb the actual session ID from the frontend via baggage?
+    val uuid = UUID.randomUUID()
+
+    val clientAttrs = mutableMapOf<String, Value>()
+    clientAttrs["session"] = Value(uuid.toString())
+    client.evaluationContext = ImmutableContext(clientAttrs)
+    return client.getBooleanValue(ff, false)
 }
