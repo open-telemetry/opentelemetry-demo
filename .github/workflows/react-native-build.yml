@@ -21,7 +21,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e  # v4.3.0
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069  # v4.4.1
 
       - name: Build Android APK
         run: make build-react-native-android
@@ -52,7 +52,7 @@ jobs:
           cache-dependency-path: src/react-native-app/package-lock.json
 
       - name: Set up Ruby
-        uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b  # v1.321.0
+        uses: ruby/setup-ruby@e8944e80fb94b20106697132f8c20c665fab29e9  # v1.325.0
         with:
           working-directory: src/react-native-app
           bundler-cache: true
