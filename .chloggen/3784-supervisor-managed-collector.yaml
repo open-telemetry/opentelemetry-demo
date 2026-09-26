@@ -1,0 +1,11 @@
+change_type: enhancement
+
+component: otel-collector
+
+note: Run the Collector under the alpha OpAMP Supervisor.
+
+issues: [3784]
+
+subtext: |-
+  Support remote configuration with automatic rollback and use startup
+  fallback configuration when the OpAMP server is unavailable.

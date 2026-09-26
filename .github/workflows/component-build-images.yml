@@ -138,6 +138,10 @@ jobs:
             tag_suffix: opamp-server
             context: ./
             setup-qemu: true
+          - file: ./src/otel-collector/Dockerfile
+            tag_suffix: otel-collector
+            context: ./
+            setup-qemu: true
           - file: ./src/mcp/Dockerfile
             tag_suffix: mcp
             context: ./
@@ -182,7 +186,7 @@ jobs:
           if [ -f .env ]; then
             # Filter out comments and empty lines, then add each variable to $GITHUB_ENV
             grep -vE '^\s*#|^\s*$' .env | while read -r line; do
-              echo "$line" >> $GITHUB_ENV
+              echo "$line" >> "$GITHUB_ENV"
             done
           else
             echo ".env file not found!"
@@ -256,6 +260,27 @@ jobs:
           fi
 
           FILES_CHANGED=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- "$DOCKERFILE_DIR")
+
+          # Keep this list in sync with build arguments sourced from .env.
+          ENV_KEYS=()
+          case "${DOCKERFILE}" in
+            ./src/opamp-server/Dockerfile)
+              ENV_KEYS=(OPAMP_GO_REF)
+              ;;
+            ./src/otel-collector/Dockerfile)
+              ENV_KEYS=(COLLECTOR_CONTRIB_IMAGE OPAMP_SUPERVISOR_IMAGE)
+              ;;
+          esac
+
+          if [ "${#ENV_KEYS[@]}" -gt 0 ] && git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- .env | grep -q '^\.env$'; then
+            for key in "${ENV_KEYS[@]}"; do
+              if git diff -U0 "$BASE_SHA" "$HEAD_SHA" -- .env | grep -qE "^[+-]${key}="; then
+                FILES_CHANGED="${FILES_CHANGED} .env:${key}"
+                break
+              fi
+            done
+          fi
+
           if [ -z "$FILES_CHANGED" ]; then
             echo "No changes in ${DOCKERFILE_DIR}, skipping build for ${DOCKERFILE}."
             echo "skip=true" >> "$GITHUB_OUTPUT"
@@ -300,6 +325,8 @@ jobs:
             OTEL_JAVA_AGENT_VERSION=${{ env.OTEL_JAVA_AGENT_VERSION }}
             OPENTELEMETRY_CPP_VERSION=${{ env.OPENTELEMETRY_CPP_VERSION }}
             OPAMP_GO_REF=${{ env.OPAMP_GO_REF }}
+            COLLECTOR_CONTRIB_IMAGE=${{ env.COLLECTOR_CONTRIB_IMAGE }}
+            OPAMP_SUPERVISOR_IMAGE=${{ env.OPAMP_SUPERVISOR_IMAGE }}
           tags: |
             ${{ inputs.dockerhub_repo }}:${{ inputs.version }}-${{matrix.file_tag.tag_suffix }}
             ${{ inputs.dockerhub_repo }}:latest-${{matrix.file_tag.tag_suffix }}

@@ -3,18 +3,18 @@
 
 # Base collector configuration: receivers, processors, and pipelines.
 # Exports only to the debug exporter by default.
-# Layer additional configs on top with --config to add exporters:
+# The Supervisor layers these additional config files to add exporters:
 #   otelcol-config-full.yml        adds Kafka and PostgreSQL metric receivers
-#   otelcol-config-observability.yml  adds observability exporters and OpAMP status reporting
+#   otelcol-config-observability.yml  adds observability exporters
 #   otelcol-config-extras.yml      extras/customizations (empty stub)
 
 receivers:
   otlp:
     protocols:
       grpc:
-        endpoint: ${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_GRPC}
+        endpoint: 0.0.0.0:${env:OTEL_COLLECTOR_PORT_GRPC}
       http:
-        endpoint: ${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_HTTP}
+        endpoint: 0.0.0.0:${env:OTEL_COLLECTOR_PORT_HTTP}
         cors:
           allowed_origins:
             - "http://*"

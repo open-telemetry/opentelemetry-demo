@@ -109,6 +109,9 @@ services:
         limits:
           memory: 500M
     restart: unless-stopped
+    networks:
+      - default
+      - opamp-control
     ports:
       - "${CHATBOT_PORT}"
     environment:
