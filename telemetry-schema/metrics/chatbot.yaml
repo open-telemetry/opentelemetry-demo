@@ -1,0 +1,14 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+metrics:
+  - name: demo.chatbot.requests
+    brief: Chatbot request counter
+    instrument: counter
+    unit: "{request}"
+    stability: stable
+    requirement_level: recommended
+    note: Counts chat messages sent from the chatbot UI to the agent service
+    annotations:
+      service: chatbot

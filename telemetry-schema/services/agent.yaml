@@ -1,0 +1,11 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+attribute_groups:
+  - id: service.agent
+    visibility: public
+    brief: Agent service attributes
+    stability: stable
+    attributes:
+      - ref: gen_ai.tool.name
