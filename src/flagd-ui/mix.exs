@@ -70,7 +70,7 @@ defmodule FlagdUi.MixProject do
       {:credo, "~> 1.7.19", only: [:dev, :test], runtime: false},
       {:opentelemetry, "~> 1.7.0"},
       {:opentelemetry_api, "~> 1.5.0"},
-      {:opentelemetry_exporter, "~> 1.10.0"},
+      {:opentelemetry_exporter, "~> 1.11.0"},
       {:opentelemetry_phoenix, "~> 2.0.1"},
       {:opentelemetry_bandit, "~> 0.3.0"}
     ]

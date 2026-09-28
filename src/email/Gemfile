@@ -11,7 +11,7 @@ gem "puma",     "~> 8.0"
 gem "sinatra",  "~> 4.2"
 gem "rackup",   "~> 2.3"
 
-gem "google-protobuf", "~> 4.36.1"
+gem "google-protobuf", "~> 4.36.2"
 
 gem "ostruct"
 
