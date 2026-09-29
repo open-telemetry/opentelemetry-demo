@@ -23,7 +23,7 @@
     <PackageVersion Include="OpenTelemetry.OpAmp.Client" Version="0.7.0-alpha.2" />
     <PackageVersion Include="OpenTelemetry.Resources.Container" Version="1.19.1-beta.1" />
     <PackageVersion Include="OpenTelemetry.Resources.Host" Version="1.19.1-beta.1" />
-    <PackageVersion Include="StackExchange.Redis" Version="3.3.0" />
+    <PackageVersion Include="StackExchange.Redis" Version="3.3.1" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.0" />
   </ItemGroup>
