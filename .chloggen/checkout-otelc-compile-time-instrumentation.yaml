@@ -13,4 +13,4 @@ issues: [4034]
 # (Optional) One or more lines of additional information to render under the primary note.
 subtext: |-
   The otelslog bridge is kept because otelc's log/slog instrumentation does
-  not export logs over OTLP. The container memory limit is raised to 40M.
+  not export logs over OTLP.
