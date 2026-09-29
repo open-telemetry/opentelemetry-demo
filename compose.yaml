@@ -124,7 +124,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 40M
+          memory: 20M
     restart: unless-stopped
     ports:
       - "${CHECKOUT_PORT}"
@@ -138,7 +138,7 @@ services:
       - PAYMENT_ADDR
       - PRODUCT_CATALOG_ADDR
       - SHIPPING_ADDR
-      - GOMEMLIMIT=32MiB
+      - GOMEMLIMIT=16MiB
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
