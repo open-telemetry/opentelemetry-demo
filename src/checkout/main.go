@@ -28,7 +28,6 @@ import (
 	"github.com/open-feature/go-sdk/openfeature"
 
 	"go.opentelemetry.io/contrib/bridges/otelslog"
-	"go.opentelemetry.io/contrib/instrumentation/runtime"
 	"go.opentelemetry.io/otel"
 	otelcodes "go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/propagation"
@@ -89,11 +88,6 @@ func main() {
 	// https://github.com/open-telemetry/opentelemetry-go-compile-instrumentation/issues/1414
 	logger = otelslog.NewLogger("checkout")
 	slog.SetDefault(logger)
-
-	err := runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
-	if err != nil {
-		logger.Error((err.Error()))
-	}
 
 	provider, err := flagd.NewProvider()
 	if err != nil {
@@ -177,12 +171,7 @@ func main() {
 	<-ctx.Done()
 
 	srv.GracefulStop()
-	srv.GracefulStop()
-	if err := otelruntime.Shutdown(context.Background()); err != nil {
-		logger.Error("Error shutting down OpenTelemetry SDK", slog.Any("error", err))
-	}
 	logger.Info("Checkout gRPC server stopped")
-}
 }
 
 func mustMapEnv(target *string, envKey string) {
