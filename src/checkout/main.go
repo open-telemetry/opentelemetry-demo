@@ -177,7 +177,12 @@ func main() {
 	<-ctx.Done()
 
 	srv.GracefulStop()
+	srv.GracefulStop()
+	if err := otelruntime.Shutdown(context.Background()); err != nil {
+		logger.Error("Error shutting down OpenTelemetry SDK", slog.Any("error", err))
+	}
 	logger.Info("Checkout gRPC server stopped")
+}
 }
 
 func mustMapEnv(target *string, envKey string) {
