@@ -81,7 +81,7 @@ class Agent:
 
     @workflow(name="astronomy_shop_agent_workflow")
     async def run_agent(self, input_prompt, history: List[Dict] | None = None):
-        model = ChatLLM()
+        model = ChatLLM(model=os.getenv("LLM_SMALL_MODEL", "small"))
         tools = await self.get_tool_list()
         system_prompt = "You are a helpful assistant. Be concise and accurate."
         runaway_iterations = get_int_feature_flag("aiRunawayAgent")
