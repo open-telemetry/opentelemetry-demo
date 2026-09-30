@@ -13,6 +13,35 @@ and rolled out automatically by `.github/workflows/azure-deploy.yml`.
 | Application Insights | `otel-demo-appi` |
 | CI identity | app registration `otel-demo-github-ci` (OIDC, `azure` branch only; AcrPush + AKS Cluster User) |
 
+## Azure resources (Terraform)
+
+Everything in the table above is described in `terraform/`. Terraform's state is in
+the storage account `oteldemotfstateca5de3` (resource group `otel-demo-tfstate-rg`).
+
+```bash
+cd deploy/azure/terraform
+terraform init -backend-config=backend.hcl
+terraform plan      # preview; "No changes" means Azure matches the files
+terraform apply     # make Azure match the files
+```
+
+### Moving to another Azure account
+
+1. `AZURE_CONFIG_DIR=~/.azure-<name> az login`, and keep that `export` in the terminal.
+2. Create a state storage account + `tfstate` container in the new subscription (in its
+   own resource group), grant yourself "Storage Blob Data Contributor" on it, and put
+   its names in `backend.hcl`.
+3. In `terraform.tfvars`: set `subscription_id`, pick a new globally unique `acr_name`,
+   and delete the `aks_dns_prefix` line.
+4. Check the node size has quota: `az vm list-usage -l centralindia -o table`.
+5. `terraform init -backend-config=backend.hcl && terraform apply` (~10 min).
+6. `terraform output`: copy the four IDs into the `env:` block of
+   `.github/workflows/azure-deploy.yml`, and
+   `terraform output -raw appinsights_connection_string` into `secrets.env`.
+7. Install the demo (below).
+
+`terraform destroy` removes everything it created (the state storage stays).
+
 ## Secrets
 
 Never commit them. Put them in `deploy/azure/secrets.env` (git-ignored):
