@@ -45,12 +45,7 @@ fun main() {
     // "latest" silently drops those orders, so fraud-detection may emit no
     // telemetry on a quiet/cold start.
     props[AUTO_OFFSET_RESET_CONFIG] = "earliest"
-    // Bound the per-poll batch so a poll cycle stays under max.poll.interval.ms
-    // (default 5 min) even when kafkaQueueProblems throttles processing to seconds
-    // per record: 30 records * 5s (the max flag variant) = 150s, comfortably under
-    // the 300s limit. Without this the consumer overshoots the poll interval on a
-    // full 500-record batch, gets evicted, and rebalance-flaps (inflating fetch
-    // latency) instead of lagging cleanly.
+    // Keeps a poll cycle under max.poll.interval.ms when kafkaQueueProblems throttles
     props[MAX_POLL_RECORDS_CONFIG] = "30"
     val bootstrapServers = System.getenv("KAFKA_ADDR")
     if (bootstrapServers == null) {
@@ -61,20 +56,14 @@ fun main() {
     val consumer = KafkaConsumer<String, ByteArray>(props).apply {
         subscribe(listOf(topic))
     }
-    // Tracks whether we are currently a member of the consumer group. The
-    // kafkaConsumerDead scenario toggles this: unsubscribe() leaves the group
-    // (broker reports it Empty, members -> 0) while committed offsets persist so
-    // lag stays computable; re-subscribe() rejoins. See getBooleanFeatureFlagValue.
+    // False while kafkaConsumerDead has the consumer out of the group
     var subscribed = true
 
     var totalCount = 0L
 
     consumer.use {
         while (true) {
-            // kafkaConsumerDead scenario (detect_consumer_liveness): when on, leave
-            // the group and stop polling so members drops to 0 while checkout keeps
-            // producing -> lag accrues against a zero-member group. Reversible with a
-            // single flag toggle (re-subscribe on off).
+            // kafkaConsumerDead: leave the group and stop polling; re-subscribe when off
             if (getBooleanFeatureFlagValue("kafkaConsumerDead")) {
                 if (subscribed) {
                     logger.info("FeatureFlag 'kafkaConsumerDead' is enabled, unsubscribing from '$topic' (group goes Empty, members -> 0)")
@@ -94,10 +83,7 @@ fun main() {
                 .poll(ofMillis(100))
                 .fold(totalCount) { accumulator, record ->
                     val newCount = accumulator + 1
-                    // kafkaQueueProblems scenario: the flag value is the per-record
-                    // sleep in milliseconds (0 = off). Throttling the consumer below
-                    // the producer's rate makes fraud-detection lag climb. Tunable
-                    // live from the flag UI (hot-reload) with no rebuild.
+                    // Flag value = per-record sleep in ms
                     val sleepMs = getFeatureFlagValue("kafkaQueueProblems")
                     if (sleepMs > 0) {
                         logger.info("FeatureFlag 'kafkaQueueProblems' is enabled, sleeping ${sleepMs}ms")
