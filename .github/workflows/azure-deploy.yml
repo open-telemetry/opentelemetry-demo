@@ -1,0 +1,103 @@
+name: Deploy to Azure (AKS)
+
+# Push to the `azure` branch → build every service whose src/ changed → push to ACR
+# → roll that deployment on AKS to the new image. Image tag = commit SHA, and the
+# commit is recorded on the deployment, so an incident can be traced to the change.
+
+on:
+  push:
+    branches: [azure]
+    paths: ["src/**"]
+  workflow_dispatch:
+    inputs:
+      services:
+        description: "Space-separated services to build and deploy (e.g. checkout payment)"
+        required: true
+
+permissions:
+  id-token: write # GitHub → Azure login without a stored secret (OIDC)
+  contents: read
+
+concurrency:
+  group: azure-deploy
+  cancel-in-progress: false
+
+env:
+  # Not secrets: login only works for this repo + branch (federated credential in Azure).
+  AZURE_CLIENT_ID: 3b008be3-c94d-4ad9-813d-a80a7bdd2118
+  AZURE_TENANT_ID: 8779709d-05a7-46a7-a4de-a2c2d9524b5c
+  AZURE_SUBSCRIPTION_ID: 88e59ba1-f869-410e-a9cd-a7ff269952a6
+  RESOURCE_GROUP: otel-demo-rg
+  AKS_CLUSTER: otel-demo-aks
+  ACR_NAME: oteldemo5352cb
+  NAMESPACE: otel-demo
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find changed services
+        id: changed
+        env:
+          INPUT_SERVICES: ${{ github.event.inputs.services }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          if [ -n "$INPUT_SERVICES" ]; then
+            services="$INPUT_SERVICES"
+          else
+            services=$(git diff --name-only "$BEFORE" "$GITHUB_SHA" -- src/ | cut -d/ -f2 | sort -u | tr '\n' ' ')
+          fi
+          echo "services=$services" >> "$GITHUB_OUTPUT"
+          echo "Services to deploy: ${services:-none}"
+
+      - name: Azure login
+        if: steps.changed.outputs.services != ''
+        uses: azure/login@v2
+        with:
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Log in to ACR and AKS
+        if: steps.changed.outputs.services != ''
+        run: |
+          az acr login --name "$ACR_NAME"
+          az aks get-credentials --resource-group "$RESOURCE_GROUP" --name "$AKS_CLUSTER"
+
+      - name: Build, push, deploy
+        if: steps.changed.outputs.services != ''
+        env:
+          SERVICES: ${{ steps.changed.outputs.services }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          set -a; . ./.env; set +a
+          for svc in $SERVICES; do
+            case "$svc" in
+              cart) dockerfile=src/cart/src/Dockerfile ;;
+              accounting|ad|checkout|currency|email|fraud-detection|frontend|frontend-proxy|image-provider|load-generator|payment|product-catalog|quote|recommendation|shipping)
+                dockerfile=src/$svc/Dockerfile ;;
+              *) echo "::notice::skipping $svc (not a deployable service)"; continue ;;
+            esac
+
+            image="$ACR_NAME.azurecr.io/otel-demo/$svc:$GITHUB_SHA"
+            echo "::group::$svc → $image"
+            docker build -f "$dockerfile" \
+              --build-arg OTEL_JAVA_AGENT_VERSION="$OTEL_JAVA_AGENT_VERSION" \
+              --build-arg OPENTELEMETRY_CPP_VERSION="$OPENTELEMETRY_CPP_VERSION" \
+              -t "$image" .
+            docker push "$image"
+
+            kubectl -n "$NAMESPACE" set image "deployment/$svc" "$svc=$image"
+            kubectl -n "$NAMESPACE" annotate "deployment/$svc" --overwrite \
+              kubernetes.io/change-cause="$GITHUB_SHA $(echo "$COMMIT_MESSAGE" | head -1)" \
+              deploy.sherlocks.io/commit="$GITHUB_SHA" \
+              deploy.sherlocks.io/repo="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
+            # A bad release is expected in chaos runs: report it, don't fail the job.
+            kubectl -n "$NAMESPACE" rollout status "deployment/$svc" --timeout=180s \
+              || echo "::warning::$svc did not become healthy after deploying $GITHUB_SHA"
+            echo "::endgroup::"
+          done

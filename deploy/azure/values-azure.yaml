@@ -1,0 +1,96 @@
+# otel-demo on AKS: telemetry goes to Azure Application Insights and
+# SolarWinds Observability instead of the in-cluster Jaeger/Prometheus/Grafana/OpenSearch.
+# Secrets come from the `otel-demo-exporters` Kubernetes Secret, never from this file.
+
+components:
+  # LLM add-ons need an external model; not used here.
+  agent:
+    enabled: false
+  chatbot:
+    enabled: false
+  mcp:
+    enabled: false
+  telemetry-docs:
+    enabled: false
+  opamp-server:
+    enabled: false
+
+  frontend-proxy:
+    service:
+      type: LoadBalancer
+
+  load-generator:
+    envOverrides:
+      # Headless-browser users are heavy for a single node.
+      - name: LOCUST_BROWSER_TRAFFIC_ENABLED
+        value: "false"
+
+jaeger:
+  enabled: false
+prometheus:
+  enabled: false
+grafana:
+  enabled: false
+opensearch:
+  enabled: false
+
+opentelemetry-collector:
+  extraEnvs:
+    - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+      valueFrom:
+        secretKeyRef:
+          name: otel-demo-exporters
+          key: APPLICATIONINSIGHTS_CONNECTION_STRING
+    - name: SOLARWINDS_REGION
+      valueFrom:
+        secretKeyRef:
+          name: otel-demo-exporters
+          key: SOLARWINDS_REGION
+    - name: SOLARWINDS_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: otel-demo-exporters
+          key: SOLARWINDS_TOKEN
+  config:
+    exporters:
+      # Helm can't delete these subchart defaults with `null`, and the collector
+      # rejects an empty exporter even when unused, so park them on a dead
+      # endpoint. They are in no pipeline, so they never start.
+      otlp_grpc/jaeger:
+        endpoint: localhost:1
+      otlp_http/prometheus:
+        endpoint: http://localhost:1
+      opensearch:
+        http:
+          endpoint: http://localhost:1
+      otlp_grpc/firepit:
+        endpoint: localhost:1
+      azure_monitor:
+        connection_string: ${env:APPLICATIONINSIGHTS_CONNECTION_STRING}
+      otlp_grpc/solarwinds:
+        endpoint: otel.collector.${env:SOLARWINDS_REGION}.cloud.solarwinds.com:443
+        headers:
+          authorization: Bearer ${env:SOLARWINDS_TOKEN}
+    extensions:
+      # Same as above: opamp-server is disabled, the extension is not in service.extensions.
+      opamp:
+        server:
+          ws:
+            endpoint: ws://localhost:1/v1/opamp
+    service:
+      extensions: [health_check]
+      pipelines:
+        traces:
+          exporters: [debug, span_metrics, azure_monitor, otlp_grpc/solarwinds]
+        metrics:
+          exporters: [debug, otlp_grpc/solarwinds]
+        # App Insights gets only the metrics the services emit themselves; the
+        # host/kubelet/cluster metrics would blow the ingestion cap.
+        metrics/azure:
+          receivers: [otlp]
+          processors: [memory_limiter, k8sattributes, resource_detection, resource]
+          exporters: [azure_monitor]
+        logs:
+          exporters: [debug, azure_monitor, otlp_grpc/solarwinds]
+        profiles:
+          exporters: [debug]
