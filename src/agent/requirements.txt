@@ -1137,9 +1137,9 @@ langchain==1.4.2 \
     --hash=sha256:30a27c34cfa0004bf659dcdef488b99a9b90acb08bcc514a5a74264755da536c \
     --hash=sha256:5b476418cacbfb8f0da6e63b3b263eefdcec13b48abd6117565a25728ec10b77
     # via -r requirements.in
-langchain-core==1.6.3 \
-    --hash=sha256:114fe1868c9ed60606662b9dd0074bf3152cc6b0b1522ba37cbd6b04f55ca77d \
-    --hash=sha256:88b430944fbd4d40fa98135d6c873581d497b6f33515d01962337548e918df2f
+langchain-core==1.6.5 \
+    --hash=sha256:54c7b0e9314b9084fb04405bb33dc5d32986d512d92b7b8863899cd5f6267556 \
+    --hash=sha256:bdb059fef65473fd444558dbb18f50901657402c43ceed9dc0fdc7b76a393c6b
     # via
     #   langchain
     #   langchain-mcp-adapters
@@ -1152,9 +1152,9 @@ langchain-mcp-adapters==0.3.2 \
     --hash=sha256:094e6b3096dbcc408417d5722f6915f164772e50c502ae3d8989405bf12c3c84 \
     --hash=sha256:61cd1a09597adb619a9bafb0642938ffc2a9463d699a753f7af0420ea46c381a
     # via -r requirements.in
-langchain-openai==1.6.2 \
-    --hash=sha256:368e34ab3bdd30af422371b2f2f9346f21e79beae8b0823c253633819d1fd2f8 \
-    --hash=sha256:bec6d190e1e47e774c2be8728bc93457cef1ab2ec3295c277d8daefab434e880
+langchain-openai==1.6.6 \
+    --hash=sha256:60dcaa443ddfdf1559feaf1d25916f394c7dda809aebe22a769fc39f02705be7 \
+    --hash=sha256:7b3848f42825aca40165463aa37757051165eb292ba7f24658a2f58f9bb221f9
     # via -r requirements.in
 langchain-protocol==0.0.18 \
     --hash=sha256:70b53a86fbf9cedc863555effe44da192ab02d556ddbf2cf95b8873adcf41b5a \
