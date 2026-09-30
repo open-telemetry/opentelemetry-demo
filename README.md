@@ -71,11 +71,11 @@ keeping it up to date for you.
 | [Azure Data Explorer]     | [Last9]        | [TelemetryHub]                   |
 | [Bronto]                  | [Liatrio]      | [Teletrace]                      |
 | [Causely]                 | [Logz.io]      | [Tinybird]                       |
-| [ClickStack]              | [New Relic]    | [Tracetest]                      |
-| [Coralogix]               | [Oodle]        | [Tsuga]                          |
-| [Dash0]                   | [OpenObserve]  | [Uptrace]                        |
-| [Datadog]                 | [OpenSearch]   | [VictoriaMetrics]                |
-| [Dynatrace]               | [Oracle]       |                                  |
+| [ClickStack]              | [New Relic]    | [Trace0]                         |
+| [Coralogix]               | [Oodle]        | [Tracetest]                      |
+| [Dash0]                   | [OpenObserve]  | [Tsuga]                          |
+| [Datadog]                 | [OpenSearch]   | [Uptrace]                        |
+| [Dynatrace]               | [Oracle]       | [VictoriaMetrics]                |
 | [Elastic]                 | [Parseable]    |                                  |
 
 ## Contributing
@@ -83,6 +83,10 @@ keeping it up to date for you.
 To get involved with the project see our [CONTRIBUTING](CONTRIBUTING.md)
 documentation. Our [SIG Calls](CONTRIBUTING.md#join-a-sig-call) are every other
 Wednesday at 8:30 AM PST and anyone is welcome.
+
+New to CNCF Slack? [Create an account](https://slack.cncf.io/) first, then join
+us in
+[`#otel-community-demo`](https://cloud-native.slack.com/archives/C03B4CWV4DA).
 
 ### Maintainers
 
@@ -165,6 +169,7 @@ For more information about the emeritus role, see the [community repository](htt
 [TelemetryHub]: https://github.com/TelemetryHub/opentelemetry-demo/tree/telemetryhub-backend
 [Teletrace]: https://github.com/teletrace/opentelemetry-demo
 [Tinybird]: https://github.com/tinybirdco/opentelemetry-demo
+[Trace0]: https://github.com/Trace0-HQ/opentelemetry-demo
 [Tracetest]: https://github.com/kubeshop/opentelemetry-demo
 [Tsuga]: https://github.com/tsuga-dev/opentelemetry-demo
 [Uptrace]: https://github.com/uptrace/uptrace/tree/master/example/opentelemetry-demo
