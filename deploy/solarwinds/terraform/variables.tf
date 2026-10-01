@@ -1,15 +1,9 @@
-# Values for this SolarWinds account are in terraform.tfvars; the Slack webhook
-# comes from TF_VAR_slack_webhook_url in ../secrets.env.
+# Values for this SolarWinds account are in terraform.tfvars. Alerts reach Slack
+# through the Logic App in the Azure stack (webhook.tf).
 
 variable "swo_region" {
   description = "SolarWinds data center, as in my.<region>.cloud.solarwinds.com (e.g. ap-01, na-01, eu-01)."
   type        = string
-}
-
-variable "slack_webhook_url" {
-  description = "Slack incoming webhook for the alerts channel."
-  type        = string
-  sensitive   = true
 }
 
 variable "cluster_name" {

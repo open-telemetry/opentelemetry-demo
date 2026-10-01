@@ -85,3 +85,9 @@ variable "tags" {
   type    = map(string)
   default = { purpose = "otel-demo-playground" }
 }
+
+variable "solarwinds_slack_webhook_url" {
+  description = "Slack incoming webhook the SolarWinds alerts post through (TF_VAR_solarwinds_slack_webhook_url in deploy/azure/secrets.env)."
+  type        = string
+  sensitive   = true
+}

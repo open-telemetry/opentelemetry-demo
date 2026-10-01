@@ -1,19 +1,9 @@
-# Where alerts go: one Slack channel, via an incoming webhook.
-resource "swo_notification" "slack" {
-  title       = "otel-demo alerts (Slack)"
-  description = "Slack channel for otel-demo alerts"
-  type        = "slack"
-  settings = {
-    slack = {
-      url = var.slack_webhook_url
-    }
-  }
-}
-
 locals {
   notify_slack = [
     {
-      configuration_ids       = [swo_notification.slack.id] # already "<id>:slack"
+      # Formatted Slack message via the Logic App (webhook.tf), not SolarWinds'
+      # fixed-format Slack integration.
+      configuration_ids       = [swo_notification.logic_app.id]
       resend_interval_seconds = 3600
     },
   ]

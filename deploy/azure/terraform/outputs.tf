@@ -27,3 +27,9 @@ output "appinsights_connection_string" {
   value     = azurerm_application_insights.appi.connection_string
   sensitive = true
 }
+
+# The URL SolarWinds posts alerts to (read by deploy/solarwinds via remote state).
+output "solarwinds_webhook_url" {
+  value     = azurerm_logic_app_trigger_http_request.solarwinds_alert.callback_url
+  sensitive = true
+}
