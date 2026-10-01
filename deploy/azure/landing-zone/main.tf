@@ -7,7 +7,7 @@
 #       └── landingzones
 #           ├── corp    → lz-corp-prod          (sample resources below)
 #           └── online  → lz-online-prod        (the otel-demo AKS app)
-#                       → lz-online-dev
+#                       → lz-online-dev         (sample resources below)
 #
 # Sherlocks reads it all through Reader at otel-demo-alz, like an enterprise tenant.
 
@@ -31,6 +31,12 @@ provider "azurerm" {
   alias = "corp"
   features {}
   subscription_id = var.corp_subscription_id
+}
+
+provider "azurerm" {
+  alias = "online_dev"
+  features {}
+  subscription_id = var.online_dev_subscription_id
 }
 
 data "azurerm_client_config" "current" {}
@@ -139,6 +145,61 @@ resource "azurerm_linux_web_app" "corp" {
   resource_group_name = azurerm_resource_group.corp_app.name
   location            = var.location
   service_plan_id     = azurerm_service_plan.corp.id
+  tags                = var.tags
+  site_config {
+    always_on = false # not available on the free tier
+  }
+}
+
+# ---------------------------------------------------------------------------
+# Sample workload in the Online landing zone's dev subscription (same cheap set as Corp)
+# ---------------------------------------------------------------------------
+
+resource "azurerm_resource_group" "online_dev_app" {
+  provider = azurerm.online_dev
+  name     = "online-dev-rg"
+  location = var.location
+  tags     = var.tags
+}
+
+resource "azurerm_storage_account" "online_dev" {
+  provider                        = azurerm.online_dev
+  name                            = "onlinedev${substr(var.online_dev_subscription_id, 0, 8)}"
+  resource_group_name             = azurerm_resource_group.online_dev_app.name
+  location                        = var.location
+  account_tier                    = "Standard"
+  account_replication_type        = "LRS"
+  allow_nested_items_to_be_public = false
+  tags                            = var.tags
+}
+
+resource "azurerm_key_vault" "online_dev" {
+  provider                   = azurerm.online_dev
+  name                       = "online-dev-${substr(var.online_dev_subscription_id, 0, 8)}"
+  resource_group_name        = azurerm_resource_group.online_dev_app.name
+  location                   = var.location
+  tenant_id                  = data.azurerm_client_config.current.tenant_id
+  sku_name                   = "standard"
+  rbac_authorization_enabled = true
+  tags                       = var.tags
+}
+
+resource "azurerm_service_plan" "online_dev" {
+  provider            = azurerm.online_dev
+  name                = "online-dev-plan"
+  resource_group_name = azurerm_resource_group.online_dev_app.name
+  location            = var.location
+  os_type             = "Linux"
+  sku_name            = "F1"
+  tags                = var.tags
+}
+
+resource "azurerm_linux_web_app" "online_dev" {
+  provider            = azurerm.online_dev
+  name                = "online-dev-api-${substr(var.online_dev_subscription_id, 0, 8)}"
+  resource_group_name = azurerm_resource_group.online_dev_app.name
+  location            = var.location
+  service_plan_id     = azurerm_service_plan.online_dev.id
   tags                = var.tags
   site_config {
     always_on = false # not available on the free tier
