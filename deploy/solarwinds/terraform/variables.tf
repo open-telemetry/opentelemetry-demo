@@ -12,17 +12,22 @@ variable "slack_webhook_url" {
   sensitive   = true
 }
 
+variable "cluster_name" {
+  description = "k8s.cluster.name the collector stamps on all data. Scopes node and pod alerts to this cluster (the account holds other environments, and node names change on every restart)."
+  type        = string
+  default     = "otel-demo-aks"
+}
+
 variable "namespace" {
-  description = "Kubernetes namespace the demo runs in. Alerts only look at this namespace."
+  description = "Kubernetes namespace the demo runs in."
   type        = string
   default     = "otel-demo"
 }
 
 variable "services" {
   description = <<-EOT
-    Demo services the error-rate alert watches. The SolarWinds account also holds
-    other environments, so alerts must not match every service. fraud-detection
-    is left out: it reports 100% errors even when healthy.
+    Demo services the trace-based alerts watch (those metrics carry no cluster
+    tag). fraud-detection is left out: it reports 100% errors even when healthy.
   EOT
   type        = list(string)
   default = [
@@ -33,13 +38,19 @@ variable "services" {
 }
 
 variable "error_rate_threshold_pct" {
-  description = "Error-rate alert threshold. Healthy demo services sit at 0–50%, so this is set high."
+  description = "Endpoint error-rate threshold. Healthy demo endpoints sit at 0–50%, so this is set high."
   type        = number
   default     = 90
 }
 
 variable "latency_threshold_seconds" {
-  description = "Average HTTP server duration that counts as slow. The frontend normally averages ~0.01 s."
+  description = "Average request duration per endpoint that counts as slow. cart EmptyCart normally averages ~0.19 s."
   type        = number
-  default     = 1
+  default     = 0.5
+}
+
+variable "memory_exhaustion_exclude_deployments" {
+  description = "Deployments that normally run near their memory limit (cache and database), left out of the memory alert."
+  type        = list(string)
+  default     = ["valkey-cart", "astronomy-db"]
 }

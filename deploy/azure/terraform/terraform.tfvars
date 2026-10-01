@@ -7,3 +7,6 @@ acr_name        = "oteldemo5352cb"
 # The cluster was first created with `az aks create`, which picked this prefix.
 # A new setup can drop this line and use the default.
 aks_dns_prefix = "otel-demo--otel-demo-rg-88e59b"
+
+# Daily Log Analytics ingestion cap (GB). Raised from 1 so App Insights metrics fit a full day.
+log_analytics_daily_cap_gb = 3

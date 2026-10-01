@@ -35,6 +35,13 @@ opensearch:
   enabled: false
 
 opentelemetry-collector:
+  clusterRole:
+    rules:
+      # kubeletstats reads pod memory limits from the kubelet's /pods endpoint
+      # (needed for k8s.*.memory_limit_utilization).
+      - apiGroups: [""]
+        resources: ["nodes/proxy"]
+        verbs: ["get"]
   extraEnvs:
     - name: APPLICATIONINSIGHTS_CONNECTION_STRING
       valueFrom:
@@ -52,6 +59,40 @@ opentelemetry-collector:
           name: otel-demo-exporters
           key: SOLARWINDS_TOKEN
   config:
+    receivers:
+      # Optional metrics the SolarWinds alerts need (sent to SolarWinds only).
+      hostmetrics:
+        scrapers:
+          filesystem:
+            metrics:
+              system.filesystem.utilization:
+                enabled: true
+      kubeletstats:
+        metrics:
+          k8s.pod.memory_limit_utilization:
+            enabled: true
+          k8s.container.memory_limit_utilization:
+            enabled: true
+      k8s_cluster:
+        metrics:
+          # Current reason per container: OOMKilled, CrashLoopBackOff, ErrImagePull, …
+          k8s.container.status.reason:
+            enabled: true
+        resource_attributes:
+          # Keeps "OOMKilled" visible after the container has restarted.
+          k8s.container.status.last_terminated_reason:
+            enabled: true
+    processors:
+      resource:
+        attributes:
+          - key: service.instance.id
+            from_attribute: k8s.pod.uid
+            action: insert
+          # Lets alerts and Sherlocks tell this cluster apart from others
+          # reporting to the same backend; node names change on every restart.
+          - key: k8s.cluster.name
+            value: otel-demo-aks
+            action: upsert
     exporters:
       # Helm can't delete these subchart defaults with `null`, and the collector
       # rejects an empty exporter even when unused, so park them on a dead

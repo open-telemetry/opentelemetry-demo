@@ -1,13 +1,35 @@
 # SolarWinds alerts → Slack
 
-Terraform creates a Slack notification and three alerts in SolarWinds Observability,
-all scoped to the otel-demo (the account also holds other environments).
+Terraform creates a Slack notification and 13 alerts in SolarWinds Observability,
+modelled on the playground's SigNoz alert set. All are scoped to this cluster
+(`k8s.cluster.name = otel-demo-aks`, stamped by the collector) or to the demo's
+services, because the account also holds other environments.
 
 | Alert | Fires when | Severity |
 |---|---|---|
-| otel-demo: pod not ready | a pod in `otel-demo` is not ready for 10 min (crash loop, failing probe) | CRITICAL |
-| otel-demo: service error rate | a demo service's traced error rate ≥ 90% for 10 min | WARNING |
-| otel-demo: slow requests | average HTTP server duration ≥ 1 s for 10 min | WARNING |
+| High Application Error Rate | one endpoint of a demo service fails ≥ 90% of requests for 10 min | WARNING |
+| High Application Latency | an endpoint's average duration ≥ 0.5 s for 10 min | WARNING |
+| Service Stopped Reporting | a demo service sends no traces for 10 min (crashed or down) | CRITICAL |
+| Pod CrashLoopBackOff | a container is in CrashLoopBackOff for 5 min | CRITICAL |
+| Pod OOM Killed | a container's last restart was an OOMKill | CRITICAL |
+| Pod Memory Exhaustion (>90% Limit) | a container uses > 90% of its memory limit for 5 min (valkey-cart and astronomy-db excluded: they always do) | WARNING |
+| Pod High CPU Usage (>1 CPU) | a pod averages > 1 core for 5 min | WARNING |
+| Pod Pending (>5m) | a pod stays Pending for 5 min | WARNING |
+| Pod Not Ready | a pod is not ready for 10 min | CRITICAL |
+| Node Not Ready | a node is not Ready for 5 min | CRITICAL |
+| Node High CPU (>80%) | a node's CPU is > 80% busy for 10 min | WARNING |
+| Node High Memory (>85%) | a node's memory is > 85% used for 10 min | WARNING |
+| Node Disk Pressure (>85%) | a node filesystem is > 85% full for 10 min | WARNING |
+
+There is no "node not reachable" alert: it would fire on every `demo-stop`.
+
+Some of these need optional collector metrics and the `k8s.cluster.name` tag, enabled
+in `deploy/azure/values-azure.yaml` (`opentelemetry-collector.config.receivers` and
+`processors.resource`), plus read access to the kubelet's `/pods` endpoint
+(`clusterRole.rules`).
+
+A crashed service cannot report its own errors; it shows up as "stopped reporting",
+and as failures on the endpoints that call it (e.g. frontend `/api/checkout`).
 
 Thresholds and the list of watched services are in `terraform/variables.tf`.
 

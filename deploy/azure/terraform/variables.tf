@@ -69,6 +69,18 @@ variable "github_branch" {
   default     = "azure"
 }
 
+variable "slack_webhook_url" {
+  description = "Slack incoming webhook that Azure alerts post to (TF_VAR_slack_webhook_url in deploy/azure/secrets.env)."
+  type        = string
+  sensitive   = true
+}
+
+variable "alert_namespace" {
+  description = "Kubernetes namespace the alerts watch."
+  type        = string
+  default     = "otel-demo"
+}
+
 variable "tags" {
   type    = map(string)
   default = { purpose = "otel-demo-playground" }
