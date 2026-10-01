@@ -133,7 +133,8 @@ Once the images are built and containers are started, visit:
 
 The OpAMP UI shows the OpenTelemetry Collector as a managed agent. Click the
 collector instance ID to view its health status, version, attributes, and
-effective configuration.
+effective configuration. The trusted-local remote configuration example is
+documented in [`src/opamp-server/README.md`](./src/opamp-server/README.md).
 
 ## Troubleshooting Common Issues
 

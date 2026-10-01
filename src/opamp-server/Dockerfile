@@ -8,18 +8,18 @@ ARG OPAMP_GO_REF
 RUN apk add --no-cache git
 
 WORKDIR /src/opamp-go
+COPY ./src/opamp-server/local-config-ui.patch /tmp/local-config-ui.patch
 RUN git init && \
     git remote add origin https://github.com/open-telemetry/opamp-go.git && \
     git fetch --depth 1 origin ${OPAMP_GO_REF} && \
-    git checkout FETCH_HEAD
+    git checkout FETCH_HEAD && \
+    git apply --unidiff-zero /tmp/local-config-ui.patch
 
 RUN sed -i 's|href="/"|href="/opamp/"|g' internal/examples/html/html/agent.html && \
     awk ' \
-      /Additional Configuration:/ { skip = "td"; next } \
       /<form action="\/rotate_client_cert"/ { skip = "form"; next } \
       /<h3>OpAMP Connection Settings<\/h3>/ { skip = "form"; next } \
       /<h3>Custom Messages<\/h3>/ { exit } \
-      skip == "td" && /<\/td>/ { skip = ""; next } \
       skip == "form" && /<\/form>/ { skip = ""; next } \
       skip == "" { print } \
     ' internal/examples/html/html/agent.html > /tmp/agent.html && \

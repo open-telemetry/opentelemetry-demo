@@ -1,0 +1,50 @@
+diff --git a/internal/examples/html/html/agent.html b/internal/examples/html/html/agent.html
+index a5de63d..37319da 100644
+--- a/internal/examples/html/html/agent.html
++++ b/internal/examples/html/html/agent.html
+@@ -30,4 +30,0 @@
+-<link rel="stylesheet"
+-      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/styles/default.min.css">
+-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+-<script>hljs.highlightAll();</script>
+@@ -94 +90,8 @@
+-            <form action="/save_config" method="post">
++            <p><strong>Trusted-local demo only:</strong> saving posts to
++            <code>http://127.0.0.1:4321</code> on the machine running this browser.
++            Open <code>http://localhost:8080/opamp/</code> on the demo host to push
++            config. Production OpAMP servers should require access control.</p>
++            <p>Paste a Collector YAML overlay snippet. The Supervisor merges it on
++            top of the checked-in demo config; Collector config arrays generally
++            replace existing arrays rather than append.</p>
++            <form action="http://127.0.0.1:4321/save_config" method="post">
+diff --git a/internal/examples/server/uisrv/ui.go b/internal/examples/server/uisrv/ui.go
+index 917bc83..a802084 100644
+--- a/internal/examples/server/uisrv/ui.go
++++ b/internal/examples/server/uisrv/ui.go
+@@ -34,3 +34,3 @@
+-	mux.HandleFunc("/rotate_client_cert", rotateInstanceClientCert)
+-	mux.HandleFunc("/opamp_connection_settings", opampConnectionSettings)
+-	mux.HandleFunc("/send_custom_message", sendCustomMessage)
++	mux.HandleFunc("/rotate_client_cert", http.NotFound)
++	mux.HandleFunc("/opamp_connection_settings", http.NotFound)
++	mux.HandleFunc("/send_custom_message", http.NotFound)
+@@ -122 +122,15 @@
+-func saveCustomConfigForInstance(w http.ResponseWriter, r *http.Request) {
++func trustedLocalOrigin(r *http.Request) bool {
++	switch r.Header.Get("Origin") {
++	case "http://localhost:8080", "http://127.0.0.1:8080":
++		return true
++	default:
++		return false
++	}
++}
++
++func saveCustomConfigForInstance(w http.ResponseWriter, r *http.Request) {
++	if r.Method != http.MethodPost || !trustedLocalOrigin(r) {
++		w.WriteHeader(http.StatusForbidden)
++		return
++	}
++
+@@ -160 +174 @@
+-	http.Redirect(w, r, "/agent?instanceid="+uid.String(), http.StatusSeeOther)
++	http.Redirect(w, r, "http://localhost:8080/opamp/agent?instanceid="+uid.String(), http.StatusSeeOther)

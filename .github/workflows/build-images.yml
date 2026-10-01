@@ -5,6 +5,7 @@ name: Test image generation
 on:
   push:
     paths:
+      - '.env'
       - 'src/**'
       - 'test/**'
 
