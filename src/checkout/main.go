@@ -14,14 +14,11 @@ import (
 	"os"
 	"os/signal"
 	"strconv"
-	"sync"
 	"syscall"
 	"time"
 
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/baggage"
-	"go.opentelemetry.io/otel/log/global"
-	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
 	"go.opentelemetry.io/otel/trace"
 
 	"github.com/IBM/sarama"
@@ -31,21 +28,10 @@ import (
 	"github.com/open-feature/go-sdk/openfeature"
 
 	"go.opentelemetry.io/contrib/bridges/otelslog"
-	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
-	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc/filters"
-	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
-	"go.opentelemetry.io/contrib/instrumentation/runtime"
 	"go.opentelemetry.io/otel"
 	otelcodes "go.opentelemetry.io/otel/codes"
-	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp"
-	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
-	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/propagation"
-
-	sdklog "go.opentelemetry.io/otel/sdk/log"
-	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
-	sdkresource "go.opentelemetry.io/otel/sdk/resource"
-	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -68,78 +54,11 @@ import (
 //go:generate openfeature generate -o flags --package-name flags go
 
 var (
-	logger            *slog.Logger
-	tracer            trace.Tracer
-	resource          *sdkresource.Resource
-	initResourcesOnce sync.Once
+	logger *slog.Logger
+	tracer trace.Tracer
 )
 
 const emailRequestTimeout = time.Second
-
-func initResource() *sdkresource.Resource {
-	initResourcesOnce.Do(func() {
-		extraResources, _ := sdkresource.New(
-			context.Background(),
-			sdkresource.WithOS(),
-			sdkresource.WithProcess(),
-			sdkresource.WithContainer(),
-			sdkresource.WithHost(),
-		)
-		resource, _ = sdkresource.Merge(
-			sdkresource.Default(),
-			extraResources,
-		)
-	})
-	return resource
-}
-
-func initTracerProvider() *sdktrace.TracerProvider {
-	ctx := context.Background()
-
-	exporter, err := otlptracehttp.New(ctx)
-	if err != nil {
-		logger.Error(fmt.Sprintf("new otlp trace http exporter failed: %v", err))
-	}
-	tp := sdktrace.NewTracerProvider(
-		sdktrace.WithBatcher(exporter),
-		sdktrace.WithResource(initResource()),
-	)
-	otel.SetTracerProvider(tp)
-	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
-	return tp
-}
-
-func initMeterProvider() *sdkmetric.MeterProvider {
-	ctx := context.Background()
-
-	exporter, err := otlpmetrichttp.New(ctx)
-	if err != nil {
-		logger.Error(fmt.Sprintf("new otlp metric http exporter failed: %v", err))
-	}
-
-	mp := sdkmetric.NewMeterProvider(
-		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exporter)),
-		sdkmetric.WithResource(initResource()),
-	)
-	otel.SetMeterProvider(mp)
-	return mp
-}
-
-func initLoggerProvider() *sdklog.LoggerProvider {
-	ctx := context.Background()
-
-	logExporter, err := otlploghttp.New(ctx)
-	if err != nil {
-		return nil
-	}
-
-	loggerProvider := sdklog.NewLoggerProvider(
-		sdklog.WithProcessor(sdklog.NewBatchProcessor(logExporter)),
-	)
-	global.SetLoggerProvider(loggerProvider)
-
-	return loggerProvider
-}
 
 type checkout struct {
 	productCatalogSvcAddr string
@@ -164,37 +83,11 @@ func main() {
 	var port string
 	mustMapEnv(&port, "CHECKOUT_PORT")
 
-	tp := initTracerProvider()
-	defer func() {
-		if err := tp.Shutdown(context.Background()); err != nil {
-			logger.Error(fmt.Sprintf("Error shutting down tracer provider: %v", err))
-		}
-	}()
-
-	mp := initMeterProvider()
-	defer func() {
-		if err := mp.Shutdown(context.Background()); err != nil {
-			logger.Error(fmt.Sprintf("Error shutting down meter provider: %v", err))
-		}
-	}()
-
-	lp := initLoggerProvider()
-	defer func() {
-		if err := lp.Shutdown(context.Background()); err != nil {
-			logger.Error(fmt.Sprintf("Error shutting down logger provider: %v", err))
-		}
-	}()
-
-	// this *must* be called after the logger provider is initialized
-	// otherwise the Sarama producer in kafka/producer.go will not be
-	// able to log properly
+	// otelc's log/slog instrumentation only adds trace_id/span_id to log output
+	// and does not export logs over OTLP, so the otelslog bridge is kept.
+	// https://github.com/open-telemetry/opentelemetry-go-compile-instrumentation/issues/1414
 	logger = otelslog.NewLogger("checkout")
 	slog.SetDefault(logger)
-
-	err := runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
-	if err != nil {
-		logger.Error((err.Error()))
-	}
 
 	provider, err := flagd.NewProvider()
 	if err != nil {
@@ -208,12 +101,10 @@ func main() {
 	defer openfeature.Shutdown()
 	openfeature.AddHooks(otelhooks.NewTracesHook())
 
-	tracer = tp.Tracer("checkout")
+	tracer = otel.Tracer("checkout")
 
 	svc := new(checkout)
-	svc.httpClient = &http.Client{
-		Transport: otelhttp.NewTransport(http.DefaultTransport),
-	}
+	svc.httpClient = &http.Client{}
 
 	mustMapEnv(&svc.shippingSvcAddr, "SHIPPING_ADDR")
 	c := mustCreateClient(svc.shippingSvcAddr)
@@ -261,11 +152,7 @@ func main() {
 		logger.Error(err.Error())
 	}
 
-	srv := grpc.NewServer(
-		grpc.StatsHandler(otelgrpc.NewServerHandler(
-			otelgrpc.WithFilter(filters.Not(filters.HealthCheck())),
-		)),
-	)
+	srv := grpc.NewServer()
 	pb.RegisterCheckoutServiceServer(srv, svc)
 
 	healthcheck := health.NewServer()
@@ -473,7 +360,6 @@ func (cs *checkout) prepareOrderItemsAndShippingQuoteFromCart(ctx context.Contex
 func mustCreateClient(svcAddr string) *grpc.ClientConn {
 	c, err := grpc.NewClient(svcAddr,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
 	)
 	if err != nil {
 		logger.Error(fmt.Sprintf("could not connect to %s service, err: %+v", svcAddr, err))
