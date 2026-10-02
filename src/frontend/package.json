@@ -39,7 +39,7 @@
     "@opentelemetry/sdk-trace-node": "2.11.0",
     "@opentelemetry/sdk-trace-web": "2.11.0",
     "@opentelemetry/semantic-conventions": "1.43.0",
-    "@tanstack/react-query": "5.103.3",
+    "@tanstack/react-query": "5.104.0",
     "cookies-next": "6.1.1",
     "currency-symbol-map": "5.1.0",
     "dotenv": "18.0.4",
@@ -48,7 +48,7 @@
     "pino": "^10.3.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "sharp": "0.35.4",
+    "sharp": "0.35.5",
     "styled-components": "6.5.3",
     "uuid": "14.0.2"
   },
@@ -66,10 +66,5 @@
     "eslint-plugin-react-hooks": "7.1.1",
     "ts-proto": "2.12.4",
     "typescript": "6.0.3"
-  },
-  "overrides": {
-    "@cypress/request": "4.0.0",
-    "postcss": "8.5.23",
-    "qs": "6.16.0"
   }
 }
