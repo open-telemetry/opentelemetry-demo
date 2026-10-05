@@ -1398,7 +1398,7 @@
             "uid": "webstore-logs"
           },
           "format": "table",
-          "query": "source=otel-logs-*\n| where eventName = 'db.server.top_query'\n| where attributes.db.namespace in (${query_db:singlequote})\n| where attributes.postgresql.rolname != 'monitoring_user'\n| where attributes.db.query.text is not null\n| stats sum(attributes.postgresql.total_exec_time) as total_exec_time_s, sum(attributes.postgresql.calls) as calls, sum(attributes.postgresql.rows) as rows by attributes.db.namespace, attributes.postgresql.rolname, attributes.db.query.text\n| sort - total_exec_time_s\n| head 20",
+          "query": "source=otel-logs-*\n| where eventName = 'db.server.top_query'\n| where attributes.db.namespace in (${query_db:singlequote})\n| where attributes.postgresql.rolname != 'monitoring_user'\n| where attributes.db.query.text is not null\n| stats sum(attributes.postgresql.total_exec_time) as total_exec_time_s, sum(attributes.postgresql.total_plan_time) as total_plan_time_s, sum(attributes.postgresql.calls) as calls, sum(attributes.postgresql.rows) as rows, sum(attributes.postgresql.shared_blks_read) as blocks_read, sum(attributes.postgresql.shared_blks_hit) as blocks_hit, sum(attributes.postgresql.shared_blks_written) as blocks_written, sum(attributes.postgresql.temp_blks_read) as temp_read, sum(attributes.postgresql.temp_blks_written) as temp_written by attributes.db.namespace, attributes.postgresql.rolname, attributes.postgresql.queryid, attributes.db.query.text\n| where calls > 0\n| eval avg_exec_ms=total_exec_time_s * 1000 / calls\n| sort - total_exec_time_s\n| head 20",
           "queryType": "PPL",
           "refId": "A",
           "timeField": "observedTimestamp"
@@ -1412,9 +1412,17 @@
             "renameByName": {
               "attributes.db.namespace": "Database",
               "attributes.db.query.text": "Query",
+              "attributes.postgresql.queryid": "Query ID",
               "attributes.postgresql.rolname": "Role",
+              "avg_exec_ms": "Avg execution (ms)",
+              "blocks_hit": "Shared blocks hit",
+              "blocks_read": "Shared blocks read",
+              "blocks_written": "Shared blocks written",
               "calls": "Calls",
               "rows": "Rows",
+              "temp_read": "Temp blocks read",
+              "temp_written": "Temp blocks written",
+              "total_plan_time_s": "Plan time (s)",
               "total_exec_time_s": "Execution time (s)"
             }
           }
@@ -1472,7 +1480,7 @@
             "uid": "webstore-logs"
           },
           "format": "table",
-          "query": "source=otel-logs-*\n| where eventName = 'db.server.query_sample'\n| where attributes.db.namespace in (${query_db:singlequote})\n| where attributes.user.name != 'monitoring_user'\n| fields @timestamp, attributes.db.namespace, attributes.user.name, attributes.postgresql.state, attributes.postgresql.total_exec_time, attributes.postgresql.wait_event_type, attributes.postgresql.wait_event, attributes.db.query.text\n| sort - @timestamp\n| head 50",
+          "query": "source=otel-logs-*\n| where eventName = 'db.server.query_sample'\n| where attributes.db.namespace in (${query_db:singlequote})\n| where attributes.user.name != 'monitoring_user'\n| fields @timestamp, attributes.db.namespace, attributes.user.name, attributes.postgresql.pid, attributes.postgresql.query_id, attributes.network.peer.address, attributes.postgresql.state, attributes.postgresql.total_exec_time, attributes.postgresql.wait_event_type, attributes.postgresql.wait_event, attributes.postgresql.blocking.pids, attributes.postgresql.blocking.wait_duration, attributes.postgresql.blocking.lock.mode, attributes.postgresql.blocking.lock.relation, attributes.db.query.text\n| sort - @timestamp\n| head 50",
           "queryType": "PPL",
           "refId": "A",
           "timeField": "observedTimestamp"
@@ -1487,10 +1495,17 @@
               "@timestamp": "Time",
               "attributes.db.namespace": "Database",
               "attributes.db.query.text": "Query",
+              "attributes.postgresql.blocking.lock.mode": "Blocking lock mode",
+              "attributes.postgresql.blocking.lock.relation": "Blocking relation",
+              "attributes.postgresql.blocking.pids": "Blocking PIDs",
+              "attributes.postgresql.blocking.wait_duration": "Blocking wait (s)",
+              "attributes.postgresql.pid": "PID",
+              "attributes.postgresql.query_id": "Query ID",
               "attributes.postgresql.state": "State",
               "attributes.postgresql.total_exec_time": "Execution time (ms)",
               "attributes.postgresql.wait_event": "Wait event",
               "attributes.postgresql.wait_event_type": "Wait type",
+              "attributes.network.peer.address": "Client address",
               "attributes.user.name": "Role"
             }
           }
@@ -1565,6 +1580,167 @@
               "attributes.db.query.text": "Query",
               "attributes.postgresql.query_plan": "Plan (blank when unavailable)",
               "attributes.postgresql.rolname": "Role"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "webstore-logs"
+      },
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "webstore-logs"
+      },
+      "description": "Wait fields are captured with query samples. ClientRead commonly means an idle backend waiting for client input; non-empty blocking PIDs and lock fields indicate PostgreSQL lock blockers.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 53
+      },
+      "id": 21,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "webstore-logs"
+          },
+          "format": "table",
+          "query": "source=otel-logs-*\n| where eventName = 'db.server.query_sample'\n| where attributes.db.namespace in (${query_db:singlequote})\n| where attributes.user.name != 'monitoring_user'\n| where attributes.postgresql.wait_event_type != \"\" or attributes.postgresql.blocking.pids != \"{}\"\n| fields @timestamp, attributes.db.namespace, attributes.user.name, attributes.postgresql.state, attributes.postgresql.wait_event_type, attributes.postgresql.wait_event, attributes.postgresql.blocking.pids, attributes.postgresql.blocking.wait_duration, attributes.postgresql.blocking.lock.mode, attributes.postgresql.blocking.lock.type, attributes.postgresql.blocking.lock.relation, attributes.db.query.text\n| sort - @timestamp\n| head 50",
+          "queryType": "PPL",
+          "refId": "A",
+          "timeField": "observedTimestamp"
+        }
+      ],
+      "title": "Wait and Blocker Samples",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "renameByName": {
+              "@timestamp": "Time",
+              "attributes.db.namespace": "Database",
+              "attributes.db.query.text": "Query",
+              "attributes.postgresql.blocking.lock.mode": "Blocking lock mode",
+              "attributes.postgresql.blocking.lock.relation": "Blocking relation",
+              "attributes.postgresql.blocking.lock.type": "Blocking lock type",
+              "attributes.postgresql.blocking.pids": "Blocking PIDs",
+              "attributes.postgresql.blocking.wait_duration": "Blocking wait (s)",
+              "attributes.postgresql.state": "State",
+              "attributes.postgresql.wait_event": "Wait event",
+              "attributes.postgresql.wait_event_type": "Wait type",
+              "attributes.user.name": "DB user"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "webstore-logs"
+      },
+      "description": "Execution duration for sampled queries, in milliseconds. These are sampled query records, not a latency percentile or full query history.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 63
+      },
+      "id": 22,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "webstore-logs"
+          },
+          "format": "table",
+          "query": "source=otel-logs-*\n| where eventName = 'db.server.query_sample'\n| where attributes.db.namespace in (${query_db:singlequote})\n| where attributes.user.name != 'monitoring_user'\n| fields @timestamp, attributes.db.namespace, attributes.user.name, attributes.postgresql.state, attributes.postgresql.total_exec_time, attributes.postgresql.wait_event_type, attributes.postgresql.wait_event, attributes.db.query.text\n| sort - attributes.postgresql.total_exec_time\n| head 20",
+          "queryType": "PPL",
+          "refId": "A",
+          "timeField": "observedTimestamp"
+        }
+      ],
+      "title": "Longest Query Samples",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "renameByName": {
+              "@timestamp": "Time",
+              "attributes.db.namespace": "Database",
+              "attributes.db.query.text": "Query",
+              "attributes.postgresql.state": "State",
+              "attributes.postgresql.total_exec_time": "Execution time (ms)",
+              "attributes.postgresql.wait_event": "Wait event",
+              "attributes.postgresql.wait_event_type": "Wait type",
+              "attributes.user.name": "DB user"
             }
           }
         }
