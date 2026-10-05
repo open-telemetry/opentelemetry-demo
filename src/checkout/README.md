@@ -1,15 +1,6 @@
 # Checkout Service
 
 This service provides checkout services for the application.
-
-It also shows how to do compile-time instrumentation of Go applications with
-[`otelc`](https://github.com/open-telemetry/opentelemetry-go-compile-instrumentation),
-the OpenTelemetry Go compile-time instrumentation tool. The Docker image is built
-with `go tool otelc go build` instead of `go build`, so `otelc` instruments gRPC,
-HTTP, `log/slog` and Go runtime metrics at compile time and initializes the
-OpenTelemetry SDK. The service code contains no SDK setup for these signals.
-`otelc` is declared as a `tool` dependency in `go.mod`.
-
 ## Local Build
 
 To build the service binary without instrumentation, run:
