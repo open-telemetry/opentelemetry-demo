@@ -1,8 +1,8 @@
 requests==2.34.2
-python-dotenv==1.2.3
+python-dotenv==1.2.4
 httpx==0.28.1
-fastapi==0.141.1
-gradio==6.28.0
+fastapi==0.142.2
+gradio==6.29.1
 opentelemetry-api==1.44.0
 opentelemetry-sdk==1.44.0
 opentelemetry-opamp-client==0.3b0
