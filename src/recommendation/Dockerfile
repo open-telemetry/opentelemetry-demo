@@ -19,10 +19,12 @@ RUN ./gradlew --no-daemon bootJar -PprotoSourceDir=./proto
 
 FROM docker.io/library/eclipse-temurin:24.0.2_12-jre@sha256:8cb2387a28af84cf0db0948d9c67d4480192f4e567027a3963f145d218e8b4f2
 
+ARG OTEL_JAVA_AGENT_VERSION
 WORKDIR /usr/src/app/
 
 COPY --from=builder /usr/src/app/build/libs/recommendation.jar ./recommendation.jar
-ENV JAVA_TOOL_OPTIONS="-Xmx300m -XX:+ExitOnOutOfMemoryError"
+ADD --chmod=644 https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v$OTEL_JAVA_AGENT_VERSION/opentelemetry-javaagent.jar /usr/src/app/opentelemetry-javaagent.jar
+ENV JAVA_TOOL_OPTIONS="-javaagent:/usr/src/app/opentelemetry-javaagent.jar -Xmx300m -XX:+ExitOnOutOfMemoryError"
 
 ARG RECOMMENDATION_PORT=9001
 EXPOSE ${RECOMMENDATION_PORT}

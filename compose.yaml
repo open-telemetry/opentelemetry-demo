@@ -610,6 +610,8 @@ services:
       dockerfile: ${RECOMMENDATION_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-recommendation
+      args:
+        OTEL_JAVA_AGENT_VERSION: ${OTEL_JAVA_AGENT_VERSION}
     deploy:
       resources:
         limits:
