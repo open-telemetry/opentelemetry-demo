@@ -46,7 +46,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 175M
+          memory: 350M
     restart: unless-stopped
     environment:
       - "GF_INSTALL_PLUGINS=grafana-opensearch-datasource"
