@@ -1,9 +1,9 @@
 requests==2.34.2
-traceloop-sdk==0.62.3
-python-dotenv==1.2.3
+traceloop-sdk==0.62.4
+python-dotenv==1.2.4
 httpx==0.28.1
-langchain_openai==1.6.6
-langchain==1.4.2
+langchain_openai==1.6.7
+langchain==1.4.3
 langgraph-prebuilt==1.1.0
 mcp==1.30.0
 fastmcp==3.4.7
@@ -12,8 +12,8 @@ fastapi==0.141.1
 opentelemetry-api==1.43.0
 opentelemetry-sdk==1.43.0
 opentelemetry-semantic-conventions==0.64b0
-opentelemetry-instrumentation-langchain==0.62.3
-opentelemetry-instrumentation-openai==0.62.3
+opentelemetry-instrumentation-langchain==0.62.4
+opentelemetry-instrumentation-openai==0.62.4
 opentelemetry-instrumentation-fastapi==0.64b0
 opentelemetry-instrumentation-requests==0.64b0
 opentelemetry-instrumentation-httpx==0.64b0
