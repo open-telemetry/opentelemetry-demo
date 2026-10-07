@@ -1259,9 +1259,9 @@ keyring==25.7.0 \
     --hash=sha256:be4a0b195f149690c166e850609a477c532ddbfbaed96a404d4e43f8d5e2689f \
     --hash=sha256:fe01bd85eb3f8fb3dd0405defdeac9a5b4f6f0439edbb3149577f244a2e8245b
     # via py-key-value-aio
-langchain==1.4.2 \
-    --hash=sha256:30a27c34cfa0004bf659dcdef488b99a9b90acb08bcc514a5a74264755da536c \
-    --hash=sha256:5b476418cacbfb8f0da6e63b3b263eefdcec13b48abd6117565a25728ec10b77
+langchain==1.4.3 \
+    --hash=sha256:0334066939dd1c7551889727ed2d09a72dea7a6aed2193ffb61817fb658d8921 \
+    --hash=sha256:aed5c1a7cd581f70ddc076b75fdbcbae8031b8373983f86efd287aa70798abc2
     # via -r requirements.in
 langchain-core==1.6.6 \
     --hash=sha256:67616d984c085009be2c381c2efd330d32429a58aebab295b4f51b6573964511 \
@@ -1278,9 +1278,9 @@ langchain-mcp-adapters==0.3.2 \
     --hash=sha256:094e6b3096dbcc408417d5722f6915f164772e50c502ae3d8989405bf12c3c84 \
     --hash=sha256:61cd1a09597adb619a9bafb0642938ffc2a9463d699a753f7af0420ea46c381a
     # via -r requirements.in
-langchain-openai==1.6.6 \
-    --hash=sha256:60dcaa443ddfdf1559feaf1d25916f394c7dda809aebe22a769fc39f02705be7 \
-    --hash=sha256:7b3848f42825aca40165463aa37757051165eb292ba7f24658a2f58f9bb221f9
+langchain-openai==1.6.7 \
+    --hash=sha256:b276a01b43c5287382f62070a4e1ca5bad5581fadab8c086e46b79daa4bf975d \
+    --hash=sha256:e1b9b318fafc47b2dbc3485778aa23f809195065ee313611c188af29744b8e8e
     # via -r requirements.in
 langchain-protocol==0.0.19 \
     --hash=sha256:4cdf879a492a35980fd859ae792d3c65458ccaae504e183c9a10d7eac1f0720f \
@@ -1962,9 +1962,9 @@ opentelemetry-instrumentation-lancedb==0.62.4 \
     --hash=sha256:acf992d1922c8492f4ed4a8907acc26a1b2cd4feff8aca7bdef48bc37dac03cd \
     --hash=sha256:d1e2ca10101f4992ff7ba25f13a5ff483f28f54577992f69c3768a73bbba99ec
     # via traceloop-sdk
-opentelemetry-instrumentation-langchain==0.62.3 \
-    --hash=sha256:1832c280d2a2cb5db4c1b8d062958020ab4ca04e0df976634b54b959acb9ee63 \
-    --hash=sha256:b36d3cec030a5fdac44381ae8a6fda4072d53c9afa42caba8a0bcf386571157c
+opentelemetry-instrumentation-langchain==0.62.4 \
+    --hash=sha256:7727f752c803f6ea59aa6cc0c9617fb461417ea3f8416ee9a0f3c1cb5a33029f \
+    --hash=sha256:d84871c34e4bb972a6047bbed5e891a4d6b97fcb0a188c4713e9ed56b2444ae3
     # via
     #   -r requirements.in
     #   traceloop-sdk
@@ -2000,9 +2000,9 @@ opentelemetry-instrumentation-ollama==0.62.4 \
     --hash=sha256:2b3bbc92975a8a8ee8bea947c588f1160fbd1ec115c83bba22b4ab52fe799b55 \
     --hash=sha256:fb65f39a22adee2e4c327f8f0fb374c70cd5ccf390a2bf7a5897b62e09f80f4b
     # via traceloop-sdk
-opentelemetry-instrumentation-openai==0.62.3 \
-    --hash=sha256:890ed3a63191ea96d7f5d24595f89470578d1a5bf0172e4afbdaf408d3b066fb \
-    --hash=sha256:b9e1b9a1e6c48cdd436cfaa6fb9af1b393e806debbafd408f4b5232f9ec4df12
+opentelemetry-instrumentation-openai==0.62.4 \
+    --hash=sha256:2a88073a6998d00a4b9371c51760c11679af0c2377511db8fadd1bf6b75d5a84 \
+    --hash=sha256:a2c03cf4b8c18ed5e53d4a59b3299df39858640e41b91379ca72153a3f85a716
     # via
     #   -r requirements.in
     #   traceloop-sdk
@@ -2648,9 +2648,9 @@ pyperclip==1.11.0 \
     --hash=sha256:244035963e4428530d9e3a6101a1ef97209c6825edab1567beac148ccc1db1b6 \
     --hash=sha256:299403e9ff44581cb9ba2ffeed69c7aa96a008622ad0c46cb575ca75b5b84273
     # via fastmcp-slim
-python-dotenv==1.2.3 \
-    --hash=sha256:904552145e8bfed22162c09dab1c2b9b54fefa7b23ba780f4f26ca0316b0f0d9 \
-    --hash=sha256:a20a594dabeaa385725aa239d5244871c143ecb356add8a20fcf23773a6c3a35
+python-dotenv==1.2.4 \
+    --hash=sha256:42269a8a5b3fd54ffa6f3d84b18abed50064717576b4ecf03dc4a55d8aa04fdc \
+    --hash=sha256:f0d53e69935a851c0dcc78f3ab7aaccd8cabef0b92382b576b824212902873c0
     # via
     #   -r requirements.in
     #   fastmcp-slim
@@ -3122,9 +3122,9 @@ tiktoken==0.14.0 \
     --hash=sha256:f5e7665f6624e052e5e7f6a36919ab69279decdc976d7b16b4fa15e1897d0513 \
     --hash=sha256:f702e0aeeb6506e57687e881c59e844ebe8f0a6a097ddafe20e3ab25f387be4e
     # via langchain-openai
-traceloop-sdk==0.62.3 \
-    --hash=sha256:57b9a6f8c386bd15d736ae270b0da78f0a99552832c78cb71714baf928bf28bc \
-    --hash=sha256:8a0beec552d1b742abfef959d31d40e0e2229096250c2bb08d93fcea57215040
+traceloop-sdk==0.62.4 \
+    --hash=sha256:033dbeb200021c4381a3e2aaf8678747b61d85c758ef9e36648e29b16d0d8deb \
+    --hash=sha256:0f7bb433ca1324ab55d099c6aa583c9e7ed1f4d6ad8942ead964965c54b94295
     # via -r requirements.in
 truststore==0.10.4 \
     --hash=sha256:9d91bd436463ad5e4ee4aba766628dd6cd7010cf3e2461756b3303710eebc301 \
