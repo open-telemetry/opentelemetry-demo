@@ -4,10 +4,16 @@ This service provides checkout services for the application.
 
 ## Local Build
 
-To build the service binary, run:
+To build the service binary without instrumentation, run:
 
 ```sh
 go build -o /go/bin/checkout/
+```
+
+To build it with compile-time instrumentation, as the Docker image does, run:
+
+```sh
+go tool otelc go build -o /go/bin/checkout/
 ```
 
 ## Docker Build
