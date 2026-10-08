@@ -71,6 +71,11 @@ receivers:
         enabled: true
       postgresql.deadlocks:
         enabled: true
+    events:
+      db.server.query_sample:
+        enabled: true
+      db.server.top_query:
+        enabled: true
     tls:
       insecure: true
   # Scrape a Prometheus `/metrics` endpoint exposed by the ad service.
@@ -255,7 +260,7 @@ service:
       processors: [resource_detection, memory_limiter]
       exporters: [debug]
     logs:
-      receivers: [otlp]
+      receivers: [otlp, postgresql]
       processors: [resource_detection, memory_limiter, transform/sanitize_logs]
       exporters: [debug]
     profiles:

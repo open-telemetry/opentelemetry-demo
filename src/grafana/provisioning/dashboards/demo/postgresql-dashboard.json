@@ -21,7 +21,7 @@
       }
     ]
   },
-  "description": "Performance metrics for PostgreSQL instrumented with the OpenTelemetry Collector PostgreSQL receiver.",
+  "description": "PostgreSQL performance metrics and query events collected by the OpenTelemetry Collector.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
@@ -1334,6 +1334,418 @@
       ],
       "title": "Number of active connections",
       "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 16,
+      "panels": [],
+      "title": "PostgreSQL Query Activity",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "webstore-logs"
+      },
+      "description": "Top-query values are interval deltas. Execution time is seconds; calls and rows are counts over the selected period. Collector-owned queries are excluded.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 23
+      },
+      "id": 17,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "webstore-logs"
+          },
+          "format": "table",
+          "query": "source=otel-logs-*\n| where eventName = 'db.server.top_query'\n| where attributes.db.namespace in (${query_db:singlequote})\n| where attributes.postgresql.rolname != 'monitoring_user'\n| where attributes.db.query.text is not null\n| stats sum(attributes.postgresql.total_exec_time) as total_exec_time_s, sum(attributes.postgresql.total_plan_time) as total_plan_time_s, sum(attributes.postgresql.calls) as calls, sum(attributes.postgresql.rows) as rows, sum(attributes.postgresql.shared_blks_read) as blocks_read, sum(attributes.postgresql.shared_blks_hit) as blocks_hit, sum(attributes.postgresql.shared_blks_written) as blocks_written, sum(attributes.postgresql.temp_blks_read) as temp_read, sum(attributes.postgresql.temp_blks_written) as temp_written by attributes.db.namespace, attributes.postgresql.rolname, attributes.postgresql.queryid, attributes.db.query.text\n| where calls > 0\n| eval avg_exec_ms=total_exec_time_s * 1000 / calls\n| sort - total_exec_time_s\n| head 20",
+          "queryType": "PPL",
+          "refId": "A",
+          "timeField": "observedTimestamp"
+        }
+      ],
+      "title": "Top Queries by Execution Time",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "renameByName": {
+              "attributes.db.namespace": "Database",
+              "attributes.db.query.text": "Query",
+              "attributes.postgresql.queryid": "Query ID",
+              "attributes.postgresql.rolname": "Role",
+              "avg_exec_ms": "Avg execution (ms)",
+              "blocks_hit": "Shared blocks hit",
+              "blocks_read": "Shared blocks read",
+              "blocks_written": "Shared blocks written",
+              "calls": "Calls",
+              "rows": "Rows",
+              "temp_read": "Temp blocks read",
+              "temp_written": "Temp blocks written",
+              "total_plan_time_s": "Plan time (s)",
+              "total_exec_time_s": "Execution time (s)"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "webstore-logs"
+      },
+      "description": "Recent query samples from pg_stat_activity. The receiver reports postgresql.total_exec_time here in milliseconds.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 33
+      },
+      "id": 18,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "webstore-logs"
+          },
+          "format": "table",
+          "query": "source=otel-logs-*\n| where eventName = 'db.server.query_sample'\n| where attributes.db.namespace in (${query_db:singlequote})\n| where attributes.user.name != 'monitoring_user'\n| fields @timestamp, attributes.db.namespace, attributes.user.name, attributes.postgresql.pid, attributes.postgresql.query_id, attributes.network.peer.address, attributes.postgresql.state, attributes.postgresql.total_exec_time, attributes.postgresql.wait_event_type, attributes.postgresql.wait_event, attributes.postgresql.blocking.pids, attributes.postgresql.blocking.wait_duration, attributes.postgresql.blocking.lock.mode, attributes.postgresql.blocking.lock.relation, attributes.db.query.text\n| sort - @timestamp\n| head 50",
+          "queryType": "PPL",
+          "refId": "A",
+          "timeField": "observedTimestamp"
+        }
+      ],
+      "title": "Recent Query Samples",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "renameByName": {
+              "@timestamp": "Time",
+              "attributes.db.namespace": "Database",
+              "attributes.db.query.text": "Query",
+              "attributes.postgresql.blocking.lock.mode": "Blocking lock mode",
+              "attributes.postgresql.blocking.lock.relation": "Blocking relation",
+              "attributes.postgresql.blocking.pids": "Blocking PIDs",
+              "attributes.postgresql.blocking.wait_duration": "Blocking wait (s)",
+              "attributes.postgresql.pid": "PID",
+              "attributes.postgresql.query_id": "Query ID",
+              "attributes.postgresql.state": "State",
+              "attributes.postgresql.total_exec_time": "Execution time (ms)",
+              "attributes.postgresql.wait_event": "Wait event",
+              "attributes.postgresql.wait_event_type": "Wait type",
+              "attributes.network.peer.address": "Client address",
+              "attributes.user.name": "Role"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "webstore-logs"
+      },
+      "description": "All top queries are shown, including queries with no plan. An empty plan is expected when monitoring_user cannot EXPLAIN a query, including queries that reference accounting.shipping, which is intentionally excluded from its SELECT grants.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 43
+      },
+      "id": 19,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "webstore-logs"
+          },
+          "format": "table",
+          "query": "source=otel-logs-*\n| where eventName = 'db.server.top_query'\n| where attributes.db.namespace in (${query_db:singlequote})\n| where attributes.postgresql.rolname != 'monitoring_user'\n| fields @timestamp, attributes.db.namespace, attributes.postgresql.rolname, attributes.db.query.text, attributes.postgresql.query_plan\n| sort - @timestamp\n| head 20",
+          "queryType": "PPL",
+          "refId": "A",
+          "timeField": "observedTimestamp"
+        }
+      ],
+      "title": "Top Queries and Plans",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "renameByName": {
+              "@timestamp": "Time",
+              "attributes.db.namespace": "Database",
+              "attributes.db.query.text": "Query",
+              "attributes.postgresql.query_plan": "Plan (blank when unavailable)",
+              "attributes.postgresql.rolname": "Role"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "webstore-logs"
+      },
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "webstore-logs"
+      },
+      "description": "Wait fields are captured with query samples. ClientRead commonly means an idle backend waiting for client input; non-empty blocking PIDs and lock fields indicate PostgreSQL lock blockers.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 53
+      },
+      "id": 21,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "webstore-logs"
+          },
+          "format": "table",
+          "query": "source=otel-logs-*\n| where eventName = 'db.server.query_sample'\n| where attributes.db.namespace in (${query_db:singlequote})\n| where attributes.user.name != 'monitoring_user'\n| where attributes.postgresql.wait_event_type != \"\" or attributes.postgresql.blocking.pids != \"{}\"\n| fields @timestamp, attributes.db.namespace, attributes.user.name, attributes.postgresql.state, attributes.postgresql.wait_event_type, attributes.postgresql.wait_event, attributes.postgresql.blocking.pids, attributes.postgresql.blocking.wait_duration, attributes.postgresql.blocking.lock.mode, attributes.postgresql.blocking.lock.type, attributes.postgresql.blocking.lock.relation, attributes.db.query.text\n| sort - @timestamp\n| head 50",
+          "queryType": "PPL",
+          "refId": "A",
+          "timeField": "observedTimestamp"
+        }
+      ],
+      "title": "Wait and Blocker Samples",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "renameByName": {
+              "@timestamp": "Time",
+              "attributes.db.namespace": "Database",
+              "attributes.db.query.text": "Query",
+              "attributes.postgresql.blocking.lock.mode": "Blocking lock mode",
+              "attributes.postgresql.blocking.lock.relation": "Blocking relation",
+              "attributes.postgresql.blocking.lock.type": "Blocking lock type",
+              "attributes.postgresql.blocking.pids": "Blocking PIDs",
+              "attributes.postgresql.blocking.wait_duration": "Blocking wait (s)",
+              "attributes.postgresql.state": "State",
+              "attributes.postgresql.wait_event": "Wait event",
+              "attributes.postgresql.wait_event_type": "Wait type",
+              "attributes.user.name": "DB user"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "webstore-logs"
+      },
+      "description": "Execution duration for sampled queries, in milliseconds. These are sampled query records, not a latency percentile or full query history.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 63
+      },
+      "id": 22,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "webstore-logs"
+          },
+          "format": "table",
+          "query": "source=otel-logs-*\n| where eventName = 'db.server.query_sample'\n| where attributes.db.namespace in (${query_db:singlequote})\n| where attributes.user.name != 'monitoring_user'\n| fields @timestamp, attributes.db.namespace, attributes.user.name, attributes.postgresql.state, attributes.postgresql.total_exec_time, attributes.postgresql.wait_event_type, attributes.postgresql.wait_event, attributes.db.query.text\n| sort - attributes.postgresql.total_exec_time\n| head 20",
+          "queryType": "PPL",
+          "refId": "A",
+          "timeField": "observedTimestamp"
+        }
+      ],
+      "title": "Longest Query Samples",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "renameByName": {
+              "@timestamp": "Time",
+              "attributes.db.namespace": "Database",
+              "attributes.db.query.text": "Query",
+              "attributes.postgresql.state": "State",
+              "attributes.postgresql.total_exec_time": "Execution time (ms)",
+              "attributes.postgresql.wait_event": "Wait event",
+              "attributes.postgresql.wait_event_type": "Wait type",
+              "attributes.user.name": "DB user"
+            }
+          }
+        }
+      ],
+      "type": "table"
     }
   ],
   "preload": false,
@@ -1460,6 +1872,32 @@
         "regex": "",
         "type": "query"
       }
+      ,
+      {
+        "current": {
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "grafana-opensearch-datasource",
+          "uid": "webstore-logs"
+        },
+        "definition": "{\"find\":\"terms\",\"field\":\"attributes.db.namespace.keyword\",\"query\":\"eventName.keyword:\\\"db.server.top_query\\\"\",\"size\":1000}",
+        "includeAll": true,
+        "label": "Query Database",
+        "multi": true,
+        "name": "query_db",
+        "options": [],
+        "query": "{\"find\":\"terms\",\"field\":\"attributes.db.namespace.keyword\",\"query\":\"eventName.keyword:\\\"db.server.top_query\\\"\",\"size\":1000}",
+        "refresh": 2,
+        "regex": "",
+        "sort": 1,
+        "type": "query"
+      }
     ]
   },
   "time": {
@@ -1470,5 +1908,5 @@
   "timezone": "browser",
   "title": "PostgreSQL",
   "uid": "xHhbQmdjA",
-  "version": 5
+  "version": 6
 }
