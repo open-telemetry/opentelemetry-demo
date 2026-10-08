@@ -13,24 +13,16 @@ import dev.openfeature.sdk.OpenFeatureAPI;
 import dev.openfeature.sdk.providers.memory.Flag;
 import dev.openfeature.sdk.providers.memory.InMemoryProvider;
 import io.grpc.BindableService;
-import io.grpc.ClientInterceptor;
-import io.grpc.ServerInterceptor;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
-import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.StatusCode;
-import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
-import io.opentelemetry.context.propagation.ContextPropagators;
-import io.opentelemetry.instrumentation.grpc.v1_6.GrpcTelemetry;
-import io.opentelemetry.sdk.OpenTelemetrySdk;
-import io.opentelemetry.sdk.metrics.SdkMeterProvider;
+import io.opentelemetry.sdk.autoconfigure.spi.AutoConfigurationCustomizerProvider;
 import io.opentelemetry.sdk.metrics.data.LongPointData;
 import io.opentelemetry.sdk.testing.exporter.InMemoryMetricReader;
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
-import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import java.util.HashMap;
@@ -48,9 +40,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import org.springframework.grpc.client.GlobalClientInterceptor;
 import org.springframework.grpc.client.GrpcChannelFactory;
-import org.springframework.grpc.server.GlobalServerInterceptor;
 import oteldemo.Demo.Empty;
 import oteldemo.Demo.ListProductsResponse;
 import oteldemo.Demo.ListRecommendationsRequest;
@@ -59,7 +49,8 @@ import oteldemo.Demo.Product;
 import oteldemo.ProductCatalogServiceGrpc;
 import oteldemo.RecommendationServiceGrpc;
 
-@SpringBootTest
+@SpringBootTest(
+    properties = {"otel.traces.exporter=none", "otel.metrics.exporter=none", "otel.logs.exporter=none"})
 @AutoConfigureTestGrpcTransport
 class RecommendationServiceTests {
 
@@ -244,30 +235,15 @@ class RecommendationServiceTests {
     }
 
     @Bean
-    @Primary
-    OpenTelemetry inMemoryOpenTelemetry(
+    AutoConfigurationCustomizerProvider inMemoryTelemetry(
         InMemorySpanExporter spanExporter, InMemoryMetricReader metricReader) {
-      return OpenTelemetrySdk.builder()
-          .setTracerProvider(
-              SdkTracerProvider.builder()
-                  .addSpanProcessor(SimpleSpanProcessor.create(spanExporter))
-                  .build())
-          .setMeterProvider(SdkMeterProvider.builder().registerMetricReader(metricReader).build())
-          .setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))
-          .build();
-    }
-
-    // The Java agent instruments gRPC in the image, the tests run without it.
-    @Bean
-    @GlobalServerInterceptor
-    ServerInterceptor grpcTelemetryServerInterceptor(OpenTelemetry openTelemetry) {
-      return GrpcTelemetry.create(openTelemetry).createServerInterceptor();
-    }
-
-    @Bean
-    @GlobalClientInterceptor
-    ClientInterceptor grpcTelemetryClientInterceptor(OpenTelemetry openTelemetry) {
-      return GrpcTelemetry.create(openTelemetry).createClientInterceptor();
+      return customizer ->
+          customizer
+              .addTracerProviderCustomizer(
+                  (tracerProvider, config) ->
+                      tracerProvider.addSpanProcessor(SimpleSpanProcessor.create(spanExporter)))
+              .addMeterProviderCustomizer(
+                  (meterProvider, config) -> meterProvider.registerMetricReader(metricReader));
     }
 
     @Bean
