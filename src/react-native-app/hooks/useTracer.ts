@@ -1,14 +1,16 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
+import { trace, context, propagation } from '@opentelemetry/api';
 import {
   CompositePropagator,
   W3CBaggagePropagator,
   W3CTraceContextPropagator,
 } from "@opentelemetry/core";
-import { WebTracerProvider } from "@opentelemetry/sdk-trace-web";
 import {
   BatchSpanProcessor,
-} from "@opentelemetry/sdk-trace-base";
+  TracerProvider,
+  StackContextManager
+} from "@opentelemetry/sdk-trace";
 import { XMLHttpRequestInstrumentation } from "@opentelemetry/instrumentation-xml-http-request";
 import { FetchInstrumentation } from "@opentelemetry/instrumentation-fetch";
 import { registerInstrumentations } from "@opentelemetry/instrumentation";
@@ -58,20 +60,13 @@ export const setupTracerProvider = (proxyURL: string) => {
     [ATTR_DEVICE_ID]: getUniqueIdSync(),
   });
 
-  // TODO Not obvious that the WebTracerProvider can be used for React Native, might be useful to have a thin
-  //  ReactNativeTracerProvider on top of it (or BasicTracerProvider) that makes this clear. Could also add some
-  //  protection against browser specific functionality being added to WebTracerProvider that breaks functionality
-  //  for React Native.
-  //  Alternatively could offer a TracerProvider that exposed a JS interface on top of the OTEL Android and Swift SDKS,
-  //  giving developers the option of collecting telemetry at the native mobile layer
-  return new WebTracerProvider({
+  return new TracerProvider({
     resource,
     spanProcessors: [
-      new BatchSpanProcessor(
-        new OTLPTraceExporter({
-          url: `${proxyURL}/otlp-http/v1/traces`,
-        }),
-        {
+      new BatchSpanProcessor({
+          exporter: new OTLPTraceExporter({
+            url: `${proxyURL}/otlp-http/v1/traces`,
+          }),
           scheduledDelayMillis: 500,
         },
       ),
@@ -84,16 +79,15 @@ export const setupTracerProvider = (proxyURL: string) => {
 
 const Tracer = async () => {
   const proxyURL = await getFrontendProxyURL();
-  const provider = setupTracerProvider(proxyURL);
 
-  provider.register({
-    propagator: new CompositePropagator({
-      propagators: [
-        new W3CBaggagePropagator(),
-        new W3CTraceContextPropagator(),
-      ],
-    }),
-  });
+  context.setGlobalContextManager(new StackContextManager())
+  propagation.setGlobalPropagator(new CompositePropagator({
+    propagators: [
+      new W3CBaggagePropagator(),
+      new W3CTraceContextPropagator(),
+    ],
+  }));
+  trace.setGlobalTracerProvider(setupTracerProvider(proxyURL));
 
   registerInstrumentations({
     instrumentations: [
