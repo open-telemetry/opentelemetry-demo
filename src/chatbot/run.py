@@ -19,7 +19,11 @@ from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
-from src.chat_interface.chat_interface import ChatAgentUI, get_chat_ui_config
+from src.chat_interface.chat_interface import (
+    ChatAgentUI,
+    get_chat_ui_config,
+    init_metrics,
+)
 from src.opamp import start_opamp_agent, stop_opamp_agent
 
 logging.basicConfig(level=logging.INFO)
@@ -34,6 +38,7 @@ def _configure_telemetry() -> None:
         ],
     )
     metrics.set_meter_provider(meter_provider)
+    init_metrics(metrics.get_meter(__name__))
 
     tracer_provider = TracerProvider(meter_provider=meter_provider)
     tracer_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
