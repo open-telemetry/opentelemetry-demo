@@ -18,6 +18,12 @@ src/*/*/Dockerfile
 ./src/frontend/node_modules/
 
 ###################################
+# inventory
+./src/inventory/.zig-cache
+./src/inventory/zig-out
+./src/inventory/zig-pkg
+
+###################################
 # shipping
 ./src/shipping/target
 ###################################

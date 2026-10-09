@@ -56,5 +56,8 @@ docker-compose.override.yml
 src/frontend/cypress/videos
 src/frontend/cypress/screenshots
 src/shipping/target/
+src/inventory/.zig-cache/
+src/inventory/zig-out/
+src/inventory/zig-pkg/
 
 !src/currency/build

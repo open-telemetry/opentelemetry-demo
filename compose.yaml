@@ -135,6 +135,7 @@ services:
       - CART_ADDR
       - CURRENCY_ADDR
       - EMAIL_ADDR
+      - INVENTORY_ADDR
       - PAYMENT_ADDR
       - PRODUCT_CATALOG_ADDR
       - SHIPPING_ADDR
@@ -158,6 +159,8 @@ services:
       currency:
         condition: service_healthy
       email:
+        condition: service_healthy
+      inventory:
         condition: service_healthy
       payment:
         condition: service_healthy
@@ -413,6 +416,43 @@ services:
       retries: 20
     depends_on:
       otel-collector:
+        condition: service_started
+    logging: *logging
+
+  # Inventory Service
+  inventory:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-inventory
+    container_name: inventory
+    build:
+      context: ./
+      dockerfile: ${INVENTORY_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-inventory
+    deploy:
+      resources:
+        limits:
+          memory: 40M
+    restart: unless-stopped
+    ports:
+      - "${INVENTORY_PORT}"
+    environment:
+      - FLAGD_HOST
+      - FLAGD_OFREP_PORT
+      - INVENTORY_PORT
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=high
+      - OTEL_SERVICE_NAME=inventory
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:${INVENTORY_PORT}/health"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    depends_on:
+      otel-collector:
+        condition: service_started
+      flagd:
         condition: service_started
     logging: *logging
 
