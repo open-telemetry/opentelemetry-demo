@@ -9,6 +9,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Confluent.Kafka" />
 		<PackageReference Include="EFCore.NamingConventions" />
 		<PackageReference Include="Google.Protobuf" />
@@ -16,10 +20,8 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.Extensions.Logging" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
-		<PackageReference Include="OpenTelemetry.AutoInstrumentation" />
 	</ItemGroup>
 
 	<ItemGroup>
