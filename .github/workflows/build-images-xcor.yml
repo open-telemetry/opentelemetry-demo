@@ -5,8 +5,16 @@ on:
     branches: [ charles-* ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Image tag version'
+        default: 'dev'
 
 jobs:
   build_images:
     if: github.repository == 'chronosphereio/opentelemetry-demo'
     uses: ./.github/workflows/component-build-images-xcor.yml
+    with:
+      version: ${{ inputs.version || 'dev' }}
+      push: true
