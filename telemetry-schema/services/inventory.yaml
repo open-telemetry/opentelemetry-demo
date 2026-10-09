@@ -1,0 +1,14 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+attribute_groups:
+  - id: service.inventory
+    visibility: public
+    brief: Inventory service attributes
+    stability: stable
+    attributes:
+      - ref: demo.order.id
+      - ref: demo.order.items.count
+      - ref: demo.product.id
+      - ref: demo.product.quantity

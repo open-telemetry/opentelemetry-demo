@@ -126,6 +126,10 @@ jobs:
             tag_suffix: image-provider
             context: ./
             setup-qemu: true
+          - file: ./src/inventory/Dockerfile
+            tag_suffix: inventory
+            context: ./
+            setup-qemu: true
           - file: ./src/kafka/Dockerfile
             tag_suffix: kafka
             context: ./
