@@ -19,6 +19,7 @@ SIGNAL_MATRIX = {
     "frontend-proxy": {"traces": True, "metrics": True, "logs": True},
     "frontend-web": {"traces": True, "metrics": True, "logs": False},
     "image-provider": {"traces": True, "metrics": True, "logs": False},
+    "inventory": {"traces": True, "metrics": True, "logs": False},
     "kafka": {"traces": False, "metrics": True, "logs": True},
     "payment": {"traces": True, "metrics": True, "logs": True},
     "product-catalog": {"traces": True, "metrics": True, "logs": True},
@@ -88,6 +89,7 @@ SERVICE_EDGES = [
     ("checkout", "payment"),
     ("checkout", "shipping"),         # HTTP
     ("checkout", "email"),            # HTTP
+    ("checkout", "inventory"),        # HTTP
     ("checkout", "product-catalog"),
     ("checkout", "currency"),
     # Other sync

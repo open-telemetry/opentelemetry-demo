@@ -146,6 +146,7 @@ type checkout struct {
 	cartSvcAddr           string
 	currencySvcAddr       string
 	shippingSvcAddr       string
+	inventorySvcAddr      string
 	emailSvcAddr          string
 	paymentSvcAddr        string
 	kafkaBrokerSvcAddr    string
@@ -239,6 +240,8 @@ func main() {
 	c = mustCreateClient(svc.emailSvcAddr)
 	svc.emailSvcClient = pb.NewEmailServiceClient(c)
 	defer c.Close()
+
+	mustMapEnv(&svc.inventorySvcAddr, "INVENTORY_ADDR")
 
 	mustMapEnv(&svc.paymentSvcAddr, "PAYMENT_ADDR")
 	c = mustCreateClient(svc.paymentSvcAddr)
@@ -357,6 +360,11 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 		multPrice := money.MultiplySlow(it.Cost, uint32(it.GetItem().GetQuantity()))
 		total = money.Must(money.Sum(total, multPrice))
 	}
+
+	if err := cs.reserveStock(ctx, orderID.String(), prep.cartItems); err != nil {
+		return nil, status.Errorf(codes.Unavailable, "inventory error: %+v", err)
+	}
+	span.AddEvent("reserved")
 
 	txID, err := cs.chargeCard(ctx, total, req.CreditCard)
 	if err != nil {
@@ -616,6 +624,32 @@ func (cs *checkout) sendOrderConfirmation(ctx context.Context, email string, ord
 	}
 
 	return err
+}
+
+func (cs *checkout) reserveStock(ctx context.Context, orderID string, items []*pb.CartItem) error {
+	reservePayload, err := json.Marshal(map[string]interface{}{
+		"order_id": orderID,
+		"items":    items,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to marshal reserve request: %+v", err)
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "POST", cs.inventorySvcAddr+"/reserve", bytes.NewBuffer(reservePayload))
+	if err != nil {
+		return fmt.Errorf("failed to create request: %+v", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cs.httpClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("failed POST to inventory service: %+v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("failed POST to inventory service: expected 200, got %d", resp.StatusCode)
+	}
+	return nil
 }
 
 func (cs *checkout) shipOrder(ctx context.Context, address *pb.Address, items []*pb.CartItem) (string, error) {

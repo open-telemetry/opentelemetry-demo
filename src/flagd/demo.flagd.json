@@ -115,6 +115,29 @@
         "off": 0
       }
     },
+    "inventoryFailure": {
+      "defaultVariant": "off",
+      "description": "Fail inventory reservations for orders containing a specific product",
+      "state": "ENABLED",
+      "targeting": {
+        "if": [
+          {
+            "==": [
+              {
+                "var": "product_id"
+              },
+              "OLJCESPC7Z"
+            ]
+          },
+          "off",
+          "off"
+        ]
+      },
+      "variants": {
+        "off": false,
+        "on": true
+      }
+    },
     "kafkaConsumerDead": {
       "defaultVariant": "off",
       "description": "fraud-detection leaves the orders consumer group (unsubscribes and stops polling) while checkout keeps producing, so the group empties (members -> 0) and lag climbs against a zero-member group",
