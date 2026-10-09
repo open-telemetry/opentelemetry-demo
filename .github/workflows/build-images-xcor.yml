@@ -1,10 +1,6 @@
 name: Test image generation xcor
 
 on:
-  push:
-    branches: [ charles-* ]
-  pull_request:
-    branches: [ main ]
   workflow_dispatch:
     inputs:
       version:
