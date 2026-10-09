@@ -1,0 +1,13 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+spring:
+  application:
+    name: recommendation
+  grpc:
+    server:
+      port: ${RECOMMENDATION_PORT:9001}
+    client:
+      channel:
+        product-catalog:
+          target: ${PRODUCT_CATALOG_ADDR:localhost:3550}
