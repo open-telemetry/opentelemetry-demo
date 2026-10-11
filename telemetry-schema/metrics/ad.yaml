@@ -18,3 +18,6 @@ metrics:
       - ref: demo.ad.response_type
         requirement_level: required
         note: Indicates whether targeted ads were returned or random ads were used
+      - ref: demo.ad.request_id
+        requirement_level:
+          conditionally_required: When the adMetricCardinalityOverflow feature flag is enabled

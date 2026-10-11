@@ -39,3 +39,13 @@ attributes:
     stability: stable
     note: Indicates whether the ad response was targeted or random
     examples: ["TARGETED", "RANDOM"]
+  - key: demo.ad.request_id
+    type: string
+    brief: Synthetic unique ad request identifier for the cardinality overflow scenario
+    stability: development
+    note: >-
+      Added only to demo.ad.requests when adMetricCardinalityOverflow is enabled.
+      Intentionally unbounded to demonstrate SDK cardinality protection and the
+      loss of measurement attributes in the overflow point. Do not use this
+      instrumentation pattern in production.
+    examples: ["550e8400-e29b-41d4-a716-446655440000"]
