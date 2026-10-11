@@ -19,15 +19,6 @@
         "on": true
       }
     },
-    "adMetricCardinalityOverflow": {
-      "defaultVariant": "off",
-      "description": "Adds a unique request ID to demo.ad.requests to trigger SDK metric cardinality overflow. View it in the Self-Observability dashboard.",
-      "state": "ENABLED",
-      "variants": {
-        "off": false,
-        "on": true
-      }
-    },
     "adManualGc": {
       "defaultVariant": "off",
       "description": "Triggers full manual garbage collections in the ad service",
@@ -68,6 +59,15 @@
         "75%": 0.75,
         "90%": 0.9,
         "off": 0
+      }
+    },
+    "cartMetricCardinalityOverflow": {
+      "defaultVariant": "off",
+      "description": "Adds the current trace ID to demo.cart.get_cart.latency to trigger SDK metric cardinality overflow. View it in the Self-Observability dashboard.",
+      "state": "ENABLED",
+      "variants": {
+        "off": false,
+        "on": true
       }
     },
     "emailMemoryLeak": {

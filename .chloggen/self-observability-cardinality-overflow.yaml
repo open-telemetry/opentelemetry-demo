@@ -1,8 +1,8 @@
 change_type: enhancement
 component: grafana
-note: Add metric cardinality overflow discovery and an ad-service reproduction scenario.
+note: Add metric cardinality overflow discovery and a cart-service reproduction scenario.
 issues: [4087]
 subtext: |-
   The Self-Observability dashboard shows services and metric series with overflow
-  points in the selected time range. Enable adMetricCardinalityOverflow to add
-  unique request IDs to the ad request counter and trigger SDK cardinality overflow.
+  points in the selected time range. Enable cartMetricCardinalityOverflow to add
+  trace IDs to the cart retrieval latency histogram and trigger SDK cardinality overflow.

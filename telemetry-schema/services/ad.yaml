@@ -13,7 +13,6 @@ attribute_groups:
       - ref: demo.ad.count
       - ref: demo.ad.request_type
       - ref: demo.ad.response_type
-      - ref: demo.ad.request_id
       - ref: demo.ad.category
       - ref: session.id
       - ref: enduser.id

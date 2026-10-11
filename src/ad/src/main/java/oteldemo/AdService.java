@@ -16,7 +16,6 @@ import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.baggage.Baggage;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
-import io.opentelemetry.api.common.AttributesBuilder;
 import io.opentelemetry.api.metrics.LongCounter;
 import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.api.trace.Span;
@@ -165,7 +164,6 @@ public final class AdService {
     private static final String AD_FAILURE = "adFailure";
     private static final String AD_MANUAL_GC_FEATURE_FLAG = "adManualGc";
     private static final String AD_HIGH_CPU_FEATURE_FLAG = "adHighCpu";
-    private static final String AD_METRIC_CARDINALITY_OVERFLOW = "adMetricCardinalityOverflow";
     private static final Client ffClient = OpenFeatureAPI.getInstance().getClient();
     
     private AdServiceImpl() {}
@@ -231,13 +229,10 @@ public final class AdService {
         span.setAttribute("demo.ad.request_type", adRequestType.name());
         span.setAttribute("demo.ad.response_type", adResponseType.name());
 
-        AttributesBuilder requestAttributes = Attributes.builder()
-            .put(adRequestTypeKey, adRequestType.name())
-            .put(adResponseTypeKey, adResponseType.name());
-        if (ffClient.getBooleanValue(AD_METRIC_CARDINALITY_OVERFLOW, false, evaluationContext)) {
-          requestAttributes.put("demo.ad.request_id", UUID.randomUUID().toString());
-        }
-        adRequestsCounter.add(1, requestAttributes.build());
+        adRequestsCounter.add(
+            1,
+            Attributes.of(
+                adRequestTypeKey, adRequestType.name(), adResponseTypeKey, adResponseType.name()));
 
         // Throw 1/10 of the time to simulate a failure when the feature flag is enabled
         if (ffClient.getBooleanValue(AD_FAILURE, false, evaluationContext) && random.nextInt(10) == 0) {
