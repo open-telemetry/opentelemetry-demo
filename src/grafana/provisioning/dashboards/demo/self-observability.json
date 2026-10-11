@@ -1034,7 +1034,7 @@
       },
       "options": {
         "mode": "markdown",
-        "content": "Overflow combines measurements whose attribute sets exceeded the cardinality limit, losing their measurement attributes.\n\n**Observed does not mean actively overflowing:** cumulative points can still be exported without new overflow. Histogram `_bucket`, `_sum`, and `_count` names appear separately; buckets are collapsed. No results means **no overflow observed**, not proof of SDK support or complete telemetry coverage.\n\n[Learn about cardinality limits](https://opentelemetry.io/blog/2026/cardinality-limits-in-opentelemetry/)"
+        "content": "Overflow combines measurements whose attribute sets exceeded the cardinality limit, losing their measurement attributes.\n\n**Observed does not mean actively overflowing:** cumulative points can still be exported without new overflow. Classic histogram `_bucket`, `_sum`, and `_count` components appear as one metric when matching buckets are present; other metric names are preserved. No results means **no overflow observed**, not proof of SDK support or complete telemetry coverage.\n\n[Learn about cardinality limits](https://opentelemetry.io/blog/2026/cardinality-limits-in-opentelemetry/)"
       }
     },
     {
@@ -1042,7 +1042,7 @@
         "type": "prometheus",
         "uid": "${prometheus_datasource}"
       },
-      "description": "One row per Prometheus metric name, service instance, and scope observed in the selected time range. A row indicates presence, not lost measurement count, configured limit, or current overflow activity. Classic histogram components retain their Prometheus names.",
+      "description": "One row per metric, service instance, and scope observed in the selected time range. Classic histogram components are grouped under their base Prometheus name only when matching _bucket series with an le label are present for the same service instance and scope. The suffix regex extracts a candidate base name; unmatched names are preserved. A row indicates presence, not lost measurement count, configured limit, or current overflow activity.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -1081,7 +1081,7 @@
             "uid": "${prometheus_datasource}"
           },
           "editorMode": "code",
-          "expr": "group by (__name__, service_namespace, service_name, service_instance_id, otel_scope_name, otel_scope_version) (last_over_time({otel_metric_overflow=\"true\",service_name=~\"$service_name\"}[$__range]))",
+          "expr": "group by (metric, service_namespace, service_name, service_instance_id, otel_scope_name, otel_scope_version) ((label_replace(group by (__name__, service_namespace, service_name, service_instance_id, otel_scope_name, otel_scope_version) (last_over_time({otel_metric_overflow=\"true\",service_name=~\"$service_name\"}[$__range])), \"metric\", \"$1\", \"__name__\", \"(.+)_(bucket|sum|count)\") and on (metric, service_namespace, service_name, service_instance_id, otel_scope_name, otel_scope_version) label_replace(group by (__name__, service_namespace, service_name, service_instance_id, otel_scope_name, otel_scope_version) (last_over_time({otel_metric_overflow=\"true\",service_name=~\"$service_name\",__name__=~\".+_bucket\",le!=\"\"}[$__range])), \"metric\", \"$1\", \"__name__\", \"(.+)_bucket\")) or label_replace((label_replace(group by (__name__, service_namespace, service_name, service_instance_id, otel_scope_name, otel_scope_version) (last_over_time({otel_metric_overflow=\"true\",service_name=~\"$service_name\"}[$__range])), \"metric\", \"$1\", \"__name__\", \"(.+)_(bucket|sum|count)\") unless on (metric, service_namespace, service_name, service_instance_id, otel_scope_name, otel_scope_version) label_replace(group by (__name__, service_namespace, service_name, service_instance_id, otel_scope_name, otel_scope_version) (last_over_time({otel_metric_overflow=\"true\",service_name=~\"$service_name\",__name__=~\".+_bucket\",le!=\"\"}[$__range])), \"metric\", \"$1\", \"__name__\", \"(.+)_bucket\")), \"metric\", \"$1\", \"__name__\", \"(.+)\"))",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
@@ -1089,7 +1089,7 @@
           "refId": "A"
         }
       ],
-      "title": "Metric series with overflow observed",
+      "title": "Metrics with overflow observed",
       "transformations": [
         {
           "id": "organize",
@@ -1104,7 +1104,7 @@
               "service_instance_id": 2,
               "otel_scope_name": 3,
               "otel_scope_version": 4,
-              "__name__": 5
+              "metric": 5
             },
             "renameByName": {
               "service_namespace": "Namespace",
@@ -1112,7 +1112,7 @@
               "service_instance_id": "Instance",
               "otel_scope_name": "Scope",
               "otel_scope_version": "Scope version",
-              "__name__": "Metric series"
+              "metric": "Metric"
             }
           }
         }
