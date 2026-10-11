@@ -1027,14 +1027,14 @@
       "type": "text",
       "title": "Interpreting overflow",
       "gridPos": {
-        "h": 5,
+        "h": 9,
         "w": 18,
         "x": 6,
         "y": 80
       },
       "options": {
         "mode": "markdown",
-        "content": "Overflow combines measurements whose attribute sets exceeded the cardinality limit, losing their measurement attributes.\n\n**Observed does not mean actively overflowing:** cumulative points can still be exported without new overflow. Classic histogram `_bucket`, `_sum`, and `_count` components appear as one metric when matching buckets are present; other metric names are preserved. No results means **no overflow observed**, not proof of SDK support or complete telemetry coverage.\n\n[Learn about cardinality limits](https://opentelemetry.io/blog/2026/cardinality-limits-in-opentelemetry/)"
+        "content": "Overflow preserves measurement values but loses their measurement attributes.\n\nFor synchronous instruments:\n- **Cumulative:** once capacity is exhausted, new attribute combinations continue overflowing until SDK state is reset, typically by restarting the service. Previously tracked combinations continue normally.\n- **Delta:** overflow can stop in subsequent collection cycles when active cardinality falls below the limit.\n\nThis dashboard shows overflow **observed within the selected time range**, which can remain visible after recovery.\n\n[Learn about cardinality limits](https://opentelemetry.io/docs/concepts/signals/metrics/#cardinality-limits)"
       }
     },
     {
@@ -1060,7 +1060,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 85
+        "y": 89
       },
       "id": 53,
       "options": {
