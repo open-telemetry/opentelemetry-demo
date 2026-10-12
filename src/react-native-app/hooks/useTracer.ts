@@ -80,7 +80,7 @@ export const setupTracerProvider = (proxyURL: string) => {
 const Tracer = async () => {
   const proxyURL = await getFrontendProxyURL();
 
-  context.setGlobalContextManager(new StackContextManager())
+  context.setGlobalContextManager(new StackContextManager().enable());
   propagation.setGlobalPropagator(new CompositePropagator({
     propagators: [
       new W3CBaggagePropagator(),
