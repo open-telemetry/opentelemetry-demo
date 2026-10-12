@@ -5,8 +5,8 @@
     .minimum_zig_version = "0.16.0",
     .dependencies = .{
         .opentelemetry = .{
-            .url = "git+https://github.com/open-telemetry/opentelemetry-zig?ref=refs/pull/88/head#834b8cbd44dbde6fe4ebcacfa719a2e5313f4cfb",
-            .hash = "opentelemetry-0.0.1-U_uKJ4tMJQBxmk75U1tp07Vl9vTqEZDv8ifrQTWDAsPm",
+            .url = "git+https://github.com/open-telemetry/opentelemetry-zig#32debdbcbf6e5d4bd85b8e448e55e754c750bbe9",
+            .hash = "opentelemetry-0.0.1-U_uKJ4lMJQAozLiKfpfAi8toCso7ftMOHf55G3yDKyKe",
         },
     },
     .paths = .{
