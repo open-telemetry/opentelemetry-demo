@@ -230,6 +230,8 @@ public class ValkeyCartStore : ICartStore
         {
             if (overflowEnabled && activity is not null && activity.TraceId != default)
             {
+                // Intentionally bad practice: trace IDs as metric attributes cause high cardinality.
+                // Only for demonstrating overflow. Use exemplars for metric-to-trace correlation.
                 getCartHistogram.Record(stopwatch.Elapsed.TotalSeconds,
                     new KeyValuePair<string, object>("demo.cart.trace_id", activity.TraceId.ToString()));
             }
