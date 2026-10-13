@@ -361,9 +361,9 @@ click==8.5.0 \
     # via
     #   huggingface-hub
     #   uvicorn
-fastapi==0.142.2 \
-    --hash=sha256:06366626f2e70576367714d9ab2fe8472e6c8456dba69b399f9f797ab5e92570 \
-    --hash=sha256:bd5f4d81f1e93a88bcd77caf4dfe3c2dbffc3805407a0007e9a114c18b3a670b
+fastapi==0.143.0 \
+    --hash=sha256:1acffe48206a80917cf7dac21992b5c44b25384e8902bf745c1fd9dabcf6c51f \
+    --hash=sha256:3e9395fd35276425b61b516a31fdd7c77fe2af83e41b4da22e30696fb1304c5d
     # via
     #   -r requirements.in
     #   gradio
@@ -381,9 +381,9 @@ googleapis-common-protos==1.75.5 \
     --hash=sha256:c7a866fc34ed29a3b10af627a4b9b1dc2433313ca6e959f0ae4feb132047ed72 \
     --hash=sha256:d7285525c23039db98f2463e6d5a4f9b958b94d497f03a844ece3259c4e72d5d
     # via opentelemetry-exporter-otlp-proto-http
-gradio==6.29.1 \
-    --hash=sha256:6b4b5ae67ade38697bb40c28c68f143ddb897ebb13e262108a67b388c4868397 \
-    --hash=sha256:e7309025b692579b8829e985f6babf3c6476b598b02ced2b5dd6fcc9713b939e
+gradio==6.30.0 \
+    --hash=sha256:a6ae3f803bf5c15049390bec3b22eb7198f1f2649fd3b2136441639b294bd34a \
+    --hash=sha256:aae3aa81ec9f44e55781b498ad2ba12b117aa512e8d2bb0ef3e52af7f2ee6305
     # via -r requirements.in
 gradio-client==2.7.2 \
     --hash=sha256:12c9d2d940df28eb8dce58eef61f5e808265ad87bbbca53704d1330aa701e5e2 \
@@ -660,9 +660,9 @@ opentelemetry-instrumentation-requests==0.65b0 \
     --hash=sha256:1d601548f89236d5ab373c7208a2e1e162a8d6462b5b972f9ad8fb0ed82d7438 \
     --hash=sha256:91688ec0d4d1fed75ea8d026ef2c66274ed9868c22b6be211ef85d832d16f957
     # via -r requirements.in
-opentelemetry-opamp-client==0.3b0 \
-    --hash=sha256:b78c9e47438647941181e18c1695ee69a7497e75aaf7eb0b99046e96a7407159 \
-    --hash=sha256:e49e4a49e5177fa20feef6a96760aeae4f84060ce2058a8da29a43354b74ee7d
+opentelemetry-opamp-client==0.4b0 \
+    --hash=sha256:0959cf0143049071ca15a577d6d6d07eaa88637b13d4d5ee2e7faaf8bc4d0321 \
+    --hash=sha256:764d5b6d8e8ca6234af8ebb60fe063a85f3e6784f2566d7e894f1fba7db81cdb
     # via -r requirements.in
 opentelemetry-proto==1.44.0 \
     --hash=sha256:898b155a0e1557afd867478fb6158e8122a46329ca0bb8dc53cc55e98f017f56 \
@@ -1164,6 +1164,7 @@ requests==2.34.2 \
     # via
     #   -r requirements.in
     #   opentelemetry-exporter-otlp-proto-http
+    #   opentelemetry-opamp-client
 rich==15.0.0 \
     --hash=sha256:33bd4ef74232fb73fe9279a257718407f169c09b78a87ad3d296f548e27de0bb \
     --hash=sha256:edd07a4824c6b40189fb7ac9bc4c52536e9780fbbfbddf6f1e2502c31b068c36
