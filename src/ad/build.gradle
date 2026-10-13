@@ -7,7 +7,7 @@ plugins {
     id 'com.github.sherter.google-java-format' version '0.9'
     id 'idea'
     id 'application'
-    id 'com.github.ben-manes.versions' version '0.64.0'
+    id 'com.github.ben-manes.versions' version '0.65.0'
 }
 
 repositories {
@@ -19,9 +19,9 @@ description = 'Ad Service'
 group = "ad"
 version = "0.1.0-SNAPSHOT"
 
-def opentelemetryVersion = "1.66.0"
-def opentelemetryInstrumentationVersion = "2.31.1"
-def grpcVersion = "1.84.0"
+def opentelemetryVersion = "1.67.0"
+def opentelemetryInstrumentationVersion = "2.32.0"
+def grpcVersion = "1.84.2"
 def jacksonVersion = "2.22.3"
 def protocVersion = "4.36.2"
 def prometheusMetricsVersion = "1.9.0"

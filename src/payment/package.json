@@ -9,7 +9,7 @@
   "author": "Jonathan Lui",
   "license": "ISC",
   "dependencies": {
-    "@grpc/grpc-js": "1.14.5",
+    "@grpc/grpc-js": "1.14.6",
     "@grpc/proto-loader": "0.8.1",
     "@openfeature/flagd-provider": "0.16.1",
     "@openfeature/server-sdk": "1.23.0",
@@ -18,9 +18,9 @@
     "grpc-js-health-check": "1.2.2",
     "pino": "^10.4.0",
     "simple-card-validator": "1.1.0",
-    "uuid": "14.0.2"
+    "uuid": "14.0.3"
   },
   "devDependencies": {
-    "@opentelemetry/auto-instrumentations-node": "0.80.0"
+    "@opentelemetry/auto-instrumentations-node": "0.81.0"
   }
 }
