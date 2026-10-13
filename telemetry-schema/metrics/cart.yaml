@@ -22,3 +22,7 @@ metrics:
     note: Histogram measuring the latency of cart retrieval operations with custom bucket boundaries from 5ms to 10s
     annotations:
       service: cart
+    attributes:
+      - ref: demo.cart.trace_id
+        requirement_level:
+          conditionally_required: When cartMetricCardinalityOverflow is enabled and a valid trace ID is available

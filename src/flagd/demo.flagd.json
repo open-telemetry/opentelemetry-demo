@@ -61,6 +61,15 @@
         "off": 0
       }
     },
+    "cartMetricCardinalityOverflow": {
+      "defaultVariant": "off",
+      "description": "Adds the current trace ID to demo.cart.get_cart.latency to trigger SDK metric cardinality overflow. View it in the Self-Observability dashboard.",
+      "state": "ENABLED",
+      "variants": {
+        "off": false,
+        "on": true
+      }
+    },
     "emailMemoryLeak": {
       "defaultVariant": "off",
       "description": "Memory leak in the email service.",
