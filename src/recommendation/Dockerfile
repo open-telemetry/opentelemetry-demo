@@ -2,30 +2,28 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM docker.io/library/python:3.14.7-alpine3.24@sha256:c6ead215bfd31f1e433d968853b7a769989117115b728874824e6c0a27cb96fc AS build-venv
+FROM --platform=${BUILDPLATFORM} docker.io/library/eclipse-temurin:24.0.2_12-jdk@sha256:7493205ffe6caa8074fa8a06a276bb1c5ac41d3dd0fd43a0db66d7f776e80b3e AS builder
+WORKDIR /usr/src/app/
 
-RUN apk update && \
-    apk add gcc g++ linux-headers
+COPY ./src/recommendation/gradlew* ./src/recommendation/settings.gradle* ./src/recommendation/build.gradle ./
+COPY ./src/recommendation/gradle ./gradle
 
-COPY ./src/recommendation/requirements.txt requirements.txt
+RUN chmod +x ./gradlew
+RUN ./gradlew --no-daemon downloadRepos
 
-RUN python -m venv venv && \
-    venv/bin/pip install --no-cache-dir --require-hashes -r requirements.txt
+COPY ./src/recommendation/src ./src
+COPY ./pb/ ./proto
+RUN ./gradlew --no-daemon bootJar -PprotoSourceDir=./proto
 
-RUN venv/bin/opentelemetry-bootstrap -a install
+# -----------------------------------------------------------------------------
 
-FROM docker.io/library/python:3.14.7-alpine3.24@sha256:c6ead215bfd31f1e433d968853b7a769989117115b728874824e6c0a27cb96fc
+FROM docker.io/library/eclipse-temurin:24.0.2_12-jre@sha256:8cb2387a28af84cf0db0948d9c67d4480192f4e567027a3963f145d218e8b4f2
 
-COPY --from=build-venv /venv/ /venv/
+WORKDIR /usr/src/app/
 
-WORKDIR /app
-
-COPY ./src/recommendation/demo_pb2_grpc.py demo_pb2_grpc.py
-COPY ./src/recommendation/demo_pb2.py demo_pb2.py
-COPY ./src/recommendation/logger.py logger.py
-COPY ./src/recommendation/metrics.py metrics.py
-COPY ./src/recommendation/recommendation_server.py recommendation_server.py
+COPY --from=builder /usr/src/app/build/libs/recommendation.jar ./recommendation.jar
+ENV JAVA_TOOL_OPTIONS="-Xmx300m -XX:+ExitOnOutOfMemoryError"
 
 ARG RECOMMENDATION_PORT=9001
 EXPOSE ${RECOMMENDATION_PORT}
-ENTRYPOINT [ "/venv/bin/opentelemetry-instrument", "/venv/bin/python", "recommendation_server.py" ]
+ENTRYPOINT [ "java", "-jar", "recommendation.jar" ]

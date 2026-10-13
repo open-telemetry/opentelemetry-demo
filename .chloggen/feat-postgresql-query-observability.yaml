@@ -1,0 +1,4 @@
+change_type: enhancement
+component: collector, grafana
+note: Enable PostgreSQL query log events in the Collector and add query activity panels to the PostgreSQL Grafana dashboard.
+issues: [4064]

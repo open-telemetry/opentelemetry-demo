@@ -1,9 +1,9 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
+import { context, propagation, trace } from '@opentelemetry/api';
 import { CompositePropagator, W3CBaggagePropagator, W3CTraceContextPropagator } from '@opentelemetry/core';
-import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
-import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
+import { BatchSpanProcessor, TracerProvider } from '@opentelemetry/sdk-trace';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 import { resourceFromAttributes, detectResources } from '@opentelemetry/resources';
@@ -27,34 +27,31 @@ const FrontendTracer = async () => {
   const detectedResources = detectResources({detectors: [browserDetector]});
   resource = resource.merge(detectedResources);
 
-  const provider = new WebTracerProvider({
+  const provider = new TracerProvider({
     resource,
     spanProcessors: [
       new SessionIdProcessor(),
       new BatchSpanProcessor(
-          new OTLPTraceExporter({
-            url: NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT || 'http://localhost:4318/v1/traces',
-          }),
           {
+            exporter: new OTLPTraceExporter({
+              url: NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT || 'http://localhost:4318/v1/traces',
+            }),
             scheduledDelayMillis: 500,
           }
       ),
     ],
   });
 
-  const contextManager = new ZoneContextManager();
-
-  provider.register({
-    contextManager,
-    propagator: new CompositePropagator({
-      propagators: [
-        new W3CBaggagePropagator(),
-        new W3CTraceContextPropagator()],
-    }),
-  });
+  context.setGlobalContextManager(new ZoneContextManager().enable());
+  propagation.setGlobalPropagator(new CompositePropagator({
+    propagators: [
+      new W3CBaggagePropagator(),
+      new W3CTraceContextPropagator()],
+  }));
+  trace.setGlobalTracerProvider(provider);
 
   registerInstrumentations({
-    tracerProvider: provider,
+    tracerProvider: trace.getTracerProvider(),
     instrumentations: [
       getWebAutoInstrumentations({
         '@opentelemetry/instrumentation-fetch': {
