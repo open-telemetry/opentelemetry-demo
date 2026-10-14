@@ -15,7 +15,7 @@
 # limitations under the License.
 
 # https://mcr.microsoft.com/v2/dotnet/sdk/tags/list
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0.401@sha256:2fa828c68761b1b8c23d7662dc134421b9d3b59fe1425fdbc80804e390cdb24d AS base
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0.401@sha256:e70cdb7f80b0348f5cb85f19a8f670fca061f033d57eed12fa003d58b0e06317 AS base
 ARG TARGETARCH
 
 WORKDIR /usr/src/app/
@@ -40,9 +40,9 @@ RUN dotnet publish ./src/cart.csproj -r linux-musl-$TARGETARCH --no-restore -o /
 # -----------------------------------------------------------------------------
 
 # https://mcr.microsoft.com/v2/dotnet/runtime-deps/tags/list
-FROM ghcr.io/grpc-ecosystem/grpc-health-probe:v0.4.57@sha256:f77f1257805ecb57f1f0c36c5825d3c2e47aa81cce87128675e768463ed6487a AS grpc-health-probe
+FROM ghcr.io/grpc-ecosystem/grpc-health-probe:v0.4.59@sha256:3b3276565698344cdd853f4b0323bf2b7ee5f36b7d10ac25705f00558d3601b2 AS grpc-health-probe
 
-FROM mcr.microsoft.com/dotnet/runtime-deps:10.0.12-alpine3.23@sha256:90fa8d0a47833fdc9544fcc76b833d287d4d809625b1523a3227fa6595a4ed91
+FROM mcr.microsoft.com/dotnet/runtime-deps:10.0.12-alpine3.23@sha256:ec7978b6668931a141e5a6d5b831aea858e4f8fa908ca75900299e40fb17529e
 
 WORKDIR /usr/src/app/
 COPY --from=builder /cart/ ./

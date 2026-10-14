@@ -68,15 +68,15 @@ keeping it up to date for you.
 | [Aspecto]                 | [Instana]      | [SolarWinds Observability]       |
 | [Axiom]                   | [Kloudfuse]    | [Splunk]                         |
 | [Axoflow]                 | [Kopai]        | [Sumo Logic]                     |
-| [Azure Data Explorer]     | [Last9]        | [TelemetryHub]                   |
-| [Bronto]                  | [Liatrio]      | [Teletrace]                      |
-| [Causely]                 | [Logz.io]      | [Tinybird]                       |
-| [ClickStack]              | [New Relic]    | [Tracetest]                      |
-| [Coralogix]               | [Oodle]        | [Tsuga]                          |
-| [Dash0]                   | [OpenObserve]  | [Uptrace]                        |
-| [Datadog]                 | [OpenSearch]   | [VictoriaMetrics]                |
-| [Dynatrace]               | [Oracle]       |                                  |
-| [Elastic]                 | [Parseable]    |                                  |
+| [Azure Data Explorer]     | [Last9]        | [Tayga]                          |
+| [Bronto]                  | [Liatrio]      | [TelemetryHub]                   |
+| [Causely]                 | [Logz.io]      | [Teletrace]                      |
+| [ClickStack]              | [New Relic]    | [Tinybird]                       |
+| [Coralogix]               | [Oodle]        | [Trace0]                         |
+| [Dash0]                   | [OpenObserve]  | [Tracetest]                      |
+| [Datadog]                 | [OpenSearch]   | [Tsuga]                          |
+| [Dynatrace]               | [Oracle]       | [Uptrace]                        |
+| [Elastic]                 | [Parseable]    | [VictoriaMetrics]                |
 
 ## Contributing
 
@@ -166,9 +166,11 @@ For more information about the emeritus role, see the [community repository](htt
 [SolarWinds Observability]: https://github.com/solarwinds/opentelemetry-demo
 [Splunk]: https://github.com/signalfx/opentelemetry-demo
 [Sumo Logic]: https://www.sumologic.com/blog/common-opentelemetry-demo-application/
+[Tayga]: https://softberries.github.io/tayga/getting-started/otel-demo/
 [TelemetryHub]: https://github.com/TelemetryHub/opentelemetry-demo/tree/telemetryhub-backend
 [Teletrace]: https://github.com/teletrace/opentelemetry-demo
 [Tinybird]: https://github.com/tinybirdco/opentelemetry-demo
+[Trace0]: https://github.com/Trace0-HQ/opentelemetry-demo
 [Tracetest]: https://github.com/kubeshop/opentelemetry-demo
 [Tsuga]: https://github.com/tsuga-dev/opentelemetry-demo
 [Uptrace]: https://github.com/uptrace/uptrace/tree/master/example/opentelemetry-demo
