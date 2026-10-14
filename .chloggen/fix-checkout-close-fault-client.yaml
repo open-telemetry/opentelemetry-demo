@@ -4,4 +4,4 @@ component: checkout
 
 note: Close the temporary gRPC client created when the `paymentUnreachable` flag is enabled, so it no longer leaks a connection on every order.
 
-issues: [2960]
+issues: [4107]
