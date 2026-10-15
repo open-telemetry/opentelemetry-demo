@@ -22,10 +22,12 @@ const FrontendTracer = async () => {
   const { ZoneContextManager } = await import('@opentelemetry/context-zone');
 
   let resource = defaultResource()
-    .merge(resourceFromAttributes({
-      [ATTR_SERVICE_NAME]: NEXT_PUBLIC_OTEL_SERVICE_NAME,
-    }))
-    .merge(detectResources({detectors: [browserDetector]}));
+    .merge(
+      resourceFromAttributes({
+        [ATTR_SERVICE_NAME]: NEXT_PUBLIC_OTEL_SERVICE_NAME,
+      }),
+    )
+    .merge(detectResources({ detectors: [browserDetector] }));
 
   const tracerProvider = new TracerProvider({
     resource,
@@ -33,7 +35,9 @@ const FrontendTracer = async () => {
       new SessionIdProcessor(),
       new BatchSpanProcessor({
         exporter: new OTLPTraceExporter({
-          url: NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT || 'http://localhost:4318/v1/traces',
+          url:
+            NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT ||
+            'http://localhost:4318/v1/traces',
         }),
         scheduledDelayMillis: 500,
       }),
@@ -41,12 +45,14 @@ const FrontendTracer = async () => {
   });
 
   context.setGlobalContextManager(new ZoneContextManager().enable());
-  propagation.setGlobalPropagator(new CompositePropagator({
-    propagators: [
-      new W3CBaggagePropagator(),
-      new W3CTraceContextPropagator(),
-    ],
-  }));
+  propagation.setGlobalPropagator(
+    new CompositePropagator({
+      propagators: [
+        new W3CBaggagePropagator(),
+        new W3CTraceContextPropagator(),
+      ],
+    }),
+  );
   trace.setGlobalTracerProvider(tracerProvider);
 
   registerInstrumentations({
