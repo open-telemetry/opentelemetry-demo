@@ -31,3 +31,10 @@
 #       exporters: [otlp_http/prometheus, debug, otlp_grpc/mybackend]           # repeat upstream exporters
 #     logs:
 #       exporters: [opensearch, debug, otlp_grpc/mybackend]                     # repeat upstream exporters
+
+processors:
+  memory_limiter:
+    limit_percentage: 0
+    spike_limit_percentage: 0
+    limit_mib: 320
+    spike_limit_mib: 64
