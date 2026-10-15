@@ -21,7 +21,7 @@ DOCKER_COMPOSE_ENV=--env-file .env --env-file .env.override
 #   Full (adds Kafka group):    compose.yaml + compose.full.yaml
 #   With observability stack:   + compose.observability.yaml
 #   With extras customizations: + compose.extras.yaml (always last)
-DOCKER_COMPOSE_FILES_CORE=-f compose.yaml
+DOCKER_COMPOSE_FILES_CORE=-f compose.yaml -f compose.portfolio.yaml
 DOCKER_COMPOSE_FILES_FULL=$(DOCKER_COMPOSE_FILES_CORE) -f compose.full.yaml
 DOCKER_COMPOSE_FILES_OBSERVABILITY=-f compose.observability.yaml
 DOCKER_COMPOSE_FILES_PROFILING=-f compose.profiling.yaml

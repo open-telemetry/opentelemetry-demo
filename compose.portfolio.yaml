@@ -1,0 +1,6 @@
+services:
+  recommendation:
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - bash -c 'echo > /dev/tcp/127.0.0.1/${RECOMMENDATION_PORT}'
