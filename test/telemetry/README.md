@@ -72,6 +72,7 @@ signals it emits:
 | frontend-proxy   | yes    | yes     | yes   | minimal |
 | frontend-web     | yes    | yes     | no    | full    |
 | image-provider   | yes    | yes     | no    | minimal |
+| inventory        | yes    | yes     | no    | minimal |
 | kafka            | no     | yes     | yes   | full    |
 | payment          | yes    | yes     | yes   | minimal |
 | product-catalog  | yes    | yes     | yes   | minimal |
