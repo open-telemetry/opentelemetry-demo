@@ -60,6 +60,8 @@ services:
       options:
         max-size: "5m"
         max-file: "2"
+    env_file:
+      - ./src/incident-intake/.env.incidents
 
   # Prometheus
   prometheus:

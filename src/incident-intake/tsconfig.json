@@ -13,7 +13,10 @@
     "lib": [
       "ES2022"
     ],
-    "noEmitOnError": true
+    "noEmitOnError": true,
+    "types": [
+      "node"
+    ]
   },
   "include": [
     "src/**/*.ts"

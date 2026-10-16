@@ -26,7 +26,6 @@ groups:
                   sum by (deployment_environment_name, service_namespace, service_name, service_instance_id, http_route, http_request_method, le) (
                     rate(
                       http_server_request_duration_seconds_bucket{
-                        deployment_environment_name="",
                         service_namespace="opentelemetry-demo",
                         service_name="cart",
                         http_request_method="POST",
@@ -89,5 +88,3 @@ groups:
           severity: warning
           team_name: webstore
         isPaused: false
-        notification_settings:
-          receiver: grafana-default-email

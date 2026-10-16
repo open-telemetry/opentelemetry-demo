@@ -1,0 +1,15 @@
+# Routes alerts that use notification policies to incident-intake by default.
+# Groups notifications by folder and alert name; incident correlation happens in Intake.
+apiVersion: 1
+
+policies:
+  - orgId: 1
+    receiver: incident-intake
+    group_by:
+      - grafana_folder
+      - alertname
+    # To be deleted, only for test
+    # shorten notification intervals to receive alerts faster during testing
+    group_wait: 10s
+    group_interval: 30s
+    repeat_interval: 1m

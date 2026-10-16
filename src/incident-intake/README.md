@@ -5,11 +5,15 @@ It doesn't provide the full telemetry context to the investigation event. It jus
 
 ## Architecture status
 
-TypeScript architecture scaffold only. There is no running HTTP server,
-database implementation, queue integration, or business logic. Concrete entry
-points throw `NotImplementedError`; abstract adapters cannot be instantiated.
-The existing Dockerfile and Compose file are intentionally left untouched until
-there is a runnable service. Nothing here accepts a webhook or publishes a job.
+The service provides a local HTTP preview for Grafana webhooks.
+It authenticates requests, validates the payload, and maps alerts to
+the internal application contract.
+Preview mode logs normalized notifications and returns success without
+persisting data. Incident processing, deduplication, correlation,
+PostgreSQL persistence, outbox delivery, and broker integration are
+not implemented yet.
+
+See [WEBHOOK-PREVIEW.md](WEBHOOK-PREVIEW.md) for local setup.
 
 ## Bounded context and ownership
 

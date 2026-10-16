@@ -1,0 +1,15 @@
+# Defines the incident-intake webhook contact point for firing and resolved alerts.
+apiVersion: 1
+
+contactPoints:
+  - orgId: 1
+    name: incident-intake
+    receivers:
+      - uid: incident-intake-webhook
+        type: webhook
+        disableResolveMessage: false
+        settings:
+          url: http://host.docker.internal:8081/webhooks/grafana
+          httpMethod: POST
+          authorization_scheme: Bearer
+          authorization_credentials: $INTAKE_WEBHOOK_TOKEN
