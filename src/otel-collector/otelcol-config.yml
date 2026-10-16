@@ -157,6 +157,11 @@ exporters:
 
 processors:
   memory_limiter:
+    # On WSL2 + Docker Desktop, percentage limits may fail with "invalid format
+    # for MountPoint". Workaround: replace both percentage settings below with
+    # limit_mib and spike_limit_mib sized for your collector memory allocation.
+    # For a 400 MiB allocation, use limit_mib: 320 and spike_limit_mib: 100.
+    # See https://github.com/open-telemetry/opentelemetry-collector/issues/16174
     check_interval: 5s
     limit_percentage: 80
     spike_limit_percentage: 25

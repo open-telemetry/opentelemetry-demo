@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 using System;
 using System.Linq;
+using System.Collections.Generic;
+using OpenFeature;
 using System.Threading.Tasks;
 using Grpc.Core;
 using StackExchange.Redis;
@@ -16,6 +18,7 @@ namespace cart.cartstore;
 public class ValkeyCartStore : ICartStore
 {
     private readonly ILogger _logger;
+    private readonly IFeatureClient _featureClient;
     private const string CartFieldName = "cart";
     private const int RedisRetryNumber = 30;
 
@@ -44,9 +47,10 @@ public class ValkeyCartStore : ICartStore
         });
     private readonly ConfigurationOptions _redisConnectionOptions;
 
-    public ValkeyCartStore(ILogger<ValkeyCartStore> logger, string valkeyAddress)
+    public ValkeyCartStore(ILogger<ValkeyCartStore> logger, string valkeyAddress, IFeatureClient featureClient)
     {
         _logger = logger;
+        _featureClient = featureClient;
         // Serialize empty cart into byte array.
         var cart = new Oteldemo.Cart();
         _emptyCartBytes = cart.ToByteArray();
@@ -195,6 +199,8 @@ public class ValkeyCartStore : ICartStore
 
     public async Task<Oteldemo.Cart> GetCartAsync(string userId)
     {
+        var overflowEnabled = await _featureClient.GetBooleanValueAsync("cartMetricCardinalityOverflow", false);
+        var activity = Activity.Current;
         var stopwatch = Stopwatch.StartNew();
 
         Log.GetCartAsync(_logger, userId);
@@ -222,7 +228,17 @@ public class ValkeyCartStore : ICartStore
         }
         finally
         {
-            getCartHistogram.Record(stopwatch.Elapsed.TotalSeconds);
+            if (overflowEnabled && activity is not null && activity.TraceId != default)
+            {
+                // Intentionally bad practice: trace IDs as metric attributes cause high cardinality.
+                // Only for demonstrating overflow. Use exemplars for metric-to-trace correlation.
+                getCartHistogram.Record(stopwatch.Elapsed.TotalSeconds,
+                    new KeyValuePair<string, object>("demo.cart.trace_id", activity.TraceId.ToString()));
+            }
+            else
+            {
+                getCartHistogram.Record(stopwatch.Elapsed.TotalSeconds);
+            }
         }
     }
 

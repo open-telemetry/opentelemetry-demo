@@ -575,6 +575,7 @@ func (cs *checkout) chargeCard(ctx context.Context, amount *pb.Money, paymentInf
 	if flags.PaymentUnreachable.Value(ctx, openfeature.EvaluationContext{}) {
 		badAddress := "badAddress:50051"
 		c := mustCreateClient(badAddress)
+		defer c.Close()
 		paymentService = pb.NewPaymentServiceClient(c)
 	}
 

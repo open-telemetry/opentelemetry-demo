@@ -382,7 +382,7 @@ updates:
     patterns:
       - "*"
     multi-ecosystem-group: "src-quote"
-  - package-ecosystem: "pip"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
+  - package-ecosystem: "gradle"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
     directories:
       - "/src/recommendation/**"
     patterns:

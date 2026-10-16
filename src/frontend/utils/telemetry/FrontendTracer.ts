@@ -6,7 +6,7 @@ import { CompositePropagator, W3CBaggagePropagator, W3CTraceContextPropagator } 
 import { BatchSpanProcessor, TracerProvider } from '@opentelemetry/sdk-trace';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
-import { resourceFromAttributes, detectResources } from '@opentelemetry/resources';
+import { defaultResource, resourceFromAttributes, detectResources } from '@opentelemetry/resources';
 import { browserDetector } from '@opentelemetry/opentelemetry-browser-detector';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
@@ -21,37 +21,42 @@ const {
 const FrontendTracer = async () => {
   const { ZoneContextManager } = await import('@opentelemetry/context-zone');
 
-  let resource = resourceFromAttributes({
-    [ATTR_SERVICE_NAME]: NEXT_PUBLIC_OTEL_SERVICE_NAME,
-  });
-  const detectedResources = detectResources({detectors: [browserDetector]});
-  resource = resource.merge(detectedResources);
+  let resource = defaultResource()
+    .merge(
+      resourceFromAttributes({
+        [ATTR_SERVICE_NAME]: NEXT_PUBLIC_OTEL_SERVICE_NAME,
+      }),
+    )
+    .merge(detectResources({ detectors: [browserDetector] }));
 
-  const provider = new TracerProvider({
+  const tracerProvider = new TracerProvider({
     resource,
     spanProcessors: [
       new SessionIdProcessor(),
-      new BatchSpanProcessor(
-          {
-            exporter: new OTLPTraceExporter({
-              url: NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT || 'http://localhost:4318/v1/traces',
-            }),
-            scheduledDelayMillis: 500,
-          }
-      ),
+      new BatchSpanProcessor({
+        exporter: new OTLPTraceExporter({
+          url:
+            NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT ||
+            'http://localhost:4318/v1/traces',
+        }),
+        scheduledDelayMillis: 500,
+      }),
     ],
   });
 
   context.setGlobalContextManager(new ZoneContextManager().enable());
-  propagation.setGlobalPropagator(new CompositePropagator({
-    propagators: [
-      new W3CBaggagePropagator(),
-      new W3CTraceContextPropagator()],
-  }));
-  trace.setGlobalTracerProvider(provider);
+  propagation.setGlobalPropagator(
+    new CompositePropagator({
+      propagators: [
+        new W3CBaggagePropagator(),
+        new W3CTraceContextPropagator(),
+      ],
+    }),
+  );
+  trace.setGlobalTracerProvider(tracerProvider);
 
   registerInstrumentations({
-    tracerProvider: trace.getTracerProvider(),
+    tracerProvider,
     instrumentations: [
       getWebAutoInstrumentations({
         '@opentelemetry/instrumentation-fetch': {
