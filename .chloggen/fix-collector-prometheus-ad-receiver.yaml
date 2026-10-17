@@ -1,0 +1,14 @@
+change_type: bug_fix
+
+component: collector
+
+note: Add the `prometheus/ad` receiver to the full collector config so the ad service's `demo_ad_served_total` metric is scraped whenever the full or observability config layers are active.
+
+issues: [4121]
+
+subtext: |-
+  The collector replaces arrays when merging `--config` layers, so
+  otelcol-config-full.yml must repeat every receiver from otelcol-config.yml. It omitted
+  prometheus/ad, which the base config both defines and uses, silently disabling the ad
+  Prometheus scrape in the default `make start` (and any configuration layering
+  compose.full.yaml or compose.observability.yaml).
