@@ -17,7 +17,7 @@ COPY ./src/checkout/kafka/ kafka/
 COPY ./src/checkout/money/ money/
 COPY ./src/checkout/main.go main.go
 
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags "-s -w" -o checkout main.go
+RUN CGO_ENABLED=0 GOOS=linux go tool otelc go build -ldflags "-s -w" -o checkout main.go
 
 FROM ghcr.io/grpc-ecosystem/grpc-health-probe:v0.4.59@sha256:3b3276565698344cdd853f4b0323bf2b7ee5f36b7d10ac25705f00558d3601b2 AS grpc-health-probe
 
