@@ -128,7 +128,7 @@ async def get_product(product_id: str):
 @count_tool_call
 async def checkout(checkout_person):
     """Checkout the user's cart and create an order.
-    Takes request in the format {string user_id, string userCurrency, Address address, string email, CreditCardInfo creditCard}
+    Takes request in the format {string userId, string userCurrency, Address address, string email, CreditCardInfo creditCard}
     Where Address is {string streetAddress, string city, string state, string country, string zipCode} and
     CreditCardInfo is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear, int32 creditCardExpirationMonth}
     """
