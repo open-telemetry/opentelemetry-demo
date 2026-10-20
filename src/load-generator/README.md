@@ -15,8 +15,14 @@ learn more about modifying the locustfile.
 ## Configuration
 
 The Docker Compose deployment uses Locust's default web interface bind address
-(`*`, all interfaces). The `LOCUST_WEB_HOST` value in the root `.env` file
-configures Envoy's destination hostname, not Locust's listener.
+(`*`, all interfaces). `LOAD_GENERATOR_WEB_HOST` in the root `.env` file
+configures Envoy's destination hostname and defaults to `load-generator`.
+Locust's `LOCUST_WEB_HOST` option controls its listener and is left unset in
+the load-generator container.
+
+If you previously used `LOCUST_WEB_HOST` in `.env.override` or a custom
+frontend-proxy deployment to override Envoy's destination, rename that setting
+to `LOAD_GENERATOR_WEB_HOST`.
 
 * `LOCUST_BROWSER_TRAFFIC_ENABLED`: when `true`, spawns `WebsiteBrowserUser`
   virtual users that drive a real headless Chromium session against the

@@ -338,7 +338,7 @@ services:
     environment:
       - FRONTEND_PORT
       - FRONTEND_HOST
-      - LOCUST_WEB_HOST
+      - LOAD_GENERATOR_WEB_HOST
       - LOCUST_WEB_PORT
       - GRAFANA_PORT
       - GRAFANA_HOST
