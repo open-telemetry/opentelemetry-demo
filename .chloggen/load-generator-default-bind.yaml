@@ -1,0 +1,6 @@
+change_type: bug_fix
+component: load-generator
+note: >-
+  Honor IPV6_ENABLED for the default Docker Compose network and restore Locust's
+  default web interface binding by removing the IPv4-only override.
+issues: [4053]

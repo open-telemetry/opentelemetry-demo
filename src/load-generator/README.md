@@ -14,6 +14,10 @@ learn more about modifying the locustfile.
 
 ## Configuration
 
+The Docker Compose deployment uses Locust's default web interface bind address
+(`*`, all interfaces). The `LOCUST_WEB_HOST` value in the root `.env` file
+configures Envoy's destination hostname, not Locust's listener.
+
 * `LOCUST_BROWSER_TRAFFIC_ENABLED`: when `true`, spawns `WebsiteBrowserUser`
   virtual users that drive a real headless Chromium session against the
   frontend. Each one keeps its browser process alive for its whole lifetime,
