@@ -134,6 +134,8 @@ async def checkout(checkout_person):
     """
     url = f"http://{BASE_URL}/api/checkout"
     try:
+        if isinstance(checkout_person, str):
+            checkout_person = json.loads(checkout_person)
         async with httpx.AsyncClient(timeout=TIMEOUT) as client:
             res = await client.post(url, json=checkout_person)
             if not res.is_success:
