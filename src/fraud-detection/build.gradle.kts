@@ -21,7 +21,7 @@ group = "io.opentelemetry"
 version = "1.0"
 
 
-val grpcVersion = "1.84.2"
+val grpcVersion = "1.85.0"
 val protobufVersion = "4.36.2"
 
 
@@ -36,7 +36,7 @@ dependencies {
     implementation("com.google.protobuf:protobuf-java:${protobufVersion}")
     testImplementation(kotlin("test"))
     implementation(kotlin("script-runtime"))
-    implementation("org.apache.kafka:kafka-clients:4.3.1")
+    implementation("org.apache.kafka:kafka-clients:4.4.0")
     implementation("com.google.api.grpc:proto-google-common-protos:2.78.0")
     implementation("io.grpc:grpc-protobuf:${grpcVersion}")
     implementation("io.grpc:grpc-stub:${grpcVersion}")
@@ -49,7 +49,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.20")
     implementation("com.google.protobuf:protobuf-kotlin:${protobufVersion}")
     implementation("dev.openfeature:sdk:1.23.0")
-    implementation("dev.openfeature.contrib.providers:flagd:0.14.2")
+    implementation("dev.openfeature.contrib.providers:flagd:0.15.0")
 
     if (JavaVersion.current().isJava9Compatible) {
         // Workaround for @javax.annotation.Generated
