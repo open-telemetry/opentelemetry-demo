@@ -2,9 +2,9 @@ requests==2.34.2
 traceloop-sdk==0.62.4
 python-dotenv==1.2.4
 httpx==0.28.1
-langchain_openai==1.7.0
-langchain==1.4.4
-langgraph-prebuilt==1.1.0
+langchain_openai==1.7.2
+langchain==1.4.6
+langgraph-prebuilt==1.1.1
 mcp==1.30.0
 fastmcp==3.4.7
 langchain_mcp_adapters==0.3.2
@@ -21,4 +21,4 @@ vcrpy==8.3.0
 aiohttp==3.14.5
 greenlet==3.5.6
 openfeature-hooks-opentelemetry==0.3.1
-openfeature-provider-flagd==0.5.2
+openfeature-provider-flagd==0.6.0
