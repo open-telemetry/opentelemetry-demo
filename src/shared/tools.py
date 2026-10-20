@@ -76,7 +76,7 @@ async def get_cart(user_id: str):
     url = f"http://{BASE_URL}/api/cart"
     try:
         async with httpx.AsyncClient(timeout=TIMEOUT) as client:
-            res = await client.get(url, params={"user_id": user_id})
+            res = await client.get(url, params={"sessionId": user_id})
             res.raise_for_status()
             return res.json()
     except Exception as e:
