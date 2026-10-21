@@ -113,6 +113,8 @@ jobs:
           persist-credentials: false
       - name: Run sanitycheck.py
         run: python3 ./internal/tools/sanitycheck.py
+      - name: Check collector config layers keep earlier pipeline components
+        run: python3 ./internal/tools/check_collector_pipelines.py
 
   checklicense:
     name: Check license
