@@ -1,0 +1,26 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+name: Changelog
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+    branches: [main]
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  changelog:
+    permissions:
+      contents: read  # for actions/checkout
+      pull-requests: read  # for dorny/paths-filter to list changed files
+    uses: open-telemetry/shared-workflows/.github/workflows/chloggen.yml@f09a36e1fa2576787fe05cbc1313ef6066918c78  # v0.23.0
+    with:
+      go-version: '1.27.1'
+      # Only maintainers and approvers can add labels, so a title marker would
+      # let any author opt out.
+      skip-title-marker: ''
