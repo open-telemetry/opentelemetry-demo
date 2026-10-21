@@ -1,6 +1,10 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
+FROM ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.78.0@sha256:bec336cd9581df9be51b4dfb8fb19e76723c275b8f824b60d7a18c7ae5943942 AS otelagent
+
+# -----------------------------------------------------------------------------
+
 FROM docker.io/library/node:25.9.0-slim@sha256:81db02c4b671288a03915da9534dbd54f96d0e7c24d80ccc54f5b36b2e684370 AS builder
 
 WORKDIR /app
@@ -24,6 +28,7 @@ COPY ./src/frontend/utils/telemetry/ utils/telemetry/
 COPY ./src/frontend/utils/imageLoader.js utils/imageLoader.js
 COPY ./src/frontend/utils/Request.ts utils/Request.ts
 
+COPY ./src/frontend/instrumentation-client.ts instrumentation-client.ts
 COPY ./src/frontend/next.config.js next.config.js
 COPY ./src/frontend/tsconfig.json tsconfig.json
 
@@ -53,9 +58,11 @@ COPY --from=deps /app/node_modules/ node_modules/
 
 COPY ./src/frontend/public/ public/
 
-COPY ./src/frontend/utils/telemetry/Instrumentation.js Instrumentation.js
+# Path matches where the OpenTelemetry Operator mounts its payload, so an
+# operator-injected pod shadows this copy and loads the same file.
+COPY --from=otelagent /autoinstrumentation /otel-auto-instrumentation-nodejs
 
 ARG FRONTEND_PORT=8080
 EXPOSE ${FRONTEND_PORT}
 
-CMD ["--require=./Instrumentation.js", "server.js"]
+CMD ["--require=/otel-auto-instrumentation-nodejs/autoinstrumentation.js", "server.js"]
