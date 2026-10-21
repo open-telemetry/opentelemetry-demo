@@ -7,7 +7,7 @@ plugins {
     id 'com.github.sherter.google-java-format' version '0.9'
     id 'idea'
     id 'application'
-    id 'com.github.ben-manes.versions' version '0.65.0'
+    id 'com.github.ben-manes.versions' version '0.66.0'
 }
 
 repositories {
@@ -21,10 +21,10 @@ version = "0.1.0-SNAPSHOT"
 
 def opentelemetryVersion = "1.67.0"
 def opentelemetryInstrumentationVersion = "2.32.0"
-def grpcVersion = "1.84.2"
+def grpcVersion = "1.85.0"
 def jacksonVersion = "2.22.3"
 def protocVersion = "4.36.2"
-def prometheusMetricsVersion = "1.9.0"
+def prometheusMetricsVersion = "1.10.0"
 
 tasks.withType(JavaCompile).configureEach {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -55,7 +55,7 @@ dependencies {
                 "io.opentelemetry:opentelemetry-sdk",
                 "io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations",
                 "org.apache.logging.log4j:log4j-core:2.26.1",
-                "dev.openfeature.contrib.providers:flagd:0.14.2",
+                "dev.openfeature.contrib.providers:flagd:0.15.0",
                 'dev.openfeature:sdk:1.23.0',
                 "io.prometheus:prometheus-metrics-core:${prometheusMetricsVersion}",
                 "io.prometheus:prometheus-metrics-exporter-httpserver:${prometheusMetricsVersion}"

@@ -18,11 +18,11 @@ group = "recommendation"
 version = "0.1.0-SNAPSHOT"
 
 // protoc-gen-grpc-java, kept at the gRPC version the Spring Boot BOM manages for the runtime
-def grpcVersion = "1.84.2"
+def grpcVersion = "1.85.0"
 def protocVersion = "4.36.2"
 def opentelemetryInstrumentationVersion = "2.31.1"
 def openFeatureSdkVersion = "1.23.0"
-def flagdProviderVersion = "0.14.2"
+def flagdProviderVersion = "0.15.0"
 def openFeatureOtelHookVersion = "3.3.1"
 
 tasks.withType(JavaCompile).configureEach {
