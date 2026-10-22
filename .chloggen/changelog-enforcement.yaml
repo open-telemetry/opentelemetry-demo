@@ -1,0 +1,9 @@
+change_type: enhancement
+
+component: ci
+
+note: Require a `.chloggen` fragment on every PR unless a maintainer or approver adds the `Skip Changelog` label.
+
+issues: [4153]
+
+subtext:
