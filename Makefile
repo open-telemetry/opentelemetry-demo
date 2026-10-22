@@ -130,7 +130,7 @@ addlicense:	$(ADDLICENSE)
 .PHONY: checklinks
 checklinks:
 	@echo "Checking links..."
-	lychee --config .lychee.toml --cache .
+	lychee --config .github/lychee.toml --cache .
 
 # Run all checks in order of speed / likely failure.
 .PHONY: check
