@@ -88,13 +88,13 @@ jobs:
         id: cache-restore
         with:
           path: .lycheecache
-          key: ${{ runner.os }}-lychee-${{ hashFiles('.lychee.toml') }}
+          key: ${{ runner.os }}-lychee-${{ hashFiles('.github/lychee.toml') }}
           restore-keys: |
             ${{ runner.os }}-lychee-
       - name: Run lychee
         uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8  # v2.9.0
         with:
-          args: --config .lychee.toml --cache --max-cache-age 3d --cache-exclude-status 300..=599 .
+          args: --config .github/lychee.toml --cache --max-cache-age 3d --cache-exclude-status 300..=599 .
           fail: true
       - name: Save lychee cache
         if: always()
@@ -113,6 +113,8 @@ jobs:
           persist-credentials: false
       - name: Run sanitycheck.py
         run: python3 ./internal/tools/sanitycheck.py
+      - name: Check collector config layers keep earlier pipeline components
+        run: python3 ./internal/tools/check_collector_pipelines.py
 
   checklicense:
     name: Check license
@@ -125,9 +127,8 @@ jobs:
       - name: Run checklicense
         run: make checklicense
 
-  # Validates that every fragment in .chloggen/ is well-formed. This does not
-  # require a fragment to be present on a PR; the `Skip Changelog` label is
-  # documented as the convention for when/if presence enforcement is enabled.
+  # Validates that every fragment in .chloggen/ is well-formed. Presence of a
+  # fragment on each PR is enforced separately by changelog.yml.
   changelog:
     name: Changelog
     runs-on: ubuntu-latest
