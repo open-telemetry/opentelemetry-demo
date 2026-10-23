@@ -199,6 +199,8 @@ class RootCauseAnalyzer:
 
         for m in bundle.metrics:
             name_lower = m.metric_name.lower()
+            if name_lower.startswith("outbound_"):
+                continue
             if "error" in name_lower or "fail" in name_lower:
                 error_rate = m.observed_value
             elif "latency" in name_lower or "duration" in name_lower:

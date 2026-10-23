@@ -1,12 +1,13 @@
 """Jaeger v2 telemetry client for retrieving distributed traces and error spans."""
 from __future__ import annotations
 
+import json
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional, Set
 import requests
 
 from .base import TelemetryClient
-from .exceptions import TelemetryError
+from .exceptions import TelemetryError, TelemetryResponseError
 
 
 class JaegerClient(TelemetryClient):
@@ -59,6 +60,7 @@ class JaegerClient(TelemetryClient):
         num_traces: int = 20,
         start_time: Optional[datetime] = None,
         end_time: Optional[datetime] = None,
+        errors_only: bool = False,
     ) -> Dict[str, Any]:
         """Query traces for a specific service in a time window."""
         now = end_time or datetime.now(timezone.utc)
@@ -71,9 +73,16 @@ class JaegerClient(TelemetryClient):
             "query.start_time_min": start.strftime(fmt),
             "query.start_time_max": now.strftime(fmt),
         }
+        if errors_only:
+            params["query.attributes"] = json.dumps({"error": "true"})
 
         try:
             return self._request("GET", "/jaeger/ui/api/v3/traces", params=params)
+        except TelemetryResponseError as e:
+            # Jaeger v3 answers 404 when no trace matches the query.
+            if e.status_code == 404:
+                return {"result": {"resourceSpans": []}}
+            raise
         except TelemetryError:
             # Fallback for standard Jaeger API (start/end in epoch microseconds)
             start_us = int(start.timestamp() * 1_000_000)
@@ -84,19 +93,22 @@ class JaegerClient(TelemetryClient):
                 "start": start_us,
                 "end": end_us,
             }
-            return self._request("GET", "/api/traces", params=fallback_params)
+            if errors_only:
+                fallback_params["tags"] = json.dumps({"error": "true"})
+            return self._request("GET", "/jaeger/ui/api/traces", params=fallback_params)
 
     def get_error_trace_ids(
         self,
         service_name: str,
         lookback_seconds: int = 300,
-        max_traces: int = 20,
+        max_traces: int = 50,
     ) -> List[str]:
         """Extract unique trace IDs that contain error spans for the specified service."""
         raw = self.get_traces(
             service_name=service_name,
             lookback_seconds=lookback_seconds,
             num_traces=max_traces,
+            errors_only=True,
         )
 
         error_trace_ids: Set[str] = set()

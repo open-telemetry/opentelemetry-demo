@@ -171,3 +171,26 @@ def test_jaeger_malformed_json(client, mock_session):
 
     with pytest.raises(TelemetryDataError, match="Malformed JSON"):
         client.get_traces("cart")
+
+
+def test_get_error_trace_ids_requests_error_traces_only(client, mock_session):
+    mock_resp = MagicMock()
+    mock_resp.ok = True
+    mock_resp.json.return_value = {"result": {"resourceSpans": []}}
+    mock_session.request.return_value = mock_resp
+
+    client.get_error_trace_ids("checkout")
+    params = mock_session.request.call_args.kwargs["params"]
+    assert json.loads(params["query.attributes"]) == {"error": "true"}
+    assert params["query.num_traces"] == 50
+
+
+def test_get_error_trace_ids_treats_v3_404_as_no_traces(client, mock_session):
+    not_found = MagicMock()
+    not_found.ok = False
+    not_found.status_code = 404
+    not_found.text = '{"error":{"code":404,"message":"trace not found"}}'
+    mock_session.request.return_value = not_found
+
+    assert client.get_error_trace_ids("cart") == []
+    assert mock_session.request.call_count == 1
