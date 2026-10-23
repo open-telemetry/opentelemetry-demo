@@ -52,7 +52,7 @@ def test_all_healthy():
     stats = [_stats("cart"), _stats("payment")]
     result = check_containers(infos, stats, None, NOW)
     assert result["ok"] is True
-    assert result["summary"] == "All 2 containers healthy."
+    assert result["summary"].startswith("All 2 containers healthy. Busiest: cart")
     assert [e["id"] for e in result["evidence"]] == [
         "container:cart",
         "container:payment",
@@ -82,14 +82,28 @@ def test_high_cpu_is_measured_against_the_cpu_limit():
     unlimited = _inspect("cart")
     stats = [_stats("ad", cpu="48.00%"), _stats("cart", cpu="48.00%")]
     result = check_containers([limited, unlimited], stats, None, NOW)
-    assert result["summary"] == "1 of 2 containers unhealthy: ad (CPU 96% of limit)"
-
-
-def test_high_memory_is_flagged():
-    result = check_containers(
-        [_inspect("cart")], [_stats("cart", mem="95.10%")], None, NOW
+    assert result["summary"].startswith(
+        "1 of 2 containers unhealthy: ad (CPU 96% of limit)."
     )
-    assert "memory 95% of limit" in result["summary"]
+    texts = {e["id"]: e["text"] for e in result["evidence"]}
+    assert "cpu=96.0% of limit" in texts["container:ad"]
+    assert "cpu=48.0% of one core" in texts["container:cart"]
+
+
+def test_busy_container_without_cpu_limit_is_not_flagged():
+    # Live demo: no container has a CPU limit and busy ones use several cores.
+    stats = [_stats("product-catalog", cpu="418.00%")]
+    result = check_containers([_inspect("product-catalog")], stats, None, NOW)
+    assert result["summary"].startswith("All 1 containers healthy.")
+
+
+def test_high_memory_is_reported_but_not_flagged():
+    # Live demo: checkout runs at ~98% of its 20 MiB limit while healthy.
+    result = check_containers(
+        [_inspect("checkout")], [_stats("checkout", mem="98.14%")], None, NOW
+    )
+    assert result["summary"].startswith("All 1 containers healthy.")
+    assert "mem=98.1% of limit" in result["evidence"][0]["text"]
 
 
 def test_recent_restarts_are_flagged_but_old_ones_are_not():
@@ -238,3 +252,19 @@ def test_tool_is_registered_with_optional_service():
     schema = TOOL_SCHEMAS["container_health"]["input_schema"]
     assert "service" in schema["properties"]
     assert schema["required"] == []
+
+
+def test_busiest_healthy_containers_survive_the_evidence_cap():
+    # 25 healthy containers; the busy one sorts last by name but must be shown.
+    names = [f"svc{i:02d}" for i in range(24)] + ["zz-recommendation"]
+    infos = [_inspect(n) for n in names]
+    stats = [_stats(n) for n in names[:-1]] + [
+        _stats("zz-recommendation", mem="97.00%")
+    ]
+    result = check_containers(infos, stats, None, NOW)
+    assert len(result["evidence"]) == 20
+    assert result["evidence"][0]["id"] == "container:zz-recommendation"
+    assert (
+        "Busiest: zz-recommendation cpu=1.5% of one core, mem=97.0% of limit"
+        in (result["summary"])
+    )
