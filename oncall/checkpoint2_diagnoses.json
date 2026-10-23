@@ -147,29 +147,29 @@
         "observation": {
           "tool_name": "deployment_history_inspect",
           "success": true,
-          "summary": "Deployment History for 'cart': Verified repository history on branch 'main'. Latest commit: [ad06a6f9] '[ci] Require a changelog fragment on PRs unless Skip Changelog is set (#4153)' by Shenoy Pratik on 2026-10-22 12:20:43 +0000. No uncommitted code changes detected in service directory.",
+          "summary": "Deployment History for 'cart': Verified repository history on branch 'main'. Latest commit: [321ed975] 'feat(oncall): implement AI on-call engineer for Checkpoints' by natisha19 on 2026-10-23 16:59:25 +0530. No uncommitted code changes detected in service directory.",
           "data": {
             "service_name": "cart",
             "git_deployment_history": {
               "available": true,
               "commits": [
                 {
-                  "hash": "ad06a6f9",
-                  "author": "Shenoy Pratik",
-                  "date": "2026-10-22 12:20:43 +0000",
-                  "message": "[ci] Require a changelog fragment on PRs unless Skip Changelog is set (#4153)"
+                  "hash": "321ed975",
+                  "author": "natisha19",
+                  "date": "2026-10-23 16:59:25 +0530",
+                  "message": "feat(oncall): implement AI on-call engineer for Checkpoints"
                 },
                 {
-                  "hash": "2c4be617",
-                  "author": "Shenoy Pratik",
-                  "date": "2026-10-21 17:33:58 +0000",
-                  "message": "[ci] Check collector config layers keep earlier pipeline components (#4148)"
+                  "hash": "49cba28b",
+                  "author": "Charan-Tej5",
+                  "date": "2026-10-23 16:53:30 +0530",
+                  "message": "feat(platform): oncall skeleton, contracts, ledger, guard, registry, llm client [P1]"
                 },
                 {
-                  "hash": "ba1757b3",
-                  "author": "Himanshu Deshbhratar",
-                  "date": "2026-10-21 05:11:26 +0000",
-                  "message": "[collector] Include prometheus/ad in the full collector config (#4122)"
+                  "hash": "49784906",
+                  "author": "PreethamVJ",
+                  "date": "2026-10-23 16:25:32 +0530",
+                  "message": "feat(platform): dockerfile, compose.oncall layer, healthz, helper scripts [P1]"
                 }
               ]
             },
@@ -179,13 +179,13 @@
           "citations": [
             {
               "source_type": "system_health",
-              "identifier": "git:commit:ad06a6f9",
-              "summary": "Deployment commit ad06a6f9: [ci] Require a changelog fragment on PRs unless Skip Changelog is set  (verified stable deployment)",
+              "identifier": "git:commit:321ed975",
+              "summary": "Deployment commit 321ed975: feat(oncall): implement AI on-call engineer for Checkpoints (verified stable deployment)",
               "evidence_payload": {
-                "hash": "ad06a6f9",
-                "author": "Shenoy Pratik",
-                "date": "2026-10-22 12:20:43 +0000",
-                "message": "[ci] Require a changelog fragment on PRs unless Skip Changelog is set (#4153)"
+                "hash": "321ed975",
+                "author": "natisha19",
+                "date": "2026-10-23 16:59:25 +0530",
+                "message": "feat(oncall): implement AI on-call engineer for Checkpoints"
               }
             }
           ]
@@ -225,13 +225,13 @@
       },
       {
         "source_type": "system_health",
-        "identifier": "git:commit:ad06a6f9",
-        "summary": "Deployment commit ad06a6f9: [ci] Require a changelog fragment on PRs unless Skip Changelog is set  (verified stable deployment)",
+        "identifier": "git:commit:321ed975",
+        "summary": "Deployment commit 321ed975: feat(oncall): implement AI on-call engineer for Checkpoints (verified stable deployment)",
         "evidence_payload": {
-          "hash": "ad06a6f9",
-          "author": "Shenoy Pratik",
-          "date": "2026-10-22 12:20:43 +0000",
-          "message": "[ci] Require a changelog fragment on PRs unless Skip Changelog is set (#4153)"
+          "hash": "321ed975",
+          "author": "natisha19",
+          "date": "2026-10-23 16:59:25 +0530",
+          "message": "feat(oncall): implement AI on-call engineer for Checkpoints"
         }
       }
     ],
@@ -394,29 +394,29 @@
         "observation": {
           "tool_name": "deployment_history_inspect",
           "success": true,
-          "summary": "Deployment History for 'payment': Verified repository history on branch 'main'. Latest commit: [ad06a6f9] '[ci] Require a changelog fragment on PRs unless Skip Changelog is set (#4153)' by Shenoy Pratik on 2026-10-22 12:20:43 +0000. No uncommitted code changes detected in service directory.",
+          "summary": "Deployment History for 'payment': Verified repository history on branch 'main'. Latest commit: [321ed975] 'feat(oncall): implement AI on-call engineer for Checkpoints' by natisha19 on 2026-10-23 16:59:25 +0530. No uncommitted code changes detected in service directory.",
           "data": {
             "service_name": "payment",
             "git_deployment_history": {
               "available": true,
               "commits": [
                 {
-                  "hash": "ad06a6f9",
-                  "author": "Shenoy Pratik",
-                  "date": "2026-10-22 12:20:43 +0000",
-                  "message": "[ci] Require a changelog fragment on PRs unless Skip Changelog is set (#4153)"
+                  "hash": "321ed975",
+                  "author": "natisha19",
+                  "date": "2026-10-23 16:59:25 +0530",
+                  "message": "feat(oncall): implement AI on-call engineer for Checkpoints"
                 },
                 {
-                  "hash": "2c4be617",
-                  "author": "Shenoy Pratik",
-                  "date": "2026-10-21 17:33:58 +0000",
-                  "message": "[ci] Check collector config layers keep earlier pipeline components (#4148)"
+                  "hash": "49cba28b",
+                  "author": "Charan-Tej5",
+                  "date": "2026-10-23 16:53:30 +0530",
+                  "message": "feat(platform): oncall skeleton, contracts, ledger, guard, registry, llm client [P1]"
                 },
                 {
-                  "hash": "ba1757b3",
-                  "author": "Himanshu Deshbhratar",
-                  "date": "2026-10-21 05:11:26 +0000",
-                  "message": "[collector] Include prometheus/ad in the full collector config (#4122)"
+                  "hash": "49784906",
+                  "author": "PreethamVJ",
+                  "date": "2026-10-23 16:25:32 +0530",
+                  "message": "feat(platform): dockerfile, compose.oncall layer, healthz, helper scripts [P1]"
                 }
               ]
             },
@@ -426,13 +426,13 @@
           "citations": [
             {
               "source_type": "system_health",
-              "identifier": "git:commit:ad06a6f9",
-              "summary": "Deployment commit ad06a6f9: [ci] Require a changelog fragment on PRs unless Skip Changelog is set  (verified stable deployment)",
+              "identifier": "git:commit:321ed975",
+              "summary": "Deployment commit 321ed975: feat(oncall): implement AI on-call engineer for Checkpoints (verified stable deployment)",
               "evidence_payload": {
-                "hash": "ad06a6f9",
-                "author": "Shenoy Pratik",
-                "date": "2026-10-22 12:20:43 +0000",
-                "message": "[ci] Require a changelog fragment on PRs unless Skip Changelog is set (#4153)"
+                "hash": "321ed975",
+                "author": "natisha19",
+                "date": "2026-10-23 16:59:25 +0530",
+                "message": "feat(oncall): implement AI on-call engineer for Checkpoints"
               }
             }
           ]
@@ -473,13 +473,13 @@
       },
       {
         "source_type": "system_health",
-        "identifier": "git:commit:ad06a6f9",
-        "summary": "Deployment commit ad06a6f9: [ci] Require a changelog fragment on PRs unless Skip Changelog is set  (verified stable deployment)",
+        "identifier": "git:commit:321ed975",
+        "summary": "Deployment commit 321ed975: feat(oncall): implement AI on-call engineer for Checkpoints (verified stable deployment)",
         "evidence_payload": {
-          "hash": "ad06a6f9",
-          "author": "Shenoy Pratik",
-          "date": "2026-10-22 12:20:43 +0000",
-          "message": "[ci] Require a changelog fragment on PRs unless Skip Changelog is set (#4153)"
+          "hash": "321ed975",
+          "author": "natisha19",
+          "date": "2026-10-23 16:59:25 +0530",
+          "message": "feat(oncall): implement AI on-call engineer for Checkpoints"
         }
       }
     ],
@@ -636,29 +636,29 @@
         "observation": {
           "tool_name": "deployment_history_inspect",
           "success": true,
-          "summary": "Deployment History for 'ad': Verified repository history on branch 'main'. Latest commit: [ad06a6f9] '[ci] Require a changelog fragment on PRs unless Skip Changelog is set (#4153)' by Shenoy Pratik on 2026-10-22 12:20:43 +0000. No uncommitted code changes detected in service directory.",
+          "summary": "Deployment History for 'ad': Verified repository history on branch 'main'. Latest commit: [321ed975] 'feat(oncall): implement AI on-call engineer for Checkpoints' by natisha19 on 2026-10-23 16:59:25 +0530. No uncommitted code changes detected in service directory.",
           "data": {
             "service_name": "ad",
             "git_deployment_history": {
               "available": true,
               "commits": [
                 {
-                  "hash": "ad06a6f9",
-                  "author": "Shenoy Pratik",
-                  "date": "2026-10-22 12:20:43 +0000",
-                  "message": "[ci] Require a changelog fragment on PRs unless Skip Changelog is set (#4153)"
+                  "hash": "321ed975",
+                  "author": "natisha19",
+                  "date": "2026-10-23 16:59:25 +0530",
+                  "message": "feat(oncall): implement AI on-call engineer for Checkpoints"
                 },
                 {
-                  "hash": "2c4be617",
-                  "author": "Shenoy Pratik",
-                  "date": "2026-10-21 17:33:58 +0000",
-                  "message": "[ci] Check collector config layers keep earlier pipeline components (#4148)"
+                  "hash": "49cba28b",
+                  "author": "Charan-Tej5",
+                  "date": "2026-10-23 16:53:30 +0530",
+                  "message": "feat(platform): oncall skeleton, contracts, ledger, guard, registry, llm client [P1]"
                 },
                 {
-                  "hash": "ba1757b3",
-                  "author": "Himanshu Deshbhratar",
-                  "date": "2026-10-21 05:11:26 +0000",
-                  "message": "[collector] Include prometheus/ad in the full collector config (#4122)"
+                  "hash": "49784906",
+                  "author": "PreethamVJ",
+                  "date": "2026-10-23 16:25:32 +0530",
+                  "message": "feat(platform): dockerfile, compose.oncall layer, healthz, helper scripts [P1]"
                 }
               ]
             },
@@ -668,13 +668,13 @@
           "citations": [
             {
               "source_type": "system_health",
-              "identifier": "git:commit:ad06a6f9",
-              "summary": "Deployment commit ad06a6f9: [ci] Require a changelog fragment on PRs unless Skip Changelog is set  (verified stable deployment)",
+              "identifier": "git:commit:321ed975",
+              "summary": "Deployment commit 321ed975: feat(oncall): implement AI on-call engineer for Checkpoints (verified stable deployment)",
               "evidence_payload": {
-                "hash": "ad06a6f9",
-                "author": "Shenoy Pratik",
-                "date": "2026-10-22 12:20:43 +0000",
-                "message": "[ci] Require a changelog fragment on PRs unless Skip Changelog is set (#4153)"
+                "hash": "321ed975",
+                "author": "natisha19",
+                "date": "2026-10-23 16:59:25 +0530",
+                "message": "feat(oncall): implement AI on-call engineer for Checkpoints"
               }
             }
           ]
@@ -714,13 +714,13 @@
       },
       {
         "source_type": "system_health",
-        "identifier": "git:commit:ad06a6f9",
-        "summary": "Deployment commit ad06a6f9: [ci] Require a changelog fragment on PRs unless Skip Changelog is set  (verified stable deployment)",
+        "identifier": "git:commit:321ed975",
+        "summary": "Deployment commit 321ed975: feat(oncall): implement AI on-call engineer for Checkpoints (verified stable deployment)",
         "evidence_payload": {
-          "hash": "ad06a6f9",
-          "author": "Shenoy Pratik",
-          "date": "2026-10-22 12:20:43 +0000",
-          "message": "[ci] Require a changelog fragment on PRs unless Skip Changelog is set (#4153)"
+          "hash": "321ed975",
+          "author": "natisha19",
+          "date": "2026-10-23 16:59:25 +0530",
+          "message": "feat(oncall): implement AI on-call engineer for Checkpoints"
         }
       }
     ],

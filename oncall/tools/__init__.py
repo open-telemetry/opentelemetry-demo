@@ -1,8 +1,16 @@
-<<<<<<< HEAD
+# Copyright The OpenTelemetry Authors / Bosch Incident Zero Hackathon
+# SPDX-License-Identifier: Apache-2.0
+
 from __future__ import annotations
 
 import importlib
 import logging
+
+try:
+    from oncall.tools.registry import REGISTRY, tool
+except ImportError:
+    REGISTRY = None
+    tool = None
 
 
 def load_all() -> None:
@@ -16,22 +24,17 @@ def load_all() -> None:
                 raise
 
 
-from oncall.tools.registry import REGISTRY, tool
-
-__all__ = ["REGISTRY", "load_all", "tool"]
-=======
-# Copyright The OpenTelemetry Authors / Bosch Incident Zero Hackathon
-# SPDX-License-Identifier: Apache-2.0
-
 from oncall.tools.prometheus import PrometheusTool
 from oncall.tools.jaeger import JaegerTool
 from oncall.tools.opensearch import OpenSearchTool
 from oncall.tools.deployment_history import DeploymentHistoryTool
 
 __all__ = [
+    "REGISTRY",
+    "load_all",
+    "tool",
     "PrometheusTool",
     "JaegerTool",
     "OpenSearchTool",
     "DeploymentHistoryTool",
 ]
->>>>>>> 8610c2fb (feat(oncall): implement AI on-call engineer for Checkpoints)
