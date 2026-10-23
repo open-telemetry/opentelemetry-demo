@@ -1,0 +1,1154 @@
+[
+  {
+    "id": "C1",
+    "tool": "container_health",
+    "arguments": {},
+    "query": [
+      "docker ps -a -q --filter label=com.docker.compose.project=opentelemetry-demo",
+      "docker inspect <ids of the project's containers>",
+      "docker stats --no-stream --format '{{json .}}' <running containers>"
+    ],
+    "window": {
+      "at": "2026-10-23T18:02:10+00:00"
+    },
+    "timestamp": "2026-10-23T18:02:14+00:00",
+    "result": {
+      "tool": "container_health",
+      "state": "data",
+      "query": [
+        "docker ps -a -q --filter label=com.docker.compose.project=opentelemetry-demo",
+        "docker inspect <ids of the project's containers>",
+        "docker stats --no-stream --format '{{json .}}' <running containers>"
+      ],
+      "window": {
+        "at": "2026-10-23T18:02:10+00:00"
+      },
+      "items": [
+        {
+          "name": "accounting",
+          "compose_service": "accounting",
+          "status": "running",
+          "health": "none",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:35.339264926Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.06,
+          "memory_percent": 90.86
+        },
+        {
+          "name": "ad",
+          "compose_service": "ad",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:13.384597035Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.56,
+          "memory_percent": 85.18
+        },
+        {
+          "name": "astronomy-db",
+          "compose_service": "astronomy-db",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:31:52.307773665Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 14.63,
+          "memory_percent": 71.71
+        },
+        {
+          "name": "cart",
+          "compose_service": "cart",
+          "status": "running",
+          "health": "none",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:24.32887207Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.36,
+          "memory_percent": 54.69
+        },
+        {
+          "name": "checkout",
+          "compose_service": "checkout",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:35.770141378Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.64,
+          "memory_percent": 54.55
+        },
+        {
+          "name": "currency",
+          "compose_service": "currency",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:17.239847335Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.4,
+          "memory_percent": 47.09
+        },
+        {
+          "name": "email",
+          "compose_service": "email",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:21.452497742Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.04,
+          "memory_percent": 76.06
+        },
+        {
+          "name": "fraud-detection",
+          "compose_service": "fraud-detection",
+          "status": "running",
+          "health": "none",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:35.062647075Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.43,
+          "memory_percent": 80.77
+        },
+        {
+          "name": "frontend",
+          "compose_service": "frontend",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:37.699942077Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 4.03,
+          "memory_percent": 71.15
+        },
+        {
+          "name": "frontend-proxy",
+          "compose_service": "frontend-proxy",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:44.63471057Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 3.01,
+          "memory_percent": 58.77
+        },
+        {
+          "name": "grafana",
+          "compose_service": "grafana",
+          "status": "running",
+          "health": "none",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:31:53.168708761Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 1.22,
+          "memory_percent": 57.57
+        },
+        {
+          "name": "image-provider",
+          "compose_service": "image-provider",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:19.766386602Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 3.72,
+          "memory_percent": 12.69
+        },
+        {
+          "name": "jaeger",
+          "compose_service": "jaeger",
+          "status": "running",
+          "health": "none",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:31:54.736604026Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.75,
+          "memory_percent": 35.42
+        },
+        {
+          "name": "kafka",
+          "compose_service": "kafka",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:31:55.316614245Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 4.55,
+          "memory_percent": 93.51
+        },
+        {
+          "name": "load-generator",
+          "compose_service": "load-generator",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:43.689201828Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 43.99,
+          "memory_percent": 58.11
+        },
+        {
+          "name": "opamp-server",
+          "compose_service": "opamp-server",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:31:54.169370044Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.0,
+          "memory_percent": 22.82
+        },
+        {
+          "name": "opensearch",
+          "compose_service": "opensearch",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:31:51.932163844Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 7.69,
+          "memory_percent": 85.31
+        },
+        {
+          "name": "otel-collector",
+          "compose_service": "otel-collector",
+          "status": "running",
+          "health": "none",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:13.03045509Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 5.55,
+          "memory_percent": 32.52
+        },
+        {
+          "name": "payment",
+          "compose_service": "payment",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:13.677244838Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.63,
+          "memory_percent": 72.59
+        },
+        {
+          "name": "product-catalog",
+          "compose_service": "product-catalog",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:22.178192128Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 116.54,
+          "memory_percent": 68.81
+        },
+        {
+          "name": "prometheus",
+          "compose_service": "prometheus",
+          "status": "running",
+          "health": "none",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:31:51.049711831Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.68,
+          "memory_percent": 48.23
+        },
+        {
+          "name": "quote",
+          "compose_service": "quote",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:15.07113995Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.34,
+          "memory_percent": 79.83
+        },
+        {
+          "name": "recommendation",
+          "compose_service": "recommendation",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:23.140560142Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 3.73,
+          "memory_percent": 45.94
+        },
+        {
+          "name": "shipping",
+          "compose_service": "shipping",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:14.077738767Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.39,
+          "memory_percent": 60.8
+        },
+        {
+          "name": "telemetry-docs",
+          "compose_service": "telemetry-docs",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:31:52.752027952Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.04,
+          "memory_percent": 5.97
+        },
+        {
+          "name": "valkey-cart",
+          "compose_service": "valkey-cart",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T17:39:58.234549807Z",
+          "finished_at": "2026-10-23T17:37:08.832933051Z",
+          "cpu_percent": 0.3,
+          "memory_percent": 33.54
+        }
+      ],
+      "total_items": 26,
+      "extra": {
+        "summary": {
+          "total": 26,
+          "running": 26,
+          "not_running": [],
+          "unhealthy": [],
+          "restarted": [],
+          "oom_killed": []
+        }
+      },
+      "notes": [],
+      "error": null
+    }
+  },
+  {
+    "id": "M1",
+    "tool": "query_metrics",
+    "arguments": {
+      "window_minutes": 5,
+      "top_n": 10
+    },
+    "query": [
+      "sum by (service_name) (rate(traces_span_metrics_calls_total{span_kind=~\"SPAN_KIND_SERVER|SPAN_KIND_CONSUMER\"}[5m]))",
+      "sum by (service_name) (rate(traces_span_metrics_calls_total{span_kind=~\"SPAN_KIND_SERVER|SPAN_KIND_CONSUMER\",status_code=\"STATUS_CODE_ERROR\"}[5m]))",
+      "histogram_quantile(0.95, sum by (service_name, le) (rate(traces_span_metrics_duration_milliseconds_bucket{span_kind=~\"SPAN_KIND_SERVER|SPAN_KIND_CONSUMER\"}[5m])))",
+      "sum by (service_name, span_name, span_kind) (rate(traces_span_metrics_calls_total{status_code=\"STATUS_CODE_ERROR\"}[5m]))",
+      "container_memory_percent_ratio and on (container_name) (time() - timestamp(container_memory_percent_ratio) < 120)",
+      "kafka_consumer_group_lag_sum_ratio"
+    ],
+    "window": {
+      "minutes": 5,
+      "start": "2026-10-23T17:57:13+00:00",
+      "end": "2026-10-23T18:02:13+00:00"
+    },
+    "timestamp": "2026-10-23T18:02:14+00:00",
+    "result": {
+      "tool": "query_metrics",
+      "state": "data",
+      "query": [
+        "sum by (service_name) (rate(traces_span_metrics_calls_total{span_kind=~\"SPAN_KIND_SERVER|SPAN_KIND_CONSUMER\"}[5m]))",
+        "sum by (service_name) (rate(traces_span_metrics_calls_total{span_kind=~\"SPAN_KIND_SERVER|SPAN_KIND_CONSUMER\",status_code=\"STATUS_CODE_ERROR\"}[5m]))",
+        "histogram_quantile(0.95, sum by (service_name, le) (rate(traces_span_metrics_duration_milliseconds_bucket{span_kind=~\"SPAN_KIND_SERVER|SPAN_KIND_CONSUMER\"}[5m])))",
+        "sum by (service_name, span_name, span_kind) (rate(traces_span_metrics_calls_total{status_code=\"STATUS_CODE_ERROR\"}[5m]))",
+        "container_memory_percent_ratio and on (container_name) (time() - timestamp(container_memory_percent_ratio) < 120)",
+        "kafka_consumer_group_lag_sum_ratio"
+      ],
+      "window": {
+        "minutes": 5,
+        "start": "2026-10-23T17:57:13+00:00",
+        "end": "2026-10-23T18:02:13+00:00"
+      },
+      "items": [
+        {
+          "service": "checkout",
+          "request_rate_per_s": 0.036,
+          "error_rate_per_s": 0.0361,
+          "error_rate_pct": 100.0,
+          "p95_ms": 1760.0,
+          "top_error_spans": [
+            {
+              "span_name": "oteldemo.PaymentService/Charge",
+              "span_kind": "client",
+              "error_rate_per_s": 0.0361
+            },
+            {
+              "span_name": "oteldemo.CheckoutService/PlaceOrder",
+              "span_kind": "server",
+              "error_rate_per_s": 0.0361
+            }
+          ]
+        },
+        {
+          "service": "payment",
+          "request_rate_per_s": 0.036,
+          "error_rate_per_s": 0.0361,
+          "error_rate_pct": 100.0,
+          "p95_ms": 1.9,
+          "top_error_spans": [
+            {
+              "span_name": "oteldemo.PaymentService/Charge",
+              "span_kind": "server",
+              "error_rate_per_s": 0.0361
+            },
+            {
+              "span_name": "charge",
+              "span_kind": "internal",
+              "error_rate_per_s": 0.0361
+            }
+          ]
+        },
+        {
+          "service": "product-catalog",
+          "request_rate_per_s": 5.268,
+          "error_rate_per_s": 0.0,
+          "error_rate_pct": 0.0,
+          "p95_ms": 1014.7
+        },
+        {
+          "service": "frontend",
+          "request_rate_per_s": 14.256,
+          "error_rate_per_s": 0.0,
+          "error_rate_pct": 0.0,
+          "p95_ms": 947.2
+        },
+        {
+          "service": "frontend-proxy",
+          "request_rate_per_s": 13.999,
+          "error_rate_per_s": 0.0,
+          "error_rate_pct": 0.0,
+          "p95_ms": 805.8
+        },
+        {
+          "service": "recommendation",
+          "request_rate_per_s": 0.862,
+          "error_rate_per_s": 0.0,
+          "error_rate_pct": 0.0,
+          "p95_ms": 707.5
+        },
+        {
+          "service": "shipping",
+          "request_rate_per_s": 0.163,
+          "error_rate_per_s": 0.0,
+          "error_rate_pct": 0.0,
+          "p95_ms": 18.0
+        },
+        {
+          "service": "ad",
+          "request_rate_per_s": 0.289,
+          "error_rate_per_s": 0.0,
+          "error_rate_pct": 0.0,
+          "p95_ms": 4.4
+        },
+        {
+          "service": "cart",
+          "request_rate_per_s": 1.476,
+          "error_rate_per_s": 0.0,
+          "error_rate_pct": 0.0,
+          "p95_ms": 4.0
+        },
+        {
+          "service": "currency",
+          "request_rate_per_s": 1.178,
+          "error_rate_per_s": 0.0,
+          "error_rate_pct": 0.0,
+          "p95_ms": 1.9
+        }
+      ],
+      "total_items": 16,
+      "extra": {
+        "top_error_spans": [
+          {
+            "service": "load-generator",
+            "span_name": "POST",
+            "span_kind": "client",
+            "error_rate_per_s": 0.1038
+          },
+          {
+            "service": "frontend-proxy",
+            "span_name": "router frontend egress",
+            "span_kind": "client",
+            "error_rate_per_s": 0.0361
+          },
+          {
+            "service": "checkout",
+            "span_name": "oteldemo.PaymentService/Charge",
+            "span_kind": "client",
+            "error_rate_per_s": 0.0361
+          },
+          {
+            "service": "checkout",
+            "span_name": "oteldemo.CheckoutService/PlaceOrder",
+            "span_kind": "server",
+            "error_rate_per_s": 0.0361
+          },
+          {
+            "service": "frontend",
+            "span_name": "executing api route (pages) /api/checkout",
+            "span_kind": "internal",
+            "error_rate_per_s": 0.0361
+          },
+          {
+            "service": "frontend",
+            "span_name": "oteldemo.CheckoutService/PlaceOrder",
+            "span_kind": "client",
+            "error_rate_per_s": 0.0361
+          },
+          {
+            "service": "payment",
+            "span_name": "oteldemo.PaymentService/Charge",
+            "span_kind": "server",
+            "error_rate_per_s": 0.0361
+          },
+          {
+            "service": "payment",
+            "span_name": "charge",
+            "span_kind": "internal",
+            "error_rate_per_s": 0.0361
+          }
+        ],
+        "container_memory_percent": [
+          {
+            "container": "kafka",
+            "memory_percent": 93.5
+          },
+          {
+            "container": "accounting",
+            "memory_percent": 90.9
+          },
+          {
+            "container": "opensearch",
+            "memory_percent": 85.3
+          },
+          {
+            "container": "ad",
+            "memory_percent": 85.2
+          },
+          {
+            "container": "fraud-detection",
+            "memory_percent": 80.8
+          },
+          {
+            "container": "quote",
+            "memory_percent": 79.8
+          },
+          {
+            "container": "email",
+            "memory_percent": 75.9
+          },
+          {
+            "container": "payment",
+            "memory_percent": 72.6
+          },
+          {
+            "container": "astronomy-db",
+            "memory_percent": 71.9
+          },
+          {
+            "container": "frontend",
+            "memory_percent": 71.1
+          }
+        ],
+        "kafka_consumer_lag": [
+          {
+            "group": "accounting",
+            "topic": "orders",
+            "lag_messages": 185.0
+          },
+          {
+            "group": "fraud-detection",
+            "topic": "orders",
+            "lag_messages": 0.0
+          }
+        ]
+      },
+      "notes": [
+        "service rates count SERVER and CONSUMER spans only; top_error_spans covers all span kinds",
+        "container memory comes from collector metrics and can lag; container_health is authoritative"
+      ],
+      "error": null
+    }
+  },
+  {
+    "id": "T1",
+    "tool": "query_traces",
+    "arguments": {
+      "window_minutes": 5
+    },
+    "query": [
+      "GET /api/v3/traces?query.start_time_min=2026-10-23T17%3A57%3A13Z&query.start_time_max=2026-10-23T18%3A02%3A13Z&query.search_depth=50",
+      "GET /api/v3/traces?query.start_time_min=2026-10-23T17%3A57%3A13Z&query.start_time_max=2026-10-23T18%3A02%3A13Z&query.search_depth=50&query.attributes=%7B%22error%22%3A+%22true%22%7D"
+    ],
+    "window": {
+      "minutes": 5,
+      "start": "2026-10-23T17:57:13+00:00",
+      "end": "2026-10-23T18:02:13+00:00"
+    },
+    "timestamp": "2026-10-23T18:02:14+00:00",
+    "result": {
+      "tool": "query_traces",
+      "state": "data",
+      "query": [
+        "GET /api/v3/traces?query.start_time_min=2026-10-23T17%3A57%3A13Z&query.start_time_max=2026-10-23T18%3A02%3A13Z&query.search_depth=50",
+        "GET /api/v3/traces?query.start_time_min=2026-10-23T17%3A57%3A13Z&query.start_time_max=2026-10-23T18%3A02%3A13Z&query.search_depth=50&query.attributes=%7B%22error%22%3A+%22true%22%7D"
+      ],
+      "window": {
+        "minutes": 5,
+        "start": "2026-10-23T17:57:13+00:00",
+        "end": "2026-10-23T18:02:13+00:00"
+      },
+      "items": [
+        {
+          "trace_id": "f5e2c05f2e7a64f0a1fd5663d4aedc8a",
+          "start": "2026-10-23T18:01:50+00:00",
+          "root_service": "load-generator",
+          "root_operation": "user_ask_agent",
+          "duration_ms": 4007.2,
+          "span_count": 2,
+          "error_span_count": 1,
+          "error_spans": [
+            {
+              "service": "load-generator",
+              "span": "POST",
+              "kind": "client",
+              "why": [
+                "status_error",
+                "exception_event(requests.exceptions.ConnectionError)"
+              ],
+              "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent'"
+            }
+          ],
+          "deepest_error": {
+            "service": "load-generator",
+            "span": "POST",
+            "kind": "client",
+            "why": [
+              "status_error",
+              "exception_event(requests.exceptions.ConnectionError)"
+            ],
+            "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent'"
+          }
+        },
+        {
+          "trace_id": "df60c54283e13b0757094707964b0b7c",
+          "start": "2026-10-23T18:02:12+00:00",
+          "root_service": "load-generator",
+          "root_operation": "user_checkout_multi",
+          "duration_ms": 856.9,
+          "span_count": 100,
+          "error_span_count": 8,
+          "error_spans": [
+            {
+              "service": "load-generator",
+              "span": "POST",
+              "kind": "client",
+              "why": [
+                "status_error"
+              ]
+            },
+            {
+              "service": "frontend-proxy",
+              "span": "router frontend egress",
+              "kind": "client",
+              "why": [
+                "status_error"
+              ]
+            },
+            {
+              "service": "frontend",
+              "span": "executing api route (pages) /api/checkout",
+              "kind": "internal",
+              "why": [
+                "status_error",
+                "exception_event(13)"
+              ],
+              "message": "13 INTERNAL: failed to charge card: could not charge the card: rpc error: code = Unknown desc = Payment request failed. Invalid token. demo.user_context.loyalty"
+            },
+            {
+              "service": "frontend",
+              "span": "oteldemo.CheckoutService/PlaceOrder",
+              "kind": "client",
+              "why": [
+                "status_error",
+                "rpc_status=13"
+              ]
+            },
+            {
+              "service": "checkout",
+              "span": "oteldemo.CheckoutService/PlaceOrder",
+              "kind": "server",
+              "why": [
+                "status_error",
+                "exception_event(*errors.errorString)",
+                "rpc_status=INTERNAL"
+              ],
+              "message": "failed to charge card: could not charge the card: rpc error: code = Unknown desc = Payment request failed. Invalid token. demo.user_context.loyalty_level=gold"
+            },
+            {
+              "service": "checkout",
+              "span": "oteldemo.PaymentService/Charge",
+              "kind": "client",
+              "why": [
+                "status_error",
+                "rpc_status=UNKNOWN"
+              ],
+              "message": "Payment request failed. Invalid token. demo.user_context.loyalty_level=gold"
+            }
+          ],
+          "deepest_error": {
+            "service": "payment",
+            "span": "charge",
+            "kind": "internal",
+            "why": [
+              "status_error",
+              "exception_event(Error)",
+              "error.type=Error"
+            ],
+            "message": "Payment request failed. Invalid token. demo.user_context.loyalty_level=gold"
+          }
+        },
+        {
+          "trace_id": "d3fb47bdcf3c4641b18292b2e3ef1b6e",
+          "start": "2026-10-23T17:57:28+00:00",
+          "root_service": "frontend-proxy",
+          "root_operation": "GET",
+          "duration_ms": 22.3,
+          "span_count": 2,
+          "error_span_count": 1,
+          "error_spans": [
+            {
+              "service": "frontend-proxy",
+              "span": "router jaeger egress",
+              "kind": "client",
+              "why": [
+                "status_error"
+              ]
+            }
+          ],
+          "deepest_error": {
+            "service": "frontend-proxy",
+            "span": "router jaeger egress",
+            "kind": "client",
+            "why": [
+              "status_error"
+            ]
+          }
+        },
+        {
+          "trace_id": "3484ac3bd2de4d26f29daea9398792ca",
+          "start": "2026-10-23T18:01:45+00:00",
+          "root_service": "load-generator",
+          "root_operation": "user_ask_agent",
+          "duration_ms": 4008.0,
+          "span_count": 2,
+          "error_span_count": 1,
+          "error_spans": [
+            {
+              "service": "load-generator",
+              "span": "POST",
+              "kind": "client",
+              "why": [
+                "status_error",
+                "exception_event(requests.exceptions.ConnectionError)"
+              ],
+              "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent'"
+            }
+          ],
+          "deepest_error": {
+            "service": "load-generator",
+            "span": "POST",
+            "kind": "client",
+            "why": [
+              "status_error",
+              "exception_event(requests.exceptions.ConnectionError)"
+            ],
+            "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent'"
+          }
+        },
+        {
+          "trace_id": "44676ae049979801da19c5de852f1eba",
+          "start": "2026-10-23T18:02:09+00:00",
+          "root_service": "load-generator",
+          "root_operation": "user_checkout_single",
+          "duration_ms": 963.0,
+          "span_count": 51,
+          "error_span_count": 8,
+          "error_spans": [
+            {
+              "service": "load-generator",
+              "span": "POST",
+              "kind": "client",
+              "why": [
+                "status_error"
+              ]
+            },
+            {
+              "service": "frontend-proxy",
+              "span": "router frontend egress",
+              "kind": "client",
+              "why": [
+                "status_error"
+              ]
+            },
+            {
+              "service": "frontend",
+              "span": "executing api route (pages) /api/checkout",
+              "kind": "internal",
+              "why": [
+                "status_error",
+                "exception_event(13)"
+              ],
+              "message": "13 INTERNAL: failed to charge card: could not charge the card: rpc error: code = Unknown desc = Payment request failed. Invalid token. demo.user_context.loyalty"
+            },
+            {
+              "service": "frontend",
+              "span": "oteldemo.CheckoutService/PlaceOrder",
+              "kind": "client",
+              "why": [
+                "status_error",
+                "rpc_status=13"
+              ]
+            },
+            {
+              "service": "checkout",
+              "span": "oteldemo.CheckoutService/PlaceOrder",
+              "kind": "server",
+              "why": [
+                "status_error",
+                "exception_event(*errors.errorString)",
+                "rpc_status=INTERNAL"
+              ],
+              "message": "failed to charge card: could not charge the card: rpc error: code = Unknown desc = Payment request failed. Invalid token. demo.user_context.loyalty_level=gold"
+            },
+            {
+              "service": "checkout",
+              "span": "oteldemo.PaymentService/Charge",
+              "kind": "client",
+              "why": [
+                "status_error",
+                "rpc_status=UNKNOWN"
+              ],
+              "message": "Payment request failed. Invalid token. demo.user_context.loyalty_level=gold"
+            }
+          ],
+          "deepest_error": {
+            "service": "payment",
+            "span": "charge",
+            "kind": "internal",
+            "why": [
+              "status_error",
+              "exception_event(Error)",
+              "error.type=Error"
+            ],
+            "message": "Payment request failed. Invalid token. demo.user_context.loyalty_level=gold"
+          }
+        }
+      ],
+      "total_items": 34,
+      "extra": {
+        "error_groups": [
+          {
+            "deepest_service": "load-generator",
+            "deepest_span": "POST",
+            "kind": "client",
+            "why": [
+              "status_error",
+              "exception_event(requests.exceptions.ConnectionError)"
+            ],
+            "traces": 19,
+            "example_trace_id": "f5e2c05f2e7a64f0a1fd5663d4aedc8a",
+            "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent'"
+          },
+          {
+            "deepest_service": "payment",
+            "deepest_span": "charge",
+            "kind": "internal",
+            "why": [
+              "status_error",
+              "exception_event(Error)",
+              "error.type=Error"
+            ],
+            "traces": 14,
+            "example_trace_id": "df60c54283e13b0757094707964b0b7c",
+            "message": "Payment request failed. Invalid token. demo.user_context.loyalty_level=gold"
+          },
+          {
+            "deepest_service": "frontend-proxy",
+            "deepest_span": "router jaeger egress",
+            "kind": "client",
+            "why": [
+              "status_error"
+            ],
+            "traces": 1,
+            "example_trace_id": "d3fb47bdcf3c4641b18292b2e3ef1b6e"
+          }
+        ]
+      },
+      "notes": [
+        "ranked among the 84 most recent traces sampled",
+        "a span counts as erroring on status ERROR, an exception event, an error attribute, a non-OK RPC status or HTTP 5xx; see `why`. A failing dependency is not always marked as an error",
+        "388 items removed by sanitiser"
+      ],
+      "error": null
+    }
+  },
+  {
+    "id": "L1",
+    "tool": "query_logs",
+    "arguments": {
+      "window_minutes": 5
+    },
+    "query": [
+      "POST /otel-logs-*/_search {'size': 1000, 'track_total_hits': True, 'sort': [{'observedTimestamp': 'desc'}], '_source': ['body', 'severity.text', 'observedTimestamp', 'resource.service.name', 'traceId', 'spanId'], 'query': {'bool': {'filter': [{'range': {'observedTimestamp': {'gte': '2026-10-23T17:57:13+00:00', 'lte': '2026-10-23T18:02:13+00:00'}}}, {'bool': {'minimum_should_match': 1, 'should': [{'terms': {'severity.text': ['error', 'err', 'fatal', 'critical', 'crit', 'severe', 'emergency', 'alert']}}, {'match': {'body': {'query': 'exception failed failure fatal panic unhandled refused unavailable timeout traceback', 'operator': 'or'}}}]}}], 'must_not': [{'terms': {'resource.service.name.keyword': '<services excluded by the sanitiser>'}}]}}}"
+    ],
+    "window": {
+      "minutes": 5,
+      "start": "2026-10-23T17:57:13+00:00",
+      "end": "2026-10-23T18:02:13+00:00"
+    },
+    "timestamp": "2026-10-23T18:02:14+00:00",
+    "result": {
+      "tool": "query_logs",
+      "state": "data",
+      "query": [
+        "POST /otel-logs-*/_search {'size': 1000, 'track_total_hits': True, 'sort': [{'observedTimestamp': 'desc'}], '_source': ['body', 'severity.text', 'observedTimestamp', 'resource.service.name', 'traceId', 'spanId'], 'query': {'bool': {'filter': [{'range': {'observedTimestamp': {'gte': '2026-10-23T17:57:13+00:00', 'lte': '2026-10-23T18:02:13+00:00'}}}, {'bool': {'minimum_should_match': 1, 'should': [{'terms': {'severity.text': ['error', 'err', 'fatal', 'critical', 'crit', 'severe', 'emergency', 'alert']}}, {'match': {'body': {'query': 'exception failed failure fatal panic unhandled refused unavailable timeout traceback', 'operator': 'or'}}}]}}], 'must_not': [{'terms': {'resource.service.name.keyword': '<services excluded by the sanitiser>'}}]}}}"
+      ],
+      "window": {
+        "minutes": 5,
+        "start": "2026-10-23T17:57:13+00:00",
+        "end": "2026-10-23T18:02:13+00:00"
+      },
+      "items": [
+        {
+          "service": "payment",
+          "level": "warn",
+          "count": 13,
+          "first_seen": "2026-10-23T17:57:28.388Z",
+          "last_seen": "2026-10-23T18:02:11.584Z",
+          "sample_trace_id": "44676ae049979801da19c5de852f1eba",
+          "message": "Payment request failed. Invalid token. demo.user_context.loyalty_level=gold"
+        },
+        {
+          "service": "otelcol-contrib",
+          "level": "error",
+          "count": 12,
+          "first_seen": "2026-10-23T17:57:16.152Z",
+          "last_seen": "2026-10-23T18:01:53.149Z",
+          "message": "Error scraping metrics"
+        },
+        {
+          "service": "otelcol-contrib",
+          "level": "error",
+          "count": 6,
+          "first_seen": "2026-10-23T17:57:13.121Z",
+          "last_seen": "2026-10-23T18:01:50.259Z",
+          "message": "Exporting failed. Dropping data."
+        }
+      ],
+      "total_items": 3,
+      "extra": {},
+      "notes": [
+        "error lines = level error/fatal/critical-like, or text that is clearly an error whatever its level",
+        "counts cover the newest 31 of 31 matching lines",
+        "lines are grouped by (service, exact message); `message` is the stored text, unaltered",
+        "0 items removed by sanitiser"
+      ],
+      "error": null
+    }
+  },
+  {
+    "id": "D1",
+    "tool": "deploy_history",
+    "arguments": {},
+    "query": [
+      "docker ps -a -q --filter label=com.docker.compose.project=opentelemetry-demo",
+      "docker inspect <ids of the project's containers>"
+    ],
+    "window": {
+      "at": "2026-10-23T18:02:13+00:00"
+    },
+    "timestamp": "2026-10-23T18:02:14+00:00",
+    "result": {
+      "tool": "deploy_history",
+      "state": "data",
+      "query": [
+        "docker ps -a -q --filter label=com.docker.compose.project=opentelemetry-demo",
+        "docker inspect <ids of the project's containers>"
+      ],
+      "window": {
+        "at": "2026-10-23T18:02:13+00:00"
+      },
+      "items": [
+        {
+          "name": "valkey-cart",
+          "status": "running",
+          "started_at": "2026-10-23T17:39:58+00:00",
+          "age_seconds": 1335,
+          "restart_count": 0,
+          "restarted_recently": true
+        },
+        {
+          "name": "frontend-proxy",
+          "status": "running",
+          "started_at": "2026-10-23T15:32:44+00:00",
+          "age_seconds": 8969,
+          "restart_count": 0,
+          "restarted_recently": false
+        },
+        {
+          "name": "load-generator",
+          "status": "running",
+          "started_at": "2026-10-23T15:32:43+00:00",
+          "age_seconds": 8970,
+          "restart_count": 0,
+          "restarted_recently": false
+        },
+        {
+          "name": "frontend",
+          "status": "running",
+          "started_at": "2026-10-23T15:32:37+00:00",
+          "age_seconds": 8976,
+          "restart_count": 0,
+          "restarted_recently": false
+        },
+        {
+          "name": "checkout",
+          "status": "running",
+          "started_at": "2026-10-23T15:32:35+00:00",
+          "age_seconds": 8978,
+          "restart_count": 0,
+          "restarted_recently": false
+        },
+        {
+          "name": "fraud-detection",
+          "status": "running",
+          "started_at": "2026-10-23T15:32:35+00:00",
+          "age_seconds": 8978,
+          "restart_count": 0,
+          "restarted_recently": false
+        },
+        {
+          "name": "accounting",
+          "status": "running",
+          "started_at": "2026-10-23T15:32:35+00:00",
+          "age_seconds": 8978,
+          "restart_count": 0,
+          "restarted_recently": false
+        },
+        {
+          "name": "cart",
+          "status": "running",
+          "started_at": "2026-10-23T15:32:24+00:00",
+          "age_seconds": 8989,
+          "restart_count": 0,
+          "restarted_recently": false
+        },
+        {
+          "name": "recommendation",
+          "status": "running",
+          "started_at": "2026-10-23T15:32:23+00:00",
+          "age_seconds": 8990,
+          "restart_count": 0,
+          "restarted_recently": false
+        },
+        {
+          "name": "product-catalog",
+          "status": "running",
+          "started_at": "2026-10-23T15:32:22+00:00",
+          "age_seconds": 8991,
+          "restart_count": 0,
+          "restarted_recently": false
+        },
+        {
+          "name": "email",
+          "status": "running",
+          "started_at": "2026-10-23T15:32:21+00:00",
+          "age_seconds": 8992,
+          "restart_count": 0,
+          "restarted_recently": false
+        },
+        {
+          "name": "image-provider",
+          "status": "running",
+          "started_at": "2026-10-23T15:32:19+00:00",
+          "age_seconds": 8994,
+          "restart_count": 0,
+          "restarted_recently": false
+        }
+      ],
+      "total_items": 26,
+      "extra": {
+        "summary": {
+          "total": 26,
+          "restarted_recently": [
+            "valkey-cart"
+          ],
+          "median_age_seconds": 8997,
+          "newest_start": "2026-10-23T17:39:58+00:00"
+        }
+      },
+      "notes": [
+        "a deploy here means a container start or recreate; `restarted_recently` = restart count above 0, or started more than 300s after the median container",
+        "`make start --force-recreate` makes every container look recently started; then only restart_count and the spread of start times mean anything",
+        "2 items removed by sanitiser"
+      ],
+      "error": null
+    }
+  }
+]

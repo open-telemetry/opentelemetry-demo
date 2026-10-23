@@ -19,3 +19,7 @@ must never read this file.
 | 2026-10-23T17:39:57+00:00 | reset | cache-unavailable | container | valkey-cart | - | verified | container valkey-cart: exited -> running and healthy (docker start valkey-cart) |
 | 2026-10-23T17:42:05+00:00 | inject | payment-failure | flag | paymentFailure | 100% | verified | flag paymentFailure: 'off' -> '100%' (read all, change only this flag, write all, re-read) |
 | 2026-10-23T17:43:50+00:00 | reset | payment-failure | flag | paymentFailure | off | verified | flag paymentFailure: '100%' -> 'off' (read all, change only this flag, write all, re-read) |
+| 2026-10-23T17:56:34+00:00 | inject | payment-failure | flag | paymentFailure | 100% | verified | flag paymentFailure: 'off' -> '100%' (read all, change only this flag, write all, re-read) |
+| 2026-10-23T18:02:48+00:00 | reset | payment-failure | flag | paymentFailure | off | verified | flag paymentFailure: '100%' -> 'off' (read all, change only this flag, write all, re-read) |
+| 2026-10-23T18:02:51+00:00 | inject | cache-unavailable | container | valkey-cart | - | verified | container valkey-cart: running -> stopped (docker stop valkey-cart) |
+| 2026-10-23T18:05:49+00:00 | reset | cache-unavailable | container | valkey-cart | - | verified | container valkey-cart: exited -> running and healthy (docker start valkey-cart) |

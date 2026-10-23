@@ -1,0 +1,1133 @@
+[
+  {
+    "id": "C1",
+    "tool": "container_health",
+    "arguments": {},
+    "query": [
+      "docker ps -a -q --filter label=com.docker.compose.project=opentelemetry-demo",
+      "docker inspect <ids of the project's containers>",
+      "docker stats --no-stream --format '{{json .}}' <running containers>"
+    ],
+    "window": {
+      "at": "2026-10-23T18:04:51+00:00"
+    },
+    "timestamp": "2026-10-23T18:04:55+00:00",
+    "result": {
+      "tool": "container_health",
+      "state": "data",
+      "query": [
+        "docker ps -a -q --filter label=com.docker.compose.project=opentelemetry-demo",
+        "docker inspect <ids of the project's containers>",
+        "docker stats --no-stream --format '{{json .}}' <running containers>"
+      ],
+      "window": {
+        "at": "2026-10-23T18:04:51+00:00"
+      },
+      "items": [
+        {
+          "name": "valkey-cart",
+          "compose_service": "valkey-cart",
+          "status": "exited",
+          "health": "unhealthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T17:39:58.234549807Z",
+          "finished_at": "2026-10-23T18:02:51.778799872Z"
+        },
+        {
+          "name": "accounting",
+          "compose_service": "accounting",
+          "status": "running",
+          "health": "none",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:35.339264926Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.28,
+          "memory_percent": 90.86
+        },
+        {
+          "name": "ad",
+          "compose_service": "ad",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:13.384597035Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.29,
+          "memory_percent": 84.52
+        },
+        {
+          "name": "astronomy-db",
+          "compose_service": "astronomy-db",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:31:52.307773665Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.0,
+          "memory_percent": 71.93
+        },
+        {
+          "name": "cart",
+          "compose_service": "cart",
+          "status": "running",
+          "health": "none",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:24.32887207Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.25,
+          "memory_percent": 59.01
+        },
+        {
+          "name": "checkout",
+          "compose_service": "checkout",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:35.770141378Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 1.86,
+          "memory_percent": 54.39
+        },
+        {
+          "name": "currency",
+          "compose_service": "currency",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:17.239847335Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.16,
+          "memory_percent": 46.99
+        },
+        {
+          "name": "email",
+          "compose_service": "email",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:21.452497742Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.03,
+          "memory_percent": 78.55
+        },
+        {
+          "name": "fraud-detection",
+          "compose_service": "fraud-detection",
+          "status": "running",
+          "health": "none",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:35.062647075Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.41,
+          "memory_percent": 80.69
+        },
+        {
+          "name": "frontend",
+          "compose_service": "frontend",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:37.699942077Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 28.74,
+          "memory_percent": 71.25
+        },
+        {
+          "name": "frontend-proxy",
+          "compose_service": "frontend-proxy",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:44.63471057Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 1.27,
+          "memory_percent": 58.81
+        },
+        {
+          "name": "grafana",
+          "compose_service": "grafana",
+          "status": "running",
+          "health": "none",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:31:53.168708761Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 1.0,
+          "memory_percent": 57.4
+        },
+        {
+          "name": "image-provider",
+          "compose_service": "image-provider",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:19.766386602Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.11,
+          "memory_percent": 12.7
+        },
+        {
+          "name": "jaeger",
+          "compose_service": "jaeger",
+          "status": "running",
+          "health": "none",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:31:54.736604026Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 1.03,
+          "memory_percent": 41.97
+        },
+        {
+          "name": "kafka",
+          "compose_service": "kafka",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:31:55.316614245Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 1.85,
+          "memory_percent": 93.52
+        },
+        {
+          "name": "load-generator",
+          "compose_service": "load-generator",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:43.689201828Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 11.96,
+          "memory_percent": 57.66
+        },
+        {
+          "name": "opamp-server",
+          "compose_service": "opamp-server",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:31:54.169370044Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.0,
+          "memory_percent": 22.83
+        },
+        {
+          "name": "opensearch",
+          "compose_service": "opensearch",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:31:51.932163844Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 1.52,
+          "memory_percent": 85.42
+        },
+        {
+          "name": "otel-collector",
+          "compose_service": "otel-collector",
+          "status": "running",
+          "health": "none",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:13.03045509Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 5.42,
+          "memory_percent": 35.12
+        },
+        {
+          "name": "payment",
+          "compose_service": "payment",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:13.677244838Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.44,
+          "memory_percent": 72.7
+        },
+        {
+          "name": "product-catalog",
+          "compose_service": "product-catalog",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:22.178192128Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.69,
+          "memory_percent": 69.18
+        },
+        {
+          "name": "prometheus",
+          "compose_service": "prometheus",
+          "status": "running",
+          "health": "none",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:31:51.049711831Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.4,
+          "memory_percent": 48.78
+        },
+        {
+          "name": "quote",
+          "compose_service": "quote",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:15.07113995Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.01,
+          "memory_percent": 79.52
+        },
+        {
+          "name": "recommendation",
+          "compose_service": "recommendation",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:23.140560142Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.31,
+          "memory_percent": 45.94
+        },
+        {
+          "name": "shipping",
+          "compose_service": "shipping",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:32:14.077738767Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.12,
+          "memory_percent": 60.41
+        },
+        {
+          "name": "telemetry-docs",
+          "compose_service": "telemetry-docs",
+          "status": "running",
+          "health": "healthy",
+          "restart_count": 0,
+          "exit_code": 0,
+          "oom_killed": false,
+          "started_at": "2026-10-23T15:31:52.752027952Z",
+          "finished_at": "0001-01-01T00:00:00Z",
+          "cpu_percent": 0.05,
+          "memory_percent": 5.97
+        }
+      ],
+      "total_items": 26,
+      "extra": {
+        "summary": {
+          "total": 26,
+          "running": 25,
+          "not_running": [
+            "valkey-cart"
+          ],
+          "unhealthy": [],
+          "restarted": [],
+          "oom_killed": []
+        }
+      },
+      "notes": [],
+      "error": null
+    }
+  },
+  {
+    "id": "M1",
+    "tool": "query_metrics",
+    "arguments": {
+      "window_minutes": 2,
+      "top_n": 10
+    },
+    "query": [
+      "sum by (service_name) (rate(traces_span_metrics_calls_total{span_kind=~\"SPAN_KIND_SERVER|SPAN_KIND_CONSUMER\"}[2m]))",
+      "sum by (service_name) (rate(traces_span_metrics_calls_total{span_kind=~\"SPAN_KIND_SERVER|SPAN_KIND_CONSUMER\",status_code=\"STATUS_CODE_ERROR\"}[2m]))",
+      "histogram_quantile(0.95, sum by (service_name, le) (rate(traces_span_metrics_duration_milliseconds_bucket{span_kind=~\"SPAN_KIND_SERVER|SPAN_KIND_CONSUMER\"}[2m])))",
+      "sum by (service_name, span_name, span_kind) (rate(traces_span_metrics_calls_total{status_code=\"STATUS_CODE_ERROR\"}[2m]))",
+      "container_memory_percent_ratio and on (container_name) (time() - timestamp(container_memory_percent_ratio) < 120)",
+      "kafka_consumer_group_lag_sum_ratio"
+    ],
+    "window": {
+      "minutes": 2,
+      "start": "2026-10-23T18:02:54+00:00",
+      "end": "2026-10-23T18:04:54+00:00"
+    },
+    "timestamp": "2026-10-23T18:04:55+00:00",
+    "result": {
+      "tool": "query_metrics",
+      "state": "data",
+      "query": [
+        "sum by (service_name) (rate(traces_span_metrics_calls_total{span_kind=~\"SPAN_KIND_SERVER|SPAN_KIND_CONSUMER\"}[2m]))",
+        "sum by (service_name) (rate(traces_span_metrics_calls_total{span_kind=~\"SPAN_KIND_SERVER|SPAN_KIND_CONSUMER\",status_code=\"STATUS_CODE_ERROR\"}[2m]))",
+        "histogram_quantile(0.95, sum by (service_name, le) (rate(traces_span_metrics_duration_milliseconds_bucket{span_kind=~\"SPAN_KIND_SERVER|SPAN_KIND_CONSUMER\"}[2m])))",
+        "sum by (service_name, span_name, span_kind) (rate(traces_span_metrics_calls_total{status_code=\"STATUS_CODE_ERROR\"}[2m]))",
+        "container_memory_percent_ratio and on (container_name) (time() - timestamp(container_memory_percent_ratio) < 120)",
+        "kafka_consumer_group_lag_sum_ratio"
+      ],
+      "window": {
+        "minutes": 2,
+        "start": "2026-10-23T18:02:54+00:00",
+        "end": "2026-10-23T18:04:54+00:00"
+      },
+      "items": [
+        {
+          "service": "cart",
+          "request_rate_per_s": 0.018,
+          "error_rate_per_s": 0.0181,
+          "error_rate_pct": 100.0,
+          "p95_ms": 15000.0,
+          "top_error_spans": [
+            {
+              "span_name": "POST /oteldemo.CartService/GetCart",
+              "span_kind": "server",
+              "error_rate_per_s": 0.0181
+            }
+          ]
+        },
+        {
+          "service": "frontend-proxy",
+          "request_rate_per_s": 13.27,
+          "error_rate_per_s": 0.1264,
+          "error_rate_pct": 0.95,
+          "p95_ms": 3283.7,
+          "top_error_spans": [
+            {
+              "span_name": "POST",
+              "span_kind": "server",
+              "error_rate_per_s": 0.1264
+            }
+          ]
+        },
+        {
+          "service": "frontend",
+          "request_rate_per_s": 10.995,
+          "error_rate_per_s": 0.0181,
+          "error_rate_pct": 0.16,
+          "p95_ms": 3537.5,
+          "top_error_spans": [
+            {
+              "span_name": "GET /api/cart",
+              "span_kind": "server",
+              "error_rate_per_s": 0.0181
+            },
+            {
+              "span_name": "oteldemo.CartService/GetCart",
+              "span_kind": "client",
+              "error_rate_per_s": 0.0181
+            },
+            {
+              "span_name": "executing api route (pages) /api/cart",
+              "span_kind": "internal",
+              "error_rate_per_s": 0.0181
+            }
+          ]
+        },
+        {
+          "service": "product-catalog",
+          "request_rate_per_s": 3.051,
+          "error_rate_per_s": 0.0,
+          "error_rate_pct": 0.0,
+          "p95_ms": 1204.0
+        },
+        {
+          "service": "recommendation",
+          "request_rate_per_s": 0.451,
+          "error_rate_per_s": 0.0,
+          "error_rate_pct": 0.0,
+          "p95_ms": 550.0
+        },
+        {
+          "service": "ad",
+          "request_rate_per_s": 0.307,
+          "error_rate_per_s": 0.0,
+          "error_rate_pct": 0.0,
+          "p95_ms": 8.3
+        },
+        {
+          "service": "currency",
+          "request_rate_per_s": 0.632,
+          "error_rate_per_s": 0.0,
+          "error_rate_pct": 0.0,
+          "p95_ms": 1.9
+        },
+        {
+          "service": "telemetry-docs",
+          "request_rate_per_s": 0.217,
+          "error_rate_per_s": 0.0,
+          "error_rate_pct": 0.0,
+          "p95_ms": 1.9
+        },
+        {
+          "service": "image-provider",
+          "request_rate_per_s": 4.062,
+          "error_rate_per_s": 0.0,
+          "error_rate_pct": 0.0,
+          "p95_ms": 1.9
+        },
+        {
+          "service": "accounting",
+          "request_rate_per_s": 0.0,
+          "error_rate_per_s": 0.0,
+          "error_rate_pct": null,
+          "p95_ms": null
+        }
+      ],
+      "total_items": 16,
+      "extra": {
+        "top_error_spans": [
+          {
+            "service": "load-generator",
+            "span_name": "POST",
+            "span_kind": "client",
+            "error_rate_per_s": 0.1625
+          },
+          {
+            "service": "frontend-proxy",
+            "span_name": "POST",
+            "span_kind": "server",
+            "error_rate_per_s": 0.1264
+          },
+          {
+            "service": "cart",
+            "span_name": "POST /oteldemo.CartService/GetCart",
+            "span_kind": "server",
+            "error_rate_per_s": 0.0181
+          },
+          {
+            "service": "frontend",
+            "span_name": "GET /api/cart",
+            "span_kind": "server",
+            "error_rate_per_s": 0.0181
+          },
+          {
+            "service": "frontend",
+            "span_name": "oteldemo.CartService/GetCart",
+            "span_kind": "client",
+            "error_rate_per_s": 0.0181
+          },
+          {
+            "service": "frontend",
+            "span_name": "executing api route (pages) /api/cart",
+            "span_kind": "internal",
+            "error_rate_per_s": 0.0181
+          }
+        ],
+        "container_memory_percent": [
+          {
+            "container": "kafka",
+            "memory_percent": 93.5
+          },
+          {
+            "container": "accounting",
+            "memory_percent": 90.9
+          },
+          {
+            "container": "opensearch",
+            "memory_percent": 85.4
+          },
+          {
+            "container": "ad",
+            "memory_percent": 84.5
+          },
+          {
+            "container": "fraud-detection",
+            "memory_percent": 80.7
+          },
+          {
+            "container": "quote",
+            "memory_percent": 79.5
+          },
+          {
+            "container": "email",
+            "memory_percent": 78.4
+          },
+          {
+            "container": "payment",
+            "memory_percent": 72.7
+          },
+          {
+            "container": "astronomy-db",
+            "memory_percent": 71.7
+          },
+          {
+            "container": "product-catalog",
+            "memory_percent": 71.6
+          }
+        ],
+        "kafka_consumer_lag": [
+          {
+            "group": "accounting",
+            "topic": "orders",
+            "lag_messages": 185.0
+          },
+          {
+            "group": "fraud-detection",
+            "topic": "orders",
+            "lag_messages": 0.0
+          }
+        ]
+      },
+      "notes": [
+        "service rates count SERVER and CONSUMER spans only; top_error_spans covers all span kinds",
+        "container memory comes from collector metrics and can lag; container_health is authoritative"
+      ],
+      "error": null
+    }
+  },
+  {
+    "id": "T1",
+    "tool": "query_traces",
+    "arguments": {
+      "window_minutes": 2
+    },
+    "query": [
+      "GET /api/v3/traces?query.start_time_min=2026-10-23T18%3A02%3A54Z&query.start_time_max=2026-10-23T18%3A04%3A54Z&query.search_depth=50",
+      "GET /api/v3/traces?query.start_time_min=2026-10-23T18%3A02%3A54Z&query.start_time_max=2026-10-23T18%3A04%3A54Z&query.search_depth=50&query.attributes=%7B%22error%22%3A+%22true%22%7D"
+    ],
+    "window": {
+      "minutes": 2,
+      "start": "2026-10-23T18:02:54+00:00",
+      "end": "2026-10-23T18:04:54+00:00"
+    },
+    "timestamp": "2026-10-23T18:04:55+00:00",
+    "result": {
+      "tool": "query_traces",
+      "state": "data",
+      "query": [
+        "GET /api/v3/traces?query.start_time_min=2026-10-23T18%3A02%3A54Z&query.start_time_max=2026-10-23T18%3A04%3A54Z&query.search_depth=50",
+        "GET /api/v3/traces?query.start_time_min=2026-10-23T18%3A02%3A54Z&query.start_time_max=2026-10-23T18%3A04%3A54Z&query.search_depth=50&query.attributes=%7B%22error%22%3A+%22true%22%7D"
+      ],
+      "window": {
+        "minutes": 2,
+        "start": "2026-10-23T18:02:54+00:00",
+        "end": "2026-10-23T18:04:54+00:00"
+      },
+      "items": [
+        {
+          "trace_id": "c84d8ee66cade8264681cf066951c58f",
+          "start": "2026-10-23T18:04:49+00:00",
+          "root_service": "frontend-proxy",
+          "root_operation": "POST",
+          "duration_ms": 3053.4,
+          "span_count": 4,
+          "error_span_count": 2,
+          "error_spans": [
+            {
+              "service": "frontend-proxy",
+              "span": "POST",
+              "kind": "server",
+              "why": [
+                "error_attribute"
+              ]
+            },
+            {
+              "service": "frontend-proxy",
+              "span": "router frontend egress",
+              "kind": "client",
+              "why": [
+                "error_attribute"
+              ]
+            }
+          ],
+          "deepest_error": {
+            "service": "frontend-proxy",
+            "span": "router frontend egress",
+            "kind": "client",
+            "why": [
+              "error_attribute"
+            ]
+          }
+        },
+        {
+          "trace_id": "827aea16270e9eb3e587b9820fa8493b",
+          "start": "2026-10-23T18:04:32+00:00",
+          "root_service": "load-generator",
+          "root_operation": "user_ask_agent",
+          "duration_ms": 4008.6,
+          "span_count": 2,
+          "error_span_count": 1,
+          "error_spans": [
+            {
+              "service": "load-generator",
+              "span": "POST",
+              "kind": "client",
+              "why": [
+                "status_error",
+                "exception_event(requests.exceptions.ConnectionError)"
+              ],
+              "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent'"
+            }
+          ],
+          "deepest_error": {
+            "service": "load-generator",
+            "span": "POST",
+            "kind": "client",
+            "why": [
+              "status_error",
+              "exception_event(requests.exceptions.ConnectionError)"
+            ],
+            "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent'"
+          }
+        },
+        {
+          "trace_id": "84ff05c44f809dcefe21d10a997c3f5a",
+          "start": "2026-10-23T18:02:54+00:00",
+          "root_service": "frontend-proxy",
+          "root_operation": "GET",
+          "duration_ms": 98154.4,
+          "span_count": 8,
+          "error_span_count": 6,
+          "error_spans": [
+            {
+              "service": "frontend-proxy",
+              "span": "GET",
+              "kind": "server",
+              "why": [
+                "error_attribute"
+              ]
+            },
+            {
+              "service": "frontend-proxy",
+              "span": "router frontend egress",
+              "kind": "client",
+              "why": [
+                "error_attribute"
+              ]
+            },
+            {
+              "service": "frontend",
+              "span": "GET /api/cart",
+              "kind": "server",
+              "why": [
+                "status_error",
+                "error.type=500",
+                "http_status=500"
+              ]
+            },
+            {
+              "service": "frontend",
+              "span": "executing api route (pages) /api/cart",
+              "kind": "internal",
+              "why": [
+                "status_error",
+                "exception_event(9)",
+                "http_status=500"
+              ],
+              "message": "9 FAILED_PRECONDITION: Can't access cart storage. System.ApplicationException: Wasn't able to connect to redis\n   at cart.cartstore.ValkeyCartStore.EnsureRedisC"
+            },
+            {
+              "service": "frontend",
+              "span": "oteldemo.CartService/GetCart",
+              "kind": "client",
+              "why": [
+                "status_error",
+                "rpc_status=9"
+              ]
+            },
+            {
+              "service": "cart",
+              "span": "POST /oteldemo.CartService/GetCart",
+              "kind": "server",
+              "why": [
+                "status_error",
+                "exception_event(Grpc.Core.RpcException)",
+                "rpc_status=9"
+              ],
+              "message": "Status(StatusCode=\"FailedPrecondition\", Detail=\"Can't access cart storage. System.ApplicationException: Wasn't able to connect to redis\n   at cart.cartstore.Val"
+            }
+          ],
+          "deepest_error": {
+            "service": "cart",
+            "span": "POST /oteldemo.CartService/GetCart",
+            "kind": "server",
+            "why": [
+              "status_error",
+              "exception_event(Grpc.Core.RpcException)",
+              "rpc_status=9"
+            ],
+            "message": "Status(StatusCode=\"FailedPrecondition\", Detail=\"Can't access cart storage. System.ApplicationException: Wasn't able to connect to redis\n   at cart.cartstore.Val"
+          }
+        },
+        {
+          "trace_id": "7a21a524befcff7bb7f3d02943036529",
+          "start": "2026-10-23T18:04:48+00:00",
+          "root_service": "frontend-proxy",
+          "root_operation": "GET",
+          "duration_ms": 3394.7,
+          "span_count": 4,
+          "error_span_count": 2,
+          "error_spans": [
+            {
+              "service": "frontend-proxy",
+              "span": "GET",
+              "kind": "server",
+              "why": [
+                "error_attribute"
+              ]
+            },
+            {
+              "service": "frontend-proxy",
+              "span": "router frontend egress",
+              "kind": "client",
+              "why": [
+                "error_attribute"
+              ]
+            }
+          ],
+          "deepest_error": {
+            "service": "frontend-proxy",
+            "span": "router frontend egress",
+            "kind": "client",
+            "why": [
+              "error_attribute"
+            ]
+          }
+        },
+        {
+          "trace_id": "60cfa5eb220d069711eb457e6811068a",
+          "start": "2026-10-23T18:04:04+00:00",
+          "root_service": "load-generator",
+          "root_operation": "user_ask_agent",
+          "duration_ms": 4008.2,
+          "span_count": 2,
+          "error_span_count": 1,
+          "error_spans": [
+            {
+              "service": "load-generator",
+              "span": "POST",
+              "kind": "client",
+              "why": [
+                "status_error",
+                "exception_event(requests.exceptions.ConnectionError)"
+              ],
+              "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent'"
+            }
+          ],
+          "deepest_error": {
+            "service": "load-generator",
+            "span": "POST",
+            "kind": "client",
+            "why": [
+              "status_error",
+              "exception_event(requests.exceptions.ConnectionError)"
+            ],
+            "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent'"
+          }
+        }
+      ],
+      "total_items": 19,
+      "extra": {
+        "error_groups": [
+          {
+            "deepest_service": "frontend-proxy",
+            "deepest_span": "router frontend egress",
+            "kind": "client",
+            "why": [
+              "error_attribute"
+            ],
+            "traces": 13,
+            "example_trace_id": "c84d8ee66cade8264681cf066951c58f"
+          },
+          {
+            "deepest_service": "load-generator",
+            "deepest_span": "POST",
+            "kind": "client",
+            "why": [
+              "status_error",
+              "exception_event(requests.exceptions.ConnectionError)"
+            ],
+            "traces": 5,
+            "example_trace_id": "827aea16270e9eb3e587b9820fa8493b",
+            "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent'"
+          },
+          {
+            "deepest_service": "cart",
+            "deepest_span": "POST /oteldemo.CartService/GetCart",
+            "kind": "server",
+            "why": [
+              "status_error",
+              "exception_event(Grpc.Core.RpcException)",
+              "rpc_status=9"
+            ],
+            "traces": 1,
+            "example_trace_id": "84ff05c44f809dcefe21d10a997c3f5a",
+            "message": "Status(StatusCode=\"FailedPrecondition\", Detail=\"Can't access cart storage. System.ApplicationException: Wasn't able to connect to redis\n   at cart.cartstore.Val"
+          }
+        ]
+      },
+      "notes": [
+        "ranked among the 66 most recent traces sampled",
+        "a span counts as erroring on status ERROR, an exception event, an error attribute, a non-OK RPC status or HTTP 5xx; see `why`. A failing dependency is not always marked as an error",
+        "46 items removed by sanitiser"
+      ],
+      "error": null
+    }
+  },
+  {
+    "id": "L1",
+    "tool": "query_logs",
+    "arguments": {
+      "window_minutes": 2
+    },
+    "query": [
+      "POST /otel-logs-*/_search {'size': 1000, 'track_total_hits': True, 'sort': [{'observedTimestamp': 'desc'}], '_source': ['body', 'severity.text', 'observedTimestamp', 'resource.service.name', 'traceId', 'spanId'], 'query': {'bool': {'filter': [{'range': {'observedTimestamp': {'gte': '2026-10-23T18:02:54+00:00', 'lte': '2026-10-23T18:04:54+00:00'}}}, {'bool': {'minimum_should_match': 1, 'should': [{'terms': {'severity.text': ['error', 'err', 'fatal', 'critical', 'crit', 'severe', 'emergency', 'alert']}}, {'match': {'body': {'query': 'exception failed failure fatal panic unhandled refused unavailable timeout traceback', 'operator': 'or'}}}]}}], 'must_not': [{'terms': {'resource.service.name.keyword': '<services excluded by the sanitiser>'}}]}}}"
+    ],
+    "window": {
+      "minutes": 2,
+      "start": "2026-10-23T18:02:54+00:00",
+      "end": "2026-10-23T18:04:54+00:00"
+    },
+    "timestamp": "2026-10-23T18:04:55+00:00",
+    "result": {
+      "tool": "query_logs",
+      "state": "data",
+      "query": [
+        "POST /otel-logs-*/_search {'size': 1000, 'track_total_hits': True, 'sort': [{'observedTimestamp': 'desc'}], '_source': ['body', 'severity.text', 'observedTimestamp', 'resource.service.name', 'traceId', 'spanId'], 'query': {'bool': {'filter': [{'range': {'observedTimestamp': {'gte': '2026-10-23T18:02:54+00:00', 'lte': '2026-10-23T18:04:54+00:00'}}}, {'bool': {'minimum_should_match': 1, 'should': [{'terms': {'severity.text': ['error', 'err', 'fatal', 'critical', 'crit', 'severe', 'emergency', 'alert']}}, {'match': {'body': {'query': 'exception failed failure fatal panic unhandled refused unavailable timeout traceback', 'operator': 'or'}}}]}}], 'must_not': [{'terms': {'resource.service.name.keyword': '<services excluded by the sanitiser>'}}]}}}"
+      ],
+      "window": {
+        "minutes": 2,
+        "start": "2026-10-23T18:02:54+00:00",
+        "end": "2026-10-23T18:04:54+00:00"
+      },
+      "items": [
+        {
+          "service": "otelcol-contrib",
+          "level": "error",
+          "count": 5,
+          "first_seen": "2026-10-23T18:03:43.978Z",
+          "last_seen": "2026-10-23T18:04:39.513Z",
+          "message": "Error scraping metrics"
+        },
+        {
+          "service": "cart",
+          "level": "information",
+          "count": 4,
+          "first_seen": "2026-10-23T18:02:55.367Z",
+          "last_seen": "2026-10-23T18:02:55.367Z",
+          "sample_trace_id": "7d90380ec642d7799174c28303657df3",
+          "message": "Connection failed. Disposing the object"
+        },
+        {
+          "service": "otelcol-contrib",
+          "level": "error",
+          "count": 2,
+          "first_seen": "2026-10-23T18:03:41.095Z",
+          "last_seen": "2026-10-23T18:04:36.512Z",
+          "message": "Exporting failed. Dropping data."
+        },
+        {
+          "service": "cart",
+          "level": "error",
+          "count": 1,
+          "first_seen": "2026-10-23T18:04:29.314Z",
+          "last_seen": "2026-10-23T18:04:29.314Z",
+          "sample_trace_id": "84ff05c44f809dcefe21d10a997c3f5a",
+          "message": "Wasn't able to connect to redis"
+        },
+        {
+          "service": "frontend",
+          "level": "error",
+          "count": 1,
+          "first_seen": "2026-10-23T18:04:25.451Z",
+          "last_seen": "2026-10-23T18:04:25.451Z",
+          "sample_trace_id": "84ff05c44f809dcefe21d10a997c3f5a",
+          "message": "API request failed"
+        }
+      ],
+      "total_items": 5,
+      "extra": {},
+      "notes": [
+        "error lines = level error/fatal/critical-like, or text that is clearly an error whatever its level",
+        "counts cover the newest 13 of 13 matching lines",
+        "lines are grouped by (service, exact message); `message` is the stored text, unaltered",
+        "0 items removed by sanitiser"
+      ],
+      "error": null
+    }
+  },
+  {
+    "id": "D1",
+    "tool": "deploy_history",
+    "arguments": {},
+    "query": [
+      "docker ps -a -q --filter label=com.docker.compose.project=opentelemetry-demo",
+      "docker inspect <ids of the project's containers>"
+    ],
+    "window": {
+      "at": "2026-10-23T18:04:55+00:00"
+    },
+    "timestamp": "2026-10-23T18:04:55+00:00",
+    "result": {
+      "tool": "deploy_history",
+      "state": "data",
+      "query": [
+        "docker ps -a -q --filter label=com.docker.compose.project=opentelemetry-demo",
+        "docker inspect <ids of the project's containers>"
+      ],
+      "window": {
+        "at": "2026-10-23T18:04:55+00:00"
+      },
+      "items": [
+        {
+          "name": "valkey-cart",
+          "status": "exited",
+          "started_at": "2026-10-23T17:39:58+00:00",
+          "age_seconds": 1497,
+          "restart_count": 0,
+          "restarted_recently": true
+        },
+        {
+          "name": "frontend-proxy",
+          "status": "running",
+          "started_at": "2026-10-23T15:32:44+00:00",
+          "age_seconds": 9130,
+          "restart_count": 0,
+          "restarted_recently": false
+        },
+        {
+          "name": "load-generator",
+          "status": "running",
+          "started_at": "2026-10-23T15:32:43+00:00",
+          "age_seconds": 9131,
+          "restart_count": 0,
+          "restarted_recently": false
+        },
+        {
+          "name": "frontend",
+          "status": "running",
+          "started_at": "2026-10-23T15:32:37+00:00",
+          "age_seconds": 9137,
+          "restart_count": 0,
+          "restarted_recently": false
+        },
+        {
+          "name": "checkout",
+          "status": "running",
+          "started_at": "2026-10-23T15:32:35+00:00",
+          "age_seconds": 9139,
+          "restart_count": 0,
+          "restarted_recently": false
+        },
+        {
+          "name": "accounting",
+          "status": "running",
+          "started_at": "2026-10-23T15:32:35+00:00",
+          "age_seconds": 9139,
+          "restart_count": 0,
+          "restarted_recently": false
+        },
+        {
+          "name": "fraud-detection",
+          "status": "running",
+          "started_at": "2026-10-23T15:32:35+00:00",
+          "age_seconds": 9140,
+          "restart_count": 0,
+          "restarted_recently": false
+        },
+        {
+          "name": "cart",
+          "status": "running",
+          "started_at": "2026-10-23T15:32:24+00:00",
+          "age_seconds": 9151,
+          "restart_count": 0,
+          "restarted_recently": false
+        },
+        {
+          "name": "recommendation",
+          "status": "running",
+          "started_at": "2026-10-23T15:32:23+00:00",
+          "age_seconds": 9152,
+          "restart_count": 0,
+          "restarted_recently": false
+        },
+        {
+          "name": "product-catalog",
+          "status": "running",
+          "started_at": "2026-10-23T15:32:22+00:00",
+          "age_seconds": 9153,
+          "restart_count": 0,
+          "restarted_recently": false
+        },
+        {
+          "name": "email",
+          "status": "running",
+          "started_at": "2026-10-23T15:32:21+00:00",
+          "age_seconds": 9153,
+          "restart_count": 0,
+          "restarted_recently": false
+        },
+        {
+          "name": "image-provider",
+          "status": "running",
+          "started_at": "2026-10-23T15:32:19+00:00",
+          "age_seconds": 9155,
+          "restart_count": 0,
+          "restarted_recently": false
+        }
+      ],
+      "total_items": 26,
+      "extra": {
+        "summary": {
+          "total": 26,
+          "restarted_recently": [
+            "valkey-cart"
+          ],
+          "median_age_seconds": 9159,
+          "newest_start": "2026-10-23T17:39:58+00:00"
+        }
+      },
+      "notes": [
+        "a deploy here means a container start or recreate; `restarted_recently` = restart count above 0, or started more than 300s after the median container",
+        "`make start --force-recreate` makes every container look recently started; then only restart_count and the spread of start times mean anything",
+        "2 items removed by sanitiser"
+      ],
+      "error": null
+    }
+  }
+]
