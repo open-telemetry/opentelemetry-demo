@@ -58,3 +58,7 @@ src/frontend/cypress/screenshots
 src/shipping/target/
 
 !src/currency/build
+oncall/runs/
+oncall/.env.local
+__pycache__/
+.pytest_cache/

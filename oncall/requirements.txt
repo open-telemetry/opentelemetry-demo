@@ -1,0 +1,12 @@
+pydantic>=2
+httpx
+fastapi
+uvicorn
+openai
+docker
+pyyaml
+typer
+rich
+tenacity
+pytest
+pytest-asyncio
