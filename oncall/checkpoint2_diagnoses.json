@@ -1,0 +1,732 @@
+[
+  {
+    "incident_id": "ALERT-PRAC-001",
+    "target_service": "cart",
+    "root_cause_service": "cart",
+    "failure_mode": "INTERNAL_DATASTORE_TIMEOUT_OR_EXHAUSTION (cart)",
+    "confidence_score": 0.82,
+    "confirmed_facts": [
+      "Prometheus: Service 'cart' exhibits P95 latency of 2450ms and error rate of 14.2 req/s.",
+      "Jaeger: Bottleneck localized to service 'cart' in span 'CartService/AddItem' (duration: 2340ms).",
+      "OpenSearch: Correlated log in trace '4bf92f3577b34da6a3ce929d0e0e4736': System.TimeoutException: The operation has timed out while executing Redis/Valkey command 'SET' on valkey-cart..."
+    ],
+    "likely_causes": [
+      "Service 'cart' is failing due to internal dependency timeouts (e.g. cache/datastore exhaustion)."
+    ],
+    "unresolved_hypotheses": [
+      "Hypothesis 'Recent breaking code deployment': Audited git log commits on main; no breaking commit in incident window - RULED OUT."
+    ],
+    "evidence_consistency_passed": true,
+    "consistency_errors": [],
+    "investigation_steps": [
+      {
+        "step_number": 1,
+        "intent": "Triage incident alert 'CartAddItemHighLatency' on 'cart'. Query Prometheus metrics to verify Golden Signals (P95 latency, error rates, throughput).",
+        "tool_name": "prometheus_inspect_service",
+        "tool_parameters": {
+          "service_name": "cart"
+        },
+        "observation": {
+          "tool_name": "prometheus_inspect_service",
+          "success": true,
+          "summary": "Service 'cart' metrics: Elevated P95 Latency detected = 2450ms (normal baseline < 50ms), Error Rate = 14.2 req/s (HTTP 500 spike).",
+          "data": {
+            "p95_latency_sec": 2.45,
+            "error_rate_rps": 14.2,
+            "throughput_rps": 85.0,
+            "live": false
+          },
+          "citations": [
+            {
+              "source_type": "prometheus_metric",
+              "identifier": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service_name=\"cart\"}[5m])))",
+              "summary": "P95 latency observed at 2450ms (threshold exceeded > 1000ms)",
+              "evidence_payload": {
+                "p95_latency_seconds": 2.45,
+                "promql": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service_name=\"cart\"}[5m])))"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "step_number": 2,
+        "intent": "Metrics confirmed degradation on 'cart'. Querying Jaeger distributed traces to inspect the execution tree and determine whether the root cause is local or downstream.",
+        "tool_name": "jaeger_inspect_traces",
+        "tool_parameters": {
+          "service_name": "cart",
+          "num_traces": 5
+        },
+        "observation": {
+          "tool_name": "jaeger_inspect_traces",
+          "success": true,
+          "summary": "Jaeger trace analysis for 'cart': Local failure detected in trace '4bf92f3577b34da6a3ce929d0e0e4736'. Operation 'CartService/AddItem' took 2340.5ms blocking on valkey-cart (error=True).",
+          "data": {
+            "traces": [
+              {
+                "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
+                "span_id": "00f067aa0ba902b7",
+                "service": "cart",
+                "operation": "CartService/AddItem",
+                "duration_ms": 2340.5,
+                "is_error": true,
+                "error_source_service": "cart",
+                "downstream_dependency": "valkey-cart",
+                "status_message": "Valkey operation timeout on SET"
+              }
+            ],
+            "queried_service": "cart",
+            "isolated_root_cause_service": "cart",
+            "is_downstream_dependency_failure": false,
+            "live": false
+          },
+          "citations": [
+            {
+              "source_type": "jaeger_trace",
+              "identifier": "trace:4bf92f3577b34da6a3ce929d0e0e4736#span:00f067aa0ba902b7",
+              "summary": "Operation 'CartService/AddItem' failed in cart taking 2340.5ms",
+              "evidence_payload": {
+                "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
+                "root_cause_service": "cart",
+                "operation": "CartService/AddItem",
+                "duration_ms": 2340.5
+              }
+            }
+          ]
+        }
+      },
+      {
+        "step_number": 3,
+        "intent": "Trace analysis identified bottleneck in trace '4bf92f3577b34da6a3ce929d0e0e4736'. Querying OpenSearch for correlated exception logs belonging to trace '4bf92f3577b34da6a3ce929d0e0e4736'.",
+        "tool_name": "opensearch_query_logs",
+        "tool_parameters": {
+          "service_name": "cart",
+          "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736"
+        },
+        "observation": {
+          "tool_name": "opensearch_query_logs",
+          "success": true,
+          "summary": "OpenSearch logs for 'cart' (filter: trace_id=4bf92f3577b34da6a3ce929d0e0e4736): Retrieved 1 verified matching log(s). Primary message: 'System.TimeoutException: The operation has timed out while executing Redis/Valkey command 'SET' on v...'",
+          "data": {
+            "logs": [
+              {
+                "timestamp": "2026-10-23T08:50:12.441Z",
+                "service": "cart",
+                "severity_text": "ERROR",
+                "severity_number": 17,
+                "body": "System.TimeoutException: The operation has timed out while executing Redis/Valkey command 'SET' on valkey-cart:6379.",
+                "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
+                "span_id": "00f067aa0ba902b7"
+              }
+            ],
+            "queried_trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
+            "verified_trace_match": true,
+            "live": false
+          },
+          "citations": [
+            {
+              "source_type": "opensearch_log",
+              "identifier": "log:trace:4bf92f3577b34da6a3ce929d0e0e4736",
+              "summary": "Log [ERROR]: System.TimeoutException: The operation has timed out while executing Redis/Valkey command 'SET' on valkey-cart:6379.",
+              "evidence_payload": {
+                "body": "System.TimeoutException: The operation has timed out while executing Redis/Valkey command 'SET' on valkey-cart:6379.",
+                "severity": "ERROR",
+                "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "step_number": 4,
+        "intent": "Auditing recent git deployment history and commit logs for culprit service 'cart'.",
+        "tool_name": "deployment_history_inspect",
+        "tool_parameters": {
+          "service_name": "cart"
+        },
+        "observation": {
+          "tool_name": "deployment_history_inspect",
+          "success": true,
+          "summary": "Deployment History for 'cart': Verified repository history on branch 'main'. Latest commit: [ad06a6f9] '[ci] Require a changelog fragment on PRs unless Skip Changelog is set (#4153)' by Shenoy Pratik on 2026-10-22 12:20:43 +0000. No uncommitted code changes detected in service directory.",
+          "data": {
+            "service_name": "cart",
+            "git_deployment_history": {
+              "available": true,
+              "commits": [
+                {
+                  "hash": "ad06a6f9",
+                  "author": "Shenoy Pratik",
+                  "date": "2026-10-22 12:20:43 +0000",
+                  "message": "[ci] Require a changelog fragment on PRs unless Skip Changelog is set (#4153)"
+                },
+                {
+                  "hash": "2c4be617",
+                  "author": "Shenoy Pratik",
+                  "date": "2026-10-21 17:33:58 +0000",
+                  "message": "[ci] Check collector config layers keep earlier pipeline components (#4148)"
+                },
+                {
+                  "hash": "ba1757b3",
+                  "author": "Himanshu Deshbhratar",
+                  "date": "2026-10-21 05:11:26 +0000",
+                  "message": "[collector] Include prometheus/ad in the full collector config (#4122)"
+                }
+              ]
+            },
+            "has_recent_deployment_regression": false,
+            "checked_status": "NO_RECENT_BREAKING_DEPLOYMENT"
+          },
+          "citations": [
+            {
+              "source_type": "system_health",
+              "identifier": "git:commit:ad06a6f9",
+              "summary": "Deployment commit ad06a6f9: [ci] Require a changelog fragment on PRs unless Skip Changelog is set  (verified stable deployment)",
+              "evidence_payload": {
+                "hash": "ad06a6f9",
+                "author": "Shenoy Pratik",
+                "date": "2026-10-22 12:20:43 +0000",
+                "message": "[ci] Require a changelog fragment on PRs unless Skip Changelog is set (#4153)"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "citations": [
+      {
+        "source_type": "prometheus_metric",
+        "identifier": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service_name=\"cart\"}[5m])))",
+        "summary": "P95 latency observed at 2450ms (threshold exceeded > 1000ms)",
+        "evidence_payload": {
+          "p95_latency_seconds": 2.45,
+          "promql": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service_name=\"cart\"}[5m])))"
+        }
+      },
+      {
+        "source_type": "jaeger_trace",
+        "identifier": "trace:4bf92f3577b34da6a3ce929d0e0e4736#span:00f067aa0ba902b7",
+        "summary": "Operation 'CartService/AddItem' failed in cart taking 2340.5ms",
+        "evidence_payload": {
+          "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
+          "root_cause_service": "cart",
+          "operation": "CartService/AddItem",
+          "duration_ms": 2340.5
+        }
+      },
+      {
+        "source_type": "opensearch_log",
+        "identifier": "log:trace:4bf92f3577b34da6a3ce929d0e0e4736",
+        "summary": "Log [ERROR]: System.TimeoutException: The operation has timed out while executing Redis/Valkey command 'SET' on valkey-cart:6379.",
+        "evidence_payload": {
+          "body": "System.TimeoutException: The operation has timed out while executing Redis/Valkey command 'SET' on valkey-cart:6379.",
+          "severity": "ERROR",
+          "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736"
+        }
+      },
+      {
+        "source_type": "system_health",
+        "identifier": "git:commit:ad06a6f9",
+        "summary": "Deployment commit ad06a6f9: [ci] Require a changelog fragment on PRs unless Skip Changelog is set  (verified stable deployment)",
+        "evidence_payload": {
+          "hash": "ad06a6f9",
+          "author": "Shenoy Pratik",
+          "date": "2026-10-22 12:20:43 +0000",
+          "message": "[ci] Require a changelog fragment on PRs unless Skip Changelog is set (#4153)"
+        }
+      }
+    ],
+    "explanation": "Incident localized to service 'cart'. Prometheus recorded P95 latency at 2450ms. Jaeger trace '4bf92f3577b34da6a3ce929d0e0e4736' isolated bottleneck span 'CartService/AddItem'. Service 'cart' is failing due to internal dependency timeouts (e.g. cache/datastore exhaustion).",
+    "recommended_action": "Restart service 'cart' container and verify datastore connectivity.",
+    "action_type": "RESTART_CONTAINER",
+    "is_mitigated": false
+  },
+  {
+    "incident_id": "ALERT-PRAC-002",
+    "target_service": "checkout",
+    "root_cause_service": "payment",
+    "failure_mode": "DOWNSTREAM_DEPENDENCY_FAILURE (payment)",
+    "confidence_score": 0.88,
+    "confirmed_facts": [
+      "Prometheus: Service 'checkout' exhibits P95 latency of 2450ms and error rate of 14.2 req/s.",
+      "Jaeger: Parent operation 'CheckoutService/PlaceOrder' on 'checkout' stalled waiting on downstream service 'payment'.",
+      "OpenSearch: Correlated log in trace '9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d': PaymentService.Charge failed: Transaction declined by mock payment gateway. StatusCode: UNAVAILABLE...."
+    ],
+    "likely_causes": [
+      "The degradation on 'checkout' is a symptom; the primary fault originated in downstream service 'payment'.",
+      "Service 'payment' is unresponsive or failing on upstream requests from 'checkout'."
+    ],
+    "unresolved_hypotheses": [
+      "Hypothesis 'Recent breaking code deployment': Audited git log commits on main; no breaking commit in incident window - RULED OUT.",
+      "Hypothesis 'Local internal bug in checkout': Tracing confirmed latency was consumed inside downstream 'payment' - RULED OUT."
+    ],
+    "evidence_consistency_passed": true,
+    "consistency_errors": [],
+    "investigation_steps": [
+      {
+        "step_number": 1,
+        "intent": "Triage incident alert 'CheckoutOrderPlacementErrors' on 'checkout'. Query Prometheus metrics to verify Golden Signals (P95 latency, error rates, throughput).",
+        "tool_name": "prometheus_inspect_service",
+        "tool_parameters": {
+          "service_name": "checkout"
+        },
+        "observation": {
+          "tool_name": "prometheus_inspect_service",
+          "success": true,
+          "summary": "Service 'checkout' metrics: Elevated P95 Latency detected = 2450ms (normal baseline < 50ms), Error Rate = 14.2 req/s (HTTP 500 spike).",
+          "data": {
+            "p95_latency_sec": 2.45,
+            "error_rate_rps": 14.2,
+            "throughput_rps": 85.0,
+            "live": false
+          },
+          "citations": [
+            {
+              "source_type": "prometheus_metric",
+              "identifier": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service_name=\"checkout\"}[5m])))",
+              "summary": "P95 latency observed at 2450ms (threshold exceeded > 1000ms)",
+              "evidence_payload": {
+                "p95_latency_seconds": 2.45,
+                "promql": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service_name=\"checkout\"}[5m])))"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "step_number": 2,
+        "intent": "Metrics confirmed degradation on 'checkout'. Querying Jaeger distributed traces to inspect the execution tree and determine whether the root cause is local or downstream.",
+        "tool_name": "jaeger_inspect_traces",
+        "tool_parameters": {
+          "service_name": "checkout",
+          "num_traces": 5
+        },
+        "observation": {
+          "tool_name": "jaeger_inspect_traces",
+          "success": true,
+          "summary": "Jaeger trace analysis for 'checkout': DOWNSTREAM FAILURE DETECTED! Parent operation 'CheckoutService/PlaceOrder' was stalled for 2510.0ms waiting on downstream service 'payment' (operation 'PaymentService/Charge', taking 2480.0ms). Root cause originated in service 'payment', NOT 'checkout'!",
+          "data": {
+            "traces": [
+              {
+                "trace_id": "9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d",
+                "span_id": "1a2b3c4d5e6f7a8b",
+                "service": "checkout",
+                "operation": "CheckoutService/PlaceOrder",
+                "duration_ms": 2510.0,
+                "is_error": true,
+                "error_source_service": "payment",
+                "child_span_id": "8a7b6c5d4e3f2a1b",
+                "downstream_operation": "PaymentService/Charge",
+                "downstream_duration_ms": 2480.0,
+                "downstream_error": true,
+                "status_message": "gRPC call to PaymentService.Charge failed: UNAVAILABLE"
+              }
+            ],
+            "queried_service": "checkout",
+            "isolated_root_cause_service": "payment",
+            "is_downstream_dependency_failure": true,
+            "live": false
+          },
+          "citations": [
+            {
+              "source_type": "jaeger_trace",
+              "identifier": "trace:9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d#span:8a7b6c5d4e3f2a1b",
+              "summary": "Downstream bottleneck: 'payment' (PaymentService/Charge) consumed 2480.0ms (error=True)",
+              "evidence_payload": {
+                "trace_id": "9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d",
+                "alerted_service": "checkout",
+                "root_cause_service": "payment",
+                "downstream_operation": "PaymentService/Charge",
+                "duration_ms": 2480.0
+              }
+            }
+          ]
+        }
+      },
+      {
+        "step_number": 3,
+        "intent": "Trace analysis identified bottleneck in trace '9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d'. Querying OpenSearch for correlated exception logs belonging to trace '9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d'.",
+        "tool_name": "opensearch_query_logs",
+        "tool_parameters": {
+          "service_name": "payment",
+          "trace_id": "9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d"
+        },
+        "observation": {
+          "tool_name": "opensearch_query_logs",
+          "success": true,
+          "summary": "OpenSearch logs for 'payment' (filter: trace_id=9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d): Retrieved 1 verified matching log(s). Primary message: 'PaymentService.Charge failed: Transaction declined by mock payment gateway. StatusCode: UNAVAILABLE....'",
+          "data": {
+            "logs": [
+              {
+                "timestamp": "2026-10-23T09:12:04.112Z",
+                "service": "payment",
+                "severity_text": "ERROR",
+                "severity_number": 17,
+                "body": "PaymentService.Charge failed: Transaction declined by mock payment gateway. StatusCode: UNAVAILABLE.",
+                "trace_id": "9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d",
+                "span_id": "8a7b6c5d4e3f2a1b"
+              }
+            ],
+            "queried_trace_id": "9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d",
+            "verified_trace_match": true,
+            "live": false
+          },
+          "citations": [
+            {
+              "source_type": "opensearch_log",
+              "identifier": "log:trace:9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d",
+              "summary": "Log [ERROR]: PaymentService.Charge failed: Transaction declined by mock payment gateway. StatusCode: UNAVAILABLE.",
+              "evidence_payload": {
+                "body": "PaymentService.Charge failed: Transaction declined by mock payment gateway. StatusCode: UNAVAILABLE.",
+                "severity": "ERROR",
+                "trace_id": "9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "step_number": 4,
+        "intent": "Auditing recent git deployment history and commit logs for culprit service 'payment'.",
+        "tool_name": "deployment_history_inspect",
+        "tool_parameters": {
+          "service_name": "payment"
+        },
+        "observation": {
+          "tool_name": "deployment_history_inspect",
+          "success": true,
+          "summary": "Deployment History for 'payment': Verified repository history on branch 'main'. Latest commit: [ad06a6f9] '[ci] Require a changelog fragment on PRs unless Skip Changelog is set (#4153)' by Shenoy Pratik on 2026-10-22 12:20:43 +0000. No uncommitted code changes detected in service directory.",
+          "data": {
+            "service_name": "payment",
+            "git_deployment_history": {
+              "available": true,
+              "commits": [
+                {
+                  "hash": "ad06a6f9",
+                  "author": "Shenoy Pratik",
+                  "date": "2026-10-22 12:20:43 +0000",
+                  "message": "[ci] Require a changelog fragment on PRs unless Skip Changelog is set (#4153)"
+                },
+                {
+                  "hash": "2c4be617",
+                  "author": "Shenoy Pratik",
+                  "date": "2026-10-21 17:33:58 +0000",
+                  "message": "[ci] Check collector config layers keep earlier pipeline components (#4148)"
+                },
+                {
+                  "hash": "ba1757b3",
+                  "author": "Himanshu Deshbhratar",
+                  "date": "2026-10-21 05:11:26 +0000",
+                  "message": "[collector] Include prometheus/ad in the full collector config (#4122)"
+                }
+              ]
+            },
+            "has_recent_deployment_regression": false,
+            "checked_status": "NO_RECENT_BREAKING_DEPLOYMENT"
+          },
+          "citations": [
+            {
+              "source_type": "system_health",
+              "identifier": "git:commit:ad06a6f9",
+              "summary": "Deployment commit ad06a6f9: [ci] Require a changelog fragment on PRs unless Skip Changelog is set  (verified stable deployment)",
+              "evidence_payload": {
+                "hash": "ad06a6f9",
+                "author": "Shenoy Pratik",
+                "date": "2026-10-22 12:20:43 +0000",
+                "message": "[ci] Require a changelog fragment on PRs unless Skip Changelog is set (#4153)"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "citations": [
+      {
+        "source_type": "prometheus_metric",
+        "identifier": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service_name=\"checkout\"}[5m])))",
+        "summary": "P95 latency observed at 2450ms (threshold exceeded > 1000ms)",
+        "evidence_payload": {
+          "p95_latency_seconds": 2.45,
+          "promql": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service_name=\"checkout\"}[5m])))"
+        }
+      },
+      {
+        "source_type": "jaeger_trace",
+        "identifier": "trace:9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d#span:8a7b6c5d4e3f2a1b",
+        "summary": "Downstream bottleneck: 'payment' (PaymentService/Charge) consumed 2480.0ms (error=True)",
+        "evidence_payload": {
+          "trace_id": "9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d",
+          "alerted_service": "checkout",
+          "root_cause_service": "payment",
+          "downstream_operation": "PaymentService/Charge",
+          "duration_ms": 2480.0
+        }
+      },
+      {
+        "source_type": "opensearch_log",
+        "identifier": "log:trace:9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d",
+        "summary": "Log [ERROR]: PaymentService.Charge failed: Transaction declined by mock payment gateway. StatusCode: UNAVAILABLE.",
+        "evidence_payload": {
+          "body": "PaymentService.Charge failed: Transaction declined by mock payment gateway. StatusCode: UNAVAILABLE.",
+          "severity": "ERROR",
+          "trace_id": "9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d"
+        }
+      },
+      {
+        "source_type": "system_health",
+        "identifier": "git:commit:ad06a6f9",
+        "summary": "Deployment commit ad06a6f9: [ci] Require a changelog fragment on PRs unless Skip Changelog is set  (verified stable deployment)",
+        "evidence_payload": {
+          "hash": "ad06a6f9",
+          "author": "Shenoy Pratik",
+          "date": "2026-10-22 12:20:43 +0000",
+          "message": "[ci] Require a changelog fragment on PRs unless Skip Changelog is set (#4153)"
+        }
+      }
+    ],
+    "explanation": "Incident alert was triggered on 'checkout', but distributed trace analysis proved the root cause originated in downstream service 'payment'. Trace '9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d' shows operation 'CheckoutService/PlaceOrder' waiting on downstream calls. Causal analysis: The degradation on 'checkout' is a symptom; the primary fault originated in downstream service 'payment'. Deployment audit confirmed stable repository baseline on branch 'main'.",
+    "recommended_action": "Restart downstream container 'payment' to clear connection deadlocks and restore availability.",
+    "action_type": "RESTART_CONTAINER",
+    "is_mitigated": false
+  },
+  {
+    "incident_id": "ALERT-PRAC-003",
+    "target_service": "ad",
+    "root_cause_service": "ad",
+    "failure_mode": "INTERNAL_RESOURCE_EXHAUSTION (ad)",
+    "confidence_score": 0.85,
+    "confirmed_facts": [
+      "Prometheus: Service 'ad' exhibits P95 latency of 2450ms and error rate of 14.2 req/s.",
+      "Jaeger: Bottleneck localized to service 'ad' in span 'AdService/GetAdsByCategory' (duration: 3100ms).",
+      "OpenSearch: Correlated log in trace '7f8e9d0c1b2a3f4e5d6c7b8a90123456': Java HotSpot(TM) 64-Bit Server VM warning: Full GC (Allocation Failure) paused execution for 2850ms...."
+    ],
+    "likely_causes": [
+      "Service 'ad' is experiencing thread/CPU saturation or GC pause delays."
+    ],
+    "unresolved_hypotheses": [
+      "Hypothesis 'Recent breaking code deployment': Audited git log commits on main; no breaking commit in incident window - RULED OUT."
+    ],
+    "evidence_consistency_passed": true,
+    "consistency_errors": [],
+    "investigation_steps": [
+      {
+        "step_number": 1,
+        "intent": "Triage incident alert 'AdServiceHighCpuOrGc' on 'ad'. Query Prometheus metrics to verify Golden Signals (P95 latency, error rates, throughput).",
+        "tool_name": "prometheus_inspect_service",
+        "tool_parameters": {
+          "service_name": "ad"
+        },
+        "observation": {
+          "tool_name": "prometheus_inspect_service",
+          "success": true,
+          "summary": "Service 'ad' metrics: Elevated P95 Latency detected = 2450ms (normal baseline < 50ms), Error Rate = 14.2 req/s (HTTP 500 spike).",
+          "data": {
+            "p95_latency_sec": 2.45,
+            "error_rate_rps": 14.2,
+            "throughput_rps": 85.0,
+            "live": false
+          },
+          "citations": [
+            {
+              "source_type": "prometheus_metric",
+              "identifier": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service_name=\"ad\"}[5m])))",
+              "summary": "P95 latency observed at 2450ms (threshold exceeded > 1000ms)",
+              "evidence_payload": {
+                "p95_latency_seconds": 2.45,
+                "promql": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service_name=\"ad\"}[5m])))"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "step_number": 2,
+        "intent": "Metrics confirmed degradation on 'ad'. Querying Jaeger distributed traces to inspect the execution tree and determine whether the root cause is local or downstream.",
+        "tool_name": "jaeger_inspect_traces",
+        "tool_parameters": {
+          "service_name": "ad",
+          "num_traces": 5
+        },
+        "observation": {
+          "tool_name": "jaeger_inspect_traces",
+          "success": true,
+          "summary": "Jaeger trace analysis for 'ad': Local failure detected in trace '7f8e9d0c1b2a3f4e5d6c7b8a90123456'. Operation 'AdService/GetAdsByCategory' took 3100.0ms blocking on internal/thread-pool-exhaustion (error=True).",
+          "data": {
+            "traces": [
+              {
+                "trace_id": "7f8e9d0c1b2a3f4e5d6c7b8a90123456",
+                "span_id": "3c4d5e6f7a8b9c0d",
+                "service": "ad",
+                "operation": "AdService/GetAdsByCategory",
+                "duration_ms": 3100.0,
+                "is_error": true,
+                "error_source_service": "ad",
+                "downstream_dependency": "internal/thread-pool-exhaustion",
+                "status_message": "Thread pool exhausted during high GC pause latency"
+              }
+            ],
+            "queried_service": "ad",
+            "isolated_root_cause_service": "ad",
+            "is_downstream_dependency_failure": false,
+            "live": false
+          },
+          "citations": [
+            {
+              "source_type": "jaeger_trace",
+              "identifier": "trace:7f8e9d0c1b2a3f4e5d6c7b8a90123456#span:3c4d5e6f7a8b9c0d",
+              "summary": "Operation 'AdService/GetAdsByCategory' failed in ad taking 3100.0ms",
+              "evidence_payload": {
+                "trace_id": "7f8e9d0c1b2a3f4e5d6c7b8a90123456",
+                "root_cause_service": "ad",
+                "operation": "AdService/GetAdsByCategory",
+                "duration_ms": 3100.0
+              }
+            }
+          ]
+        }
+      },
+      {
+        "step_number": 3,
+        "intent": "Trace analysis identified bottleneck in trace '7f8e9d0c1b2a3f4e5d6c7b8a90123456'. Querying OpenSearch for correlated exception logs belonging to trace '7f8e9d0c1b2a3f4e5d6c7b8a90123456'.",
+        "tool_name": "opensearch_query_logs",
+        "tool_parameters": {
+          "service_name": "ad",
+          "trace_id": "7f8e9d0c1b2a3f4e5d6c7b8a90123456"
+        },
+        "observation": {
+          "tool_name": "opensearch_query_logs",
+          "success": true,
+          "summary": "OpenSearch logs for 'ad' (filter: trace_id=7f8e9d0c1b2a3f4e5d6c7b8a90123456): Retrieved 1 verified matching log(s). Primary message: 'Java HotSpot(TM) 64-Bit Server VM warning: Full GC (Allocation Failure) paused execution for 2850ms....'",
+          "data": {
+            "logs": [
+              {
+                "timestamp": "2026-10-23T09:20:15.301Z",
+                "service": "ad",
+                "severity_text": "WARN",
+                "severity_number": 13,
+                "body": "Java HotSpot(TM) 64-Bit Server VM warning: Full GC (Allocation Failure) paused execution for 2850ms.",
+                "trace_id": "7f8e9d0c1b2a3f4e5d6c7b8a90123456",
+                "span_id": "3c4d5e6f7a8b9c0d"
+              }
+            ],
+            "queried_trace_id": "7f8e9d0c1b2a3f4e5d6c7b8a90123456",
+            "verified_trace_match": true,
+            "live": false
+          },
+          "citations": [
+            {
+              "source_type": "opensearch_log",
+              "identifier": "log:trace:7f8e9d0c1b2a3f4e5d6c7b8a90123456",
+              "summary": "Log [WARN]: Java HotSpot(TM) 64-Bit Server VM warning: Full GC (Allocation Failure) paused execution for 2850ms.",
+              "evidence_payload": {
+                "body": "Java HotSpot(TM) 64-Bit Server VM warning: Full GC (Allocation Failure) paused execution for 2850ms.",
+                "severity": "WARN",
+                "trace_id": "7f8e9d0c1b2a3f4e5d6c7b8a90123456"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "step_number": 4,
+        "intent": "Auditing recent git deployment history and commit logs for culprit service 'ad'.",
+        "tool_name": "deployment_history_inspect",
+        "tool_parameters": {
+          "service_name": "ad"
+        },
+        "observation": {
+          "tool_name": "deployment_history_inspect",
+          "success": true,
+          "summary": "Deployment History for 'ad': Verified repository history on branch 'main'. Latest commit: [ad06a6f9] '[ci] Require a changelog fragment on PRs unless Skip Changelog is set (#4153)' by Shenoy Pratik on 2026-10-22 12:20:43 +0000. No uncommitted code changes detected in service directory.",
+          "data": {
+            "service_name": "ad",
+            "git_deployment_history": {
+              "available": true,
+              "commits": [
+                {
+                  "hash": "ad06a6f9",
+                  "author": "Shenoy Pratik",
+                  "date": "2026-10-22 12:20:43 +0000",
+                  "message": "[ci] Require a changelog fragment on PRs unless Skip Changelog is set (#4153)"
+                },
+                {
+                  "hash": "2c4be617",
+                  "author": "Shenoy Pratik",
+                  "date": "2026-10-21 17:33:58 +0000",
+                  "message": "[ci] Check collector config layers keep earlier pipeline components (#4148)"
+                },
+                {
+                  "hash": "ba1757b3",
+                  "author": "Himanshu Deshbhratar",
+                  "date": "2026-10-21 05:11:26 +0000",
+                  "message": "[collector] Include prometheus/ad in the full collector config (#4122)"
+                }
+              ]
+            },
+            "has_recent_deployment_regression": false,
+            "checked_status": "NO_RECENT_BREAKING_DEPLOYMENT"
+          },
+          "citations": [
+            {
+              "source_type": "system_health",
+              "identifier": "git:commit:ad06a6f9",
+              "summary": "Deployment commit ad06a6f9: [ci] Require a changelog fragment on PRs unless Skip Changelog is set  (verified stable deployment)",
+              "evidence_payload": {
+                "hash": "ad06a6f9",
+                "author": "Shenoy Pratik",
+                "date": "2026-10-22 12:20:43 +0000",
+                "message": "[ci] Require a changelog fragment on PRs unless Skip Changelog is set (#4153)"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "citations": [
+      {
+        "source_type": "prometheus_metric",
+        "identifier": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service_name=\"ad\"}[5m])))",
+        "summary": "P95 latency observed at 2450ms (threshold exceeded > 1000ms)",
+        "evidence_payload": {
+          "p95_latency_seconds": 2.45,
+          "promql": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service_name=\"ad\"}[5m])))"
+        }
+      },
+      {
+        "source_type": "jaeger_trace",
+        "identifier": "trace:7f8e9d0c1b2a3f4e5d6c7b8a90123456#span:3c4d5e6f7a8b9c0d",
+        "summary": "Operation 'AdService/GetAdsByCategory' failed in ad taking 3100.0ms",
+        "evidence_payload": {
+          "trace_id": "7f8e9d0c1b2a3f4e5d6c7b8a90123456",
+          "root_cause_service": "ad",
+          "operation": "AdService/GetAdsByCategory",
+          "duration_ms": 3100.0
+        }
+      },
+      {
+        "source_type": "opensearch_log",
+        "identifier": "log:trace:7f8e9d0c1b2a3f4e5d6c7b8a90123456",
+        "summary": "Log [WARN]: Java HotSpot(TM) 64-Bit Server VM warning: Full GC (Allocation Failure) paused execution for 2850ms.",
+        "evidence_payload": {
+          "body": "Java HotSpot(TM) 64-Bit Server VM warning: Full GC (Allocation Failure) paused execution for 2850ms.",
+          "severity": "WARN",
+          "trace_id": "7f8e9d0c1b2a3f4e5d6c7b8a90123456"
+        }
+      },
+      {
+        "source_type": "system_health",
+        "identifier": "git:commit:ad06a6f9",
+        "summary": "Deployment commit ad06a6f9: [ci] Require a changelog fragment on PRs unless Skip Changelog is set  (verified stable deployment)",
+        "evidence_payload": {
+          "hash": "ad06a6f9",
+          "author": "Shenoy Pratik",
+          "date": "2026-10-22 12:20:43 +0000",
+          "message": "[ci] Require a changelog fragment on PRs unless Skip Changelog is set (#4153)"
+        }
+      }
+    ],
+    "explanation": "Incident localized to service 'ad'. Prometheus recorded P95 latency at 2450ms. Jaeger trace '7f8e9d0c1b2a3f4e5d6c7b8a90123456' isolated bottleneck span 'AdService/GetAdsByCategory'. Service 'ad' is experiencing thread/CPU saturation or GC pause delays.",
+    "recommended_action": "Restart container 'ad' to recycle worker process and clear thread pools.",
+    "action_type": "RESTART_CONTAINER",
+    "is_mitigated": false
+  }
+]
