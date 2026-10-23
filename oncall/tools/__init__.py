@@ -5,3 +5,6 @@ from oncall.tools.registry import TOOL_SCHEMAS, TOOLS, register_tool
 __all__ = ["TOOLS", "TOOL_SCHEMAS", "register_tool"]
 
 # --- tool imports ---
+from oncall.tools.logs import search_logs
+
+__all__ = ["TOOLS", "TOOL_SCHEMAS", "register_tool", "search_logs"]
