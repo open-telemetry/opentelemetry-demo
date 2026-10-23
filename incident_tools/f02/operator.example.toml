@@ -1,0 +1,37 @@
+# Create your own copy; existing demo configuration is not changed.
+origin = "backend"
+services = ["ad", "cart", "checkout", "currency", "email", "frontend", "frontend-proxy", "payment", "product-catalog", "quote", "recommendation", "shipping", "accounting", "fraud-detection", "load-generator", "otel-collector", "jaeger", "prometheus", "opensearch", "astronomy-db", "valkey-cart", "kafka"]
+
+[limits]
+timeout_seconds = 10
+retries = 1
+max_window_seconds = 3600
+max_items = 100
+max_response_bytes = 2097152
+max_samples = 2000
+min_step_seconds = 15
+
+[prometheus]
+endpoint = "http://localhost:9090"
+# bearer_token_env = "F02_PROMETHEUS_TOKEN"  # Requires an HTTPS endpoint.
+
+[jaeger]
+# Repository Jaeger v3 API, via the existing frontend proxy.
+endpoint = "http://localhost:8080"
+
+[opensearch]
+# Populate after: docker compose -f compose.yaml -f compose.full.yaml -f compose.observability.yaml port opensearch 9200
+endpoint = ""
+index = "otel-logs-*"
+service_field = "resource.service.name"
+# service_query_field = "resource.service.name.keyword" # Only if the live mapping has this keyword subfield.
+time_field = "observedTimestamp"
+
+[docker]
+transport = "native" # Run Python inside Ubuntu WSL where Docker runs.
+project = "opentelemetry-demo" # Verify actual com.docker.compose.project label.
+distro = "Ubuntu" # Used only for transport = "wsl" from Windows Python.
+
+[deployments]
+# Optional existing real deployment audit feed; relative paths resolve next to this TOML.
+# audit_file = "/operator/path/deployments.jsonl"

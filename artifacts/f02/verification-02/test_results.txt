@@ -1,0 +1,50 @@
+test_cli_creates_evidence_and_never_overwrites (test_f02.CLITests.test_cli_creates_evidence_and_never_overwrites) ... ok
+test_stdio_dispatch_rejects_mutation_and_bad_envelopes (test_f02.CLITests.test_stdio_dispatch_rejects_mutation_and_bad_envelopes) ... ok
+test_all_allowlisted_metrics_build_bounded_queries (test_f02.ToolTests.test_all_allowlisted_metrics_build_bounded_queries) ... ok
+test_bad_schemas_and_backend_errors_never_become_empty_success (test_f02.ToolTests.test_bad_schemas_and_backend_errors_never_become_empty_success) ... ok
+test_base64_otlp_ids_and_parent_supported (test_f02.ToolTests.test_base64_otlp_ids_and_parent_supported) ... ok
+test_container_state_is_current_scoped_and_not_env (test_f02.ToolTests.test_container_state_is_current_scoped_and_not_env) ... ok
+test_credential_and_pii_redaction (test_f02.ToolTests.test_credential_and_pii_redaction) ... ok
+test_cross_service_spans_and_bad_span_ids (test_f02.ToolTests.test_cross_service_spans_and_bad_span_ids) ... ok
+test_deployment_audit_reads_only_operator_selected_feed (test_f02.ToolTests.test_deployment_audit_reads_only_operator_selected_feed) ... ok
+test_docker_injected_id_is_not_executed (test_f02.ToolTests.test_docker_injected_id_is_not_executed) ... ok
+test_docker_timeout_and_daemon_failure (test_f02.ToolTests.test_docker_timeout_and_daemon_failure) ... ok
+test_docker_transport_forbids_mutation_and_uses_no_shell (test_f02.ToolTests.test_docker_transport_forbids_mutation_and_uses_no_shell) ... ok
+test_empty_container_inventory_does_not_invent_health (test_f02.ToolTests.test_empty_container_inventory_does_not_invent_health) ... ok
+test_empty_jaeger_proto_omits_repeated_field (test_f02.ToolTests.test_empty_jaeger_proto_omits_repeated_field) ... ok
+test_empty_jaeger_result_is_not_malformed (test_f02.ToolTests.test_empty_jaeger_result_is_not_malformed) ... ok
+test_events_are_not_deployments_and_use_past_window (test_f02.ToolTests.test_events_are_not_deployments_and_use_past_window) ... ok
+test_fault_oracle_logs_are_suppressed (test_f02.ToolTests.test_fault_oracle_logs_are_suppressed) ... ok
+test_flattened_log_fields_supported (test_f02.ToolTests.test_flattened_log_fields_supported) ... ok
+test_http_failures_and_invalid_json (test_f02.ToolTests.test_http_failures_and_invalid_json) ... ok
+test_invalid_operator_configuration (test_f02.ToolTests.test_invalid_operator_configuration) ... ok
+test_invalid_requests_never_reach_transports (test_f02.ToolTests.test_invalid_requests_never_reach_transports) ... ok
+test_jaeger_late_stream_errors_do_not_become_success (test_f02.ToolTests.test_jaeger_late_stream_errors_do_not_become_success) ... ok
+test_jaeger_streamed_chunks_and_empty_stream (test_f02.ToolTests.test_jaeger_streamed_chunks_and_empty_stream) ... ok
+test_keyword_log_query_keeps_source_field_separate (test_f02.ToolTests.test_keyword_log_query_keeps_source_field_separate) ... ok
+test_log_partial_shards_and_truncation (test_f02.ToolTests.test_log_partial_shards_and_truncation) ... ok
+test_logs_use_read_only_post_with_exact_scope (test_f02.ToolTests.test_logs_use_read_only_post_with_exact_scope) ... ok
+test_metric_values_units_scope_and_provenance (test_f02.ToolTests.test_metric_values_units_scope_and_provenance) ... ok
+test_missing_deployment_feed_is_unavailable (test_f02.ToolTests.test_missing_deployment_feed_is_unavailable) ... ok
+test_missing_metrics_are_no_data_not_zero (test_f02.ToolTests.test_missing_metrics_are_no_data_not_zero) ... ok
+test_network_failures_are_bounded_and_retry_limited (test_f02.ToolTests.test_network_failures_are_bounded_and_retry_limited) ... ok
+test_nonfinite_values_are_not_zero (test_f02.ToolTests.test_nonfinite_values_are_not_zero) ... ok
+test_nonstandard_json_numbers_rejected (test_f02.ToolTests.test_nonstandard_json_numbers_rejected) ... ok
+test_out_of_window_observations_rejected (test_f02.ToolTests.test_out_of_window_observations_rejected) ... ok
+test_redirects_not_followed (test_f02.ToolTests.test_redirects_not_followed) ... ok
+test_response_byte_budget (test_f02.ToolTests.test_response_byte_budget) ... ok
+test_schemas_are_callable_and_disallow_additional_properties (test_f02.ToolTests.test_schemas_are_callable_and_disallow_additional_properties) ... ok
+test_scope_mismatch_rejected_for_each_backend (test_f02.ToolTests.test_scope_mismatch_rejected_for_each_backend) ... ok
+test_series_and_sample_limits (test_f02.ToolTests.test_series_and_sample_limits) ... ok
+test_stale_range_coverage_is_partial (test_f02.ToolTests.test_stale_range_coverage_is_partial) ... ok
+test_structured_log_credentials_redacted (test_f02.ToolTests.test_structured_log_credentials_redacted) ... ok
+test_text_json_credentials_and_truncation (test_f02.ToolTests.test_text_json_credentials_and_truncation) ... ok
+test_trace_end_is_exclusive (test_f02.ToolTests.test_trace_end_is_exclusive) ... ok
+test_trace_filter_is_bounded_and_honest (test_f02.ToolTests.test_trace_filter_is_bounded_and_honest) ... ok
+test_trace_ids_duration_and_selected_attributes (test_f02.ToolTests.test_trace_ids_duration_and_selected_attributes) ... ok
+test_valid_stdio_call_returns_source_ids (test_f02.ToolTests.test_valid_stdio_call_returns_source_ids) ... ok
+
+----------------------------------------------------------------------
+Ran 45 tests in 2.051s
+
+OK

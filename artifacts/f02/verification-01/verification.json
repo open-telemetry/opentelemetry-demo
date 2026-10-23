@@ -1,0 +1,29 @@
+{
+  "verified_at": "2026-10-23T11:00:10.119241Z",
+  "baseline_head": "e8980674dabe885820273b5deebfdecc92133a52",
+  "current_head": "e8980674dabe885820273b5deebfdecc92133a52",
+  "baseline_files_checked": 677,
+  "changed_existing_files": [],
+  "missing_existing_files": [],
+  "tracked_diff": [],
+  "new_paths": [
+    "artifacts/f02/baseline.json",
+    "incident_tools/__init__.py",
+    "incident_tools/f02/README.md",
+    "incident_tools/f02/__init__.py",
+    "incident_tools/f02/__main__.py",
+    "incident_tools/f02/boundary.py",
+    "incident_tools/f02/operator.example.toml",
+    "incident_tools/f02/tests/test_f02.py",
+    "incident_tools/f02/tools.py",
+    "incident_tools/f02/verify.py"
+  ],
+  "tests_run": 42,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "fixture_contracts_passed": true,
+  "source_preservation_passed": true,
+  "live_demo_validation": "not_run",
+  "evidence_notice": "Tests use synthetic HTTP/Docker/audit fixtures. They are not incident telemetry or live acceptance."
+}
