@@ -10,7 +10,7 @@ Feature specs are in [FEATURES.md](FEATURES.md).
 |---|---|---|---|---|---|---|---|
 | 00 | F00 | CI, AGENTS.md override and feature spec | repo setup | P0 | none | PR #1 | merged |
 | 01 | F01 | Package skeleton, contracts, config, tool registry | brain | P0 | F00 | [#2](https://github.com/rhrishi-99/opentelemetry-demo/issues/2) | open |
-| 02 | F02 | Run log | brain | P0 | F01 | [#3](https://github.com/rhrishi-99/opentelemetry-demo/issues/3) | open |
+| 02 | F02 | Run log | brain | P0 | F01 | [#3](https://github.com/rhrishi-99/opentelemetry-demo/issues/3) | in progress (`feat/02-run-log`) |
 | 03 | F03 | Telemetry backends: live + offline (record & replay) | tools | P0 | F01 | [#4](https://github.com/rhrishi-99/opentelemetry-demo/issues/4) | open |
 | 04 | F04 | Tool: get_metrics | tools | P0 | F01, F03 | [#5](https://github.com/rhrishi-99/opentelemetry-demo/issues/5) | open |
 | 05 | F05 | Tool: search_traces | tools | P0 | F01, F03 | [#6](https://github.com/rhrishi-99/opentelemetry-demo/issues/6) | open |
