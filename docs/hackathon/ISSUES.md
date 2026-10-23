@@ -31,5 +31,6 @@ Feature specs are in [FEATURES.md](FEATURES.md).
 | 93 | D93 | Verified telemetry facts | eval-docs | P0 | none | PR #26 | merged |
 | 95 | D95 | Wave 2 specs F11-F17 | eval-docs | P0 | none | PR #26 | merged |
 | 96 | D96 | F18-F19 specs | eval-docs | P0 | none | — | in PR (`docs/96-f18-f19-specs`) |
+| 97 | I97 | interface-change: Diagnosis contract (`Category`, `Alternative`, `Diagnosis` in models.py + interfaces.md) | brain | P0 | none | — | needs 👍: brain (P1 ✅), safety/report (F16), eval (F17) |
 
 (* = needs only the Diagnosis contract from F12's first commit)

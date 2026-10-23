@@ -32,6 +32,36 @@ class Alert(TypedDict):
     source: Literal["detector", "manual"]
 
 
+Category = Literal[
+    "app_error",
+    "dependency_unavailable",
+    "container_down",
+    "resource_cpu",
+    "resource_memory",
+    "network_degradation",
+    "traffic_surge",
+    "upstream_propagation",
+    "unknown",
+]
+
+
+class Alternative(TypedDict):
+    hypothesis: str
+    rejected_because: str
+
+
+class Diagnosis(TypedDict):
+    component: str | None
+    category: Category
+    cause: str
+    confidence: float
+    evidence_ids: list[str]
+    affected_services: list[str]
+    alternatives: list[Alternative]
+    decision: Literal["act", "escalate"]
+    reasoning: str
+
+
 def make_result(
     tool: str, query: dict, summary: str, evidence: list[Evidence]
 ) -> ToolResult:
