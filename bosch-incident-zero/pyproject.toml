@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bosch-incident-zero"
+version = "0.1.0"
+description = "Autonomous Incident Diagnosis and Safe Remediation for OpenTelemetry Microservices"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "Bosch Incident Zero Team" }
+]
+dependencies = [
+    "pydantic>=2.0.0",
+    "requests>=2.31.0",
+    "pyyaml>=6.0.1",
+    "jsonschema>=4.20.0",
+    "rich>=13.7.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-mock>=3.12.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --strict-markers"

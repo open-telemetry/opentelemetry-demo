@@ -1,0 +1,10 @@
+# Core runtime
+pydantic>=2.0.0
+requests>=2.31.0
+pyyaml>=6.0.1
+jsonschema>=4.20.0
+rich>=13.7.0
+
+# Testing
+pytest>=7.4.0
+pytest-mock>=3.12.0
