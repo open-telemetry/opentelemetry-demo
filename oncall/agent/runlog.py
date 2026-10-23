@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, TypedDict
 
@@ -35,7 +35,7 @@ class RunLog:
 
     def __init__(self, run_id: str | None = None, runs_dir: str = "runs") -> None:
         if run_id is None:
-            ts_prefix = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+            ts_prefix = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
             run_id = f"{ts_prefix}_{uuid.uuid4().hex[:6]}"
 
         self.run_id: str = run_id
@@ -50,7 +50,7 @@ class RunLog:
 
         Flushes immediately so events are written even if the process exits.
         """
-        ts = data.pop("ts", None) or datetime.now(timezone.utc).isoformat()
+        ts = data.pop("ts", None) or datetime.now(UTC).isoformat()
         record = {"event": event, "ts": ts, **data}
 
         with open(self.path, "a", encoding="utf-8") as f:
@@ -63,7 +63,7 @@ class RunLog:
             return []
 
         records: list[dict[str, Any]] = []
-        with open(self.path, "r", encoding="utf-8") as f:
+        with open(self.path, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if not line:
