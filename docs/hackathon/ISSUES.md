@@ -9,5 +9,6 @@ Feature specs are in [FEATURES.md](FEATURES.md).
 | NN | ID | Title | Module | Priority | Depends on | Status |
 |---|---|---|---|---|---|---|
 | 00 | F00 | CI, AGENTS.md override and feature spec | repo setup | P0 | none | in PR (`chore/00-ci-and-workflow-setup`) |
+| 91 | D01 | 1-page architecture sketch | eval/docs | P0 | none | in progress (`docs/91-architecture-sketch`) |
 
 Rows for F01-F09 are added from the issue board the team pastes next.
