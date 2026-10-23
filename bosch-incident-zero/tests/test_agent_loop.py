@@ -318,3 +318,155 @@ def test_search_traces_falls_back_to_scan_and_reports_no_data():
     jaeger = _FakeJaeger({"filtered": {"result": {"resourceSpans": []}}, "plain": _otlp(OTHER_TRACE, False)})
     res = search_traces(ToolContext(jaeger=jaeger, prometheus=object(), opensearch=object()), "payment")
     assert res["status"] == "no_data" and len(jaeger.calls) == 2
+
+
+# --- Root cause vs impacted service for an unreachable dependency -------------------------------
+# Sanitized from the live runs (DEMO-001, LIVE-002): checkout's client call to PaymentService/Charge
+# fails with a name-resolution error and payment produces no span at all.
+
+UNREACHED_TRACE = "c" * 32
+
+
+def _span(span_id, parent, name, kind, error=False, message=None, attrs=None):
+    sp = {"traceId": UNREACHED_TRACE, "spanId": span_id, "name": name, "kind": kind,
+          "startTimeUnixNano": "1000", "endTimeUnixNano": "7000000",
+          "status": {"code": 2, "message": message} if error else {},
+          "attributes": [{"key": k, "value": {"stringValue": v}} for k, v in (attrs or {}).items()]}
+    if parent:
+        sp["parentSpanId"] = parent
+    return sp
+
+
+def _trace_payload(resource_spans):
+    return {"result": {"resourceSpans": [
+        {"resource": {"attributes": [{"key": "service.name", "value": {"stringValue": svc}}]},
+         "scopeSpans": [{"spans": spans}]} for svc, spans in resource_spans]}}
+
+
+def unreachable_payment_trace():
+    return _trace_payload([
+        ("frontend", [_span("f1", None, "oteldemo.CheckoutService/PlaceOrder", 3, True,
+                            attrs={"rpc.service": "oteldemo.CheckoutService"})]),
+        ("checkout", [
+            _span("c1", "f1", "oteldemo.CheckoutService/PlaceOrder", 2, True,
+                  "failed to charge card: could not charge the card: rpc error: code = Unavailable"),
+            _span("c2", "c1", "oteldemo.PaymentService/Charge", 3, True,
+                  "name resolver error: produced zero addresses",
+                  {"rpc.method": "oteldemo.PaymentService/Charge"})]),
+    ])
+
+
+def failing_payment_server_trace():
+    payload = unreachable_payment_trace()
+    payload["result"]["resourceSpans"].append(
+        {"resource": {"attributes": [{"key": "service.name", "value": {"stringValue": "payment"}}]},
+         "scopeSpans": [{"spans": [_span("p1", "c2", "charge", 2, True, "Invalid token")]}]})
+    return payload
+
+
+class _TraceJaeger:
+    def __init__(self, payload):
+        self.payload = payload
+
+    def _request(self, method, path, params=None):
+        return self.payload
+
+
+def _ctx(payload):
+    from src.agent.tools import ToolContext
+    return ToolContext(jaeger=_TraceJaeger(payload), prometheus=object(), opensearch=object())
+
+
+def test_get_trace_marks_dependency_that_was_never_reached():
+    from src.agent.tools import get_trace
+    res = get_trace(_ctx(unreachable_payment_trace()), UNREACHED_TRACE)
+    dep = res["data"]["dependency_failure"]
+    assert (dep["caller"], dep["dependency"], dep["reached"]) == ("checkout", "payment", False)
+    assert "never reached payment" in res["summary"]
+    span_ev = next(e for e in res["evidence"] if e["ref"].startswith("span:"))
+    assert span_ev["reached"] is False and span_ev["dependency"] == "payment"
+
+
+def test_search_traces_reports_unreached_dependency():
+    from src.agent.tools import search_traces
+    res = search_traces(_ctx(unreachable_payment_trace()), "checkout")
+    assert res["data"]["traces"][0]["dependency_failure"]["dependency"] == "payment"
+    assert "checkout's calls to payment never reached payment" in res["summary"]
+
+
+def test_dependency_that_answered_with_an_error_is_not_marked_unreached():
+    from src.agent.tools import get_trace
+    res = get_trace(_ctx(failing_payment_server_trace()), UNREACHED_TRACE)
+    assert res["data"]["deepest_failing_span"]["service"] == "payment"
+    assert "dependency_failure" not in res["data"]
+
+
+def test_callee_mapping_covers_grpc_db_and_messaging():
+    from src.agent.tools import _callee_of
+    assert _callee_of({"name": "oteldemo.CartService/GetCart", "attributes": {}}) == "cart"
+    assert _callee_of({"name": "HGET", "attributes": {"db.system": "redis"}}) == "valkey-cart"
+    assert _callee_of({"name": "SELECT", "attributes": {"db.system": "postgresql"}}) == "astronomy-db"
+    assert _callee_of({"name": "orders publish", "attributes": {"messaging.system": "kafka"}}) == "kafka"
+    assert _callee_of({"name": "GET", "attributes": {"server.address": "quote:8090"}}) == "quote"
+    assert _callee_of({"name": "internal work", "attributes": {}}) is None
+
+
+def _unreached_impls():
+    span_ref = f"span:{UNREACHED_TRACE}:c2"
+    return {
+        "search_traces": lambda ctx, service, **kw: _res("search_traces", evidence=[
+            {"ref": UNREACHED_TRACE, "kind": "trace", "service": service},
+            {"ref": span_ref, "kind": "trace", "service": "checkout", "caller": "checkout",
+             "dependency": "payment", "reached": False}]),
+        "system_overview": lambda ctx, window_minutes=5: _res("system_overview", evidence=[
+            {"ref": "metric:checkout:error_rate", "kind": "metric", "value": 1.0}]),
+        "container_health": lambda ctx, service=None: _res("container_health", evidence=[
+            {"ref": "container:payment:state", "kind": "container", "value": "running"}]),
+    }
+
+
+def _unreached_diag(root, impacted):
+    return {
+        "verdict": "diagnosed",
+        "root_cause": {"service": root, "category": "dependency_unreachable",
+                       "summary": "PaymentService/Charge calls fail with a name resolution error"},
+        "impacted_services": impacted, "severity": "HIGH", "confidence": "high",
+        "evidence": [{"kind": "trace", "ref": f"span:{UNREACHED_TRACE}:c2"},
+                     {"kind": "metric", "ref": "metric:checkout:error_rate", "value": 1.0}],
+        "alternatives": [{"hypothesis": "payment container crashed", "status": "ruled_out",
+                          "reason": "container is running", "refs": ["container:payment:state"]}],
+        "recommended_next_step": "Check how checkout resolves the payment address.",
+    }
+
+
+def _run_unreached(diag_steps):
+    specs = [{"name": n, "description": n, "parameters": {"type": "object", "additionalProperties": True}}
+             for n in ("system_overview", "search_traces", "container_health")]
+    box = ToolBox(ctx=object(), impls=_unreached_impls(), specs=specs)
+    inv = [LLMResponse(tool_calls=[ToolCall("1", "system_overview", {}),
+                                   ToolCall("2", "search_traces", {"service": "checkout"}),
+                                   ToolCall("3", "container_health", {"service": "payment"})]),
+           LLMResponse(text="checkout cannot reach payment")]
+    return IncidentAgent(box, factory_for(inv, diag_steps)).run("checkout errors", incident_id="UNR")
+
+
+def test_caller_named_as_root_cause_is_reasked_and_corrected():
+    t = _run_unreached([LLMResponse(text=json.dumps(_unreached_diag("checkout", ["frontend"]))),
+                        LLMResponse(text=json.dumps(_unreached_diag("payment", ["checkout", "frontend"])))])
+    assert "never reached payment" in " ".join(t.diagnosis_attempts[0]["problems"])
+    assert t.report["target_service"] == "payment"
+    assert "checkout" in t.report["impacted_services"]
+    assert t.gate["final_confidence"] == "high" and not t.gate["escalate"]
+
+
+def test_caller_still_named_after_reask_escalates():
+    wrong = LLMResponse(text=json.dumps(_unreached_diag("checkout", ["frontend"])))
+    t = _run_unreached([wrong, wrong])
+    assert t.gate["escalate"] and t.gate["final_confidence"] == "low"
+    assert "root cause names the caller of an unreachable dependency" in t.gate["reasons"]
+    assert t.report["status"] == "DETECTED"
+
+
+def test_dependency_named_first_time_needs_no_reask():
+    t = _run_unreached([LLMResponse(text=json.dumps(_unreached_diag("payment", ["checkout"])))])
+    assert len(t.diagnosis_attempts) == 1 and t.report["target_service"] == "payment"

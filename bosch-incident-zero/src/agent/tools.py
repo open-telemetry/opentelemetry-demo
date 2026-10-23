@@ -529,6 +529,53 @@ def _span_brief(s: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
     return brief
 
 
+# gRPC service names used by the demo, mapped to the service that implements them.
+GRPC_SERVICE_OWNER = {
+    "AdService": "ad", "CartService": "cart", "CheckoutService": "checkout", "CurrencyService": "currency",
+    "EmailService": "email", "PaymentService": "payment", "ProductCatalogService": "product-catalog",
+    "RecommendationService": "recommendation", "ShippingService": "shipping", "QuoteService": "quote",
+}
+# Captures the gRPC service name in "oteldemo.PaymentService/Charge" or "oteldemo.PaymentService".
+_GRPC_NAME = re.compile(r"(?:^|\.)(\w+Service)(?:/|$)")
+SPAN_KIND_CLIENT = 3
+
+
+def _callee_of(span: Dict[str, Any]) -> Optional[str]:
+    """Which demo service or infra component a client span calls, if it can be told."""
+    attrs = span.get("attributes") or {}
+    for text in (attrs.get("rpc.service"), attrs.get("rpc.method"), span.get("name")):
+        m = _GRPC_NAME.search(str(text or ""))
+        if m and m.group(1) in GRPC_SERVICE_OWNER:
+            return GRPC_SERVICE_OWNER[m.group(1)]
+    for key in ("peer.service", "server.address", "net.peer.name"):
+        host = str(attrs.get(key) or "").split(":")[0]
+        if host in TOPOLOGY:
+            return host
+    db = str(attrs.get("db.system") or "").lower()
+    if db in ("redis", "valkey"):
+        return "valkey-cart"
+    if db in ("postgresql", "postgres"):
+        return "astronomy-db"
+    if str(attrs.get("messaging.system") or "").lower() == "kafka":
+        return "kafka"
+    return None
+
+
+def _dependency_failure(span: Optional[Dict[str, Any]], spans: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    """If the failing span is a client call whose callee never produced a span, the call never
+    reached the callee: the callee is unreachable from the caller's point of view."""
+    if not span or not span["error"] or span.get("kind") != SPAN_KIND_CLIENT:
+        return None
+    callee = _callee_of(span)
+    if not callee or callee == span["service"]:
+        return None
+    kids = _children(spans).get(span["span_id"], [])
+    reached = any(k["service"] == callee for k in kids)
+    return {"caller": span["service"], "dependency": callee, "reached": reached,
+            "operation": span["name"], "error": span.get("status_message") or (span.get("exceptions") or [None])[0],
+            "span_id": span["span_id"]}
+
+
 def _window_params(ctx: ToolContext, minutes: int) -> Tuple[datetime, datetime]:
     end = ctx.now()
     return end - timedelta(minutes=minutes), end
@@ -582,17 +629,27 @@ def search_traces(ctx: ToolContext, service: str, errors_only: bool = True,
         kids = _children(spans)
         roots = kids.get(None, [])
         root = min(roots, key=lambda s: s["start"]) if roots else min(spans, key=lambda s: s["start"])
-        rows.append({
+        deepest = _deepest_failing(spans)
+        row = {
             "trace_id": tid, "root": f"{root['service']}: {root['name']}", "duration_ms": root["duration_ms"],
             "span_count": len(spans), "error_span_count": len(errors),
             "error_services": sorted({s["service"] for s in errors}),
-            "deepest_failing_span": _span_brief(_deepest_failing(spans)),
-        })
+            "deepest_failing_span": _span_brief(deepest),
+        }
+        dep = _dependency_failure(deepest, spans)
+        if dep:
+            row["dependency_failure"] = dep
+        rows.append(row)
     rows.sort(key=lambda r: (r["error_span_count"] > 0, r["duration_ms"] or 0), reverse=True)
     rows = rows[:limit]
     for r in rows:
         evidence.append({"ref": r["trace_id"], "kind": "trace", "service": service,
                          "has_error": r["error_span_count"] > 0})
+        dep = r.get("dependency_failure")
+        if dep:
+            evidence.append({"ref": f"span:{r['trace_id']}:{dep['span_id']}", "kind": "trace",
+                             "service": dep["caller"], "caller": dep["caller"],
+                             "dependency": dep["dependency"], "reached": dep["reached"]})
     if not rows:
         what = "error traces" if errors_only else "traces"
         return _result(tool, NO_DATA, f"No {what} for '{service}' in the last {m}m "
@@ -602,6 +659,10 @@ def search_traces(ctx: ToolContext, service: str, errors_only: bool = True,
         deepest = [r["deepest_failing_span"] for r in rows if r["deepest_failing_span"]]
         if deepest:
             summary += f"; deepest failing span e.g. {deepest[0]['service']}: {deepest[0]['name']}"
+        unreached = sorted({(r["dependency_failure"]["caller"], r["dependency_failure"]["dependency"])
+                            for r in rows if r.get("dependency_failure") and not r["dependency_failure"]["reached"]})
+        for caller, dep_svc in unreached:
+            summary += f"; {caller}'s calls to {dep_svc} never reached {dep_svc}"
     return _result(tool, OK, summary, {"window": f"{m}m", "traces_scanned": len(traces), "traces": rows},
                    evidence)
 
@@ -649,17 +710,24 @@ def get_trace(ctx: ToolContext, trace_id: str) -> Dict[str, Any]:
     shown = [e for e in ordered if e["span_id"] in keep or e["depth"] <= 1][:40]
 
     deepest = _deepest_failing(spans)
+    dep = _dependency_failure(deepest, spans)
     evidence = [{"ref": tid, "kind": "trace", "has_error": bool(error_ids)}]
     if deepest:
-        evidence.append({"ref": f"span:{tid}:{deepest['span_id']}", "kind": "trace",
-                         "service": deepest["service"], "name": deepest["name"]})
+        ev = {"ref": f"span:{tid}:{deepest['span_id']}", "kind": "trace",
+              "service": deepest["service"], "name": deepest["name"]}
+        if dep:
+            ev.update(caller=dep["caller"], dependency=dep["dependency"], reached=dep["reached"])
+        evidence.append(ev)
     data = {"trace_id": tid, "span_count": len(spans), "error_span_count": len(error_ids),
             "services": sorted({s["service"] for s in spans}),
             "deepest_failing_span": _span_brief(deepest),
+            **({"dependency_failure": dep} if dep else {}),
             "largest_self_time": [{k: e.get(k) for k in ("service", "name", "self_ms")} for e in slowest[:3]],
             "spans": shown}
     summary = (f"{len(spans)} spans, {len(error_ids)} failing; deepest failure "
-               f"{deepest['service']}: {deepest['name']}" if deepest
+               f"{deepest['service']}: {deepest['name']}" + (
+                   f" (call from {dep['caller']} never reached {dep['dependency']})"
+                   if dep and not dep["reached"] else "") if deepest
                else f"{len(spans)} spans, no failing spans; slowest self-time "
                     f"{slowest[0]['service']}: {slowest[0]['name']} ({slowest[0]['self_ms']} ms)")
     return _result(tool, OK, summary, data, evidence)

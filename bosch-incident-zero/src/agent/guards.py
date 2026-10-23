@@ -131,6 +131,21 @@ def validate_citations(diag: Dict[str, Any], idx: EvidenceIndex) -> List[Dict[st
     return results
 
 
+def attribution_problems(diag: Dict[str, Any], idx: EvidenceIndex) -> List[str]:
+    """Flag a root cause that names the caller when the traces show its calls never reached a
+    dependency. The unreachable dependency is the root cause; the caller is impacted."""
+    root = str((diag.get("root_cause") or {}).get("service", "")).strip()
+    if not root or diag.get("verdict") == "escalate":
+        return []
+    deps = sorted({d for c, d in idx.unreached if c == root})
+    if not deps or any(d == root for _, d in idx.unreached):
+        return []
+    return [f"root_cause.service is '{root}', but the traces show {root}'s failing calls to "
+            f"{', '.join(deps)} never reached {', '.join(deps)} (no span from the dependency). The "
+            f"unreachable dependency is the root cause (category dependency_unreachable); list '{root}' "
+            f"and its callers under impacted_services, or escalate if you believe otherwise."]
+
+
 def _ref_known(ref: str, idx: EvidenceIndex) -> bool:
     r = str(ref).strip()
     low = r.lower()
@@ -188,6 +203,10 @@ def confidence_gate(diag: Dict[str, Any], citations: List[Dict[str, Any]],
         final = "low"
         reasons.append("every telemetry source was unavailable or errored")
 
+    misattributed = attribution_problems(diag, idx)
+    if misattributed:
+        final = "low"
+        reasons.append("root cause names the caller of an unreachable dependency")
     root = (diag.get("root_cause") or {}).get("service", "")
     escalate = (final == "low" or diag.get("verdict") == "escalate" or not root
                 or (diag.get("root_cause") or {}).get("category") == "unknown")

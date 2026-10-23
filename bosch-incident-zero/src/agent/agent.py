@@ -7,7 +7,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from . import prompts
-from .guards import confidence_gate, parse_json_object, schema_errors, validate_citations
+from .guards import (attribution_problems, confidence_gate, parse_json_object, schema_errors,
+                     validate_citations)
 from .llm import LLMError, SessionFactory, ToolResultMessage
 from .report import build_report, validate_report
 from .tools import ToolBox
@@ -115,4 +116,5 @@ class IncidentAgent:
         problems = schema_errors(diag)
         citations = validate_citations(diag, idx)
         problems += [f"citation {c['ref']!r} rejected: {c['reason']}" for c in citations if not c["valid"]]
+        problems += attribution_problems(diag, idx)
         return diag, problems, citations

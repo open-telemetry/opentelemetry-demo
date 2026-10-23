@@ -20,6 +20,10 @@ How to investigate:
 saturated CPU, a stopped or restarting container, an unreachable dependency, queue lag, a traffic spike.
 - Use traces to find the deepest failing span, and dependency_map to separate the root cause \
 from upstream victims: a caller that fails because its callee fails is a symptom, not the cause.
+- If a trace tool reports a dependency_failure with reached=false (the caller's client call to a \
+dependency failed and the dependency produced no span: connection refused, name resolution, \
+unavailable, timeout), the unreachable dependency is the root cause and the caller is impacted, \
+even when the dependency's container looks healthy.
 - Keep a short list of candidate causes with evidence for and against. Before concluding, test at \
 least one plausible alternative and say why it is ruled out.
 - Look for two independent signal types that agree (e.g. a trace plus a metric, or a log plus \
@@ -43,6 +47,9 @@ escalating with honest findings is a correct outcome, a confident wrong answer i
 Confidence: "high" only with two independent signal types that agree AND one alternative ruled \
 out; "medium" with one strong signal plus supporting context; otherwise "low". An alternative \
 only counts as ruled out if its "refs" list cites the tool-result refs that rule it out.
+Attribution: when a trace shows a caller's request to a dependency never reached that dependency \
+(dependency_failure, reached=false), root_cause.service is the dependency (category \
+dependency_unreachable) and the caller goes in impacted_services.
 
 Reply with ONE JSON object and nothing else, matching this JSON Schema:
 {schema}

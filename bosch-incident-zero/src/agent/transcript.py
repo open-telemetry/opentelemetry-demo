@@ -5,7 +5,7 @@ import json
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 
 def utc_now() -> str:
@@ -20,6 +20,8 @@ class EvidenceIndex:
     logs: Dict[str, str] = field(default_factory=dict)
     metrics: Dict[str, List[Any]] = field(default_factory=dict)
     containers: Dict[str, List[Any]] = field(default_factory=dict)
+    # (caller, dependency) pairs where a failing client call never reached the dependency
+    unreached: Set[Tuple[str, str]] = field(default_factory=set)
 
     def all_text(self) -> str:
         return "\n".join(self.logs.values())
@@ -55,6 +57,8 @@ class Transcript:
                 ref = str(ev.get("ref", ""))
                 kind = ev.get("kind")
                 if kind == "trace":
+                    if ev.get("reached") is False and ev.get("caller") and ev.get("dependency"):
+                        idx.unreached.add((ev["caller"], ev["dependency"]))
                     if ref.startswith("span:"):
                         idx.span_refs.add(ref.lower())
                         idx.trace_ids.add(ref.split(":")[1].lower())
