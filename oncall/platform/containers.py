@@ -67,7 +67,7 @@ def _run_docker(args: list[str]) -> str:
     return proc.stdout
 
 
-def _compose_container_ids(compose_files: list[str]) -> list[str]:
+def compose_container_ids(compose_files: list[str]) -> list[str]:
     """IDs of every container in this compose project, running or not."""
     args = ["compose"]
     for f in compose_files:
@@ -76,7 +76,7 @@ def _compose_container_ids(compose_files: list[str]) -> list[str]:
     return _run_docker(args).split()
 
 
-def _inspect(ids: list[str]) -> list[dict]:
+def inspect_containers(ids: list[str]) -> list[dict]:
     if not ids:
         return []
     return json.loads(_run_docker(["inspect", *ids]))
@@ -90,7 +90,7 @@ def _stats(ids: list[str]) -> list[dict]:
     return [json.loads(line) for line in out.splitlines() if line.strip()]
 
 
-def _load_fixture(settings: Settings) -> dict | None:
+def load_fixture(settings: Settings) -> dict | None:
     base = Path(settings.OFFLINE_DIR or DEFAULT_FIXTURE_DIR)
     path = base / os.environ.get("OFFLINE_SCENARIO", "baseline") / FIXTURE_FILE
     if not path.is_file():
@@ -118,7 +118,7 @@ def _cpu_limit_cores(host_config: dict) -> float | None:
     return None
 
 
-def _parse_docker_time(value: str | None) -> datetime | None:
+def parse_docker_time(value: str | None) -> datetime | None:
     """Parse Docker's "2026-10-23T09:12:01.123456789Z" to the second, in UTC."""
     if not value:
         return None
@@ -162,7 +162,7 @@ def _problems(c: dict, now: datetime) -> list[str]:
         problems.append("healthcheck unhealthy")
     if c["oom_killed"]:
         problems.append("OOM-killed")
-    started = _parse_docker_time(c["started_at"])
+    started = parse_docker_time(c["started_at"])
     if c["restart_count"] > 0 and started:
         minutes_ago = (now - started) / timedelta(minutes=1)
         if minutes_ago < RECENT_RESTART_MIN:
@@ -263,15 +263,15 @@ def container_health(service: str | None = None) -> ToolResult:
     query = {"service": service}
     try:
         if settings.TELEMETRY_BACKEND == "offline":
-            fixture = _load_fixture(settings)
+            fixture = load_fixture(settings)
             if fixture is None:
                 return make_error(TOOL, query, "container_health not available offline")
-            now = _parse_docker_time(fixture.get("captured_at")) or datetime.now(UTC)
+            now = parse_docker_time(fixture.get("captured_at")) or datetime.now(UTC)
             return check_containers(
                 fixture.get("inspect", []), fixture.get("stats", []), service, now
             )
 
-        infos = _inspect(_compose_container_ids(settings.compose_files))
+        infos = inspect_containers(compose_container_ids(settings.compose_files))
         running = [
             i["Id"] for i in infos if (i.get("State") or {}).get("Status") == "running"
         ]
