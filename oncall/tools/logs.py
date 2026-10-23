@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
 import json
 import logging
 import re
+from datetime import UTC, datetime
 from typing import Any, Literal
 
 from oncall.models import Evidence, ToolResult, make_error, make_result
