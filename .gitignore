@@ -15,9 +15,16 @@
 .vscode
 
 # AI Agents
-.claude/
+# Shared team config (.claude/, .cursor/rules/) is committed; personal overrides stay local.
+.claude/*
+!.claude/agents/
+!.claude/skills/
+!.claude/commands/
+!.claude/settings.json
+.claude/settings.local.json
 .codex/
-.cursor/
+.cursor/*
+!.cursor/rules/
 .cursorrules
 
 # Build artifacts

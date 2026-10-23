@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Blocks direct pushes to main and runs the test suite before any push.
+set -euo pipefail
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  if [[ "$remote_ref" == "refs/heads/main" || "$remote_ref" == "refs/heads/master" ]]; then
+    echo "✋ Direct push to main is not allowed. Push your branch and open a PR."
+    exit 1
+  fi
+done
+
+if command -v pytest >/dev/null 2>&1 && [[ -d tests ]]; then
+  echo "🧪 Running tests before push..."
+  pytest -q || { echo "✋ Tests failed. Fix them before pushing."; exit 1; }
+fi
+
+exit 0
