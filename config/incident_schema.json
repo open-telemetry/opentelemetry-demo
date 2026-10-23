@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BoschIncidentReport",
+  "description": "Structured incident report schema for Bosch Incident Zero",
+  "type": "object",
+  "required": [
+    "incident_id",
+    "timestamp",
+    "status",
+    "target_service",
+    "severity",
+    "root_cause_summary",
+    "confidence_score",
+    "evidence",
+    "remediation"
+  ],
+  "properties": {
+    "incident_id": {
+      "type": "string",
+      "description": "Unique identifier for the incident, e.g. INC-20261023-001"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the incident was diagnosed"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["DETECTED", "DIAGNOSED", "REMEDIATION_PENDING", "REMEDIATED", "RESOLVED", "ABORTED"]
+    },
+    "target_service": {
+      "type": "string",
+      "description": "Primary service where root cause originated"
+    },
+    "impacted_services": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Downstream or peer services experiencing cascading degradation"
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
+    },
+    "root_cause_summary": {
+      "type": "string",
+      "description": "Concise technical explanation of the failure mode"
+    },
+    "confidence_score": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Confidence score between 0.0 and 1.0"
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["trace_ids", "metrics_summary"],
+      "properties": {
+        "trace_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "description": "List of Jaeger trace IDs exhibiting error or abnormal latency"
+        },
+        "metrics_summary": {
+          "type": "object",
+          "description": "Key Prometheus metrics demonstrating the anomaly (e.g. error rate delta)"
+        },
+        "log_excerpts": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Correlated error logs from OpenSearch"
+        }
+      }
+    },
+    "remediation": {
+      "type": "object",
+      "required": ["recommended_action", "requires_approval", "dry_run"],
+      "properties": {
+        "action_id": { "type": "string" },
+        "recommended_action": { "type": "string" },
+        "action_parameters": { "type": "object" },
+        "requires_approval": { "type": "boolean" },
+        "approval_status": {
+          "type": "string",
+          "enum": ["PENDING", "APPROVED", "REJECTED", "BYPASSED"]
+        },
+        "dry_run": { "type": "boolean" },
+        "executed_at": { "type": ["string", "null"] },
+        "recovery_verified": { "type": "boolean" }
+      }
+    }
+  }
+}
