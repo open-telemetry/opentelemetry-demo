@@ -1,0 +1,10 @@
+{
+  "op": "logs_search",
+  "kwargs": {
+    "service": null,
+    "level": "error",
+    "since_min": 15,
+    "limit": 50
+  },
+  "data": []
+}

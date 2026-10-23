@@ -1,0 +1,29 @@
+{
+  "op": "jaeger_traces",
+  "kwargs": {
+    "service": "checkout",
+    "lookback": "15m",
+    "limit": 20,
+    "tags": null
+  },
+  "data": [
+    {
+      "traceID": "4bf92f3577b34da6a3ce929d0e0e4736",
+      "spans": [
+        {
+          "traceID": "4bf92f3577b34da6a3ce929d0e0e4736",
+          "spanID": "00f067aa0ba902b7",
+          "operationName": "place_order",
+          "startTime": 1700000000000,
+          "duration": 45000,
+          "tags": [
+            {
+              "key": "http.status_code",
+              "value": 200
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
