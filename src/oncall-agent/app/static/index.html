@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI On-Call Engineer — Approval Dashboard</title>
+  <style>
+    :root {
+      --bg: #0d1117; --surface: #161b22; --surface2: #21262d;
+      --border: #30363d; --text: #e6edf3; --muted: #8b949e;
+      --green: #3fb950; --red: #f85149; --yellow: #d29922;
+      --blue: #58a6ff; --purple: #bc8cff; --orange: #e3b341;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 14px; }
+    header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; }
+    header h1 { font-size: 16px; font-weight: 600; }
+    .badge { padding: 3px 8px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .badge-green { background: #1e4a29; color: var(--green); }
+    .badge-red { background: #4a1e1e; color: var(--red); }
+    .badge-yellow { background: #4a3a1e; color: var(--yellow); }
+    .badge-blue { background: #1e3a4a; color: var(--blue); }
+    .badge-purple { background: #2e1e4a; color: var(--purple); }
+    .badge-orange { background: #4a3a1e; color: var(--orange); }
+    .container { padding: 20px 24px; max-width: 1200px; margin: 0 auto; }
+    .row { display: flex; gap: 16px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+    .killswitch-row { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; }
+    button { cursor: pointer; padding: 7px 14px; border-radius: 6px; border: 1px solid var(--border); font-size: 13px; font-weight: 500; transition: opacity .15s; }
+    button:hover { opacity: 0.85; }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-approve { background: var(--green); color: #000; border-color: var(--green); }
+    .btn-reject { background: var(--red); color: #fff; border-color: var(--red); }
+    .btn-dryrun { background: var(--blue); color: #000; border-color: var(--blue); }
+    .btn-kill { background: var(--red); color: #fff; border-color: var(--red); }
+    .btn-kill-off { background: var(--green); color: #000; border-color: var(--green); }
+    .incident-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 16px; overflow: hidden; }
+    .incident-header { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; cursor: pointer; }
+    .incident-header h2 { font-size: 15px; font-weight: 600; flex: 1; }
+    .incident-body { padding: 16px; display: none; }
+    .incident-body.open { display: block; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 14px; font-size: 13px; }
+    th { text-align: left; padding: 6px 10px; background: var(--surface2); color: var(--muted); font-weight: 500; border-bottom: 1px solid var(--border); }
+    td { padding: 6px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .section-label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin: 14px 0 6px; }
+    .code-block { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; font-family: 'Courier New', monospace; font-size: 12px; white-space: pre-wrap; word-break: break-all; max-height: 200px; overflow-y: auto; color: var(--text); }
+    .action-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    .dry-run-output { margin-top: 12px; padding: 10px; background: var(--surface2); border-radius: 6px; font-family: monospace; font-size: 12px; white-space: pre-wrap; color: var(--blue); }
+    .msg { margin-top: 10px; padding: 8px 12px; border-radius: 6px; font-size: 13px; }
+    .msg-success { background: #1e4a29; color: var(--green); }
+    .msg-error { background: #4a1e1e; color: var(--red); }
+    .empty { color: var(--muted); padding: 30px 0; text-align: center; }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    #killswitch-status { font-weight: 600; }
+    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--muted); border-top-color: var(--blue); border-radius: 50%; animation: spin .6s linear infinite; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+<header>
+  <h1>🔭 AI On-Call Engineer — Approval Dashboard</h1>
+  <span id="last-update" style="color:var(--muted);font-size:12px;"></span>
+</header>
+<div class="container">
+
+  <!-- Kill Switch -->
+  <div class="killswitch-row row" id="killswitch-section">
+    <strong>Global Kill Switch:</strong>
+    <span id="killswitch-status">Loading…</span>
+    <button id="killswitch-btn" onclick="toggleKillSwitch()">…</button>
+    <span style="color:var(--muted);font-size:12px;">When engaged, all mutating actions return 423 Locked.</span>
+  </div>
+
+  <div id="incidents-container"><div class="empty"><span class="spinner"></span> Loading incidents…</div></div>
+</div>
+
+<script>
+const POLL_INTERVAL = 2000;
+let killswitchEngaged = false;
+let expandedIds = new Set();
+
+function stateBadge(state) {
+  const map = {
+    DETECTED: 'badge-yellow', INVESTIGATING: 'badge-blue', DIAGNOSED: 'badge-blue',
+    AWAITING_APPROVAL: 'badge-orange', APPROVED: 'badge-green', REJECTED: 'badge-red',
+    EXECUTING: 'badge-purple', VERIFYING: 'badge-purple',
+    RESOLVED: 'badge-green', ROLLED_BACK: 'badge-red', ESCALATED: 'badge-red',
+  };
+  return `<span class="badge ${map[state] || 'badge-yellow'}">${state}</span>`;
+}
+
+async function fetchKillswitch() {
+  try {
+    const r = await fetch('/killswitch');
+    const d = await r.json();
+    killswitchEngaged = d.engaged;
+    document.getElementById('killswitch-status').textContent = killswitchEngaged ? '🔴 ENGAGED' : '🟢 Off';
+    document.getElementById('killswitch-status').style.color = killswitchEngaged ? 'var(--red)' : 'var(--green)';
+    const btn = document.getElementById('killswitch-btn');
+    btn.textContent = killswitchEngaged ? 'Disengage Kill Switch' : 'Engage Kill Switch';
+    btn.className = killswitchEngaged ? 'btn-kill-off' : 'btn-kill';
+  } catch (e) {}
+}
+
+async function toggleKillSwitch() {
+  await fetch('/killswitch', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({engaged: !killswitchEngaged})});
+  await fetchKillswitch();
+}
+
+async function fetchIncidents() {
+  try {
+    const r = await fetch('/incidents');
+    const incidents = await r.json();
+    renderIncidents(incidents);
+    document.getElementById('last-update').textContent = 'Updated: ' + new Date().toLocaleTimeString();
+  } catch(e) {
+    document.getElementById('last-update').textContent = 'Error fetching incidents';
+  }
+}
+
+function renderIncidents(incidents) {
+  const container = document.getElementById('incidents-container');
+  if (!incidents.length) {
+    container.innerHTML = '<div class="empty">No incidents yet. System is healthy.</div>';
+    return;
+  }
+  // Sort: most recent first
+  incidents.sort((a,b) => b.detected_at.localeCompare(a.detected_at));
+  container.innerHTML = incidents.map(inc => renderIncident(inc)).join('');
+}
+
+function renderIncident(inc) {
+  const isOpen = expandedIds.has(inc.incident_id);
+  const diagnosis = inc.diagnosis || {};
+  const proposals = inc.proposals || [];
+  const isAwaiting = inc.state === 'AWAITING_APPROVAL';
+  const symptoms = inc.symptoms || [];
+
+  const symptomsHtml = symptoms.map(s => `<tr><td>${s.type}</td><td><code>${s.service}</code></td><td>${s.description}</td><td>${s.value}</td></tr>`).join('');
+
+  let diagHtml = '';
+  if (diagnosis.component) {
+    diagHtml = `
+      <div class="section-label">Root Cause Diagnosis</div>
+      <table>
+        <tr><th>Component</th><th>Category</th><th>Confidence</th></tr>
+        <tr><td><code>${diagnosis.component}</code></td><td><code>${diagnosis.cause_category}</code></td><td>${diagnosis.confidence}</td></tr>
+      </table>
+      <div style="color:var(--muted);margin-bottom:8px;">${diagnosis.cause_description || ''}</div>
+    `;
+    const evidence = diagnosis.evidence || [];
+    if (evidence.length) {
+      diagHtml += `<div class="section-label">Evidence</div><table><tr><th>ID</th><th>Type</th><th>Ref</th><th>Why it matters</th></tr>`;
+      evidence.forEach(ev => {
+        const traceLink = ev.type === 'trace' && ev.ref && ev.ref.match(/[0-9a-f]{32}/i) ?
+          `<a href="http://localhost:8080/jaeger/ui/trace/${ev.ref.match(/[0-9a-f]{32}/i)[0]}" target="_blank">${ev.ref.substring(0,40)}</a>` :
+          `<code>${(ev.ref||'').substring(0,60)}</code>`;
+        diagHtml += `<tr><td>${ev.evidence_id}</td><td>${ev.type}</td><td>${traceLink}</td><td>${ev.why_it_matters||''}</td></tr>`;
+      });
+      diagHtml += '</table>';
+    }
+  }
+
+  let proposalsHtml = '';
+  if (proposals.length) {
+    proposalsHtml = `<div class="section-label">Proposed Plan</div>`;
+    proposals.forEach((p, i) => {
+      proposalsHtml += `
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px;">
+          <strong>${p.runbook_id}</strong> — <code>${p.action}</code> on <code>${JSON.stringify(p.params)}</code><br>
+          <span style="color:var(--muted);">Reason:</span> ${p.reason}<br>
+          <span style="color:var(--muted);">Expected recovery:</span> ${p.expected_recovery_signal}
+        </div>`;
+    });
+  }
+
+  const actionButtons = isAwaiting ? `
+    <div class="action-buttons">
+      <button class="btn-dryrun" id="dryrun-btn-${inc.incident_id}" onclick="doDryRun('${inc.incident_id}')">🔍 Dry Run</button>
+      <button class="btn-approve" id="approve-btn-${inc.incident_id}" onclick="doApprove('${inc.incident_id}')">✅ Approve</button>
+      <button class="btn-reject" id="reject-btn-${inc.incident_id}" onclick="doReject('${inc.incident_id}')">❌ Reject</button>
+    </div>
+    <div id="dry-run-output-${inc.incident_id}" class="dry-run-output" style="display:none;"></div>
+    <div id="msg-${inc.incident_id}"></div>
+  ` : '';
+
+  const timelineHtml = (inc.timeline||[]).slice(-6).map(t =>
+    `<div style="font-size:12px;color:var(--muted);margin-bottom:3px;"><code>${t.ts.substring(0,19)}</code> <strong style="color:var(--text)">${t.event}</strong> ${t.detail||''}</div>`
+  ).join('');
+
+  return `
+    <div class="incident-card" id="card-${inc.incident_id}">
+      <div class="incident-header" onclick="toggleCard('${inc.incident_id}')">
+        <h2>${inc.incident_id}</h2>
+        ${stateBadge(inc.state)}
+        <span style="color:var(--muted);font-size:12px;margin-left:8px;">${inc.detected_at.substring(0,19).replace('T',' ')} UTC</span>
+        <span style="margin-left:auto;color:var(--muted);">${isOpen?'▲':'▼'}</span>
+      </div>
+      <div class="incident-body ${isOpen?'open':''}" id="body-${inc.incident_id}">
+        <div class="section-label">Symptoms</div>
+        <table>
+          <tr><th>Type</th><th>Service</th><th>Description</th><th>Value</th></tr>
+          ${symptomsHtml}
+        </table>
+        ${diagHtml}
+        ${proposalsHtml}
+        ${actionButtons}
+        <div class="section-label">Timeline</div>
+        ${timelineHtml}
+      </div>
+    </div>`;
+}
+
+function toggleCard(id) {
+  if (expandedIds.has(id)) expandedIds.delete(id);
+  else expandedIds.add(id);
+  const body = document.getElementById('body-' + id);
+  if (body) body.classList.toggle('open');
+}
+
+async function doDryRun(id) {
+  const btn = document.getElementById('dryrun-btn-' + id);
+  const out = document.getElementById('dry-run-output-' + id);
+  btn.disabled = true; btn.textContent = '⌛ Running…';
+  out.style.display = 'none';
+  try {
+    const r = await fetch(`/incidents/${id}/dry-run`, {method:'POST'});
+    const d = await r.json();
+    out.textContent = JSON.stringify(d, null, 2);
+    out.style.display = 'block';
+  } catch(e) { out.textContent = 'Error: ' + e; out.style.display='block'; }
+  btn.disabled = false; btn.textContent = '🔍 Dry Run';
+}
+
+async function doApprove(id) {
+  const btn = document.getElementById('approve-btn-' + id);
+  btn.disabled = true; btn.textContent = '⌛ Approving…';
+  try {
+    const r = await fetch(`/incidents/${id}/approve`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({approved_by:'dashboard-user'})});
+    const d = await r.json();
+    showMsg(id, d.detail || JSON.stringify(d), d.status === 'approved' ? 'success' : 'error');
+  } catch(e) { showMsg(id, 'Error: ' + e, 'error'); }
+  btn.disabled = false; btn.textContent = '✅ Approve';
+}
+
+async function doReject(id) {
+  const reason = prompt('Rejection reason (optional):') || '';
+  const btn = document.getElementById('reject-btn-' + id);
+  btn.disabled = true; btn.textContent = '⌛ Rejecting…';
+  try {
+    const r = await fetch(`/incidents/${id}/reject`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({reason})});
+    const d = await r.json();
+    showMsg(id, d.detail || JSON.stringify(d), 'error');
+  } catch(e) { showMsg(id, 'Error: ' + e, 'error'); }
+  btn.disabled = false; btn.textContent = '❌ Reject';
+}
+
+function showMsg(id, text, type) {
+  const el = document.getElementById('msg-' + id);
+  if (el) { el.className = 'msg msg-' + type; el.textContent = text; }
+}
+
+async function poll() {
+  await fetchKillswitch();
+  await fetchIncidents();
+}
+
+poll();
+setInterval(poll, POLL_INTERVAL);
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "incident_id": "INC-REJECT-01",
+  "status": "rejected",
+  "detected_at": "2026-10-24T02:10:00Z",
+  "resolved_at": "2026-10-23T22:09:55.060361+00:00",
+  "timeline": [
+    {
+      "ts": "2026-10-24T02:10:00Z",
+      "event": "DETECTED",
+      "detail": "Spike detected"
+    },
+    {
+      "ts": "2026-10-24T02:11:00Z",
+      "event": "AWAITING_APPROVAL",
+      "detail": "Plan presented in UI"
+    },
+    {
+      "ts": "2026-10-24T02:12:00Z",
+      "event": "REJECTED",
+      "detail": "Rejected by engineer: load test in progress"
+    }
+  ],
+  "symptoms": [
+    {
+      "type": "error_ratio",
+      "service": "cart",
+      "metric": "error_percentage",
+      "value": 6.2,
+      "threshold": 5.0,
+      "description": "Cart error ratio transiently at 6.2%"
+    }
+  ],
+  "root_cause": {
+    "component": "cart",
+    "category": "service_fault_injected_errors",
+    "description": "Intermittent cart error rate",
+    "confidence": {
+      "model": 0.72,
+      "evidence_score": null,
+      "final": 0.72
+    }
+  },
+  "evidence": [],
+  "alternatives_considered": [],
+  "actions": [],
+  "verification": null,
+  "escalation": null,
+  "prevention": [],
+  "memory_assist": null,
+  "model": {},
+  "auto_approve_used": false
+}

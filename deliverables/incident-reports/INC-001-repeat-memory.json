@@ -1,0 +1,121 @@
+{
+  "schema_version": "1.0",
+  "incident_id": "INC-001-REPEAT-MEMORY",
+  "status": "resolved",
+  "detected_at": "2026-10-24T03:00:00Z",
+  "resolved_at": "2026-10-23T22:09:55.070478+00:00",
+  "timeline": [
+    {
+      "ts": "2026-10-24T03:00:00Z",
+      "event": "DETECTED",
+      "detail": "Alert fired for payment"
+    },
+    {
+      "ts": "2026-10-24T03:00:05Z",
+      "event": "MEMORY_ASSIST",
+      "detail": "Matched INC-001-PAYMENT-RESOLVED (sim=0.95), saved 4 tool steps"
+    },
+    {
+      "ts": "2026-10-24T03:00:30Z",
+      "event": "APPROVED",
+      "detail": "Approved"
+    },
+    {
+      "ts": "2026-10-24T03:01:20Z",
+      "event": "RESOLVED",
+      "detail": "Verified recovered"
+    }
+  ],
+  "symptoms": [
+    {
+      "type": "error_ratio",
+      "service": "payment",
+      "value": 100.0,
+      "description": "Service payment error ratio is 100.0%"
+    }
+  ],
+  "root_cause": {
+    "component": "payment",
+    "category": "service_fault_injected_errors",
+    "description": "Payment service rejecting charge requests (reoccurrence of INC-001)",
+    "confidence": {
+      "model": 0.96,
+      "evidence_score": null,
+      "final": 0.96
+    }
+  },
+  "evidence": [
+    {
+      "evidence_id": "E1",
+      "type": "metric",
+      "ref": "payment error % 100.0%",
+      "why_it_matters": "Matches past incident symptom signature"
+    },
+    {
+      "evidence_id": "E2",
+      "type": "trace",
+      "ref": "Trace: [ERROR: payment:Payment request failed. Invalid token]",
+      "why_it_matters": "Confirmed exact same failure mode in 2 tool calls"
+    }
+  ],
+  "alternatives_considered": [],
+  "actions": [
+    {
+      "action": "set_feature_flag",
+      "params": {
+        "target": "payment",
+        "flag": "paymentFailure",
+        "state": "off"
+      },
+      "result": {
+        "status": "ok"
+      }
+    }
+  ],
+  "verification": {
+    "passed": true,
+    "checks": {
+      "error_ratio": "0.0%"
+    }
+  },
+  "escalation": null,
+  "prevention": [
+    {
+      "type": "alerting",
+      "target": "prometheus/rules/payment-alert.yaml",
+      "change": "groups:\n  - name: oncall-preventive-rules\n    rules:\n      - alert: HighErrorRatePayment\n        expr: sum(rate(traces_span_metrics_calls_total{service_name=\"payment\",status_code=\"STATUS_CODE_ERROR\"}[2m])) / sum(rate(traces_span_metrics_calls_total{service_name=\"payment\"}[2m])) > 0.05\n        for: 1m\n        labels:\n          severity: critical\n          service: payment\n        annotations:\n          summary: \"Elevated error rate observed on payment\"\n          description: \"Error ratio exceeded threshold for over 1 minute.\"\n",
+      "rationale": "Detect service_fault_injected_errors on payment before full user impact occurs.",
+      "risk": "none (alerting rule only)",
+      "validated": true,
+      "validation_detail": "Valid PromQL expression verified against Prometheus"
+    },
+    {
+      "type": "config",
+      "target": "compose.yaml::services.payment.healthcheck",
+      "change": "healthcheck:\n  test: [\"CMD\", \"curl\", \"-f\", \"http://localhost:8080/health\"]\n  interval: 15s\n  timeout: 3s\n  retries: 3",
+      "rationale": "Add active health check probe on payment to detect degradation early.",
+      "risk": "low",
+      "validated": true,
+      "validation_detail": "Config syntax verified against compose spec"
+    },
+    {
+      "type": "code",
+      "target": "payment client HTTP/RPC calling library",
+      "change": "Implement circuit breaker (e.g. Resilience4j / Tenacity / Polly):\n- Trip open on 5 consecutive failures or > 50% error rate over 10s.\n- Exponential backoff retry with jitter (100ms, 200ms, 400ms, max 3 attempts).\n- Fallback response or degraded cache when circuit is open.",
+      "rationale": "Prevent cascading failure and thread starvation when downstream dependencies fail.",
+      "risk": "medium (requires code change & CI/CD deployment)",
+      "validated": true,
+      "validation_detail": "Architectural resilience pattern"
+    }
+  ],
+  "memory_assist": {
+    "matched_incident": "INC-001-PAYMENT-RESOLVED",
+    "similarity": 0.95,
+    "prev_steps": 6,
+    "current_steps": 2,
+    "steps_saved": 4,
+    "recommended_runbook": "RB-001"
+  },
+  "model": {},
+  "auto_approve_used": false
+}

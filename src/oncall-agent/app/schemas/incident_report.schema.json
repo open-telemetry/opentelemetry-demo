@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oncall-agent/schemas/incident_report.schema.json",
+  "title": "IncidentReport",
+  "type": "object",
+  "required": ["schema_version", "incident_id", "status", "detected_at"],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "incident_id": {"type": "string"},
+    "status": {
+      "type": "string",
+      "enum": ["resolved", "escalated", "rejected", "rolled_back", "pending_approval"]
+    },
+    "detected_at": {"type": "string", "format": "date-time"},
+    "resolved_at": {"type": ["string", "null"], "format": "date-time"},
+    "timeline": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ts", "event"],
+        "properties": {
+          "ts": {"type": "string"},
+          "event": {"type": "string"},
+          "detail": {"type": "string"}
+        }
+      }
+    },
+    "symptoms": {
+      "type": "array",
+      "items": {"type": "object"}
+    },
+    "root_cause": {
+      "type": ["object", "null"],
+      "properties": {
+        "component": {"type": ["string", "null"]},
+        "category": {"type": ["string", "null"]},
+        "description": {"type": ["string", "null"]},
+        "confidence": {
+          "type": ["object", "null"],
+          "properties": {
+            "model": {"type": ["number", "null"]},
+            "evidence_score": {"type": ["number", "null"]},
+            "final": {"type": ["number", "null"]}
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["evidence_id", "type"],
+        "properties": {
+          "evidence_id": {"type": "string"},
+          "type": {"type": "string"},
+          "ref": {"type": "string"},
+          "why_it_matters": {"type": "string"}
+        }
+      }
+    },
+    "alternatives_considered": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "actions": {
+      "type": "array",
+      "items": {"type": "object"}
+    },
+    "verification": {"type": ["object", "null"]},
+    "escalation": {"type": ["object", "null"]},
+    "prevention": {"type": "array"},
+    "memory_assist": {"type": ["object", "null"]},
+    "model": {"type": "object"},
+    "auto_approve_used": {"type": "boolean"}
+  }
+}
