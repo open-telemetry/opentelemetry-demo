@@ -1,6 +1,7 @@
 """Command line entry point: python -m oncall.main <command> ..."""
 
 import argparse
+import json
 import os
 import sys
 from datetime import UTC, datetime
@@ -27,12 +28,13 @@ def cmd_investigate(args: argparse.Namespace) -> int:
         os.environ["TELEMETRY_BACKEND"] = "offline"
         os.environ["OFFLINE_SCENARIO"] = args.offline
 
-    from oncall.agent.loop import investigate
+    from oncall.agent.loop import investigate_and_diagnose
     from oncall.agent.runlog import RunLog
     from oncall.config import load_settings
 
     runlog = RunLog(runs_dir=load_settings().RUNS_DIR)
-    result = investigate(_manual_alert(args.service, args.description), runlog=runlog)
+    alert = _manual_alert(args.service, args.description)
+    result = investigate_and_diagnose(alert, runlog=runlog)
 
     print(f"run_id:  {result['run_id']}")
     print(f"stopped: {result['stopped']} after {result['steps']} steps")
@@ -40,6 +42,7 @@ def cmd_investigate(args: argparse.Namespace) -> int:
     for i, call in enumerate(runlog.events("tool_call"), 1):
         print(f"  {i}. {call['name']}({call['args']})")
     print(f"summary:\n{result['summary']}")
+    print(f"diagnosis:\n{json.dumps(result['diagnosis'], indent=2)}")
     print(f"run log: {runlog.path}")
     print(f"tokens:  {runlog.token_usage()}")
     return 0 if result["stopped"] == "finish" else 1
