@@ -29,9 +29,13 @@ def tools() -> None:
 def investigate(
     symptom: str = typer.Argument(..., help="e.g. 'checkout is failing'"),
     llm: str = typer.Option("real", "--llm", help="real or fake"),
+    engine: str = typer.Option("loop", "--engine", help="loop or graph (LangGraph)"),
 ) -> None:
-    from oncall.agent.run import investigate as run_investigation
     from oncall.agent.run import new_run_id
+    if engine == "graph":
+        from oncall.agent.graph import investigate as run_investigation
+    else:
+        from oncall.agent.run import investigate as run_investigation
     from oncall.config import settings
     from oncall.schema import to_submission
 

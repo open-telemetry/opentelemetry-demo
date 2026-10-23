@@ -2,7 +2,9 @@ import json
 
 import pytest
 
-from oncall.agent.run import MAX_ITERATIONS, investigate
+import oncall.agent.graph as graph_engine
+import oncall.agent.run as loop_engine
+from oncall.agent.run import MAX_ITERATIONS
 from oncall.contracts import Fact, Signal, ToolOutput
 from oncall.events import EventLog
 from oncall.ledger import EvidenceLedger
@@ -35,34 +37,39 @@ def _final(ids: list[str], confidence: float = 0.9, escalate: bool = False) -> s
     })
 
 
-def _run(script, tmp_path):
+@pytest.fixture(params=["loop", "graph"])
+def investigate(request):
+    return (loop_engine if request.param == "loop" else graph_engine).investigate
+
+
+def _run(script, tmp_path, investigate):
     return investigate("checkout is failing", FakeLLM(script), EvidenceLedger(), EventLog("t", str(tmp_path)))
 
 
-def test_valid_evidence_is_kept(tmp_path):
-    diagnosis, made = _run([_call(), _final(["E-002"])], tmp_path)
+def test_valid_evidence_is_kept(tmp_path, investigate):
+    diagnosis, made = _run([_call(), _final(["E-002"])], tmp_path, investigate)
     assert diagnosis.evidence_ids == ["E-002"]
     assert not diagnosis.escalate and diagnosis.confidence == 0.9
     assert made[1]["evidence"] == ["E-002"]
 
 
-def test_invented_ids_are_stripped_and_force_escalation(tmp_path):
-    diagnosis, _ = _run([_call(), _final(["E-002", "E-042"])], tmp_path)
+def test_invented_ids_are_stripped_and_force_escalation(tmp_path, investigate):
+    diagnosis, _ = _run([_call(), _final(["E-002", "E-042"])], tmp_path, investigate)
     assert diagnosis.evidence_ids == ["E-002"]
     assert diagnosis.escalate and diagnosis.confidence <= 0.3
 
 
-def test_only_invented_ids_escalate(tmp_path):
-    diagnosis, _ = _run([_final(["E-007"])], tmp_path)
+def test_only_invented_ids_escalate(tmp_path, investigate):
+    diagnosis, _ = _run([_final(["E-007"])], tmp_path, investigate)
     assert diagnosis.evidence_ids == [] and diagnosis.escalate
 
 
-def test_unparseable_answer_falls_back_to_escalation(tmp_path):
-    diagnosis, _ = _run(["not json"] * MAX_ITERATIONS, tmp_path)
+def test_unparseable_answer_falls_back_to_escalation(tmp_path, investigate):
+    diagnosis, _ = _run(["not json"] * MAX_ITERATIONS, tmp_path, investigate)
     assert diagnosis.escalate and diagnosis.fault_class == "unknown"
 
 
-def test_loop_stops_at_iteration_cap(tmp_path):
+def test_loop_stops_at_iteration_cap(tmp_path, investigate):
     llm = FakeLLM([_call(str(i)) for i in range(MAX_ITERATIONS)])
     diagnosis, made = investigate("x", llm, EvidenceLedger(), EventLog("cap", str(tmp_path)))
     assert llm.calls == MAX_ITERATIONS and len(made) == MAX_ITERATIONS + 1

@@ -1,4 +1,5 @@
 pydantic>=2
+langgraph
 httpx
 fastapi
 uvicorn
