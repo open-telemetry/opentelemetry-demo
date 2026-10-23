@@ -1,0 +1,18 @@
+{
+  "reviewed_utc": "2026-10-23T09:48:39.752016+00:00",
+  "accepted_with_corrections": true,
+  "corrections": [
+    "E006/E007 are traces, not metric requests",
+    "No successful practice execution does not mean no successful read operations",
+    "No specific application/configuration root cause is established"
+  ],
+  "supported_findings": {
+    "E001": "No matching demo containers",
+    "E002": "No matching lifecycle events",
+    "E003-E005": "Prometheus connection refused",
+    "E006-E007": "Jaeger connection refused",
+    "E008": "No OpenSearch port discovered",
+    "E009": "Practice not executed"
+  },
+  "model_output_remains_untrusted_as_telemetry": true
+}

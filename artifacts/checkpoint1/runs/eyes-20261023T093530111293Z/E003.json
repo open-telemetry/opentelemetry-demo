@@ -1,0 +1,10 @@
+{
+  "id": "E003",
+  "kind": "metrics",
+  "observed_utc": "2026-10-23T09:35:32.664502+00:00",
+  "source": "http://127.0.0.1:9090/api/v1/query_range?query=target_info&start=1792747830.111293&end=1792748130.111293&step=15",
+  "status": "error",
+  "result": null,
+  "error": "URLError: <urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>",
+  "command": null
+}

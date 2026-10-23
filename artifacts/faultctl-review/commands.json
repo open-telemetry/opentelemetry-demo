@@ -1,0 +1,718 @@
+[
+  {
+    "test": "__main__.FaultctlTests.test_acknowledgement_without_apply_is_not_reported_as_success",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--api",
+      "--api-url",
+      "http://127.0.0.1:57286/feature/api",
+      "set",
+      "paymentFailure",
+      "100%"
+    ],
+    "exit_code": 0,
+    "stdout": "  * paymentFailure -> 100%  (payment)\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_all_preset_scenarios_resolve_and_apply",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-wy4crx0u\\flags.json",
+      "scenario",
+      "apply",
+      "payment-fail"
+    ],
+    "exit_code": 0,
+    "stdout": "\n  * Scenario: payment-fail\n  Payment service fails 100% of charges\n\n    paymentFailure -> 100%  (payment)\n\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_all_preset_scenarios_resolve_and_apply",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-wy4crx0u\\flags.json",
+      "scenario",
+      "apply",
+      "payment-intermittent"
+    ],
+    "exit_code": 0,
+    "stdout": "\n  * Scenario: payment-intermittent\n  Payment service fails 50% of charges\n\n    paymentFailure -> 50%  (payment)\n\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_all_preset_scenarios_resolve_and_apply",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-wy4crx0u\\flags.json",
+      "scenario",
+      "apply",
+      "payment-down"
+    ],
+    "exit_code": 0,
+    "stdout": "\n  * Scenario: payment-down\n  Payment service is unreachable\n\n    paymentUnreachable -> on  (checkout / payment)\n\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_all_preset_scenarios_resolve_and_apply",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-wy4crx0u\\flags.json",
+      "scenario",
+      "apply",
+      "cart-fail"
+    ],
+    "exit_code": 0,
+    "stdout": "\n  * Scenario: cart-fail\n  Cart service fails 50% of requests\n\n    cartFailure -> 50%  (cart)\n\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_all_preset_scenarios_resolve_and_apply",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-wy4crx0u\\flags.json",
+      "scenario",
+      "apply",
+      "catalog-fail"
+    ],
+    "exit_code": 0,
+    "stdout": "\n  * Scenario: catalog-fail\n  Product catalog fails for product OLJCESPC7Z\n\n    productCatalogFailure -> on  (product-catalog)\n\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_all_preset_scenarios_resolve_and_apply",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-wy4crx0u\\flags.json",
+      "scenario",
+      "apply",
+      "catalog-lock"
+    ],
+    "exit_code": 0,
+    "stdout": "\n  * Scenario: catalog-lock\n  Product catalog database lock contention\n\n    productCatalogLockContention -> on  (product-catalog)\n\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_all_preset_scenarios_resolve_and_apply",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-wy4crx0u\\flags.json",
+      "scenario",
+      "apply",
+      "ad-high-cpu"
+    ],
+    "exit_code": 0,
+    "stdout": "\n  * Scenario: ad-high-cpu\n  Ad service CPU spikes to 100%\n\n    adHighCpu -> on  (ad)\n\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_all_preset_scenarios_resolve_and_apply",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-wy4crx0u\\flags.json",
+      "scenario",
+      "apply",
+      "ad-gc"
+    ],
+    "exit_code": 0,
+    "stdout": "\n  * Scenario: ad-gc\n  Ad service continuous manual GC (JVM stop-the-world)\n\n    adManualGc -> on  (ad)\n\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_all_preset_scenarios_resolve_and_apply",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-wy4crx0u\\flags.json",
+      "scenario",
+      "apply",
+      "email-leak"
+    ],
+    "exit_code": 0,
+    "stdout": "\n  * Scenario: email-leak\n  Email service memory leak (1000x multiplier)\n\n    emailMemoryLeak -> 1000x  (email)\n\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_all_preset_scenarios_resolve_and_apply",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-wy4crx0u\\flags.json",
+      "scenario",
+      "apply",
+      "kafka-dead"
+    ],
+    "exit_code": 0,
+    "stdout": "\n  * Scenario: kafka-dead\n  Fraud-detection Kafka consumer leaves group, lag climbs\n\n    kafkaConsumerDead -> on  (fraud-detection)\n\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_all_preset_scenarios_resolve_and_apply",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-wy4crx0u\\flags.json",
+      "scenario",
+      "apply",
+      "kafka-lag"
+    ],
+    "exit_code": 0,
+    "stdout": "\n  * Scenario: kafka-lag\n  Fraud-detection Kafka consumer throttled (3s per record)\n\n    kafkaQueueProblems -> 3sec  (fraud-detection)\n\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_all_preset_scenarios_resolve_and_apply",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-wy4crx0u\\flags.json",
+      "scenario",
+      "apply",
+      "shipping-slow"
+    ],
+    "exit_code": 0,
+    "stdout": "\n  * Scenario: shipping-slow\n  International shipping responses delayed 10 seconds\n\n    intlShippingSlowdown -> 10sec  (shipping)\n\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_all_preset_scenarios_resolve_and_apply",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-wy4crx0u\\flags.json",
+      "scenario",
+      "apply",
+      "image-slow"
+    ],
+    "exit_code": 0,
+    "stdout": "\n  * Scenario: image-slow\n  Product images load with 10-second delay\n\n    imageSlowLoad -> 10sec  (image-provider)\n\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_all_preset_scenarios_resolve_and_apply",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-wy4crx0u\\flags.json",
+      "scenario",
+      "apply",
+      "traffic-flood"
+    ],
+    "exit_code": 0,
+    "stdout": "\n  * Scenario: traffic-flood\n  Load generator floods homepage with 100 concurrent users\n\n    loadGeneratorFloodHomepage -> on  (load-generator)\n\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_all_preset_scenarios_resolve_and_apply",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-wy4crx0u\\flags.json",
+      "scenario",
+      "apply",
+      "ai-runaway"
+    ],
+    "exit_code": 0,
+    "stdout": "\n  * Scenario: ai-runaway\n  AI agent loops tool calls until recursion limit\n\n    aiRunawayAgent -> on  (agent)\n\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_all_preset_scenarios_resolve_and_apply",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-wy4crx0u\\flags.json",
+      "scenario",
+      "apply",
+      "ai-slow"
+    ],
+    "exit_code": 0,
+    "stdout": "\n  * Scenario: ai-slow\n  AI agent LLM responses delayed 10 seconds\n\n    aiSlowResponse -> 10sec  (agent)\n\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_all_preset_scenarios_resolve_and_apply",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-wy4crx0u\\flags.json",
+      "scenario",
+      "apply",
+      "readiness-fail"
+    ],
+    "exit_code": 0,
+    "stdout": "\n  * Scenario: readiness-fail\n  Cart service readiness probe failure\n\n    failedReadinessProbe -> on  (cart)\n\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_all_preset_scenarios_resolve_and_apply",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-wy4crx0u\\flags.json",
+      "scenario",
+      "apply",
+      "cardinality-overflow"
+    ],
+    "exit_code": 0,
+    "stdout": "\n  * Scenario: cardinality-overflow\n  Cart metric cardinality overflow (traceId in labels)\n\n    cartMetricCardinalityOverflow -> on  (cart)\n\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_api_roundtrip_preserves_top_level_metadata",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--api",
+      "--api-url",
+      "http://127.0.0.1:65254/feature/api",
+      "set",
+      "paymentFailure",
+      "100%"
+    ],
+    "exit_code": 0,
+    "stdout": "  * paymentFailure -> 100%  (payment)\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_default_variant_is_documented_first_nonoff",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-eb_sk8qr\\flags.json",
+      "inject",
+      "paymentFailure"
+    ],
+    "exit_code": 0,
+    "stdout": "  * paymentFailure -> 10%  (payment)\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_failed_auto_revert_returns_nonzero",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--api",
+      "--api-url",
+      "http://127.0.0.1:65257/feature/api",
+      "set",
+      "paymentFailure",
+      "100%",
+      "--duration",
+      "1"
+    ],
+    "exit_code": 0,
+    "stdout": "  * paymentFailure -> 100%  (payment)\n  Auto-revert in 1s ...\n",
+    "stderr": "Exception in thread Thread-1 (_revert):\nTraceback (most recent call last):\n  File \"C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\threading.py\", line 1045, in _bootstrap_inner\n    self.run()\n  File \"C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\threading.py\", line 982, in run\n    self._target(*self._args, **self._kwargs)\n  File \"D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\src\\faultctl\\cli.py\", line 205, in _revert\n    client.write(config)\n  File \"D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\src\\faultctl\\client.py\", line 108, in write\n    self._transport.write(config)\n  File \"D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\src\\faultctl\\client.py\", line 37, in write\n    with urllib.request.urlopen(req, timeout=5) as resp:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\urllib\\request.py\", line 216, in urlopen\n    return opener.open(url, data, timeout)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\urllib\\request.py\", line 525, in open\n    response = meth(req, response)\n               ^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\urllib\\request.py\", line 634, in http_response\n    response = self.parent.error(\n               ^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\urllib\\request.py\", line 563, in error\n    return self._call_chain(*args)\n           ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\urllib\\request.py\", line 496, in _call_chain\n    result = func(*args)\n             ^^^^^^^^^^^\n  File \"C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\urllib\\request.py\", line 643, in http_error_default\n    raise HTTPError(req.full_url, code, msg, hdrs, fp)\nurllib.error.HTTPError: HTTP Error 500: Internal Server Error\n"
+  },
+  {
+    "test": "__main__.FaultctlTests.test_http_routes_envelope_and_flag_roundtrip",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--api",
+      "--api-url",
+      "http://127.0.0.1:65263/feature/api",
+      "set",
+      "paymentFailure",
+      "100%"
+    ],
+    "exit_code": 0,
+    "stdout": "  * paymentFailure -> 100%  (payment)\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_list_active_service_filters_and_status",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-qpjdzlpt\\flags.json",
+      "set",
+      "paymentFailure",
+      "50%"
+    ],
+    "exit_code": 0,
+    "stdout": "  * paymentFailure -> 50%  (payment)\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_list_active_service_filters_and_status",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-qpjdzlpt\\flags.json",
+      "list",
+      "--active",
+      "--service",
+      "payment",
+      "--json"
+    ],
+    "exit_code": 0,
+    "stdout": "[\n  {\n    \"name\": \"paymentFailure\",\n    \"service\": \"payment\",\n    \"description\": \"Fail payment service charge requests n%\",\n    \"active_variant\": \"50%\",\n    \"resting_variant\": \"off\",\n    \"is_active\": true,\n    \"variants\": [\n      \"10%\",\n      \"100%\",\n      \"25%\",\n      \"50%\",\n      \"75%\",\n      \"90%\",\n      \"off\"\n    ],\n    \"has_targeting\": false\n  }\n]\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_list_active_service_filters_and_status",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-qpjdzlpt\\flags.json",
+      "status"
+    ],
+    "exit_code": 0,
+    "stdout": "\n  faultctl status  (local mode)\n\n  Total flags: 20\n  Active:      1\n\nFLAG            SERVICE  VARIANT\n--------------  -------  -------\npaymentFailure  payment  50%    \n\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_negative_scenario_duration_rejected_before_mutation",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-uaorkg6j\\flags.json",
+      "scenario",
+      "apply",
+      "payment-fail",
+      "--duration",
+      "-1"
+    ],
+    "exit_code": 1,
+    "stdout": "\n  * Scenario: payment-fail\n  Payment service fails 100% of charges\n\n    paymentFailure -> 100%  (payment)\n\n  Auto-revert in -1s ...\n",
+    "stderr": "Traceback (most recent call last):\n  File \"D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py\", line 15, in <module>\n    main()\n  File \"D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\src\\faultctl\\cli.py\", line 422, in main\n    args.func(args)\n  File \"D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\src\\faultctl\\cli.py\", line 314, in cmd_scenario_apply\n    time.sleep(duration)\nValueError: sleep length must be non-negative\n"
+  },
+  {
+    "test": "__main__.FaultctlTests.test_negative_set_duration_rejected_before_mutation",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-s2m1f1wz\\flags.json",
+      "set",
+      "paymentFailure",
+      "100%",
+      "--duration",
+      "-1"
+    ],
+    "exit_code": 0,
+    "stdout": "  * paymentFailure -> 100%  (payment)\n  Auto-revert in -1s ...\n",
+    "stderr": "Exception in thread Thread-1 (_revert):\nTraceback (most recent call last):\n  File \"C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\threading.py\", line 1045, in _bootstrap_inner\n    self.run()\n  File \"C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\threading.py\", line 982, in run\n    self._target(*self._args, **self._kwargs)\n  File \"D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\src\\faultctl\\cli.py\", line 201, in _revert\n    time.sleep(seconds)\nValueError: sleep length must be non-negative\n"
+  },
+  {
+    "test": "__main__.FaultctlTests.test_negative_trigger_all_duration_rejected_before_mutation",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-afoalhgm\\flags.json",
+      "trigger-all",
+      "--duration",
+      "-1"
+    ],
+    "exit_code": 1,
+    "stdout": "\n  * Triggered 20 faults\n\n    adFailure -> on  (ad)\n    adHighCpu -> on  (ad)\n    adManualGc -> on  (ad)\n    aiRunawayAgent -> on  (agent)\n    aiSlowResponse -> 10sec  (agent)\n    cartFailure -> 10%  (cart)\n    cartMetricCardinalityOverflow -> on  (cart)\n    emailMemoryLeak -> 10000x  (email)\n    emitRawPii -> on  (checkout / payment)\n    failedReadinessProbe -> on  (cart)\n    imageSlowLoad -> 10sec  (image-provider)\n    intlShippingSlowdown -> 10sec  (shipping)\n    kafkaConsumerDead -> on  (fraud-detection)\n    kafkaQueueProblems -> 1sec  (fraud-detection)\n    loadGeneratorFloodHomepage -> on  (load-generator)\n    paymentFailure -> 10%  (payment)\n    paymentUnreachable -> on  (checkout / payment)\n    productCatalogFailure -> on  (product-catalog)\n    productCatalogLockContention -> on  (product-catalog)\n    recommendationCacheFailure -> on  (recommendation)\n\n  Auto-reset in -1s ...\n",
+    "stderr": "Traceback (most recent call last):\n  File \"D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py\", line 15, in <module>\n    main()\n  File \"D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\src\\faultctl\\cli.py\", line 422, in main\n    args.func(args)\n  File \"D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\src\\faultctl\\cli.py\", line 258, in cmd_trigger_all\n    time.sleep(duration)\nValueError: sleep length must be non-negative\n"
+  },
+  {
+    "test": "__main__.FaultctlTests.test_standard_set_and_clear",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-85r3yqx2\\flags.json",
+      "set",
+      "paymentFailure",
+      "100%"
+    ],
+    "exit_code": 0,
+    "stdout": "  * paymentFailure -> 100%  (payment)\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_standard_set_and_clear",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-85r3yqx2\\flags.json",
+      "clear",
+      "paymentFailure"
+    ],
+    "exit_code": 0,
+    "stdout": "  * paymentFailure -> off\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_targeted_flag_preserves_predicate_and_fallback",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-f9ciej60\\flags.json",
+      "set",
+      "productCatalogFailure",
+      "on"
+    ],
+    "exit_code": 0,
+    "stdout": "  * productCatalogFailure -> on  (product-catalog)\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_timed_scenario_success",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-8i5hyzzh\\flags.json",
+      "scenario",
+      "apply",
+      "catalog-fail",
+      "--duration",
+      "1"
+    ],
+    "exit_code": 0,
+    "stdout": "\n  * Scenario: catalog-fail\n  Product catalog fails for product OLJCESPC7Z\n\n    productCatalogFailure -> on  (product-catalog)\n\n  Auto-revert in 1s ...\n  * Scenario reverted\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_timed_set_success",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-fjhrc2fp\\flags.json",
+      "set",
+      "paymentFailure",
+      "100%",
+      "--duration",
+      "1"
+    ],
+    "exit_code": 0,
+    "stdout": "  * paymentFailure -> 100%  (payment)\n  Auto-revert in 1s ...\n\n  * paymentFailure auto-reverted to off\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_timed_trigger_all_success",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-rjnjzkg_\\flags.json",
+      "trigger-all",
+      "--duration",
+      "1"
+    ],
+    "exit_code": 0,
+    "stdout": "\n  * Triggered 20 faults\n\n    adFailure -> on  (ad)\n    adHighCpu -> on  (ad)\n    adManualGc -> on  (ad)\n    aiRunawayAgent -> on  (agent)\n    aiSlowResponse -> 10sec  (agent)\n    cartFailure -> 10%  (cart)\n    cartMetricCardinalityOverflow -> on  (cart)\n    emailMemoryLeak -> 10000x  (email)\n    emitRawPii -> on  (checkout / payment)\n    failedReadinessProbe -> on  (cart)\n    imageSlowLoad -> 10sec  (image-provider)\n    intlShippingSlowdown -> 10sec  (shipping)\n    kafkaConsumerDead -> on  (fraud-detection)\n    kafkaQueueProblems -> 1sec  (fraud-detection)\n    loadGeneratorFloodHomepage -> on  (load-generator)\n    paymentFailure -> 10%  (payment)\n    paymentUnreachable -> on  (checkout / payment)\n    productCatalogFailure -> on  (product-catalog)\n    productCatalogLockContention -> on  (product-catalog)\n    recommendationCacheFailure -> on  (recommendation)\n\n  Auto-reset in 1s ...\n  * All faults reverted to off\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_trigger_all_and_reset_local",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-zp8s1ddd\\flags.json",
+      "trigger-all"
+    ],
+    "exit_code": 0,
+    "stdout": "\n  * Triggered 20 faults\n\n    adFailure -> on  (ad)\n    adHighCpu -> on  (ad)\n    adManualGc -> on  (ad)\n    aiRunawayAgent -> on  (agent)\n    aiSlowResponse -> 10sec  (agent)\n    cartFailure -> 10%  (cart)\n    cartMetricCardinalityOverflow -> on  (cart)\n    emailMemoryLeak -> 10000x  (email)\n    emitRawPii -> on  (checkout / payment)\n    failedReadinessProbe -> on  (cart)\n    imageSlowLoad -> 10sec  (image-provider)\n    intlShippingSlowdown -> 10sec  (shipping)\n    kafkaConsumerDead -> on  (fraud-detection)\n    kafkaQueueProblems -> 1sec  (fraud-detection)\n    loadGeneratorFloodHomepage -> on  (load-generator)\n    paymentFailure -> 10%  (payment)\n    paymentUnreachable -> on  (checkout / payment)\n    productCatalogFailure -> on  (product-catalog)\n    productCatalogLockContention -> on  (product-catalog)\n    recommendationCacheFailure -> on  (recommendation)\n\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_trigger_all_and_reset_local",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-zp8s1ddd\\flags.json",
+      "reset"
+    ],
+    "exit_code": 0,
+    "stdout": "  * All 20 flags reset to off\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_trigger_all_dry_run_does_not_write",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-qpgre5h3\\flags.json",
+      "trigger-all",
+      "--dry-run"
+    ],
+    "exit_code": 0,
+    "stdout": "\n  Dry run - would activate:\n\n    adFailure -> on\n    adHighCpu -> on\n    adManualGc -> on\n    aiRunawayAgent -> on\n    aiSlowResponse -> 10sec\n    cartFailure -> 10%\n    cartMetricCardinalityOverflow -> on\n    emailMemoryLeak -> 10000x\n    emitRawPii -> on\n    failedReadinessProbe -> on\n    imageSlowLoad -> 10sec\n    intlShippingSlowdown -> 10sec\n    kafkaConsumerDead -> on\n    kafkaQueueProblems -> 1sec\n    loadGeneratorFloodHomepage -> on\n    paymentFailure -> 10%\n    paymentUnreachable -> on\n    productCatalogFailure -> on\n    productCatalogLockContention -> on\n    recommendationCacheFailure -> on\n\n",
+    "stderr": ""
+  },
+  {
+    "test": "__main__.FaultctlTests.test_unknown_flag_and_variant_do_not_write",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-jm3r_wra\\flags.json",
+      "set",
+      "notAFlag",
+      "on"
+    ],
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Error: 'Unknown flag: notAFlag'\n"
+  },
+  {
+    "test": "__main__.FaultctlTests.test_unknown_flag_and_variant_do_not_write",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-jm3r_wra\\flags.json",
+      "set",
+      "paymentFailure",
+      "notAVariant"
+    ],
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Error: Invalid variant 'notAVariant' for paymentFailure. Valid variants: 10%, 100%, 25%, 50%, 75%, 90%, off\n"
+  },
+  {
+    "test": "__main__.FaultctlTests.test_unknown_flag_and_variant_do_not_write",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-jm3r_wra\\flags.json",
+      "clear",
+      "notAFlag"
+    ],
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Error: 'Unknown flag: notAFlag'\n"
+  },
+  {
+    "test": "__main__.FaultctlTests.test_unknown_flag_and_variant_do_not_write",
+    "command": [
+      "C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "-B",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\faultctl.py",
+      "--local",
+      "--file",
+      "D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\artifacts\\faultctl-review\\fixture-jm3r_wra\\flags.json",
+      "scenario",
+      "apply",
+      "notAScenario"
+    ],
+    "exit_code": 1,
+    "stdout": "  Available: ad-gc, ad-high-cpu, ai-runaway, ai-slow, cardinality-overflow, cart-fail, catalog-fail, catalog-lock, email-leak, image-slow, kafka-dead, kafka-lag, payment-down, payment-fail, payment-intermittent, readiness-fail, shipping-slow, traffic-flood\n",
+    "stderr": "Error: Unknown scenario 'notAScenario'\n"
+  }
+]

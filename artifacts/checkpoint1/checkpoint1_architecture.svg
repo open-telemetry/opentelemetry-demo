@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="297mm" height="210mm" viewBox="0 0 1782 1260">
+<title>Checkpoint 1: inspected architecture and execution limits</title>
+<desc>One-page source-preserving external observation workflow. Existing shop services are defined but not running in the observed Ubuntu Docker inventory. Ollama is reachable; cloud configuration is disabled and unverified.</desc>
+<rect width="1782" height="1260" fill="#f7f9fc"/>
+<text x="40" y="62" fill="#182b49" font-family="Arial,sans-serif" font-size="37" font-weight="700">Checkpoint 1: Eyes — inspected architecture</text>
+<text x="40" y="98" fill="#182b49" font-family="Arial,sans-serif" font-size="21" font-weight="400">23 Oct 2026 | Existing application unchanged | External observer added only under artifacts/checkpoint1</text>
+<rect x="40" y="119" width="1702" height="79" rx="15" fill="#fff2d9" stroke="#c88b28" stroke-width="2" />
+<text x="58" y="158" fill="#182b49" font-family="Arial,sans-serif" font-size="24" font-weight="700">EXECUTION STATUS</text>
+<text x="58" y="196" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Ubuntu Docker daemon available; demo inventory empty at collection. Ollama reachable. Practice drill not executed.</text>
+<rect x="40" y="230" width="520" height="150" rx="15" fill="#e1f2e9" stroke="#48876c" stroke-width="2" />
+<text x="58" y="269" fill="#182b49" font-family="Arial,sans-serif" font-size="24" font-weight="700">Native Docker in Ubuntu / WSL 2</text>
+<text x="58" y="307" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Confirmed Docker Engine + Compose</text>
+<text x="58" y="336" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Windows Docker Desktop pipe unavailable</text>
+<text x="58" y="365" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Observer uses: wsl -d Ubuntu -- docker</text>
+<rect x="40" y="415" width="520" height="325" rx="15" fill="#e8eef7" stroke="#7388a4" stroke-width="2" />
+<text x="58" y="454" fill="#182b49" font-family="Arial,sans-serif" font-size="24" font-weight="700">Existing shop topology (defined)</text>
+<text x="58" y="492" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Load generator -&gt; Envoy -&gt; frontend</text>
+<text x="58" y="521" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Frontend -&gt; ad, cart, recommendation,</text>
+<text x="58" y="550" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">catalog, currency, checkout, shipping</text>
+<text x="58" y="579" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Checkout -&gt; payment, cart, catalog,</text>
+<text x="58" y="608" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">currency, shipping, email</text>
+<text x="58" y="637" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Shipping -&gt; quote; cart -&gt; Valkey</text>
+<text x="58" y="666" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Catalog -&gt; PostgreSQL</text>
+<text x="58" y="695" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Full-only: Kafka -&gt; accounting / fraud</text>
+<text x="58" y="724" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">No application container observed running</text>
+<rect x="40" y="790" width="520" height="193" rx="15" fill="#e8eef7" stroke="#7388a4" stroke-width="2" />
+<text x="58" y="829" fill="#182b49" font-family="Arial,sans-serif" font-size="24" font-weight="700">Existing shopping agent (unchanged)</text>
+<text x="58" y="867" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">FastAPI /prompt -&gt; LangChain create_agent</text>
+<text x="58" y="896" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Shop tools or fixed shopping MCP tools</text>
+<text x="58" y="925" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">ChatOpenAI: one LLM_BASE_URL / LLM_MODEL</text>
+<text x="58" y="954" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">No log/metric/trace/history tool registry</text>
+<rect x="40" y="1020" width="520" height="170" rx="15" fill="#fff2d9" stroke="#c88b28" stroke-width="2" />
+<text x="58" y="1059" fill="#182b49" font-family="Arial,sans-serif" font-size="24" font-weight="700">Preservation / injection boundary</text>
+<text x="58" y="1097" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">SHA-256 baseline: 664 existing files</text>
+<text x="58" y="1126" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">faultctl -&gt; UI API -&gt; bound flag file</text>
+<text x="58" y="1155" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Not invoked: would rewrite existing config</text>
+<text x="58" y="1184" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">No replacement application or write tools</text>
+<rect x="630" y="230" width="500" height="150" rx="15" fill="#e8eef7" stroke="#7388a4" stroke-width="2" />
+<text x="648" y="269" fill="#182b49" font-family="Arial,sans-serif" font-size="24" font-weight="700">Existing OpenTelemetry Collector</text>
+<text x="648" y="307" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Receives OTLP + container/host/DB metrics</text>
+<text x="648" y="336" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Observability Compose adds exporters</text>
+<text x="648" y="365" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Defined configuration; no live flow proven</text>
+<rect x="630" y="415" width="500" height="100" rx="15" fill="#e8eef7" stroke="#7388a4" stroke-width="2" />
+<text x="648" y="454" fill="#182b49" font-family="Arial,sans-serif" font-size="24" font-weight="700">Prometheus — metrics</text>
+<text x="648" y="492" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">/api/v1/query_range; labels, times, values</text>
+<rect x="630" y="555" width="500" height="100" rx="15" fill="#e8eef7" stroke="#7388a4" stroke-width="2" />
+<text x="648" y="594" fill="#182b49" font-family="Arial,sans-serif" font-size="24" font-weight="700">Jaeger v3 — distributed traces</text>
+<text x="648" y="632" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">/jaeger/ui/api/v3; span and trace IDs</text>
+<rect x="630" y="695" width="500" height="100" rx="15" fill="#e8eef7" stroke="#7388a4" stroke-width="2" />
+<text x="648" y="734" fill="#182b49" font-family="Arial,sans-serif" font-size="24" font-weight="700">OpenSearch — application logs</text>
+<text x="648" y="772" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">otel-logs-*; document IDs + observed time</text>
+<rect x="630" y="840" width="500" height="143" rx="15" fill="#e1f2e9" stroke="#48876c" stroke-width="2" />
+<text x="648" y="879" fill="#182b49" font-family="Arial,sans-serif" font-size="24" font-weight="700">Docker — health / lifecycle history</text>
+<text x="648" y="917" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Selected state, bounded logs and events</text>
+<text x="648" y="946" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Lifecycle events != deployment history</text>
+<text x="648" y="975" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">No deployment audit feed identified</text>
+<rect x="630" y="1020" width="500" height="170" rx="15" fill="#fff2d9" stroke="#c88b28" stroke-width="2" stroke-dasharray="9 6"/>
+<text x="648" y="1059" fill="#182b49" font-family="Arial,sans-serif" font-size="24" font-weight="700">Required next integration (PROPOSED)</text>
+<text x="648" y="1097" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Running demo + compliant practice injector</text>
+<text x="648" y="1126" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Fresh, evidence-backed incident observations</text>
+<text x="648" y="1155" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Autonomous agent observability tools</text>
+<text x="648" y="1184" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Not implemented inside the existing agent</text>
+<rect x="1200" y="230" width="542" height="193" rx="15" fill="#e8e6fc" stroke="#8779b5" stroke-width="2" />
+<text x="1218" y="269" fill="#182b49" font-family="Arial,sans-serif" font-size="24" font-weight="700">External Eyes observer (implemented)</text>
+<text x="1218" y="307" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Read-only Python / standard library</text>
+<text x="1218" y="336" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Collect -&gt; evidence IDs -&gt; model summary</text>
+<text x="1218" y="365" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Per-call UTC time, response/error, provenance</text>
+<text x="1218" y="394" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">No fault mutation or source import/patch</text>
+<rect x="1200" y="470" width="542" height="115" rx="15" fill="#e8e6fc" stroke="#8779b5" stroke-width="2" />
+<text x="1218" y="509" fill="#182b49" font-family="Arial,sans-serif" font-size="24" font-weight="700">External model selector (implemented)</text>
+<text x="1218" y="547" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">local-only / cloud-only / either-first fallback</text>
+<text x="1218" y="576" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Existing shopping agent has no such router</text>
+<rect x="1200" y="625" width="542" height="143" rx="15" fill="#e1f2e9" stroke="#48876c" stroke-width="2" />
+<text x="1218" y="664" fill="#182b49" font-family="Arial,sans-serif" font-size="24" font-weight="700">Local LLM — Ollama (reachable)</text>
+<text x="1218" y="702" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">http://127.0.0.1:11434/api/chat</text>
+<text x="1218" y="731" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Selected installed model: qwen2.5:3b</text>
+<text x="1218" y="760" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Context/output/time/CPU bounded in TOML</text>
+<rect x="1200" y="810" width="542" height="143" rx="15" fill="#fff2d9" stroke="#c88b28" stroke-width="2" stroke-dasharray="9 6"/>
+<text x="1218" y="849" fill="#182b49" font-family="Arial,sans-serif" font-size="24" font-weight="700">Cloud LLM — disabled / unverified</text>
+<text x="1218" y="887" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Existing-compatible Chat Completions interface</text>
+<text x="1218" y="916" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Operator endpoint + model + key environment</text>
+<text x="1218" y="945" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">No cloud connection or failover demonstrated</text>
+<rect x="1200" y="1020" width="542" height="170" rx="15" fill="#e8e6fc" stroke="#8779b5" stroke-width="2" />
+<text x="1218" y="1059" fill="#182b49" font-family="Arial,sans-serif" font-size="24" font-weight="700">Outputs — artifacts/checkpoint1</text>
+<text x="1218" y="1097" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Incident report + model configuration + log</text>
+<text x="1218" y="1126" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Per-run JSON evidence and model identity</text>
+<text x="1218" y="1155" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">Source baseline / final hash verification</text>
+<text x="1218" y="1184" fill="#182b49" font-family="Arial,sans-serif" font-size="20" font-weight="400">One-page SVG and PNG (this sketch)</text>
+<polyline points="560,570 600,570 600,305 630,305" fill="none" stroke="#536b8f" stroke-width="3" /><polygon points="630,305 618,299 618,311" fill="#536b8f"/>
+<polyline points="880,380 880,415" fill="none" stroke="#536b8f" stroke-width="3" /><polygon points="880,415 874,403 886,403" fill="#536b8f"/>
+<polyline points="855,380 610,380 610,605 630,605" fill="none" stroke="#536b8f" stroke-width="3" /><polygon points="630,605 618,599 618,611" fill="#536b8f"/>
+<polyline points="830,380 585,380 585,745 630,745" fill="none" stroke="#536b8f" stroke-width="3" /><polygon points="630,745 618,739 618,751" fill="#536b8f"/>
+<polyline points="1130,465 1160,465 1160,285 1200,285" fill="none" stroke="#536b8f" stroke-width="3" /><polygon points="1200,285 1188,279 1188,291" fill="#536b8f"/>
+<polyline points="1130,605 1175,605 1175,320 1200,320" fill="none" stroke="#536b8f" stroke-width="3" /><polygon points="1200,320 1188,314 1188,326" fill="#536b8f"/>
+<polyline points="1130,745 1190,745 1190,355 1200,355" fill="none" stroke="#536b8f" stroke-width="3" /><polygon points="1200,355 1188,349 1188,361" fill="#536b8f"/>
+<polyline points="1130,910 1145,910 1145,390 1200,390" fill="none" stroke="#536b8f" stroke-width="3" /><polygon points="1200,390 1188,384 1188,396" fill="#536b8f"/>
+<polyline points="1470,423 1470,470" fill="none" stroke="#536b8f" stroke-width="3" /><polygon points="1470,470 1464,458 1476,458" fill="#536b8f"/>
+<polyline points="1470,585 1470,625" fill="none" stroke="#536b8f" stroke-width="3" /><polygon points="1470,625 1464,613 1476,613" fill="#536b8f"/>
+<polyline points="1730,585 1760,585 1760,880 1742,880" fill="none" stroke="#536b8f" stroke-width="3" stroke-dasharray="9 6"/><polygon points="1742,880 1754,874 1754,886" fill="#536b8f"/>
+<polyline points="1470,768 1180,768 1180,1000 1470,1000 1470,1020" fill="none" stroke="#536b8f" stroke-width="3" /><polygon points="1470,1020 1464,1008 1476,1008" fill="#536b8f"/>
+<text x="40" y="1239" fill="#182b49" font-family="Arial,sans-serif" font-size="19" font-weight="400">Green: confirmed reachable capability   Blue: existing definition, runtime unverified   Purple: new external artifact workflow   Amber: blocked/proposed</text>
+</svg>

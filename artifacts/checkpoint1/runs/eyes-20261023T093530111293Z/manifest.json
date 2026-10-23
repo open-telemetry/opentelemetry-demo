@@ -1,0 +1,66 @@
+{
+  "run_id": "eyes-20261023T093530111293Z",
+  "started_utc": "2026-10-23T09:35:30.111293+00:00",
+  "completed_utc": "2026-10-23T09:37:35.675493+00:00",
+  "practice_executed": false,
+  "route": "local-only",
+  "provider": "ollama",
+  "model": "qwen2.5:3b",
+  "events": [
+    {
+      "id": "E001",
+      "kind": "container_inventory",
+      "status": "ok"
+    },
+    {
+      "id": "E002",
+      "kind": "lifecycle_history",
+      "status": "ok"
+    },
+    {
+      "id": "E003",
+      "kind": "metrics",
+      "status": "error"
+    },
+    {
+      "id": "E004",
+      "kind": "metrics",
+      "status": "error"
+    },
+    {
+      "id": "E005",
+      "kind": "metrics",
+      "status": "error"
+    },
+    {
+      "id": "E006",
+      "kind": "trace_services",
+      "status": "error"
+    },
+    {
+      "id": "E007",
+      "kind": "traces",
+      "status": "error"
+    },
+    {
+      "id": "E008",
+      "kind": "logs",
+      "status": "error"
+    },
+    {
+      "id": "E009",
+      "kind": "practice_execution",
+      "status": "ok"
+    },
+    {
+      "id": "E010",
+      "kind": "local_model_inventory",
+      "status": "ok"
+    },
+    {
+      "id": "E011",
+      "kind": "llm_summary",
+      "status": "ok"
+    }
+  ]
+}

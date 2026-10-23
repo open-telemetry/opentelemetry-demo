@@ -1,0 +1,26 @@
+{
+  "id": "E001",
+  "kind": "container_inventory",
+  "observed_utc": "2026-10-23T09:41:08.000987+00:00",
+  "source": "local command",
+  "status": "ok",
+  "result": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "error": null,
+  "command": [
+    "wsl",
+    "-d",
+    "Ubuntu",
+    "--",
+    "docker",
+    "ps",
+    "-a",
+    "--filter",
+    "label=com.docker.compose.project=opentelemetry-demo",
+    "--format",
+    "json"
+  ]
+}

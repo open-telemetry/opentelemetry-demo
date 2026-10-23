@@ -1,0 +1,10 @@
+{
+  "id": "E007",
+  "kind": "traces",
+  "observed_utc": "2026-10-23T09:41:18.496077+00:00",
+  "source": "http://127.0.0.1:8080/jaeger/ui/api/v3/traces?query.service_name=frontend&query.num_traces=5&query.start_time_min=2026-10-23T09%3A36%3A07.764041%2B00%3A00&query.start_time_max=2026-10-23T09%3A41%3A07.764041%2B00%3A00",
+  "status": "error",
+  "result": null,
+  "error": "URLError: <urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>",
+  "command": null
+}

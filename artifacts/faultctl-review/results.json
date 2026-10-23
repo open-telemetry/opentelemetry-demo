@@ -1,0 +1,68 @@
+{
+  "tests_run": 24,
+  "failures": 8,
+  "errors": 0,
+  "passing": 16,
+  "failed_contracts": [
+    "__main__.FaultctlTests.test_acknowledgement_without_apply_is_not_reported_as_success",
+    "__main__.FaultctlTests.test_api_roundtrip_preserves_top_level_metadata",
+    "__main__.FaultctlTests.test_bulk_fault_injection_excludes_explicit_nonfailure_pii_flag",
+    "__main__.FaultctlTests.test_failed_auto_revert_returns_nonzero",
+    "__main__.FaultctlTests.test_interleaved_file_clients_preserve_both_changes",
+    "__main__.FaultctlTests.test_negative_scenario_duration_rejected_before_mutation",
+    "__main__.FaultctlTests.test_negative_set_duration_rejected_before_mutation",
+    "__main__.FaultctlTests.test_negative_trigger_all_duration_rejected_before_mutation"
+  ],
+  "details": {
+    "ack_only_api": {
+      "exit_code": 0,
+      "active_after_command": "off",
+      "stdout": "  * paymentFailure -> 100%  (payment)\n"
+    },
+    "variant_set_clear_combinations": 59,
+    "preset_scenarios_exercised": 18,
+    "api_metadata": {
+      "before_keys": [
+        "$schema",
+        "flags"
+      ],
+      "after_keys": [
+        "flags"
+      ]
+    },
+    "bulk_pii_flag": {
+      "emitRawPii_after_trigger_all": "on",
+      "metadata": {
+        "schedulable": false
+      },
+      "description": "Emit raw PII attributes (user.email, demo.payment.card_number, demo.payment.card_cvv) from checkout and payment for the collector redaction example. Not a failure scenario -- controls PII emission, independent of collector-side redaction which always runs."
+    },
+    "failed_auto_revert": {
+      "exit_code": 0,
+      "active_after_command": "100%",
+      "stderr": "Exception in thread Thread-1 (_revert):\nTraceback (most recent call last):\n  File \"C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\threading.py\", line 1045, in _bootstrap_inner\n    self.run()\n  File \"C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\threading.py\", line 982, in run\n    self._target(*self._args, **self._kwargs)\n  File \"D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\src\\faultctl\\cli.py\", line 205, in _revert\n    client.write(config)\n  File \"D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\src\\faultctl\\client.py\", line 108, in write\n    self._transport.write(config)\n  File \"D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\src\\faultctl\\client.py\", line 37, in write\n    with urllib.request.urlopen(req, timeout=5) as resp:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\urllib\\request.py\", line 216, in urlopen\n    return opener.open(url, data, timeout)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\urllib\\request.py\", line 525, in open\n    response = meth(req, response)\n               ^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\urllib\\request.py\", line 634, in http_response\n    response = self.parent.error(\n               ^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\urllib\\request.py\", line 563, in error\n    return self._call_chain(*args)\n           ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\urllib\\request.py\", line 496, in _call_chain\n    result = func(*args)\n             ^^^^^^^^^^^\n  File \"C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\urllib\\request.py\", line 643, in http_error_default\n    raise HTTPError(req.full_url, code, msg, hdrs, fp)\nurllib.error.HTTPError: HTTP Error 500: Internal Server Error\n"
+    },
+    "interleaved_writers": {
+      "paymentFailure": "off",
+      "adHighCpu": "on"
+    },
+    "negative_scenario_duration": {
+      "exit_code": 1,
+      "active_after_command": "100%"
+    },
+    "negative_set_duration": {
+      "exit_code": 0,
+      "active_after_command": "100%",
+      "stderr": "Exception in thread Thread-1 (_revert):\nTraceback (most recent call last):\n  File \"C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\threading.py\", line 1045, in _bootstrap_inner\n    self.run()\n  File \"C:\\Users\\Siobhan Ghosal\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\threading.py\", line 982, in run\n    self._target(*self._args, **self._kwargs)\n  File \"D:\\Siobhan\\PES\\Internships\\Bosch\\opentelemetry-demo\\src\\faultctl\\cli.py\", line 201, in _revert\n    time.sleep(seconds)\nValueError: sleep length must be non-negative\n"
+    },
+    "negative_trigger_all_duration": {
+      "exit_code": 1,
+      "active_count": 20
+    }
+  },
+  "protected_files": 705,
+  "original_files_changed": [],
+  "live_demo_mutations": 0,
+  "live_flagd_api_calls": 0,
+  "api_test_scope": "Local disposable HTTP stub matching inspected API shape; not live Elixir/flagd validation"
+}

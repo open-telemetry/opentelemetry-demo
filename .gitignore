@@ -58,6 +58,3 @@ src/frontend/cypress/screenshots
 src/shipping/target/
 
 !src/currency/build
-ProblemStatement.md
-recon_breakdown.md
-Bosch_PRD.md

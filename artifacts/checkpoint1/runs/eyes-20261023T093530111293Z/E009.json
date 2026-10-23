@@ -1,0 +1,13 @@
+{
+  "id": "E009",
+  "kind": "practice_execution",
+  "observed_utc": "2026-10-23T09:35:40.857034+00:00",
+  "source": "operator boundary",
+  "status": "ok",
+  "result": {
+    "executed": false,
+    "reason": "Observer is read-only. Current faultctl writes the existing flag configuration via either transport; no drill is injected."
+  },
+  "error": null,
+  "command": null
+}

@@ -1,0 +1,10 @@
+{
+  "id": "E008",
+  "kind": "logs",
+  "observed_utc": "2026-10-23T09:41:18.498423+00:00",
+  "source": "OpenSearch",
+  "status": "error",
+  "result": null,
+  "error": "No published OpenSearch port discovered",
+  "command": null
+}

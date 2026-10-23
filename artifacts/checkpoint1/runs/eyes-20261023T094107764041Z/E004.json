@@ -1,0 +1,10 @@
+{
+  "id": "E004",
+  "kind": "metrics",
+  "observed_utc": "2026-10-23T09:41:12.344075+00:00",
+  "source": "http://127.0.0.1:9090/api/v1/query_range?query=sum+by+%28service_name%29+%28rate%28traces_span_metrics_calls_total%7Bstatus_code%3D%22STATUS_CODE_ERROR%22%2Cspan_kind%3D%22SPAN_KIND_SERVER%22%7D%5B5m%5D%29%29&start=1792748167.764041&end=1792748467.764041&step=15",
+  "status": "error",
+  "result": null,
+  "error": "URLError: <urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>",
+  "command": null
+}
