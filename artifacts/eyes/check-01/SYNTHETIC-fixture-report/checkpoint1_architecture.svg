@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="730" viewBox="0 0 1100 730">
+<rect width="1100" height="730" fill="white"/>
+<style>text{font:14px sans-serif}rect{stroke:#174466;fill:#eef6fc}path{stroke:#174466;fill:none;stroke-width:2}</style>
+<text x="20" y="30">Eyes architecture — integrations require operator configuration; live demonstration pending</text>
+<rect x="20" y="60" width="490" height="50" rx="8"/>
+<text x="32" y="90">Existing demo + load generator</text>
+<rect x="20" y="150" width="490" height="50" rx="8"/>
+<text x="32" y="180">Collector → Prometheus / Jaeger / OpenSearch</text>
+<rect x="20" y="240" width="490" height="50" rx="8"/>
+<text x="32" y="270">F02 bounded read tools + Docker state/events</text>
+<rect x="570" y="60" width="490" height="50" rx="8"/>
+<text x="582" y="90">F01 poller + freshness check</text>
+<rect x="570" y="150" width="490" height="50" rx="8"/>
+<text x="582" y="180">SQLite incidents / dedup / queue</text>
+<rect x="570" y="240" width="490" height="50" rx="8"/>
+<text x="582" y="270">F03 single diagnostic investigator</text>
+<rect x="20" y="350" width="490" height="50" rx="8"/>
+<text x="32" y="380">Local Ollama — operator configured</text>
+<rect x="570" y="350" width="490" height="50" rx="8"/>
+<text x="582" y="380">Cloud compatible API — optional / configured</text>
+<rect x="280" y="450" width="490" height="50" rx="8"/>
+<text x="292" y="480">Operator-selected model route / fallback</text>
+<rect x="280" y="550" width="490" height="50" rx="8"/>
+<text x="292" y="580">Evidence JSON + symptom report + this SVG</text>
+<path d="M265 110V150 M265 200V240 M510 265H570 M815 110V150 M815 200V240 M265 290V350 M815 290V350 M265 400V475H280 M815 400V475H770 M525 500V550"/>
+<text x="20" y="655">Deployment audit feed: optional, unavailable unless supplied. Logs/traces never expose flag files.</text>
+<text x="20" y="690">Proposed later: diagnosis, Action API, human approval, kill switch, recovery verification.</text>
+</svg>

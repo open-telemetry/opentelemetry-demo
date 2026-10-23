@@ -1,0 +1,49 @@
+# Copy to a NEW operator file. Resolve these paths relative to that file.
+f02_config = "/tmp/f02-operator.toml"
+artifact_dir = "/tmp/eyes-artifacts"
+
+[workflow]
+services = ["checkout"]
+poll_seconds = 15
+window_seconds = 300
+consecutive_breaches = 2
+max_age_seconds = 90
+warmup_seconds = 120
+min_requests = 10
+cooldown_seconds = 300
+max_calls = 12
+max_seconds = 120
+per_call_limit = 1
+ evidence_chars = 12000
+[workflow.thresholds]
+error_rate = 0.05
+latency_p95_ms = 1000
+
+[models]
+route = "local-only" # local-only, cloud-only, local-first, cloud-first
+[models.local]
+enabled = true
+backend = "ollama"
+endpoint = "http://127.0.0.1:11434"
+model = "qwen2.5:3b" # Verify this model exists on your runtime.
+timeout_seconds = 30
+retries = 0
+max_output_tokens = 768
+context_chars = 32000
+context_window = 8192
+temperature = 0.0
+requests_per_minute = 6
+num_thread = 4
+num_gpu = 0
+[models.cloud]
+enabled = false
+backend = "openai-compatible"
+endpoint = "" # Existing compatible deployment API base (including /v1 where required).
+model = ""
+api_key_env = "EYES_CLOUD_API_KEY"
+timeout_seconds = 30
+retries = 0
+max_output_tokens = 768
+context_chars = 32000
+temperature = 0.0
+requests_per_minute = 6

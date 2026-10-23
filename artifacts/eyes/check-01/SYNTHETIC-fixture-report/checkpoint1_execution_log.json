@@ -1,0 +1,170 @@
+{
+  "incident": {
+    "id": "incident-e5ef63c228e74d3398e6e78e0acf01d2",
+    "service": "checkout",
+    "window": {
+      "start": "2026-01-01T11:55:30Z",
+      "end": "2026-01-01T12:00:30Z"
+    },
+    "detected_at": "2026-01-01T12:00:30Z",
+    "state": "open",
+    "investigation": "running",
+    "alerts": [
+      {
+        "metric": "latency_p95_ms",
+        "threshold": 1000,
+        "value": 1500,
+        "timestamp": "2026-01-01T12:00:30Z",
+        "source_time": "2026-01-01T12:00:30Z",
+        "evidence_id": "fixture-6",
+        "freshness_evidence_id": "fresh-1c32d9b8789be44280ae04d3",
+        "coverage_evidence_id": "fixture-5",
+        "query": "fixture metric expression"
+      }
+    ],
+    "origin": "fixture"
+  },
+  "evidence": [
+    {
+      "tool": "search_traces",
+      "service": "checkout",
+      "window": {
+        "start": "2026-01-01T11:55:30Z",
+        "end": "2026-01-01T12:00:30Z"
+      },
+      "origin": "fixture",
+      "status": "ok",
+      "warnings": [],
+      "collected_at": "2026-01-01T12:00:45Z",
+      "evidence_id": "fixture-7",
+      "observations": [
+        {
+          "source_id": "fixture-source",
+          "samples": [
+            {
+              "timestamp": "2026-01-01T12:00:45Z",
+              "value": 1500
+            }
+          ],
+          "symptom": "timeout"
+        }
+      ],
+      "provenance": {
+        "query": "fixture metric expression"
+      }
+    },
+    {
+      "tool": "search_logs",
+      "service": "checkout",
+      "window": {
+        "start": "2026-01-01T11:55:30Z",
+        "end": "2026-01-01T12:00:30Z"
+      },
+      "origin": "fixture",
+      "status": "ok",
+      "warnings": [],
+      "collected_at": "2026-01-01T12:00:45Z",
+      "evidence_id": "fixture-8",
+      "observations": [
+        {
+          "source_id": "fixture-source",
+          "samples": [
+            {
+              "timestamp": "2026-01-01T12:00:45Z",
+              "value": 1500
+            }
+          ],
+          "symptom": "timeout"
+        }
+      ],
+      "provenance": {
+        "query": "fixture metric expression"
+      }
+    }
+  ],
+  "decisions": [
+    {
+      "step": 0,
+      "decision": {
+        "action": "tool",
+        "tool": "search_traces",
+        "arguments": {
+          "service": "checkout",
+          "start": "2026-01-01T11:55:30Z",
+          "end": "2026-01-01T12:00:30Z"
+        },
+        "rationale": "Investigate slow requests"
+      },
+      "model": {
+        "model": "fixture-model",
+        "slot": "fixture"
+      },
+      "at": "2026-10-23T11:55:54.744607Z",
+      "based_on_evidence": []
+    },
+    {
+      "step": 1,
+      "decision": {
+        "action": "tool",
+        "tool": "search_logs",
+        "arguments": {
+          "service": "checkout",
+          "start": "2026-01-01T11:55:30Z",
+          "end": "2026-01-01T12:00:30Z"
+        },
+        "rationale": "Trace showed timeout; inspect matching logs"
+      },
+      "model": {
+        "model": "fixture-model",
+        "slot": "fixture"
+      },
+      "at": "2026-10-23T11:55:54.745839Z",
+      "based_on_evidence": [
+        "fixture-7"
+      ]
+    },
+    {
+      "step": 2,
+      "decision": {
+        "action": "finish",
+        "interpretations": [
+          {
+            "text": "Timeout symptoms require further investigation",
+            "evidence_ids": [
+              "fixture-8"
+            ]
+          }
+        ],
+        "limitations": [
+          "Synthetic test data"
+        ]
+      },
+      "model": {
+        "model": "fixture-model",
+        "slot": "fixture"
+      },
+      "at": "2026-10-23T11:55:54.746848Z",
+      "based_on_evidence": [
+        "fixture-7",
+        "fixture-8"
+      ]
+    }
+  ],
+  "interpretations": [
+    {
+      "text": "Timeout symptoms require further investigation",
+      "evidence_ids": [
+        "fixture-8"
+      ]
+    }
+  ],
+  "limitations": [
+    "Synthetic test data",
+    "Interpretations are model hypotheses; reference validation does not prove semantic entailment. Root cause is not established by this Eyes report."
+  ],
+  "stop_reason": "model_finished",
+  "finished_at": "2026-10-23T11:55:54.746848Z",
+  "model_configuration": {},
+  "origin": "fixture",
+  "adaptive_choices_recorded": true
+}

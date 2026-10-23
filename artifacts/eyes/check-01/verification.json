@@ -1,0 +1,31 @@
+{
+  "ast_files": [
+    "incident_tools\\__init__.py",
+    "incident_tools\\eyes\\core.py",
+    "incident_tools\\eyes\\runtime.py",
+    "incident_tools\\eyes\\static_check.py",
+    "incident_tools\\eyes\\__init__.py",
+    "incident_tools\\eyes\\__main__.py",
+    "incident_tools\\eyes\\tests\\test_eyes.py",
+    "incident_tools\\f02\\boundary.py",
+    "incident_tools\\f02\\tools.py",
+    "incident_tools\\f02\\verify.py",
+    "incident_tools\\f02\\__init__.py",
+    "incident_tools\\f02\\__main__.py",
+    "incident_tools\\f02\\tests\\test_f02.py"
+  ],
+  "tests_run": 59,
+  "failures": 0,
+  "errors": 0,
+  "baseline_files_checked": 692,
+  "changed_existing_files": [],
+  "svg_xml_valid": true,
+  "fixture_stop_reason": "model_finished",
+  "fixture_tools": [
+    "search_traces",
+    "search_logs"
+  ],
+  "live_incident_executed": false,
+  "real_llm_called": false,
+  "notice": "Offline synthetic verification only. Checkpoint 1 live acceptance is pending."
+}
