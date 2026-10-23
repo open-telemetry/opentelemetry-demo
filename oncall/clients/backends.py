@@ -44,6 +44,8 @@ def jaeger_spans(service: str, window_minutes: int, num_traces: int) -> list[dic
         "query.num_traces": num_traces,
     }
     response = httpx.get(f"{_jaeger_api()}/traces", params=params, timeout=18)
+    if response.status_code == 404:
+        return []
     response.raise_for_status()
     spans = []
     for chunk in _json_chunks(response.text):

@@ -41,6 +41,10 @@ def investigate(symptom: str, llm: Any, ledger: EvidenceLedger, events: EventLog
     ]
     specs = REGISTRY.openai_specs()
     made: list[dict[str, Any]] = []
+    overview = REGISTRY.call("list_services", {}, ledger)
+    events.emit("tool_result", {"name": "list_services", "result": overview})
+    made.append({"tool": "list_services", "args": {}, "ok": not overview.startswith("Error"), "evidence": re.findall(r"E-\d+", overview)})
+    messages[1]["content"] += f"\n\nService overview (already fetched with list_services):\n{overview}"
     diagnosis: Diagnosis | None = None
     for step in range(MAX_ITERATIONS):
         last_step = step == MAX_ITERATIONS - 1

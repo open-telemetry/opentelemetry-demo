@@ -1,18 +1,13 @@
 from __future__ import annotations
 
 import json
-import time
 from dataclasses import dataclass
 from typing import Any
 
 from oncall.config import settings
 
 
-<<<<<<< HEAD
-from tenacity import retry, reraise, stop_after_attempt, wait_exponential
-=======
-RETRY_ATTEMPTS = 3
->>>>>>> b0bd0ff0 (feat(eyes+brain): tools, summarise, agent loop, eval script)
+from tenacity import retry, stop_after_attempt, wait_exponential
 
 
 @dataclass
@@ -48,7 +43,6 @@ class LLMClient:
             raise RuntimeError("openai package is required for LLMClient") from exc
         if self._client is None:
             self._client = OpenAI(api_key=settings.LLM_API_KEY or None, base_url=settings.LLM_BASE_URL or None)
-<<<<<<< HEAD
         kwargs: dict[str, Any] = {
             "model": settings.LLM_MODEL,
             "messages": messages,
@@ -59,9 +53,6 @@ class LLMClient:
         if response_format is not None:
             kwargs["response_format"] = response_format
         response = self._call_completion(self._client, **kwargs)
-=======
-        response = self._create_with_retries(messages, tools, temperature, response_format)
->>>>>>> b0bd0ff0 (feat(eyes+brain): tools, summarise, agent loop, eval script)
         choice = response.choices[0]
         calls = [
             {
@@ -73,22 +64,6 @@ class LLMClient:
         ]
         usage = response.usage.model_dump() if response.usage else {}
         return LLMResponse(choice.message.content or "", calls, usage)
-
-
-    def _create_with_retries(self, messages: Any, tools: Any, temperature: float, response_format: Any) -> Any:
-        for attempt in range(RETRY_ATTEMPTS):
-            try:
-                return self._client.chat.completions.create(
-                    model=settings.LLM_MODEL,
-                    messages=messages,
-                    tools=tools,
-                    temperature=temperature,
-                    response_format=response_format,
-                )
-            except Exception:
-                if attempt == RETRY_ATTEMPTS - 1:
-                    raise
-                time.sleep(2**attempt)
 
 
 class FakeLLM:

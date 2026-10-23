@@ -1,16 +1,27 @@
 import json
 
+import pytest
+
 from oncall.agent.run import MAX_ITERATIONS, investigate
 from oncall.contracts import Fact, Signal, ToolOutput
 from oncall.events import EventLog
 from oncall.ledger import EvidenceLedger
 from oncall.llm import FakeLLM
-from oncall.tools.registry import tool
+from oncall.tools.registry import REGISTRY, tool
 
 
 @tool(name="loop_probe", description="test", params={"service": {"type": "string"}}, required=["service"])
 def loop_probe(service: str) -> ToolOutput:
     return ToolOutput(text=f"probe {service}", facts=[Fact(signal=Signal.TRACE, summary=f"{service} errors")])
+
+
+@pytest.fixture(autouse=True)
+def stub_overview(monkeypatch):
+    from oncall.tools import load_all
+
+    load_all()
+    stub = lambda: ToolOutput(text="overview", facts=[Fact(signal=Signal.CONTAINER, summary="overview")])
+    monkeypatch.setattr(REGISTRY._tools["list_services"], "function", stub)
 
 
 def _call(call_id: str = "1") -> dict:
@@ -29,15 +40,15 @@ def _run(script, tmp_path):
 
 
 def test_valid_evidence_is_kept(tmp_path):
-    diagnosis, made = _run([_call(), _final(["E-001"])], tmp_path)
-    assert diagnosis.evidence_ids == ["E-001"]
+    diagnosis, made = _run([_call(), _final(["E-002"])], tmp_path)
+    assert diagnosis.evidence_ids == ["E-002"]
     assert not diagnosis.escalate and diagnosis.confidence == 0.9
-    assert made[0]["evidence"] == ["E-001"]
+    assert made[1]["evidence"] == ["E-002"]
 
 
 def test_invented_ids_are_stripped_and_force_escalation(tmp_path):
-    diagnosis, _ = _run([_call(), _final(["E-001", "E-042"])], tmp_path)
-    assert diagnosis.evidence_ids == ["E-001"]
+    diagnosis, _ = _run([_call(), _final(["E-002", "E-042"])], tmp_path)
+    assert diagnosis.evidence_ids == ["E-002"]
     assert diagnosis.escalate and diagnosis.confidence <= 0.3
 
 
@@ -54,5 +65,5 @@ def test_unparseable_answer_falls_back_to_escalation(tmp_path):
 def test_loop_stops_at_iteration_cap(tmp_path):
     llm = FakeLLM([_call(str(i)) for i in range(MAX_ITERATIONS)])
     diagnosis, made = investigate("x", llm, EvidenceLedger(), EventLog("cap", str(tmp_path)))
-    assert llm.calls == MAX_ITERATIONS and len(made) == MAX_ITERATIONS
+    assert llm.calls == MAX_ITERATIONS and len(made) == MAX_ITERATIONS + 1
     assert diagnosis.escalate
