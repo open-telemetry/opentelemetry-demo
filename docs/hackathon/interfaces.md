@@ -28,6 +28,25 @@ Evidence id formats: `metric:<promql>@<iso_ts>`, `trace:<trace_id>/span:<span_na
  "description": str, "source": "detector" | "manual"}
 ```
 
+## Diagnosis (owner: brain, F12)
+Defined in `oncall/models.py`. Produced by `oncall.agent.diagnosis.diagnose(run, alert, llm)`;
+consumed by F13 (evidence validator), F15 (confidence) and F16 (report).
+```python
+{"component": str | None,            # root-cause service/container; never a client (load-generator)
+ "category": Category,               # app_error | dependency_unavailable | container_down |
+                                     # resource_cpu | resource_memory | network_degradation |
+                                     # traffic_surge | upstream_propagation | unknown
+ "cause": str,                       # one-sentence specific cause
+ "confidence": float,                # 0..1, LLM estimate (F15 adjusts)
+ "evidence_ids": list[str],          # ids from the run log (F13 drops unknown ones)
+ "affected_services": list[str],     # symptoms / blast radius
+ "alternatives": [{"hypothesis": str, "rejected_because": str}],
+ "decision": "act" | "escalate",
+ "reasoning": str}                   # <= 800 chars, cites evidence ids
+```
+On invalid LLM output (after one retry) or an LLM error, `diagnose()` returns an escalate
+Diagnosis with `category="unknown"` and `component=None`; it never raises.
+
 ## Tool registry
 `@register_tool(name, description, params)` in `oncall/tools/registry.py`, where `params` holds JSON-schema
 `properties` and `required`. It fills `TOOLS[name]` and `TOOL_SCHEMAS[name]`
