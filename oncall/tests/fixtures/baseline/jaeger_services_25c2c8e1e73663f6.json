@@ -1,0 +1,14 @@
+{
+  "op": "jaeger_services",
+  "kwargs": {},
+  "data": [
+    "frontend",
+    "checkout",
+    "cart",
+    "payment",
+    "product-catalog",
+    "recommendation",
+    "shipping",
+    "email"
+  ]
+}

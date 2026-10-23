@@ -1,0 +1,48 @@
+{
+  "op": "prom_query",
+  "kwargs": {
+    "promql": "up",
+    "at": null
+  },
+  "data": {
+    "status": "success",
+    "data": {
+      "resultType": "vector",
+      "result": [
+        {
+          "metric": {
+            "__name__": "up",
+            "service_name": "frontend",
+            "instance": "frontend:8080"
+          },
+          "value": [
+            1700000000,
+            "1"
+          ]
+        },
+        {
+          "metric": {
+            "__name__": "up",
+            "service_name": "checkout",
+            "instance": "checkout:8080"
+          },
+          "value": [
+            1700000000,
+            "1"
+          ]
+        },
+        {
+          "metric": {
+            "__name__": "up",
+            "service_name": "cart",
+            "instance": "cart:8080"
+          },
+          "value": [
+            1700000000,
+            "1"
+          ]
+        }
+      ]
+    }
+  }
+}
