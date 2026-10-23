@@ -1,3 +1,4 @@
+-r requirements.txt
 ruff==0.17.2
 pytest==9.1.1
 jsonschema==4.26.0
