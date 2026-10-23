@@ -1,0 +1,38 @@
+services:
+  oncall:
+    container_name: oncall
+    build:
+      context: .
+      dockerfile: oncall/Dockerfile
+    env_file:
+      - path: oncall/.env.local
+        required: false
+    environment:
+      JAEGER_URL: http://jaeger:16686/jaeger/ui
+      PROM_URL: http://prometheus:9090
+      OPENSEARCH_URL: http://opensearch:9200
+      ONCALL_MODE: docker
+      LLM_BASE_URL: ${LLM_BASE_URL:-}
+      LLM_MODEL: ${LLM_MODEL:-}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+    volumes:
+      - ./oncall:/app/oncall
+      - ./oncall/runs:/app/runs
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - "8099:8099"
+    depends_on:
+      prometheus:
+        condition: service_started
+      jaeger:
+        condition: service_started
+      opensearch:
+        condition: service_healthy
+
+  jaeger:
+    ports:
+      - "16686:16686"
+
+  opensearch:
+    ports:
+      - "9200:9200"
