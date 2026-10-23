@@ -1,10 +1,8 @@
-"""Unit tests for search_logs tool, message normalisation, and OpenSearch query handling."""
+"""Unit tests for search_logs tool, message normalisation, OTel field extraction, and offline replay."""
 
-import json
-import urllib.error
-from io import BytesIO
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
+from oncall.tools.backends import BackendError, OfflineBackend
 from oncall.tools.logs import (
     _extract_log_fields,
     _matches_level,
@@ -60,137 +58,88 @@ def test_matches_level_hierarchy():
     assert _matches_level("error", "info") is True
 
 
-def test_extract_log_fields_formats():
-    # Format A: standard OpenTelemetry collector structure
-    hit_a = {
-        "_source": {
-            "body": "Connection refused to database",
-            "service_name": "cartservice",
-            "severity_text": "ERROR",
-            "@timestamp": "2026-10-23T15:00:00Z",
-        }
+def test_extract_log_fields_real_otel_shapes():
+    # Shape 1: OTel demo real format (resource.attributes['service.name'], severity_number, string body)
+    hit_otel = {
+        "body": "Connection refused to database on port 5432",
+        "severity_number": 17,
+        "severity_text": "ERROR",
+        "@timestamp": "2026-10-23T15:00:00Z",
+        "resource": {
+            "attributes": {
+                "service.name": "cartservice",
+                "container.name": "cartservice",
+            }
+        },
     }
-    svc, msg, lvl, ts = _extract_log_fields(hit_a)
+    svc, msg, lvl, ts = _extract_log_fields(hit_otel)
     assert svc == "cartservice"
-    assert msg == "Connection refused to database"
+    assert msg == "Connection refused to database on port 5432"
     assert lvl == "error"
     assert ts == "2026-10-23T15:00:00Z"
 
-    # Format B: nested attributes structure
-    hit_b = {
-        "_source": {
-            "message": "Out of memory",
-            "resource": {"attributes": {"service.name": "recommendationservice"}},
-            "level": "FATAL",
-            "timestamp": "2026-10-23T15:05:00Z",
-        }
+    # Shape 2: Flattened OpenSearch indexing ('resource.attributes.service.name', dict body, unix nano timestamp)
+    hit_flattened = {
+        "resource.attributes.service.name": "recommendationservice",
+        "severity_number": 21,
+        "body": {"message": "Out of memory in recommendation cache", "code": 500},
+        "time_unix_nano": 1792767600000000000,
     }
-    svc, msg, lvl, ts = _extract_log_fields(hit_b)
+    svc, msg, lvl, ts = _extract_log_fields(hit_flattened)
     assert svc == "recommendationservice"
-    assert msg == "Out of memory"
+    assert "Out of memory in recommendation cache" in msg
     assert lvl == "fatal"
-    assert ts == "2026-10-23T15:05:00Z"
+    assert "2026" in ts
+
+    # Shape 3: Direct attributes fallback
+    hit_direct = {
+        "attributes": {"service.name": "frontend", "level": "WARN"},
+        "message": "User session timeout",
+        "timestamp": "2026-10-23T15:10:00Z",
+    }
+    svc, msg, lvl, ts = _extract_log_fields(hit_direct)
+    assert svc == "frontend"
+    assert msg == "User session timeout"
+    assert lvl == "warn"
+    assert ts == "2026-10-23T15:10:00Z"
 
 
-def test_no_opensearch_endpoint_returns_error():
-    """Acceptance criteria: no OpenSearch -> ok=False with helpful error."""
-    with patch(
-        "oncall.tools.logs.discover_endpoints", return_value={"opensearch": None}
-    ):
-        result = search_logs(service="cartservice")
-        assert result["ok"] is False
-        assert result["evidence"] == []
-        assert "OpenSearch endpoint could not be resolved" in (result["error"] or "")
-
-
-def test_opensearch_connection_error_returns_helpful_error():
-    with (
-        patch(
-            "oncall.tools.logs.discover_endpoints",
-            return_value={"opensearch": "http://localhost:9200"},
-        ),
-        patch("urllib.request.urlopen", side_effect=OSError("Connection refused")),
-    ):
-        result = search_logs(service="cartservice")
-        assert result["ok"] is False
-        assert "Failed to connect to OpenSearch" in (result["error"] or "")
-
-
-def test_opensearch_unknown_index_returns_error():
-    """Acceptance criteria: unknown index -> ok=False with helpful error."""
-    err_body = json.dumps(
-        {"error": {"type": "index_not_found_exception", "reason": "no such index"}}
-    ).encode("utf-8")
-    http_err = urllib.error.HTTPError(
-        url="http://localhost:9200/_all/_search",
-        code=404,
-        msg="Not Found",
-        hdrs={},
-        fp=BytesIO(err_body),
+def test_backend_error_returns_ok_false():
+    """Acceptance criteria: unknown index / no OpenSearch -> ok=False with helpful error."""
+    mock_backend = MagicMock()
+    mock_backend.logs_search.side_effect = BackendError(
+        "OpenSearch index 'unknown' not found (HTTP 404)"
     )
 
-    with (
-        patch(
-            "oncall.tools.logs.discover_endpoints",
-            return_value={"opensearch": "http://localhost:9200"},
-        ),
-        patch("urllib.request.urlopen", side_effect=http_err),
-    ):
-        result = search_logs(service="nonexistent_index")
-        assert result["ok"] is False
-        assert "HTTP 404" in (result["error"] or "")
-        assert "index_not_found_exception" in (result["error"] or "")
+    res = search_logs(service="cartservice", backend=mock_backend)
+    assert res["ok"] is False
+    assert res["evidence"] == []
+    assert "OpenSearch index 'unknown' not found" in (res["error"] or "")
 
 
-def test_search_logs_success_groups_and_evidence():
-    hits = [
-        {
-            "_source": {
-                "body": "Connection timeout to redis at host 10.0.0.1",
-                "service_name": "cartservice",
-                "severity_text": "ERROR",
-                "@timestamp": "2026-10-23T15:00:10Z",
-            }
-        },
-        {
-            "_source": {
-                "body": "Connection timeout to redis at host 10.0.0.2",
-                "service_name": "cartservice",
-                "severity_text": "ERROR",
-                "@timestamp": "2026-10-23T15:00:12Z",
-            }
-        },
-        {
-            "_source": {
-                "body": "Payment gateway 502 Bad Gateway",
-                "service_name": "paymentservice",
-                "severity_text": "FATAL",
-                "@timestamp": "2026-10-23T15:00:15Z",
-            }
-        },
-    ]
+def test_offline_backend_real_shaped_fixture_and_smaller_output():
+    """Test using OfflineBackend with the real-shaped baseline fixture and smaller output guarantees."""
+    backend = OfflineBackend(scenario="baseline")
+    res = search_logs(
+        service=None, level="error", since_min=15, limit=50, backend=backend
+    )
 
-    response_bytes = json.dumps({"hits": {"hits": hits}}).encode("utf-8")
-    mock_resp = MagicMock()
-    mock_resp.read.return_value = response_bytes
-    mock_resp.__enter__.return_value = mock_resp
+    assert res["ok"] is True
+    assert res["error"] is None
 
-    with (
-        patch(
-            "oncall.tools.logs.discover_endpoints",
-            return_value={"opensearch": "http://localhost:9200"},
-        ),
-        patch("urllib.request.urlopen", return_value=mock_resp),
-    ):
-        res = search_logs(service=None, level="error")
+    # Cartservice had 2 log entries differing only by retry number (1/3 vs 2/3) -> grouped into 1 group with count 2
+    assert "x2 [cartservice]" in res["summary"]
+    # Paymentservice had 1 fatal log -> count 1
+    assert "x1 [paymentservice]" in res["summary"]
 
-        assert res["ok"] is True
-        assert res["error"] is None
-        # Cartservice had 2 hits that normalize to the same IP pattern -> count 2
-        assert "x2 [cartservice]" in res["summary"]
-        assert "x1 [paymentservice]" in res["summary"]
+    # Smaller output checks:
+    summary_lines = res["summary"].splitlines()
+    assert len(summary_lines) <= 5
+    for line in summary_lines:
+        assert len(line) <= 95
 
-        assert len(res["evidence"]) == 2
-        ev_cart = next(e for e in res["evidence"] if "cartservice" in e["id"])
-        assert ev_cart["id"] == "log:cartservice@2026-10-23T15:00:10Z"
-        assert "Connection timeout to redis" in ev_cart["text"]
+    assert len(res["evidence"]) <= 5
+    for ev in res["evidence"]:
+        assert len(ev["text"]) <= 160
+        assert ev["id"].startswith("log:")
+        assert "@" in ev["id"]

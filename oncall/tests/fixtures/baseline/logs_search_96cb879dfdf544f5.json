@@ -6,5 +6,58 @@
     "since_min": 15,
     "limit": 50
   },
-  "data": []
+  "data": [
+    {
+      "@timestamp": "2026-10-23T15:00:10.123456Z",
+      "observed_timestamp": "2026-10-23T15:00:10.123456Z",
+      "severity_number": 17,
+      "severity_text": "ERROR",
+      "body": "Failed to connect to cart storage: redis connection pool exhausted (retry 1/3)",
+      "resource": {
+        "attributes": {
+          "service.name": "cartservice",
+          "service.version": "1.0.0",
+          "container.name": "cartservice"
+        }
+      },
+      "attributes": {
+        "net.peer.name": "redis",
+        "net.peer.port": 6379
+      }
+    },
+    {
+      "@timestamp": "2026-10-23T15:00:12.456789Z",
+      "observed_timestamp": "2026-10-23T15:00:12.456789Z",
+      "severity_number": 17,
+      "severity_text": "ERROR",
+      "body": "Failed to connect to cart storage: redis connection pool exhausted (retry 2/3)",
+      "resource": {
+        "attributes": {
+          "service.name": "cartservice",
+          "service.version": "1.0.0",
+          "container.name": "cartservice"
+        }
+      },
+      "attributes": {
+        "net.peer.name": "redis",
+        "net.peer.port": 6379
+      }
+    },
+    {
+      "@timestamp": "2026-10-23T15:00:15.987654Z",
+      "observed_timestamp": "2026-10-23T15:00:15.987654Z",
+      "severity_number": 21,
+      "severity_text": "FATAL",
+      "body": {
+        "message": "Payment processor transaction failed: credit card transaction declined 402",
+        "exception.type": "PaymentDeclinedException"
+      },
+      "resource": {
+        "attributes": {
+          "service.name": "paymentservice",
+          "service.version": "1.0.0"
+        }
+      }
+    }
+  ]
 }
