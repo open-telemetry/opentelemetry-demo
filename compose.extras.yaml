@@ -6,21 +6,70 @@
 #
 # This file is intentionally empty. It is always loaded last, giving forks
 # a stable, well-defined seam to customize without touching upstream files.
-#
-# Usage:
-#   docker compose -f compose.yaml -f compose.full.yaml -f compose.observability.yaml -f compose.extras.yaml up
-#
-# Example: add a service and patch the otel-collector to export to it:
-#
-# services:
-#   my-backend:
-#     image: myvendor/backend:latest
-#     ports:
-#       - "4317"
-#
-#   otel-collector:
-#     depends_on:
-#       my-backend:
-#         condition: service_started
-#
-# Then add your exporter config to src/otel-collector/otelcol-config-extras.yml.
+
+services:
+  action-api:
+    build:
+      context: ./src/action-api
+      dockerfile: Dockerfile
+    container_name: action-api
+    ports:
+      - "8201:8201"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./oncall-data/action-api:/data
+    environment:
+      - ACTION_API_SECRET=${ACTION_API_SECRET:-change-me-locally}
+      - COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME:-opentelemetry-demo}
+      - FLAGD_UI_URL=${ONCALL_FLAGD_UI_URL:-http://flagd-ui:4000}
+      - LOAD_GENERATOR_URL=${ONCALL_LOAD_GENERATOR_URL:-http://load-generator:8089}
+      - DATA_DIR=/data
+    deploy:
+      resources:
+        limits:
+          memory: 150M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+    restart: unless-stopped
+
+  oncall-agent:
+    build:
+      context: ./src/oncall-agent
+      dockerfile: Dockerfile
+    container_name: oncall-agent
+    ports:
+      - "8200:8200"
+    volumes:
+      - ./oncall-data/agent:/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - ACTION_API_SECRET=${ACTION_API_SECRET:-change-me-locally}
+      - ACTION_API_URL=${ACTION_API_URL:-http://action-api:8201}
+      - PROMETHEUS_URL=${PROMETHEUS_URL:-http://prometheus:9090}
+      - JAEGER_URL=${JAEGER_URL:-http://jaeger:16686}
+      - OPENSEARCH_URL=${OPENSEARCH_URL:-http://opensearch:9200}
+      - ONCALL_LLM_PROVIDER=${ONCALL_LLM_PROVIDER:-ollama}
+      - ONCALL_LLM_BASE_URL=${ONCALL_LLM_BASE_URL:-http://host.docker.internal:11434}
+      - ONCALL_LLM_MODEL=${ONCALL_LLM_MODEL:-qwen2.5:7b-instruct}
+      - DATA_DIR=/data
+      - ONCALL_POLL_INTERVAL_S=${ONCALL_POLL_INTERVAL_S:-30}
+      - EVAL_AUTO_APPROVE=${EVAL_AUTO_APPROVE:-false}
+    depends_on:
+      - prometheus
+      - jaeger
+      - opensearch
+      - action-api
+    deploy:
+      resources:
+        limits:
+          memory: 400M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+    restart: unless-stopped

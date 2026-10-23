@@ -58,3 +58,8 @@ src/frontend/cypress/screenshots
 src/shipping/target/
 
 !src/currency/build
+
+# On-call agent runtime data (ONCALL_SPEC §4)
+oncall-data/
+__pycache__/
+.venv/

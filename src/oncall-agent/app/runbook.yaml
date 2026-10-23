@@ -1,0 +1,282 @@
+runbooks:
+
+  - id: RB-001
+    description: "Payment charge errors — disable paymentFailure flag"
+    applies_to:
+      cause_categories:
+        - service_fault_injected_errors
+      component_hints:
+        - payment
+    action: set_feature_flag
+    params:
+      flag: paymentFailure
+      variant: "off"
+    risk: low
+    reason_template: "Payment service is returning {value}% errors. Disabling the paymentFailure flag will immediately stop artificial charge failures."
+    expected_recovery_signal: "payment error ratio drops below 2% within 2 minutes"
+    rollback_action: rollback
+
+  - id: RB-002
+    description: "Payment unreachable — disable paymentUnreachable flag"
+    applies_to:
+      cause_categories:
+        - service_fault_injected_errors
+        - dependency_unavailable
+      component_hints:
+        - payment
+    action: set_feature_flag
+    params:
+      flag: paymentUnreachable
+      variant: "off"
+    risk: low
+    reason_template: "Payment service is unreachable. Disabling the paymentUnreachable flag should restore connectivity."
+    expected_recovery_signal: "payment error ratio drops below 2%, checkout recovers"
+    rollback_action: rollback
+
+  - id: RB-003
+    description: "Payment container down — restart payment service"
+    applies_to:
+      cause_categories:
+        - container_down_or_crashloop
+        - dependency_unavailable
+      component_hints:
+        - payment
+    action: restart_service
+    params:
+      service: payment
+    risk: low
+    reason_template: "Payment container is {state}. Restarting should restore service."
+    expected_recovery_signal: "payment container running and healthy, error ratio < 2%"
+    rollback_action: null
+
+  - id: RB-004
+    description: "Cart intermittent errors — disable cartFailure flag"
+    applies_to:
+      cause_categories:
+        - service_fault_injected_errors
+      component_hints:
+        - cart
+    action: set_feature_flag
+    params:
+      flag: cartFailure
+      variant: "off"
+    risk: low
+    reason_template: "Cart service is failing {value}% of requests. Disabling the cartFailure flag will stop artificial cart failures."
+    expected_recovery_signal: "cart error ratio drops below 2% within 2 minutes"
+    rollback_action: rollback
+
+  - id: RB-005
+    description: "Cart dependency (valkey-cart) down — restart valkey-cart"
+    applies_to:
+      cause_categories:
+        - data_store_unavailable
+        - dependency_unavailable
+        - container_down_or_crashloop
+      component_hints:
+        - cart
+        - valkey-cart
+    action: restart_service
+    params:
+      service: valkey-cart
+    risk: low
+    reason_template: "valkey-cart (cart's Redis store) is down. Restarting it should restore cart operations."
+    expected_recovery_signal: "cart error ratio drops below 2%, valkey-cart container healthy"
+    rollback_action: null
+
+  - id: RB-006
+    description: "Cart container down — restart cart service"
+    applies_to:
+      cause_categories:
+        - container_down_or_crashloop
+      component_hints:
+        - cart
+    action: restart_service
+    params:
+      service: cart
+    risk: low
+    reason_template: "Cart container is {state}. Restarting should restore service."
+    expected_recovery_signal: "cart container running and healthy, error ratio < 2%"
+    rollback_action: null
+
+  - id: RB-007
+    description: "Product catalog failing for specific product — disable productCatalogFailure flag"
+    applies_to:
+      cause_categories:
+        - service_fault_injected_errors
+      component_hints:
+        - product-catalog
+    action: set_feature_flag
+    params:
+      flag: productCatalogFailure
+      variant: "off"
+    risk: low
+    reason_template: "Product catalog is failing requests due to productCatalogFailure flag. Disabling it will restore catalog service."
+    expected_recovery_signal: "product-catalog error ratio drops to 0% within 2 minutes"
+    rollback_action: rollback
+
+  - id: RB-008
+    description: "Product catalog database down — restart astronomy-db"
+    applies_to:
+      cause_categories:
+        - data_store_unavailable
+        - dependency_unavailable
+        - container_down_or_crashloop
+      component_hints:
+        - product-catalog
+        - astronomy-db
+    action: restart_service
+    params:
+      service: astronomy-db
+    risk: low
+    reason_template: "astronomy-db (product-catalog's database) is down. Restarting it should restore catalog operations."
+    expected_recovery_signal: "product-catalog error ratio drops below 2%, astronomy-db healthy"
+    rollback_action: null
+
+  - id: RB-009
+    description: "Recommendation memory growth / OOM — disable recommendationCacheFailure flag"
+    applies_to:
+      cause_categories:
+        - service_fault_injected_errors
+        - resource_exhaustion_memory
+      component_hints:
+        - recommendation
+    action: set_feature_flag
+    params:
+      flag: recommendationCacheFailure
+      variant: "off"
+    risk: low
+    reason_template: "Recommendation service shows memory growth / cache failures. Disabling the recommendationCacheFailure flag stops the runaway cache leak."
+    expected_recovery_signal: "recommendation memory usage stabilizes, error ratio < 2%"
+    rollback_action: rollback
+
+  - id: RB-010
+    description: "Recommendation container OOM restart — restart recommendation service"
+    applies_to:
+      cause_categories:
+        - resource_exhaustion_memory
+        - container_down_or_crashloop
+      component_hints:
+        - recommendation
+    action: restart_service
+    params:
+      service: recommendation
+    risk: low
+    reason_template: "Recommendation container OOM-killed or crash-looping. Restarting clears memory state."
+    expected_recovery_signal: "recommendation container running, OOMKilled=false, error ratio < 2%"
+    rollback_action: null
+
+  - id: RB-011
+    description: "Ad high CPU — disable adHighCpu flag"
+    applies_to:
+      cause_categories:
+        - service_fault_injected_errors
+        - resource_exhaustion_cpu
+      component_hints:
+        - ad
+    action: set_feature_flag
+    params:
+      flag: adHighCpu
+      variant: "off"
+    risk: low
+    reason_template: "Ad service showing high CPU utilization due to adHighCpu flag. Disabling it will restore normal CPU usage."
+    expected_recovery_signal: "ad CPU drops below 80% within 2 minutes"
+    rollback_action: rollback
+
+  - id: RB-012
+    description: "Ad manual GC pressure — disable adManualGc flag"
+    applies_to:
+      cause_categories:
+        - service_fault_injected_errors
+        - resource_exhaustion_cpu
+      component_hints:
+        - ad
+    action: set_feature_flag
+    params:
+      flag: adManualGc
+      variant: "off"
+    risk: low
+    reason_template: "Ad service triggering manual garbage collections. Disabling adManualGc flag stops GC pressure."
+    expected_recovery_signal: "ad CPU drops, GC pause times normalize"
+    rollback_action: rollback
+
+  - id: RB-013
+    description: "Email memory leak — disable emailMemoryLeak flag"
+    applies_to:
+      cause_categories:
+        - service_fault_injected_errors
+        - resource_exhaustion_memory
+      component_hints:
+        - email
+    action: set_feature_flag
+    params:
+      flag: emailMemoryLeak
+      variant: "off"
+    risk: low
+    reason_template: "Email service has a memory leak due to emailMemoryLeak flag. Disabling it stops the leak."
+    expected_recovery_signal: "email memory growth stops within 2 minutes"
+    rollback_action: rollback
+
+  - id: RB-014
+    description: "Email container OOM restart — restart email service"
+    applies_to:
+      cause_categories:
+        - resource_exhaustion_memory
+        - container_down_or_crashloop
+      component_hints:
+        - email
+    action: restart_service
+    params:
+      service: email
+    risk: low
+    reason_template: "Email container OOM-killed or crash-looping due to memory leak. Restarting clears memory."
+    expected_recovery_signal: "email container running, OOMKilled=false"
+    rollback_action: null
+
+  - id: RB-015
+    description: "Homepage traffic flood — throttle load generator"
+    applies_to:
+      cause_categories:
+        - traffic_overload
+      component_hints:
+        - frontend
+        - load-generator
+    action: throttle_load_generator
+    params:
+      users: 2
+      spawn_rate: 1
+    risk: low
+    reason_template: "Frontend is flooded with traffic. Throttling the load generator to {users} users will reduce load."
+    expected_recovery_signal: "frontend error ratio drops, p95 latency normalizes within 2 minutes"
+    rollback_action: rollback
+
+  - id: RB-016
+    description: "Homepage traffic flood — disable loadGeneratorFloodHomepage flag"
+    applies_to:
+      cause_categories:
+        - service_fault_injected_errors
+        - traffic_overload
+      component_hints:
+        - frontend
+        - load-generator
+    action: set_feature_flag
+    params:
+      flag: loadGeneratorFloodHomepage
+      variant: "off"
+    risk: low
+    reason_template: "loadGeneratorFloodHomepage flag is flooding the frontend. Disabling it will restore normal traffic levels."
+    expected_recovery_signal: "frontend request rate drops, error ratio < 2%"
+    rollback_action: rollback
+
+  - id: RB-017
+    description: "Generic container down — restart crashed service"
+    applies_to:
+      cause_categories:
+        - container_down_or_crashloop
+      component_hints: []
+    action: restart_service
+    params:
+      service: "{component}"
+    risk: low
+    reason_template: "Container for {component} is {state}. Restarting should restore service."
+    expected_recovery_signal: "container running and healthy, error ratio < 2%"
+    rollback_action: null
