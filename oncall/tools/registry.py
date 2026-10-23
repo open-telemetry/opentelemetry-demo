@@ -44,21 +44,35 @@ class ToolRegistry:
             for item in self._tools.values()
         ]
 
-    def call(self, name: str, args: dict[str, Any], ledger: EvidenceLedger) -> str:
+    def call(self, name: str, args: dict[str, Any], ledger: EvidenceLedger, events: Any | None = None) -> str:
+        if events is not None and hasattr(events, "emit"):
+            events.emit("tool_call", {"tool": name, "args": args})
         definition = self._tools.get(name)
         if definition is None:
-            return f"Error: unknown tool {name}"
+            err = f"Error: unknown tool {name}"
+            if events is not None and hasattr(events, "emit"):
+                events.emit("tool_result", {"tool": name, "ok": False, "text": err})
+            return err
         error = self._validate(definition, args)
         if error:
-            return f"Error: {error}"
+            err = f"Error: {error}"
+            if events is not None and hasattr(events, "emit"):
+                events.emit("tool_result", {"tool": name, "ok": False, "text": err})
+            return err
         if _contains_banned_text(args):
-            return "Error: banned text in tool arguments"
+            err = "Error: banned text in tool arguments"
+            if events is not None and hasattr(events, "emit"):
+                events.emit("tool_result", {"tool": name, "ok": False, "text": err})
+            return err
         try:
             with ThreadPoolExecutor(max_workers=1) as executor:
                 future = executor.submit(definition.function, **args)
                 result = future.result(timeout=20)
         except TimeoutError:
-            return "Error: tool timed out after 20 seconds"
+            err = "Error: tool timed out after 20 seconds"
+            if events is not None and hasattr(events, "emit"):
+                events.emit("tool_result", {"tool": name, "ok": False, "text": err})
+            return err
         except Exception as exc:
             result = ToolOutput(ok=False, text="", error=str(exc))
         query = json.dumps(args, sort_keys=True, default=str)
@@ -71,7 +85,10 @@ class ToolRegistry:
         if result.error and not result.ok:
             text = f"{text} Error: {result.error}".strip()
         logging.getLogger(__name__).debug("tool_result name=%s ok=%s", name, result.ok)
-        return text[:1800]
+        final_text = text[:1800]
+        if events is not None and hasattr(events, "emit"):
+            events.emit("tool_result", {"tool": name, "ok": result.ok, "text": final_text})
+        return final_text
 
     @staticmethod
     def _validate(definition: ToolDefinition, args: dict[str, Any]) -> str | None:

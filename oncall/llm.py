@@ -7,6 +7,9 @@ from typing import Any
 from oncall.config import settings
 
 
+from tenacity import retry, reraise, stop_after_attempt, wait_exponential
+
+
 @dataclass
 class LLMResponse:
     content: str
@@ -19,6 +22,10 @@ class LLMClient:
         self.calls = 0
         self.max_calls = max_calls if max_calls is not None else settings.MAX_LLM_CALLS
         self._client: Any = None
+
+    @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=1, max=4), reraise=True)
+    def _call_completion(self, client: Any, **kwargs: Any) -> Any:
+        return client.chat.completions.create(**kwargs)
 
     def chat(
         self,
@@ -36,13 +43,16 @@ class LLMClient:
             raise RuntimeError("openai package is required for LLMClient") from exc
         if self._client is None:
             self._client = OpenAI(api_key=settings.LLM_API_KEY or None, base_url=settings.LLM_BASE_URL or None)
-        response = self._client.chat.completions.create(
-            model=settings.LLM_MODEL,
-            messages=messages,
-            tools=tools,
-            temperature=temperature,
-            response_format=response_format,
-        )
+        kwargs: dict[str, Any] = {
+            "model": settings.LLM_MODEL,
+            "messages": messages,
+            "temperature": temperature,
+        }
+        if tools is not None:
+            kwargs["tools"] = tools
+        if response_format is not None:
+            kwargs["response_format"] = response_format
+        response = self._call_completion(self._client, **kwargs)
         choice = response.choices[0]
         calls = [
             {
