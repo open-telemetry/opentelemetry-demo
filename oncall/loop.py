@@ -4,9 +4,10 @@ The model sees only the symptom text and the tool list. Each turn it picks a too
 stores the full sanitised result in the ledger and shows the model a compact view of it
 (see toolbox.py). It ends by calling submit_diagnosis, whose arguments become the candidate.
 
-Budgets (LoopConfig): tool calls, total tokens (input + output) and tokens per reply. When a budget
-runs out, or the model repeats an identical call, the loop stops investigating and asks once more for
-a diagnosis from what was found. If no valid answer ever arrives, the candidate is an explicit
+Budgets (LoopConfig): tool calls, total tokens (input + output) and tokens per reply. A reserve keeps
+room to conclude: at 85% of the token budget, or with one tool call left, or when the model repeats an
+identical call, the loop tells the model to stop investigating and submit a diagnosis from the evidence
+it has already seen. If no valid answer ever arrives, the candidate is an explicit
 "unknown" with confidence 0 and the reason in `limitations`; the loop never invents a diagnosis.
 Validation against the ledger is NOT done here.
 """
@@ -29,9 +30,10 @@ MAX_MALFORMED = 2
 
 @dataclass
 class LoopConfig:
-    token_budget: int = 60000  # input + output tokens over the whole run
-    step_budget: int = 10  # tool calls, valid or not
+    token_budget: int = 200000  # input + output tokens over the whole run
+    step_budget: int = 12  # tool calls, valid or not; the last one is held back for the conclusion
     max_tokens: int = 1200  # per model reply
+    reserve_fraction: float = 0.85  # at this share of the token budget the model must conclude
 
 
 def _string(description: str) -> dict:
@@ -139,7 +141,7 @@ class _Investigation:
     def __init__(self, llm, symptom: str, config: LoopConfig, tools: dict):
         self.llm, self.symptom, self.config, self.tools = llm, symptom, config, tools
         self.ledger = Ledger()
-        self.system = system_prompt(config.step_budget)
+        self.system = system_prompt(self._usable_steps())
         self.specs = [t.spec() for t in tools.values()] + [SUBMIT_SPEC]
         self.messages = [{"role": "user", "content": f"Symptom report: {symptom}"}]
         self.steps: list[dict] = []
@@ -157,6 +159,10 @@ class _Investigation:
         self.nudges = 0
         self.candidate: dict | None = None
         self.done = False
+
+    def _usable_steps(self) -> int:
+        """Tool calls the model may use: the last one of the budget is held back for the conclusion."""
+        return max(1, self.config.step_budget - 1)
 
     # --- token budget -------------------------------------------------------------------
 
@@ -195,9 +201,10 @@ class _Investigation:
     def run(self) -> None:
         while not self.done:
             if not self.wrapup:
-                if len(self.steps) >= self.config.step_budget:
+                used = self.tokens_in + self.tokens_out
+                if len(self.steps) >= self._usable_steps():
                     self._start_wrapup("step_budget")
-                elif not self._can_afford(extra_calls=1):  # keep room for the final answer
+                elif used >= self.config.reserve_fraction * self.config.token_budget or not self._can_afford(extra_calls=1):
                     self._start_wrapup("token_budget")
             if self.wrapup:
                 if self.wrapup_tries >= MAX_WRAPUP_TRIES:
@@ -207,8 +214,9 @@ class _Investigation:
                     break  # no budget left even to ask for the answer
                 if not self.wrapup_noted:
                     self.wrapup_noted = True
-                    self._note("Stop investigating. Do not call any other tool. Call submit_diagnosis now with what you have; "
-                               "use component 'unknown' and a low stated_confidence if the evidence is not enough.")
+                    self._note("The investigation budget is nearly used up. Do not call any other tool. Call submit_diagnosis now, "
+                               "using only evidence you have already seen: cite the ids of the results above with exact quotes. "
+                               "Use component 'unknown' and a low stated_confidence if that evidence is not enough.")
                 self.wrapup_tries += 1
             reply = self._ask()
             if reply is None:
@@ -270,7 +278,7 @@ class _Investigation:
         self.done = True
 
     def _handle_tool(self, call, why: str) -> None:
-        if self.wrapup or len(self.steps) >= self.config.step_budget:
+        if self.wrapup or len(self.steps) >= self._usable_steps():
             self._tool_message(call, f"not run: the budget is used up. Call {SUBMIT} now.")
             return
         step = {"tool": call.name, "arguments": call.arguments, "finding": "", "ledger_id": None, "why": why}

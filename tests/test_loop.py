@@ -124,7 +124,7 @@ def test_run_info_is_produced_by_the_run():
     info = run.run_info
     assert re.fullmatch(r"inc-\d{8}-\d{6}-[0-9a-f]{4}", info["incident_id"])
     assert datetime.fromisoformat(info["started_at"]).tzinfo is not None
-    assert (info["trigger"], info["steps_used"], info["step_budget"]) == ("slow", 0, 10)
+    assert (info["trigger"], info["steps_used"], info["step_budget"]) == ("slow", 0, 12)
     assert (info["budget_exhausted"], info["llm_error"], info["tokens_used"]) == (False, None, 780)
     json.dumps(info)
     json.dumps(run.candidate)
@@ -136,15 +136,44 @@ def test_two_runs_get_different_incident_ids():
     assert a != b
 
 
-def test_step_budget_stops_investigating_and_asks_for_a_diagnosis():
-    tools, seen = stubs()
-    llm = ScriptedLLM([say(call("query_logs", window_minutes=m)) for m in (5, 6)] + [say(submit(component="unknown", stated_confidence=0.2))])
-    run = run_investigation(llm, "x", LoopConfig(step_budget=2), tools)
-    assert len(seen) == 2 and run.run_info["steps_used"] == 2
+def test_defaults_are_the_tuned_budgets():
+    config = LoopConfig()
+    assert (config.token_budget, config.step_budget, config.reserve_fraction) == (200000, 12, 0.85)
+
+
+def test_with_one_step_left_the_model_is_told_to_conclude_and_the_conclusion_carries_evidence():
+    tools, seen = stubs(container_health=ok("container_health"))
+    llm = ScriptedLLM([say(call("container_health")), say(call("query_logs", window_minutes=5)), say(submit())])
+    run = run_investigation(llm, "x", LoopConfig(step_budget=3), tools)
+    assert len(seen) == 2 and run.run_info["steps_used"] == 2  # the last step is held back
     assert run.run_info["budget_exhausted"] and run.run_info["stop_reason"] == "step_budget"
-    assert run.candidate["stated_confidence"] == 0.2
+    assert run.candidate["evidence"] == GOOD_DIAGNOSIS["evidence"] and run.candidate["stated_confidence"] == 0.8
     assert any("cut short" in n for n in run.candidate["limitations"])
-    assert "Stop investigating" in tool_messages(llm.calls[2])[-1]["content"]
+    # nothing is said before the last step is reached, then the reserve message rides on the latest tool result
+    assert all("budget is nearly used up" not in m["content"] for m in tool_messages(llm.calls[1]))
+    reserve = tool_messages(llm.calls[2])[-1]["content"]
+    assert "nearly used up" in reserve and "only evidence you have already seen" in reserve and "submit_diagnosis" in reserve
+    assert "about 2 tool calls" in llm.calls[0]["system"]
+
+
+def test_at_85_percent_of_the_token_budget_the_model_must_conclude_with_evidence():
+    config = LoopConfig(token_budget=10000, step_budget=30, max_tokens=100)
+    replies = [say(call("query_logs", window_minutes=m), usage=(500, 50)) for m in range(1, 17)] + [say(submit())]
+    llm = ScriptedLLM(replies)
+    run = run_investigation(llm, "x", config, stubs()[0])
+    assert run.run_info["stop_reason"] == "token_budget" and run.run_info["budget_exhausted"]
+    assert len(llm.calls) == 17 and run.run_info["steps_used"] == 16
+    assert 16 * 550 >= 0.85 * 10000 > 15 * 550  # 85% is crossed by the 16th call, not the 15th
+    assert "nearly used up" not in tool_messages(llm.calls[15])[-1]["content"]  # 15 calls: still under 85%
+    assert "nearly used up" in tool_messages(llm.calls[16])[-1]["content"]
+    assert run.candidate["evidence"] and run.candidate["component"] == "svc-b"
+
+
+def test_if_the_model_still_does_not_submit_after_the_reserve_message_the_candidate_is_unknown():
+    llm = ScriptedLLM([say(call("query_logs", window_minutes=5)), say(text="still thinking"), say(text="still thinking")])
+    run = run_investigation(llm, "x", LoopConfig(step_budget=2), stubs()[0])
+    assert (run.candidate["component"], run.candidate["stated_confidence"], run.candidate["evidence"]) == ("unknown", 0.0, [])
+    assert run.run_info["budget_exhausted"] and run.run_info["llm_error"]
 
 
 def test_after_the_step_budget_more_tool_calls_are_not_run_and_the_candidate_is_partial_not_invented():
@@ -336,7 +365,7 @@ def test_investigate_prints_steps_summary_and_tokens_and_saves_the_run(tmp_path,
     out = capsys.readouterr().out
     assert "INVESTIGATION STEPS" in out and "container_health()" in out and "-> C1:" in out
     assert "SYMPTOM SUMMARY" in out and "C1: 1 of 2 containers running" in out
-    assert "tokens used: 2340 of 60000" in out and "DIAGNOSIS CANDIDATE (not validated)" in out
+    assert "tokens used: 2340 of 200000" in out and "DIAGNOSIS CANDIDATE (not validated)" in out
     (folder,) = list(tmp_path.iterdir())
     assert sorted(p.name for p in folder.iterdir()) == ["candidate.json", "ledger.json", "run_info.json"]
     info = json.loads((folder / "run_info.json").read_text())

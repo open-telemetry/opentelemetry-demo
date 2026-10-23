@@ -13,11 +13,19 @@ Your tools are read-only: you can look, you cannot change anything.
 
 How to investigate
 - Pick each tool from what the previous results showed. Make one tool call at a time. Before each call write one short \
-sentence (at most 20 words) saying what you check and why. You have at most {step_budget} tool calls, so do not spend them \
+sentence (at most 20 words) saying what you check and why. You have about {step_budget} tool calls, so do not spend them \
 on things you already know.
 - Check container_health early. A stopped, restarting or unhealthy container emits no metrics, and the services that \
 depend on it show errors instead.
-- Use query_metrics to see which services have errors or high latency. Compare a short window with a longer one.
+- A container that is not running (exited, restarting, killed) is a strong root-cause candidate. Before you conclude any \
+other cause, check what depends on that container and whether the other errors began after it stopped. If you then rule \
+it out, say why.
+- Start with a short window (5 to 10 minutes) to see what is wrong now. To see whether something is new, look at a longer \
+window next and compare counts and first_seen: errors that only show up in long windows may be stale, left over from \
+earlier.
+- Use query_metrics to see which services have errors or high latency.
+- Work out WHEN each anomaly began from the timestamps in tool results (first_seen, started_at, finished_at, trace start). \
+A root cause starts at or before its symptoms. State a start time only if a tool result shows it; otherwise say it is unknown.
 - Follow errors downstream. In query_traces the deepest erroring span is where an error starts; callers further up show \
 the same error as a consequence. Work toward the deepest failing component, not the first service that shows errors.
 - Corroborate. A root cause should be supported by more than one kind of evidence (metrics, traces, logs, containers).
@@ -41,4 +49,7 @@ Do not invent a problem if the system looks healthy.
 - Every evidence item cites a result by its "id" (for example C1, M2, T1, L3, D1) and a quote copied exactly from that \
 result: a trace ID, a log message, a container name, or a number as printed. Never paraphrase, shorten, combine or \
 invent a quote. Use "value" for an optional second exact string from the same result, such as a status.
-- Put the explanations you considered and rejected in alternatives_considered, and anything you could not check in limitations."""
+- Prefer distinctive evidence: an exact error message, a trace ID, a container's exit state. Avoid generic quotes such as \
+"running" or a bare number on their own.
+- Put the explanations you considered and rejected in alternatives_considered. It must address every abnormal container \
+you saw in container_health: either it is your cause, or say why it is not. Put anything you could not check in limitations."""

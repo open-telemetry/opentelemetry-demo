@@ -152,3 +152,10 @@ def test_prompt_and_tool_text_are_generic():
         texts.append(path.read_text(encoding="utf-8"))
     joined = "\n".join(texts).lower()
     assert [w for w in words if w.lower() in joined] == []
+
+
+def test_prompt_carries_the_tuned_reasoning_guidance():
+    text = prompts.system_prompt(11)
+    for phrase in ("not running", "strong root-cause candidate", "WHEN each anomaly began", "otherwise say it is unknown",
+                   "short window (5 to 10 minutes)", "may be stale", "every abnormal container", "Prefer distinctive evidence"):
+        assert phrase in text, phrase

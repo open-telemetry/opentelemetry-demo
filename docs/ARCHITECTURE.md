@@ -73,7 +73,7 @@ Solid green = built and tested. Dashed grey = planned (P6 and Day 2), not in the
 2. Each turn it picks one tool and arguments. The loop runs it, stores the full result in the ledger, and shows the model a **compact view**: counts and only the abnormal rows, with every string and number copied unchanged from the ledger entry.
 3. The next tool is chosen from the findings so far. The step list records each call, a one-line finding built from the result, and the ledger ID.
 4. The model ends by calling `submit_diagnosis`: component, cause, stated confidence, evidence (ledger ID plus an exact quote), alternatives and limitations. "unknown" with low confidence is a valid answer.
-5. Limits: 10 tool calls, 60,000 tokens (input + output), a small token cap per reply, and a stop on an identical repeated call. When a limit is hit, the model is asked once to conclude from what it has. If it cannot, the candidate is an explicit `unknown` with confidence 0 and the reason, never an invented diagnosis.
+5. Limits: 12 tool calls, 200,000 tokens (input + output), a small token cap per reply, and a stop on an identical repeated call. A reserve keeps room to conclude: at 85% of the tokens, or with one tool call left, the model is told to call `submit_diagnosis` now using only evidence it has already seen. If it still cannot, the candidate is an explicit `unknown` with confidence 0 and the reason, never an invented diagnosis.
 
 ## Safety controls
 

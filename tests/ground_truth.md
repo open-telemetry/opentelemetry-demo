@@ -27,3 +27,16 @@ must never read this file.
 | 2026-10-23T18:29:52+00:00 | reset | payment-failure | flag | paymentFailure | off | verified | flag paymentFailure: '100%' -> 'off' (read all, change only this flag, write all, re-read) |
 | 2026-10-23T18:29:52+00:00 | inject | cache-unavailable | container | valkey-cart | - | verified | container valkey-cart: running -> stopped (docker stop valkey-cart) |
 | 2026-10-23T18:31:57+00:00 | reset | cache-unavailable | container | valkey-cart | - | verified | container valkey-cart: exited -> running and healthy (docker start valkey-cart) |
+| 2026-10-23T18:36:55+00:00 | reset | cache-unavailable | container | valkey-cart | - | verified | container valkey-cart is already running; nothing to start |
+| 2026-10-23T18:36:56+00:00 | reset | database-unavailable | container | astronomy-db | - | verified | container astronomy-db is already running; nothing to start |
+| 2026-10-23T18:36:56+00:00 | reset | currency-down | container | currency | - | verified | container currency is already running; nothing to start |
+| 2026-10-23T18:36:56+00:00 | reset | payment-failure | flag | paymentFailure | off | verified | flag paymentFailure is already 'off'; no write needed |
+| 2026-10-23T18:36:56+00:00 | reset | cart-failure | flag | cartFailure | off | verified | flag cartFailure is already 'off'; no write needed |
+| 2026-10-23T18:36:56+00:00 | reset | ad-failure | flag | adFailure | off | verified | flag adFailure is already 'off'; no write needed |
+| 2026-10-23T18:36:56+00:00 | reset | product-catalog-failure | flag | productCatalogFailure | off | verified | flag productCatalogFailure is already 'off'; no write needed |
+| 2026-10-23T18:36:56+00:00 | reset | product-catalog-lock-contention | flag | productCatalogLockContention | off | verified | flag productCatalogLockContention is already 'off'; no write needed |
+| 2026-10-23T18:36:56+00:00 | reset | ad-high-cpu | flag | adHighCpu | off | verified | flag adHighCpu is already 'off'; no write needed |
+| 2026-10-23T18:45:33+00:00 | inject | cache-unavailable | container | valkey-cart | - | verified | container valkey-cart: running -> stopped (docker stop valkey-cart) |
+| 2026-10-23T18:47:38+00:00 | reset | cache-unavailable | container | valkey-cart | - | verified | container valkey-cart: exited -> running and healthy (docker start valkey-cart) |
+| 2026-10-23T18:56:40+00:00 | inject | payment-failure | flag | paymentFailure | 100% | verified | flag paymentFailure: 'off' -> '100%' (read all, change only this flag, write all, re-read) |
+| 2026-10-23T18:58:40+00:00 | reset | payment-failure | flag | paymentFailure | off | verified | flag paymentFailure: '100%' -> 'off' (read all, change only this flag, write all, re-read) |
