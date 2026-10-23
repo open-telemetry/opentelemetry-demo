@@ -120,9 +120,10 @@ def test_missing_key_or_unknown_provider():
         LLM(Settings(LLM_PROVIDER="other", LLM_API_KEY="k"))
 
 
-def test_retries_tool_use_failed(monkeypatch):
+@pytest.mark.parametrize("code", llm_mod.BAD_GENERATION_CODES)
+def test_retries_bad_generation(monkeypatch, code):
     monkeypatch.setattr(llm_mod.time, "sleep", lambda s: None)
-    failed = '{"error": {"code": "tool_use_failed", "message": "bad tool"}}'
+    failed = json.dumps({"error": {"code": code, "message": "bad output"}})
     transport = FakeTransport((400, failed), (200, groq_response(content="ok")))
     assert LLM(settings(), transport).chat([], []).text == "ok"
 
@@ -140,3 +141,19 @@ def test_other_400_is_not_retried():
     with pytest.raises(LLMError, match="HTTP 400"):
         LLM(settings(), transport).chat([], [])
     assert len(transport.requests) == 1
+
+
+def test_rate_limit_waits_as_long_as_groq_asks(monkeypatch):
+    waits = []
+    monkeypatch.setattr(llm_mod.time, "sleep", waits.append)
+    limited = (
+        '{"error": {"message": "Rate limit reached. Please try again in 18.77s."}}'
+    )
+    transport = FakeTransport((429, limited), (200, groq_response(content="ok")))
+    assert LLM(settings(), transport).chat([], []).text == "ok"
+    assert waits == [pytest.approx(19.77)]
+
+
+def test_wait_is_capped():
+    assert llm_mod._wait_s("Please try again in 500s", 0) == llm_mod.MAX_WAIT_S
+    assert llm_mod._wait_s("no hint", 2) == 4

@@ -5,6 +5,7 @@ Another provider would translate to and from this format inside this module.
 """
 
 import json
+import re
 import time
 import urllib.error
 import urllib.request
@@ -17,7 +18,11 @@ PROVIDER_BASE_URLS = {"groq": "https://api.groq.com/openai/v1"}
 DEFAULT_MODELS = {"groq": "openai/gpt-oss-120b"}
 TIMEOUT_S = 60
 RETRY_STATUSES = (429, 500, 502, 503, 504)
-MAX_ATTEMPTS = 3
+MAX_ATTEMPTS = 4
+MAX_WAIT_S = 60
+BAD_GENERATION_CODES = ("tool_use_failed", "output_parse_failed")
+# Matches the wait in Groq's rate-limit message, e.g. "Please try again in 18.77s".
+RETRY_IN = re.compile(r"try again in ([0-9.]+)s")
 # Groq is behind Cloudflare, which rejects the default Python-urllib agent (error 1010).
 USER_AGENT = "incident-zero-oncall/0.1"
 
@@ -65,8 +70,17 @@ def to_function_tools(schemas: list[dict]) -> list[dict]:
 
 
 def _retryable(status: int, text: str) -> bool:
-    """Rate limits, server errors, and Groq's tool_use_failed (a malformed generation)."""
-    return status in RETRY_STATUSES or (status == 400 and "tool_use_failed" in text)
+    """Rate limits, server errors, and Groq 400s caused by a malformed generation."""
+    return status in RETRY_STATUSES or (
+        status == 400 and any(code in text for code in BAD_GENERATION_CODES)
+    )
+
+
+def _wait_s(text: str, attempt: int) -> float:
+    """Seconds to wait before retrying: the provider's hint if given, else backoff."""
+    match = RETRY_IN.search(text)
+    wait = float(match.group(1)) + 1 if match else 2**attempt
+    return min(wait, MAX_WAIT_S)
 
 
 def _parse_tool_call(raw: dict) -> dict:
@@ -123,7 +137,7 @@ class LLM:
             status, text = self.transport(self.url, headers, body)
             if not _retryable(status, text) or attempt == MAX_ATTEMPTS - 1:
                 break
-            time.sleep(2**attempt)
+            time.sleep(_wait_s(text, attempt))
         if status != 200:
             raise LLMError(f"{self.provider} returned HTTP {status}: {text[:500]}")
         try:
