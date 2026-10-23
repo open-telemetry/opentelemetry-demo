@@ -62,3 +62,15 @@ must never read this file.
 | 2026-10-23T19:23:53+00:00 | reset | ad-high-cpu | flag | adHighCpu | off | verified | flag adHighCpu is already 'off'; no write needed |
 | 2026-10-23T19:32:29+00:00 | inject | cache-unavailable | container | valkey-cart | - | verified | container valkey-cart: running -> stopped (docker stop valkey-cart) |
 | 2026-10-23T19:34:42+00:00 | reset | cache-unavailable | container | valkey-cart | - | verified | container valkey-cart: exited -> running and healthy (docker start valkey-cart) |
+| 2026-10-23T19:46:09+00:00 | reset | cache-unavailable | container | valkey-cart | - | verified | container valkey-cart is already running; nothing to start |
+| 2026-10-23T19:46:09+00:00 | reset | database-unavailable | container | astronomy-db | - | verified | container astronomy-db is already running; nothing to start |
+| 2026-10-23T19:46:09+00:00 | reset | currency-down | container | currency | - | verified | container currency is already running; nothing to start |
+| 2026-10-23T19:46:09+00:00 | reset | payment-failure | flag | paymentFailure | off | verified | flag paymentFailure is already 'off'; no write needed |
+| 2026-10-23T19:46:09+00:00 | reset | cart-failure | flag | cartFailure | off | verified | flag cartFailure is already 'off'; no write needed |
+| 2026-10-23T19:46:09+00:00 | reset | ad-failure | flag | adFailure | off | verified | flag adFailure is already 'off'; no write needed |
+| 2026-10-23T19:46:09+00:00 | reset | product-catalog-failure | flag | productCatalogFailure | off | verified | flag productCatalogFailure is already 'off'; no write needed |
+| 2026-10-23T19:46:09+00:00 | reset | product-catalog-lock-contention | flag | productCatalogLockContention | off | verified | flag productCatalogLockContention is already 'off'; no write needed |
+| 2026-10-23T19:46:09+00:00 | reset | ad-high-cpu | flag | adHighCpu | off | verified | flag adHighCpu is already 'off'; no write needed |
+| 2026-10-23T19:49:03+00:00 | inject | ad-failure | flag | adFailure | on | verified | flag adFailure: 'off' -> 'on' (read all, change only this flag, write all, re-read) |
+| 2026-10-23T19:51:31+00:00 | reset | ad-failure | flag | adFailure | off | verified | flag adFailure: 'on' -> 'off' (read all, change only this flag, write all, re-read) |
+| 2026-10-23T19:50:32+00:00 | agent-run | ad-failure | flag | adFailure | on | candidate ad (correct), confidence 0.3 | P5e live check, run inc-20261023-195032-c533: 10/12 steps, 104503 tokens (claude-haiku-5-5), ran ~90 s after inject. Baseline NOT clean: a cache-unavailable outage (19:32-19:34) sat inside the 30 min baseline, run skipped the planned wait. Model quoted the change line ('errors 0.00% -> 3.38%'). |

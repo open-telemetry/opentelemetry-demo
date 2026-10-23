@@ -13,9 +13,15 @@ the span that errors first is often a CLIENT span pointing at the failing depend
 
 Error rate = STATUS_CODE_ERROR calls / ALL calls. Most spans are STATUS_CODE_UNSET, so
 dividing by STATUS_CODE_OK calls would be wrong.
+
+Every service is also compared with a baseline: the same three figures over the 30 minutes
+that end where the requested window starts (the same queries with a PromQL `offset`). The
+comparison is written once, in code, as the row's `change` string, so a model can quote it.
 """
 import math
 import re
+from datetime import timedelta
+from itertools import zip_longest
 
 import requests
 
@@ -26,6 +32,7 @@ from tools.result import ToolResult, backend_error, utc_now, window_dict
 TOOL = "query_metrics"
 HTTP_TIMEOUT = 10
 MIN_WINDOW_MINUTES = 2
+BASELINE_MINUTES = 30
 INBOUND_KINDS = 'span_kind=~"SPAN_KIND_SERVER|SPAN_KIND_CONSUMER"'
 ERROR_STATUS = 'status_code="STATUS_CODE_ERROR"'
 SERVICE_NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]*$")  # keeps user input out of PromQL syntax
@@ -79,36 +86,88 @@ def error_rate_pct(error_rate: float | None, total_rate: float | None) -> float 
     return round(100.0 * (error_rate or 0.0) / total_rate, 2)
 
 
-def build_service_rows(calls, errors, p95) -> list[dict]:
+def service_figures(calls, errors, p95) -> dict[str, dict]:
+    """service -> the four figures of one period."""
     totals, errs, latency = _by_label(calls, "service_name"), _by_label(errors, "service_name"), _by_label(p95, "service_name")
-    rows = []
+    figures = {}
     for service, total in totals.items():
         err = errs.get(service, 0.0)  # no ERROR series at all means zero errors
         p = latency.get(service)
-        rows.append({
-            "service": service,
+        figures[service] = {
             "request_rate_per_s": round(total or 0.0, 3),
             "error_rate_per_s": round(err or 0.0, 4),
             "error_rate_pct": error_rate_pct(err, total),
             "p95_ms": None if p is None else round(p, 1),
-        })
+        }
+    return figures
+
+
+def _pct(value: float | None) -> str:
+    return "n/a" if value is None else f"{value:.2f}%"
+
+
+def _ms(value: float | None) -> str:
+    if value is None:
+        return "n/a"
+    return f"{value:.0f} ms" if value >= 10 else f"{value:.1f} ms"
+
+
+def change_line(now: dict, before: dict | None) -> str:
+    """One fixed-format sentence comparing a service now with its baseline."""
+    if not before or not before["request_rate_per_s"]:
+        return "baseline n/a"
+    if not now["request_rate_per_s"]:
+        return f"absent now (was {before['request_rate_per_s']:.2f}/s)"
+    return (
+        f"errors {_pct(before['error_rate_pct'])} -> {_pct(now['error_rate_pct'])}; "
+        f"p95 {_ms(before['p95_ms'])} -> {_ms(now['p95_ms'])}; "
+        f"rate {before['request_rate_per_s']:.2f}/s -> {now['request_rate_per_s']:.2f}/s"
+    )
+
+
+def build_service_rows(calls, errors, p95, base_calls=(), base_errors=(), base_p95=()) -> list[dict]:
+    now, before = service_figures(calls, errors, p95), service_figures(base_calls, base_errors, base_p95)
+    gone = {"request_rate_per_s": 0.0, "error_rate_per_s": 0.0, "error_rate_pct": None, "p95_ms": None}
+    rows = []
+    for service in [*now, *(s for s in before if s not in now)]:
+        current, baseline = now.get(service, gone), before.get(service)
+        rows.append({"service": service, **current, "baseline": baseline, "change": change_line(current, baseline)})
     return rows
 
 
+def _absent(row: dict) -> bool:
+    return row["change"].startswith("absent now")
+
+
+def _error_rise(row: dict) -> float:
+    """Rise in the error percentage over the baseline (no baseline counts as 0 %, i.e. plain error rate)."""
+    return (row["error_rate_pct"] or 0) - ((row["baseline"] or {}).get("error_rate_pct") or 0)
+
+
+def _p95_ratio(row: dict) -> float:
+    before = (row["baseline"] or {}).get("p95_ms")
+    return row["p95_ms"] / before if row["p95_ms"] and before else 1.0
+
+
+def _worse_key(row: dict) -> tuple:
+    """Most worsened first: error rise, then p95 ratio, then absent; ties fall back to the current figures."""
+    return (-_error_rise(row), -_p95_ratio(row), not _absent(row), -(row["error_rate_pct"] or 0), -(row["p95_ms"] or 0))
+
+
 def pick_worst(rows: list[dict], top_n: int) -> list[dict]:
-    """Choose top_n rows, alternating between worst error rate and worst p95.
+    """Choose top_n rows, taking in turn the most absent, the worst error rise and the worst p95 ratio.
 
     Ranking by errors alone would hide a latency incident behind noise-level error rates.
     """
-    by_errors = sorted(rows, key=lambda r: (r["error_rate_pct"] is None, -(r["error_rate_pct"] or 0), -(r["p95_ms"] or 0)))
-    by_latency = sorted(rows, key=lambda r: (r["p95_ms"] is None, -(r["p95_ms"] or 0)))
+    absent = sorted((r for r in rows if _absent(r)), key=lambda r: -r["baseline"]["request_rate_per_s"])
+    by_errors = sorted(rows, key=lambda r: (-_error_rise(r), -(r["error_rate_pct"] or 0)))
+    by_latency = sorted(rows, key=lambda r: (-_p95_ratio(r), -(r["p95_ms"] or 0)))
     chosen: list[dict] = []
-    for pair in zip(by_errors, by_latency):
-        for row in pair:
-            if row not in chosen and len(chosen) < top_n:
+    for group in zip_longest(absent, by_errors, by_latency):
+        for row in group:
+            if row is not None and row not in chosen and len(chosen) < top_n:
                 chosen.append(row)
-    chosen.sort(key=lambda r: (r["error_rate_pct"] is None, -(r["error_rate_pct"] or 0), -(r["p95_ms"] or 0)))
-    return chosen
+    return sorted(chosen, key=_worse_key)
 
 
 def erroring_spans(span_rows) -> list[dict]:
@@ -155,21 +214,27 @@ def query_metrics(
 
     now = utc_now()
     window = window_dict(window_minutes, now)
+    baseline_window = window_dict(BASELINE_MINUTES, now - timedelta(minutes=window_minutes))
     w = f"{window_minutes}m"
     svc = f',service_name="{service}"' if service else ""
-    calls_q = f'sum by (service_name) (rate(traces_span_metrics_calls_total{{{INBOUND_KINDS}{svc}}}[{w}]))'
-    errors_q = f'sum by (service_name) (rate(traces_span_metrics_calls_total{{{INBOUND_KINDS},{ERROR_STATUS}{svc}}}[{w}]))'
-    p95_q = (
-        'histogram_quantile(0.95, sum by (service_name, le) '
-        f'(rate(traces_span_metrics_duration_milliseconds_bucket{{{INBOUND_KINDS}{svc}}}[{w}])))'
-    )
+
+    def service_queries(range_: str, offset: str = "") -> list[str]:
+        return [
+            f'sum by (service_name) (rate(traces_span_metrics_calls_total{{{INBOUND_KINDS}{svc}}}[{range_}]{offset}))',
+            f'sum by (service_name) (rate(traces_span_metrics_calls_total{{{INBOUND_KINDS},{ERROR_STATUS}{svc}}}[{range_}]{offset}))',
+            'histogram_quantile(0.95, sum by (service_name, le) '
+            f'(rate(traces_span_metrics_duration_milliseconds_bucket{{{INBOUND_KINDS}{svc}}}[{range_}]{offset})))',
+        ]
+
+    calls_q, errors_q, p95_q = service_queries(w)
+    base_queries = service_queries(f"{BASELINE_MINUTES}m", f" offset {w}")
     spans_q = f'sum by (service_name, span_name, span_kind) (rate(traces_span_metrics_calls_total{{{ERROR_STATUS}{svc}}}[{w}]))'
     memory_q = (
         'container_memory_percent_ratio and on (container_name) '
         '(time() - timestamp(container_memory_percent_ratio) < 120)'
     )
     lag_q = "kafka_consumer_group_lag_sum_ratio"
-    queries = [calls_q, errors_q, p95_q, spans_q]
+    queries = [calls_q, errors_q, p95_q, spans_q, *base_queries]
 
     if base_url is None:
         endpoint = get_endpoints()["prometheus"]
@@ -180,10 +245,11 @@ def query_metrics(
         errors = instant_query(base_url, errors_q, at, http_get)
         p95 = instant_query(base_url, p95_q, at, http_get)
         span_rows = instant_query(base_url, spans_q, at, http_get)
+        base_calls, base_errors, base_p95 = (instant_query(base_url, q, at, http_get) for q in base_queries)
     except PromError as exc:
         return backend_error(TOOL, queries, window, str(exc))
 
-    rows = sanitize.clean(build_service_rows(calls, errors, p95))
+    rows = sanitize.clean(build_service_rows(calls, errors, p95, base_calls, base_errors, base_p95))
     if not rows:
         return ToolResult(
             TOOL, "no_data", queries, window,
@@ -195,7 +261,7 @@ def query_metrics(
 
     # Errors often show on a client span (a load generator, a proxy) rather than on the failing
     # service's own server span, so list the worst erroring spans across all services and kinds.
-    extra = {}
+    extra = {"baseline_window": baseline_window}
     worst_spans = erroring_spans(span_rows)
     if worst_spans:
         extra["top_error_spans"] = worst_spans[:top_n]
@@ -203,6 +269,7 @@ def query_metrics(
     # Optional sections: included only when the series exist; a failure is a note, not fatal.
     notes = [
         "service rates count SERVER and CONSUMER spans only; top_error_spans covers all span kinds",
+        f"change compares the requested window with the {BASELINE_MINUTES} minutes before it (baseline_window)",
         "container memory comes from collector metrics and can lag; container_health is authoritative",
     ]
     if not service:

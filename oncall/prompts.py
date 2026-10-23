@@ -23,17 +23,19 @@ it out, say why.
 - Start with a short window (5 to 10 minutes) to see what is wrong now. To see whether something is new, look at a longer \
 window next and compare counts and first_seen: errors that only show up in long windows may be stale, left over from \
 earlier.
-- Use query_metrics to see which services have errors or high latency.
+- Use query_metrics to see which services have errors or high latency. Each service has a "change" line comparing the \
+window with the 30 minutes before it. Use it to tell "got worse recently" from "always like this" and to date the onset; \
+"absent now" means a service that had traffic has none. If the baseline already looks abnormal, the fault began more than \
+the window ago: look at a longer window.
 - Work out WHEN each anomaly began from the timestamps in tool results (first_seen, started_at, finished_at, trace start). \
 A root cause starts at or before its symptoms. State a start time only if a tool result shows it, and take it only from \
 the first_seen or first-error timestamps of the SHORTEST window that shows the problem; otherwise say it is unknown.
 - Follow errors downstream. In query_traces the deepest erroring span is where an error starts; callers further up show \
 the same error as a consequence. Work toward the deepest failing component, not the first service that shows errors.
-- Corroborate. A root cause should be supported by more than one kind of evidence (metrics, traces, logs, containers).
-- Separate cause from symptom. The busiest failing service, or the one with the most errors, is not necessarily the root cause.
-- Some errors are always present. Errors that were already there before the problem started are background noise and are \
-less likely to be the cause. Prefer errors that are new or increasing: compare time windows, and look at first_seen, \
-last_seen and counts.
+- Corroborate across metrics, traces, logs and containers, and separate cause from symptom: the busiest failing service \
+is not necessarily the root cause.
+- Some errors are always present. Prefer errors that are new or increasing over background noise: compare windows, and \
+look at first_seen, last_seen and counts.
 - deploy_history helps when something restarted recently. If everything started together it says nothing about one service.
 - A result with state "no_data" or "backend_error" is missing evidence. It is never a sign that things are healthy. \
 Say so in limitations.

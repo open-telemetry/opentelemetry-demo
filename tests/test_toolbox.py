@@ -183,3 +183,10 @@ def test_prompt_ties_start_times_to_the_shortest_window_and_asks_for_a_rejected_
     text = prompts.system_prompt(11)
     assert "SHORTEST window that shows the problem" in text
     assert "at least one rejected hypothesis whenever any other service or container also looked abnormal" in text
+
+
+def test_prompt_explains_the_change_line_without_growing_much():
+    text = prompts.system_prompt(11)
+    for phrase in ('"change" line', "got worse recently", "always like this", "absent now", "began more than"):
+        assert phrase in text, phrase
+    assert len(text.splitlines()) <= 62

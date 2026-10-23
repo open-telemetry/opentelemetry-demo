@@ -103,8 +103,9 @@ TOOLS: dict[str, Tool] = {t.name: t for t in (
           "memory. The only way to see a stopped or crash-looping container, because a stopped container emits no "
           "metrics. Returns a summary and only the abnormal containers."),
     _tool("query_metrics", metrics.query_metrics,
-          "Per-service request rate, error rate (%) and p95 latency (ms) over the last N minutes, worst first, with "
-          "the top erroring spans of each failing service. Windows are at most 30 minutes; compare a short and a longer one to see what changed.",
+          "Per-service request rate, error rate (%) and p95 latency (ms) over the last N minutes, most worsened first, "
+          "each with a 'change' line against the 30 minutes before the window, and the top erroring spans of each "
+          "failing service. Windows are at most 30 minutes.",
           ("window_minutes", "service", "top_n"), {"window_minutes": 5, "top_n": 6}),
     _tool("query_traces", traces.query_traces,
           "Recent error traces (mode 'errors') or the slowest traces (mode 'slow'): real trace IDs, root service and "
@@ -199,12 +200,14 @@ def _container_view(r: dict) -> dict:
 def _metrics_view(r: dict) -> dict:
     rows = []
     for s in r["items"]:
-        row = _pick(s, ("service", "request_rate_per_s", "error_rate_pct", "p95_ms"))
+        row = _pick(s, ("service", "request_rate_per_s", "error_rate_pct", "p95_ms", "change"))
         if s.get("top_error_spans"):
             row["top_error_spans"] = [_pick(e, ("span_name", "span_kind", "error_rate_per_s")) for e in s["top_error_spans"]]
         rows.append(row)
     view = {"window": r["window"], "services": rows, "services_total": r["total_items"]}
     extra = r["extra"]
+    if extra.get("baseline_window"):
+        view["baseline_window"] = extra["baseline_window"]
     if extra.get("top_error_spans"):
         view["worst_error_spans"] = [_pick(e, ("service", "span_name", "span_kind", "error_rate_per_s"))
                                      for e in extra["top_error_spans"][:5]]
