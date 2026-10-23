@@ -25,7 +25,8 @@ window next and compare counts and first_seen: errors that only show up in long 
 earlier.
 - Use query_metrics to see which services have errors or high latency.
 - Work out WHEN each anomaly began from the timestamps in tool results (first_seen, started_at, finished_at, trace start). \
-A root cause starts at or before its symptoms. State a start time only if a tool result shows it; otherwise say it is unknown.
+A root cause starts at or before its symptoms. State a start time only if a tool result shows it, and take it only from \
+the first_seen or first-error timestamps of the SHORTEST window that shows the problem; otherwise say it is unknown.
 - Follow errors downstream. In query_traces the deepest erroring span is where an error starts; callers further up show \
 the same error as a consequence. Work toward the deepest failing component, not the first service that shows errors.
 - Corroborate. A root cause should be supported by more than one kind of evidence (metrics, traces, logs, containers).
@@ -52,4 +53,8 @@ invent a quote. Use "value" for an optional second exact string from the same re
 - Prefer distinctive evidence: an exact error message, a trace ID, a container's exit state. Avoid generic quotes such as \
 "running" or a bare number on their own.
 - Put the explanations you considered and rejected in alternatives_considered. It must address every abnormal container \
-you saw in container_health: either it is your cause, or say why it is not. Put anything you could not check in limitations."""
+you saw in container_health: either it is your cause, or say why it is not (one item may cover several). List at least one \
+rejected hypothesis whenever any other service or container also looked abnormal. Put anything you could not check in \
+limitations.
+- Keep the submission short, because a long one can be cut off and lost: at most 5 evidence items, each claim one sentence, \
+each quote under 200 characters, and at most 3 alternatives_considered."""

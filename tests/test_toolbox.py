@@ -51,8 +51,12 @@ def test_schema_is_generated_from_the_signature_and_hides_test_hooks(name):
 def test_schema_types_limits_and_defaults():
     traces = toolbox.TOOLS["query_traces"].spec().parameters["properties"]
     assert traces["mode"]["enum"] == ["errors", "slow"] and traces["mode"]["type"] == "string"
-    assert traces["window_minutes"]["type"] == "integer" and traces["window_minutes"]["maximum"] == 60
+    assert traces["window_minutes"]["type"] == "integer" and traces["window_minutes"]["maximum"] == 30
     assert traces["limit"]["default"] == 4  # the loop's own default, not the tool's
+    assert traces["window_minutes"]["default"] == 10
+    assert toolbox.TOOLS["query_logs"].spec().parameters["properties"]["window_minutes"]["default"] == 10
+    assert toolbox.TOOLS["query_logs"].spec().parameters["properties"]["window_minutes"]["maximum"] == 30
+    assert toolbox.TOOLS["query_metrics"].spec().parameters["properties"]["window_minutes"]["default"] == 5
     assert "default" not in traces["service"]  # None is "not given", not a default
     metrics = toolbox.TOOLS["query_metrics"].spec().parameters["properties"]
     assert metrics["window_minutes"]["minimum"] == 2 and metrics["top_n"]["maximum"] == 10
@@ -159,3 +163,23 @@ def test_prompt_carries_the_tuned_reasoning_guidance():
     for phrase in ("not running", "strong root-cause candidate", "WHEN each anomaly began", "otherwise say it is unknown",
                    "short window (5 to 10 minutes)", "may be stale", "every abnormal container", "Prefer distinctive evidence"):
         assert phrase in text, phrase
+
+
+def test_clamp_caps_windows_at_30_and_reports_what_it_cut():
+    assert toolbox.clamp_arguments({"window_minutes": 90, "limit": 5}) == (
+        {"window_minutes": 30, "limit": 5}, {"window_minutes": {"requested": 90, "used": 30}})
+    assert toolbox.clamp_arguments({"window_minutes": 30}) == ({"window_minutes": 30}, {})
+    assert toolbox.clamp_arguments({"limit": 5}) == ({"limit": 5}, {})
+
+
+def test_every_query_tool_says_the_maximum_window():
+    for name in ("query_metrics", "query_traces", "query_logs"):
+        tool = toolbox.TOOLS[name]
+        assert "at most 30 minutes" in tool.description
+        assert "at most 30" in tool.spec().parameters["properties"]["window_minutes"]["description"]
+
+
+def test_prompt_ties_start_times_to_the_shortest_window_and_asks_for_a_rejected_hypothesis():
+    text = prompts.system_prompt(11)
+    assert "SHORTEST window that shows the problem" in text
+    assert "at least one rejected hypothesis whenever any other service or container also looked abnormal" in text

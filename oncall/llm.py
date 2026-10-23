@@ -51,6 +51,7 @@ class Reply:
     text: str
     tool_calls: list[ToolCall] = field(default_factory=list)
     usage: dict = field(default_factory=dict)  # {"input_tokens": int, "output_tokens": int}; cache reads count as input
+    stop_reason: str | None = None  # the provider's own reason; "max_tokens" means the reply was cut off
 
     def as_message(self) -> dict:
         """The reply in neutral form, ready to append to the message list."""
@@ -100,7 +101,7 @@ class AnthropicProvider:
         u = response.usage
         input_tokens = (u.input_tokens or 0) + (getattr(u, "cache_creation_input_tokens", 0) or 0) \
             + (getattr(u, "cache_read_input_tokens", 0) or 0)
-        return Reply(text, calls, {"input_tokens": input_tokens, "output_tokens": u.output_tokens or 0})
+        return Reply(text, calls, {"input_tokens": input_tokens, "output_tokens": u.output_tokens or 0}, response.stop_reason)
 
 
 class OpenAIProvider:
@@ -145,7 +146,8 @@ class OpenAIProvider:
         usage = {}
         if response.usage:
             usage = {"input_tokens": response.usage.prompt_tokens or 0, "output_tokens": response.usage.completion_tokens or 0}
-        return Reply(message.content or "", calls, usage)
+        reason = response.choices[0].finish_reason
+        return Reply(message.content or "", calls, usage, "max_tokens" if reason == "length" else reason)
 
 
 PROVIDERS = {"anthropic": AnthropicProvider, "openai": OpenAIProvider}

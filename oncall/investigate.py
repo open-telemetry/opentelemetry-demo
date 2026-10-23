@@ -3,7 +3,8 @@
     python -m oncall.investigate [--symptom TEXT] [--summary] [--steps N] [--token-budget N]
 
 Prints the steps the agent took, the diagnosis candidate (NOT validated yet) and the tokens used,
-and saves ledger.json, candidate.json and run_info.json to reports/runs/<run id>/.
+and saves ledger.json, candidate.json and run_info.json (plus rejected_submissions.json when the
+model's final answer was rejected) to reports/runs/<run id>/.
 --summary also prints a symptom summary built from the ledger: it lists what the tools showed and
 cites ledger ids, and it does not say what the cause is.
 Needs the demo running and a key in .env.incident (see `python -m oncall.llm --check`).
@@ -140,6 +141,9 @@ def save_run(result: RunResult, runs_dir: Path = RUNS_DIR) -> Path:
     result.ledger.save(folder / "ledger.json")
     (folder / "candidate.json").write_text(json.dumps(result.candidate, indent=2) + "\n", encoding="utf-8")
     (folder / "run_info.json").write_text(json.dumps(result.run_info, indent=2) + "\n", encoding="utf-8")
+    if result.rejected:
+        (folder / "rejected_submissions.json").write_text(
+            json.dumps(result.rejected, indent=2, ensure_ascii=False, default=str) + "\n", encoding="utf-8")
     return folder
 
 
@@ -174,6 +178,8 @@ def main(argv: list[str] | None = None, llm=None, runs_dir: Path = RUNS_DIR) -> 
     print(f"\nsteps used: {info['steps_used']}/{info['step_budget']}   stop reason: {info['stop_reason']}"
           f"   budget exhausted: {info['budget_exhausted']}   llm error: {info['llm_error']}")
     print(f"tokens used: {info['tokens_used']} of {info['token_budget']} (input {info['tokens_input']}, output {info['tokens_output']})")
+    if result.rejected:
+        print(f"rejected submissions: {len(result.rejected)} (see rejected_submissions.json)")
     print(f"saved to {folder}")
     return 0
 

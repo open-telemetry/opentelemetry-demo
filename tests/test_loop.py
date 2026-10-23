@@ -50,8 +50,8 @@ def call(name, **arguments):
     return ToolCall(f"call_{next(_ids)}", name, arguments)
 
 
-def say(*calls, text="", usage=(1000, 50)):
-    return Reply(text, list(calls), {"input_tokens": usage[0], "output_tokens": usage[1]})
+def say(*calls, text="", usage=(1000, 50), stop=None):
+    return Reply(text, list(calls), {"input_tokens": usage[0], "output_tokens": usage[1]}, stop)
 
 
 def submit(**overrides):
@@ -217,6 +217,69 @@ def test_repeated_identical_call_stops_the_investigation():
     assert second["finding"] == "repeat of M1; not run" and second["ledger_id"] is None
     assert len(run.ledger.list()) == 1
     assert any("identical tool call" in n for n in run.candidate["limitations"])
+
+
+NO_EVIDENCE = {"evidence": []}
+
+
+def test_empty_evidence_is_sent_back_once_and_the_retry_is_counted():
+    llm = ScriptedLLM([say(submit(**NO_EVIDENCE), usage=(2000, 100)), say(submit(), usage=(2200, 300))])
+    run = run_investigation(llm, "x", tools=stubs()[0])
+    assert len(llm.calls) == 2
+    ask = tool_messages(llm.calls[1])[0]["content"]
+    assert "no evidence items" in ask and "copied exactly" in ask
+    assert run.candidate["evidence"] == GOOD_DIAGNOSIS["evidence"] and run.run_info["tokens_used"] == 4600
+    assert run.candidate["limitations"] == GOOD_DIAGNOSIS["limitations"] and run.run_info["llm_error"] is None
+
+
+def test_if_the_retry_is_still_empty_the_candidate_is_kept_with_a_note():
+    llm = ScriptedLLM([say(submit(**NO_EVIDENCE)), say(submit(**NO_EVIDENCE, stated_confidence=0.4)), say(submit())])
+    run = run_investigation(llm, "x", tools=stubs()[0])
+    assert len(llm.calls) == 2  # asked once, never a second time
+    assert (run.candidate["component"], run.candidate["stated_confidence"], run.candidate["evidence"]) == ("svc-b", 0.4, [])
+    assert any("no evidence, even after one retry" in n for n in run.candidate["limitations"])
+
+
+def test_no_retry_when_evidence_is_present_or_the_component_is_unknown():
+    with_evidence = ScriptedLLM([say(submit())])
+    run_investigation(with_evidence, "x", tools=stubs()[0])
+    assert len(with_evidence.calls) == 1
+    for component in ("unknown", "Unknown "):
+        llm = ScriptedLLM([say(submit(component=component, stated_confidence=0.1, **NO_EVIDENCE))])
+        run = run_investigation(llm, "x", tools=stubs()[0])
+        assert len(llm.calls) == 1 and run.candidate["limitations"] == GOOD_DIAGNOSIS["limitations"]
+
+
+def test_a_malformed_retry_falls_back_to_the_first_submission_not_to_unknown():
+    llm = ScriptedLLM([say(submit(**NO_EVIDENCE)), say(submit(stated_confidence=85)), say(submit(stated_confidence=85))])
+    run = run_investigation(llm, "x", tools=stubs()[0])
+    assert run.candidate["component"] == "svc-b" and run.candidate["stated_confidence"] == 0.8
+    assert any("retry did not produce a valid answer" in n for n in run.candidate["limitations"])
+    assert "malformed" in run.run_info["llm_error"]
+
+
+def test_the_retry_also_works_inside_the_forced_conclusion():
+    llm = ScriptedLLM([say(call("query_logs", window_minutes=5)), say(submit(**NO_EVIDENCE)), say(submit())])
+    run = run_investigation(llm, "x", LoopConfig(step_budget=2), stubs()[0])
+    assert len(llm.calls) == 3 and run.candidate["evidence"] and run.run_info["budget_exhausted"]
+
+
+def test_a_window_above_30_is_clamped_and_the_clamp_is_recorded_everywhere():
+    tools, seen = stubs()
+    llm = ScriptedLLM([say(call("query_logs", window_minutes=90)), say(call("query_traces")), say(call("query_metrics")), say(submit())])
+    run = run_investigation(llm, "x", tools=tools)
+    assert seen[0] == ("query_logs", {"window_minutes": 30, "limit": 6})
+    assert [kw["window_minutes"] for _, kw in seen] == [30, 10, 5]  # defaults: logs and traces 10, metrics 5
+    step = run.candidate["investigation_steps"][0]
+    assert step["arguments"]["window_minutes"] == 30 and step["clamped"] == {"window_minutes": {"requested": 90, "used": 30}}
+    assert "clamped to 30" in step["finding"] and "clamped" not in run.candidate["investigation_steps"][1]
+    assert run.ledger.get("L1").arguments["window_minutes"] == 30  # what actually ran
+    shown = tool_messages(llm.calls[1])[0]["content"]
+    assert json.loads(shown)["clamped"] == {"window_minutes": {"requested": 90, "used": 30}}
+
+
+def test_budgets_are_unchanged_by_the_hardening():
+    assert (LoopConfig().token_budget, LoopConfig().step_budget, LoopConfig().reserve_fraction, LoopConfig().max_tokens) == (200000, 12, 0.85, 1200)
 
 
 def test_unknown_tool_name_is_recorded_and_the_loop_carries_on():
@@ -401,13 +464,129 @@ def test_llm_adapter_reports_usage_and_marks_prompt_cache_points():
             @staticmethod
             def create(**kwargs):
                 Client.sent = kwargs
-                return type("R", (), {"content": [Block()], "usage": Usage()})()
+                return type("R", (), {"content": [Block()], "usage": Usage(), "stop_reason": "max_tokens"})()
 
     provider = AnthropicProvider.__new__(AnthropicProvider)
     provider.client, provider.model = Client(), "m"
     specs = [ToolSpec("a", "d", {"type": "object"}), ToolSpec("b", "d", {"type": "object"})]
     reply = provider.complete("be careful", [{"role": "user", "content": "go"}], specs, 50)
-    assert reply.usage == {"input_tokens": 4400, "output_tokens": 20}
+    assert reply.usage == {"input_tokens": 4400, "output_tokens": 20} and reply.stop_reason == "max_tokens"
     sent = Client.sent
     assert sent["system"] == [{"type": "text", "text": "be careful", "cache_control": {"type": "ephemeral"}}]
     assert "cache_control" not in sent["tools"][0] and sent["tools"][1]["cache_control"] == {"type": "ephemeral"}
+
+
+# --- truncated final answers ----------------------------------------------------------------
+
+def truncated(**missing):
+    """A submission as the API returns it when the reply hit max_tokens: later fields never arrived."""
+    cut = {k: v for k, v in GOOD_DIAGNOSIS.items() if k in ("component", "stated_confidence", "cause")}
+    return call(SUBMIT, **{k: v for k, v in cut.items() if k not in missing})
+
+
+def test_schema_puts_the_short_required_fields_first_and_the_long_lists_last():
+    from oncall.loop import SUBMIT_SPEC
+    assert list(SUBMIT_SPEC.parameters["properties"]) == [
+        "component", "stated_confidence", "cause", "evidence", "alternatives_considered", "limitations"]
+    assert SUBMIT_SPEC.parameters["required"] == ["component", "stated_confidence", "cause", "evidence"]
+
+
+def test_prompt_asks_for_a_short_submission():
+    from oncall.prompts import system_prompt
+    text = system_prompt(11)
+    assert "at most 5 evidence items" in text and "under 200 characters" in text and "at most 3 alternatives_considered" in text
+
+
+def test_a_cut_off_submission_is_saved_called_cut_off_and_retried_with_a_shorter_message():
+    raw = {"component": "svc-b", "cause": "svc-b is down.", "evidence": GOOD_DIAGNOSIS["evidence"]}  # stated_confidence never arrived
+    llm = ScriptedLLM([say(call(SUBMIT, **raw), usage=(2000, 1200), stop="max_tokens"), say(submit(), usage=(2300, 400), stop="tool_use")])
+    run = run_investigation(llm, "x", tools=stubs()[0])
+    assert len(llm.calls) == 2 and run.candidate["component"] == "svc-b" and run.run_info["llm_error"] is None
+    ask = tool_messages(llm.calls[1])[0]["content"]
+    assert "cut off" in ask and "SHORTER" in ask and "stated_confidence" in ask
+    assert "at most 3 evidence items" in ask and "under 100 characters" in ask
+    (saved,) = run.rejected
+    assert saved["raw_arguments"] == raw and saved["stop_reason"] == "max_tokens" and "stated_confidence" in saved["error"]
+    assert saved["output_tokens"] == 1200
+    assert run.run_info["rejected_submissions"] == 1 and run.run_info["tokens_used"] == 2000 + 1200 + 2300 + 400
+
+
+def test_a_submission_that_is_cut_off_twice_is_reported_as_cut_off_in_the_run_problem_and_limitations():
+    llm = ScriptedLLM([say(truncated(cause=None), stop="max_tokens"), say(truncated(cause=None), stop="max_tokens")])
+    run = run_investigation(llm, "x", tools=stubs()[0])
+    assert len(run.rejected) == 2 and run.candidate["component"] == "unknown"
+    assert "reply was cut off" in run.run_info["llm_error"] and run.run_info["stop_reason"] == "malformed_submission"
+    assert any("reply was cut off" in n for n in run.candidate["limitations"])
+    assert "reply was cut off" in run.candidate["cause"]
+
+
+def test_a_cut_off_reply_with_the_evidence_missing_asks_for_a_shorter_answer_and_keeps_the_cut_off_note():
+    llm = ScriptedLLM([say(truncated(), stop="max_tokens"), say(truncated(), stop="max_tokens")])
+    run = run_investigation(llm, "x", tools=stubs()[0])
+    ask = tool_messages(llm.calls[1])[0]["content"]
+    assert "cut off" in ask and "SHORTER" in ask and "evidence is missing" in ask
+    assert len(llm.calls) == 2 and len(run.rejected) == 2
+    assert run.candidate["component"] == "svc-b" and run.candidate["evidence"] == []
+    assert any("reply was cut off" in n for n in run.candidate["limitations"])
+
+
+def test_a_rejection_that_was_not_cut_off_keeps_the_plain_message_and_is_still_saved():
+    llm = ScriptedLLM([say(submit(stated_confidence=85), stop="tool_use"), say(submit())])
+    run = run_investigation(llm, "x", tools=stubs()[0])
+    ask = tool_messages(llm.calls[1])[0]["content"]
+    assert "cut off" not in ask and "SHORTER" not in ask and "corrected arguments" in ask
+    assert run.rejected[0]["stop_reason"] == "tool_use" and run.rejected[0]["raw_arguments"]["stated_confidence"] == 85
+    assert run.run_info["llm_error"] is None
+
+
+def test_the_concluding_call_and_the_retry_get_the_larger_cap_but_investigation_turns_do_not():
+    config = LoopConfig(step_budget=3)
+    llm = ScriptedLLM([say(call("query_logs", window_minutes=5)), say(call("query_logs", window_minutes=6)),
+                       say(truncated(cause=None), stop="max_tokens"), say(submit())])
+    run = run_investigation(llm, "x", config, stubs()[0])
+    assert [c["max_tokens"] for c in llm.calls] == [1200, 1200, 4000, 4000]
+    assert run.candidate["component"] == "svc-b"
+
+
+def test_a_retry_outside_the_wrap_up_also_gets_the_larger_cap():
+    llm = ScriptedLLM([say(submit(stated_confidence=85)), say(submit())])
+    run_investigation(llm, "x", tools=stubs()[0])
+    assert [c["max_tokens"] for c in llm.calls] == [1200, 4000]
+
+
+def test_the_larger_cap_never_exceeds_what_is_left_of_the_token_budget():
+    llm = ScriptedLLM([say(call("query_logs"), usage=(5000, 100)), say(submit(stated_confidence=0.3), usage=(5300, 200))])
+    run = run_investigation(llm, "x", LoopConfig(token_budget=12000), stubs()[0])
+    cap = llm.calls[1]["max_tokens"]
+    assert 1200 <= cap < 4000 and 5100 + 5100 + cap <= 12000
+    assert run.run_info["tokens_used"] <= 12000
+
+
+def test_investigate_saves_rejected_submissions_json_only_when_there_are_some(tmp_path, capsys):
+    raw = {"component": "svc-b", "cause": "c"}
+    llm = ScriptedLLM([say(call(SUBMIT, **raw), stop="max_tokens"), say(submit())])
+    assert main([], llm=llm, runs_dir=tmp_path / "a") == 0
+    (folder,) = list((tmp_path / "a").iterdir())
+    saved = json.loads((folder / "rejected_submissions.json").read_text())
+    assert saved[0]["raw_arguments"] == raw and saved[0]["stop_reason"] == "max_tokens" and saved[0]["error"]
+    assert "rejected submissions: 1" in capsys.readouterr().out
+
+    assert main([], llm=ScriptedLLM([say(submit())]), runs_dir=tmp_path / "b") == 0
+    (clean,) = list((tmp_path / "b").iterdir())
+    assert not (clean / "rejected_submissions.json").exists()
+
+
+def test_openai_finish_reason_length_is_reported_as_max_tokens():
+    from oncall.llm import OpenAIProvider
+
+    class Message:
+        content, tool_calls = "hi", None
+
+    class Response:
+        choices = [type("C", (), {"message": Message(), "finish_reason": "length"})()]
+        usage = None
+
+    provider = OpenAIProvider.__new__(OpenAIProvider)
+    provider.model = "m"
+    provider.client = type("Cl", (), {"chat": type("Ch", (), {"completions": type("Co", (), {"create": staticmethod(lambda **kw: Response())})()})()})()
+    assert provider.complete("", [{"role": "user", "content": "go"}], [], 50).stop_reason == "max_tokens"

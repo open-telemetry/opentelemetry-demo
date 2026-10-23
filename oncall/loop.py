@@ -9,8 +9,13 @@ room to conclude: at 85% of the token budget, or with one tool call left, or whe
 identical call, the loop tells the model to stop investigating and submit a diagnosis from the evidence
 it has already seen. If no valid answer ever arrives, the candidate is an explicit
 "unknown" with confidence 0 and the reason in `limitations`; the loop never invents a diagnosis.
-Validation against the ledger is NOT done here.
+A diagnosis that names a component but cites no evidence is sent back once; if it is still empty it is kept
+and the gap is recorded in `limitations`. Every rejected submission is kept in RunResult.rejected (raw arguments,
+stop reason, error). The concluding call and the retry after a rejection get a larger reply cap
+(LoopConfig.conclude_max_tokens); a rejection whose stop reason is "max_tokens" is reported as cut off and the
+retry asks for a shorter answer. Validation against the ledger is NOT done here.
 """
+import copy
 import json
 import secrets
 from dataclasses import dataclass, field
@@ -32,7 +37,8 @@ MAX_MALFORMED = 2
 class LoopConfig:
     token_budget: int = 200000  # input + output tokens over the whole run
     step_budget: int = 12  # tool calls, valid or not; the last one is held back for the conclusion
-    max_tokens: int = 1200  # per model reply
+    max_tokens: int = 1200  # per model reply while investigating
+    conclude_max_tokens: int = 4000  # per reply once the model must conclude, and for retries of a rejected submission
     reserve_fraction: float = 0.85  # at this share of the token budget the model must conclude
 
 
@@ -47,26 +53,31 @@ SUBMIT_SPEC = ToolSpec(
         "type": "object",
         "properties": {
             "component": _string("Service or container judged to be the root cause, or 'unknown'."),
-            "cause": _string("What is wrong and why, in 1-3 sentences."),
             "stated_confidence": {"type": "number", "minimum": 0, "maximum": 1,
                                   "description": "Your own probability from 0 to 1 that component is right."},
-            "evidence": {"type": "array", "items": {"type": "object", "properties": {
+            "cause": _string("What is wrong and why, in 1-2 short sentences."),
+            "evidence": {"type": "array", "description": "At most 5 items.", "items": {"type": "object", "properties": {
                 "ledger_id": _string("The id of the tool result, e.g. T3."),
                 "kind": {"type": "string", "enum": list(EVIDENCE_KINDS)},
                 "claim": _string("What this item shows, one sentence."),
-                "quote": _string("Text copied EXACTLY from that result: a trace ID, a log message, a container name or a number as printed."),
+                "quote": _string("Text copied EXACTLY from that result: a trace ID, a log message, a container name or a number as printed. Under 200 characters."),
                 "value": _string("Optional second exact string from the same result, e.g. 'exited'."),
             }, "required": ["ledger_id", "kind", "claim", "quote"]}},
-            "alternatives_considered": {"type": "array", "items": {"type": "object", "properties": {
+            "alternatives_considered": {"type": "array", "description": "At most 3 items.", "items": {"type": "object", "properties": {
                 "hypothesis": _string("An explanation you considered."),
                 "why_rejected": _string("Why the evidence argues against it."),
             }, "required": ["hypothesis", "why_rejected"]}},
             "limitations": {"type": "array", "items": {"type": "string"},
                             "description": "What you could not check or could not rely on."},
         },
-        "required": ["component", "cause", "stated_confidence", "evidence"],
+        "required": ["component", "stated_confidence", "cause", "evidence"],
     },
 )
+
+
+CUT_OFF = "the reply was cut off at the token limit"
+SHORTER_ANSWER = ("Call submit_diagnosis again with a SHORTER answer: at most 3 evidence items, a one-sentence cause, "
+                  "one-sentence claims, quotes under 100 characters, and at most 1 alternative.")
 
 
 class DiagnosisError(Exception):
@@ -128,6 +139,7 @@ class RunResult:
     run_info: dict
     ledger: Ledger
     steps: list[dict] = field(default_factory=list)
+    rejected: list[dict] = field(default_factory=list)  # every rejected submit_diagnosis, as received
 
 
 STOP_TEXT = {
@@ -156,8 +168,12 @@ class _Investigation:
         self.stop_reason: str | None = None
         self.llm_error: str | None = None
         self.malformed = 0
+        self.rejected: list[dict] = []
+        self.cut_off = False  # a rejected submission came from a reply that hit max_tokens
         self.nudges = 0
         self.candidate: dict | None = None
+        self.pending: dict | None = None  # a well-formed submission that had no evidence and was sent back once
+        self.notes: list[str] = []  # limitations added by the loop itself
         self.done = False
 
     def _usable_steps(self) -> int:
@@ -176,6 +192,14 @@ class _Investigation:
         next_input = self.last_in + self.last_out + self.added_chars // CHARS_PER_TOKEN
         cost = next_input + self.config.max_tokens
         return self.tokens_in + self.tokens_out + cost * (1 + extra_calls) <= self.config.token_budget
+
+    def _reply_cap(self) -> int:
+        """Reply cap for the next call: larger when concluding or retrying, never more than the budget has left."""
+        if not (self.wrapup or self.rejected):
+            return self.config.max_tokens
+        next_input = self.last_in + self.last_out + self.added_chars // CHARS_PER_TOKEN
+        room = self.config.token_budget - self.tokens_in - self.tokens_out - next_input
+        return max(self.config.max_tokens, min(self.config.conclude_max_tokens, room))
 
     # --- messages -----------------------------------------------------------------------
 
@@ -207,7 +231,7 @@ class _Investigation:
                 elif used >= self.config.reserve_fraction * self.config.token_budget or not self._can_afford(extra_calls=1):
                     self._start_wrapup("token_budget")
             if self.wrapup:
-                if self.wrapup_tries >= MAX_WRAPUP_TRIES:
+                if self.wrapup_tries >= MAX_WRAPUP_TRIES + (1 if self.pending else 0):  # the retry gets its own call
                     self.llm_error = self.llm_error or "the model did not submit a diagnosis when asked to conclude"
                     break
                 if not self._can_afford(extra_calls=0):
@@ -225,7 +249,7 @@ class _Investigation:
 
     def _ask(self):
         try:
-            reply = self.llm.complete(self.system, self.messages, self.specs, self.config.max_tokens)
+            reply = self.llm.complete(self.system, self.messages, self.specs, self._reply_cap())
         except Exception as exc:  # timeouts, rate limits, bad requests: all end the run with a recorded error
             key = getattr(self.llm, "api_key", "")
             message = str(exc).replace(key, "<key>") if key else str(exc)
@@ -258,22 +282,48 @@ class _Investigation:
             for call in reply.tool_calls:
                 if call is not submit:
                     self._tool_message(call, f"not run: {SUBMIT} was called in the same turn")
-            self._handle_submit(submit)
+            self._handle_submit(submit, reply)
             return
         for call in reply.tool_calls:
             self._handle_tool(call, reply.text.strip()[:200])
 
-    def _handle_submit(self, call) -> None:
+    def _reject(self, call, reply, error: str) -> bool:
+        """Keep a rejected submission as received. Returns True when the reply was cut off."""
+        cut = reply.stop_reason == "max_tokens"
+        self.cut_off = self.cut_off or cut
+        self.rejected.append({"raw_arguments": copy.deepcopy(call.arguments), "stop_reason": reply.stop_reason,
+                              "error": error, "output_tokens": (reply.usage or {}).get("output_tokens")})
+        return cut
+
+    def _handle_submit(self, call, reply) -> None:
         try:
-            self.candidate = parse_submission(call.arguments)
+            parsed = parse_submission(call.arguments)
         except DiagnosisError as exc:
+            cut = self._reject(call, reply, str(exc))
             self.malformed += 1
-            self._tool_message(call, f"rejected: {exc}. Call {SUBMIT} again with corrected arguments.")
+            if cut:
+                self._tool_message(call, f"rejected: {CUT_OFF} before the diagnosis was complete ({exc}). {SHORTER_ANSWER}")
+            else:
+                self._tool_message(call, f"rejected: {exc}. Call {SUBMIT} again with corrected arguments.")
             if self.malformed >= MAX_MALFORMED:
-                self.llm_error = f"{SUBMIT} was malformed twice: {exc}"
+                self.llm_error = f"{SUBMIT} was malformed twice: {exc}" + (f"; {CUT_OFF}" if self.cut_off else "")
                 self.stop_reason = self.stop_reason or "malformed_submission"
                 self.done = True
             return
+        if parsed["component"].strip().lower() != "unknown" and not parsed["evidence"]:
+            cut = self._reject(call, reply, "the diagnosis has no evidence items")
+            if self.pending is None:
+                self.pending = parsed
+                if cut:
+                    self._tool_message(call, f"rejected: {CUT_OFF} and the evidence is missing. {SHORTER_ANSWER}")
+                else:
+                    self._tool_message(call, "rejected: the diagnosis has no evidence items. Call submit_diagnosis again with evidence: "
+                                             "each item cites the id of a result you have already seen and a quote copied exactly from it. "
+                                             "Do not call other tools.")
+                return
+            self.notes.append("The diagnosis names a component but cites no evidence, even after one retry."
+                              + (f" {CUT_OFF.capitalize()}." if self.cut_off else ""))
+        self.candidate = parsed
         self._tool_message(call, "accepted")
         self.done = True
 
@@ -291,8 +341,10 @@ class _Investigation:
             self._tool_message(call, f"unknown tool {call.name!r}. Available: {', '.join(self.tools)}, {SUBMIT}.")
             return
         try:
-            arguments = toolbox.validate_arguments(tool, call.arguments)
+            arguments, clamped = toolbox.clamp_arguments(toolbox.validate_arguments(tool, call.arguments))
             step["arguments"] = arguments
+            if clamped:
+                step["clamped"] = clamped
             key = (call.name, json.dumps(arguments, sort_keys=True))
             if key in self.seen:
                 step["finding"] = f"repeat of {self.seen[key]}; not run"
@@ -310,6 +362,10 @@ class _Investigation:
         self.seen[key] = entry.id
         step["ledger_id"] = entry.id
         step["finding"] = toolbox.finding_line(view, call.name)
+        if clamped:
+            view["clamped"] = clamped  # tells the model its window was shortened
+            asked = clamped["window_minutes"]
+            step["finding"] += f" (window_minutes {asked['requested']} clamped to {asked['used']})"
         self._tool_message(call, toolbox.view_text(view))
 
     # --- result -------------------------------------------------------------------------
@@ -326,7 +382,11 @@ class _Investigation:
         return notes
 
     def result(self, started) -> RunResult:
-        notes = self._limitations()
+        if self.candidate is None and self.pending:
+            self.candidate = self.pending
+            self.notes.append("The diagnosis cites no evidence: the retry did not produce a valid answer."
+                              + (f" {CUT_OFF.capitalize()}." if self.cut_off else ""))
+        notes = self.notes + self._limitations()
         if self.candidate is None:
             reason = self.llm_error or STOP_TEXT.get(self.stop_reason or "", "the run ended without an answer")
             candidate = {
@@ -355,11 +415,12 @@ class _Investigation:
             "tokens_used": self.tokens_in + self.tokens_out,
             "tokens_input": self.tokens_in,
             "tokens_output": self.tokens_out,
+            "rejected_submissions": len(self.rejected),
             "token_budget": self.config.token_budget,
             "stop_reason": self.stop_reason or ("submitted" if self.candidate else "ended"),
             "model": getattr(getattr(self.llm, "provider", None), "model", None),
         }
-        return RunResult(candidate, run_info, self.ledger, self.steps)
+        return RunResult(candidate, run_info, self.ledger, self.steps, self.rejected)
 
 
 def run_investigation(llm, symptom: str = DEFAULT_SYMPTOM, config: LoopConfig | None = None,

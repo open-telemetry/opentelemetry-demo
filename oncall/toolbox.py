@@ -19,6 +19,7 @@ from tools import containers, deploys, logs, metrics, traces
 from tools.ledger import LedgerEntry
 from tools.result import ToolResult, backend_error
 
+MAX_WINDOW_MINUTES = 30  # longest window the model may ask for; older data is mostly stale background
 HIGH_CPU_PCT = 90  # a running container at or above these percentages is shown as abnormal; memory is higher
 HIGH_MEMORY_PCT = 97  # because several healthy JVM containers sit above 90% of their limit all the time
 SANITISER_NOTE = "removed by sanitiser"  # a note about filtering is of no use to the model
@@ -43,9 +44,9 @@ class Tool:
 # Per-parameter text and limits shown to the model. The limits mirror the tool modules' own constants.
 PARAMS = {
     "window_minutes": {
-        "query_metrics": ("How many minutes back to look.", metrics.MIN_WINDOW_MINUTES, 120),
-        "query_traces": ("How many minutes back to look.", 1, traces.MAX_WINDOW_MINUTES),
-        "query_logs": ("How many minutes back to look.", 1, logs.MAX_WINDOW_MINUTES),
+        "query_metrics": (f"How many minutes back to look (at most {MAX_WINDOW_MINUTES}).", metrics.MIN_WINDOW_MINUTES, MAX_WINDOW_MINUTES),
+        "query_traces": (f"How many minutes back to look (at most {MAX_WINDOW_MINUTES}).", 1, min(traces.MAX_WINDOW_MINUTES, MAX_WINDOW_MINUTES)),
+        "query_logs": (f"How many minutes back to look (at most {MAX_WINDOW_MINUTES}).", 1, min(logs.MAX_WINDOW_MINUTES, MAX_WINDOW_MINUTES)),
     },
     "service": {
         "query_metrics": ("Only this service (omit for all services).",),
@@ -103,16 +104,17 @@ TOOLS: dict[str, Tool] = {t.name: t for t in (
           "metrics. Returns a summary and only the abnormal containers."),
     _tool("query_metrics", metrics.query_metrics,
           "Per-service request rate, error rate (%) and p95 latency (ms) over the last N minutes, worst first, with "
-          "the top erroring spans of each failing service. Compare a short and a long window to see what changed.",
+          "the top erroring spans of each failing service. Windows are at most 30 minutes; compare a short and a longer one to see what changed.",
           ("window_minutes", "service", "top_n"), {"window_minutes": 5, "top_n": 6}),
     _tool("query_traces", traces.query_traces,
           "Recent error traces (mode 'errors') or the slowest traces (mode 'slow'): real trace IDs, root service and "
-          "the deepest erroring span, which is where an error starts. Error traces are also grouped by where they start.",
-          ("service", "window_minutes", "limit", "mode"), {"limit": 4}),
+          "the deepest erroring span, which is where an error starts. Error traces are also grouped by where they start. "
+          "Windows are at most 30 minutes.",
+          ("service", "window_minutes", "limit", "mode"), {"window_minutes": 10, "limit": 4}),
     _tool("query_logs", logs.query_logs,
           "Top error log lines over the last N minutes, grouped by service and exact message, with counts and "
-          "first/last seen times and a sample trace ID. Messages are verbatim.",
-          ("service", "window_minutes", "limit"), {"limit": 6}),
+          "first/last seen times and a sample trace ID. Messages are verbatim. Windows are at most 30 minutes.",
+          ("service", "window_minutes", "limit"), {"window_minutes": 10, "limit": 6}),
     _tool("deploy_history", deploys.deploy_history,
           "When containers last started or restarted. Lists only containers marked as restarted recently, plus a "
           "summary. A restart of the whole stack makes start times uninformative; the result says when that applies."),
@@ -138,6 +140,16 @@ def validate_arguments(tool: Tool, arguments: dict) -> dict:
         if "enum" in schema[name] and value not in schema[name]["enum"]:
             raise ArgumentError(f"argument {name!r} must be one of {schema[name]['enum']}")
     return {**{k: v for k, v in tool.defaults.items() if k in tool.exposed}, **given}
+
+
+def clamp_arguments(arguments: dict) -> tuple[dict, dict]:
+    """Cap window_minutes at MAX_WINDOW_MINUTES. Returns (arguments, {name: {"requested": n, "used": m}}) for what was cut."""
+    clamped = {}
+    value = arguments.get("window_minutes")
+    if isinstance(value, int) and value > MAX_WINDOW_MINUTES:
+        clamped["window_minutes"] = {"requested": value, "used": MAX_WINDOW_MINUTES}
+        arguments = {**arguments, "window_minutes": MAX_WINDOW_MINUTES}
+    return arguments, clamped
 
 
 def call_tool(tool: Tool, arguments: dict) -> ToolResult:
