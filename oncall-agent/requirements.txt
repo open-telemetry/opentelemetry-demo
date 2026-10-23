@@ -1,0 +1,2 @@
+groq==1.1.2
+python-dotenv==1.2.2
