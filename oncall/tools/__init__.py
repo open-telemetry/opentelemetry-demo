@@ -5,8 +5,17 @@ from oncall.platform import deploys  # noqa: F401
 from oncall.tools.logs import search_logs
 from oncall.tools.metrics import get_metrics
 from oncall.tools.registry import TOOL_SCHEMAS, TOOLS, register_tool
+from oncall.tools.traces import search_traces
 
-__all__ = ["TOOLS", "TOOL_SCHEMAS", "get_metrics", "register_tool", "search_logs"]
+__all__ = [
+    "TOOLS",
+    "TOOL_SCHEMAS",
+    "get_metrics",
+    "register_tool",
+    "search_logs",
+    "search_traces",
+]
 
 # --- tool imports ---
-import oncall.tools.metrics  # noqa: F401
+import oncall.tools.metrics
+import oncall.tools.traces  # noqa: F401
