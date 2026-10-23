@@ -402,3 +402,17 @@ def test_diagnosis_to_incident_report_validates_json_schema(analyzer):
     jsonschema.validate(instance=data, schema=schema)
     assert data["target_service"] == "valkey-cart"
     assert "cart" in data["impacted_services"]
+
+
+def test_incident_report_refuses_to_fabricate_trace_ids(analyzer):
+    bundle = EvidenceBundle(
+        service_name="payment",
+        detection_timestamp="2026-10-23T14:00:00Z",
+        metrics=[MetricDataPoint(metric_name="error_rate_ratio", service="payment",
+                                 observed_value=0.5, timestamp="t")],
+        log_excerpts=["[t] [ERROR] payment: charge failed"],
+        metadata={"source_status": {"jaeger": "available", "prometheus": "available", "opensearch": "available"}},
+    )
+    diagnosis = analyzer.diagnose(bundle)
+    with pytest.raises(ValueError, match="trace"):
+        diagnosis.to_incident_report(incident_id="INC-TEST-002")

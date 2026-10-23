@@ -71,8 +71,10 @@ class DiagnosisResult(BaseModel):
         # Extract trace IDs from supporting evidence
         trace_ids = self.supporting_evidence.get("trace_ids") or []
         if not trace_ids:
-            # Fallback placeholder to satisfy minItems constraint if no traces
-            trace_ids = [f"diag-ref-{self.investigated_service}"]
+            raise ValueError(
+                f"No trace evidence for {self.investigated_service}; the incident schema requires "
+                "at least one real trace ID, so escalate instead of reporting."
+            )
 
         metrics_sum = self.supporting_evidence.get("metrics_summary") or {}
         logs_sum = self.supporting_evidence.get("log_excerpts") or []

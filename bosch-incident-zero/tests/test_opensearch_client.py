@@ -153,3 +153,27 @@ def test_opensearch_malformed_json(client, mock_session):
 
     with pytest.raises(TelemetryDataError):
         client.search()
+
+
+def test_get_error_logs_uses_demo_log_fields(client, mock_session):
+    hit = {
+        "_source": {
+            "@timestamp": "2026-10-23T11:16:34Z",
+            "severity": {"text": "error", "number": 17},
+            "body": "failed to charge card",
+            "resource": {"service.name": "payment"},
+            "traceId": "abc123",
+        }
+    }
+    mock_resp = MagicMock()
+    mock_resp.ok = True
+    mock_resp.json.return_value = {"hits": {"hits": [hit]}}
+    mock_session.request.return_value = mock_resp
+
+    logs = client.get_error_logs("payment")
+    assert logs == ["[2026-10-23T11:16:34Z] [error] payment: failed to charge card [traceId=abc123]"]
+    dsl = mock_session.request.call_args.kwargs["json"]
+    filters = dsl["query"]["bool"]["filter"]
+    assert {"term": {"resource.service.name.keyword": "payment"}} in filters
+    should = dsl["query"]["bool"]["should"]
+    assert {"range": {"severity.number": {"gte": 17}}} in should

@@ -5,6 +5,8 @@ import os
 from pathlib import Path
 from typing import Any, Dict
 
+from .telemetry.discovery import docker_host_url
+
 
 def load_env_file(filepath: Path) -> Dict[str, str]:
     """Parse key=value pairs from a .env file."""
@@ -51,9 +53,13 @@ class Settings:
         self.dry_run_mode: bool = get_bool("DRY_RUN_MODE", True)
 
         # Observability Endpoints
-        self.jaeger_url: str = get_val("JAEGER_URL", "http://localhost:16686")
+        self.jaeger_url: str = get_val("JAEGER_URL", "http://localhost:8080")
         self.prometheus_url: str = get_val("PROMETHEUS_URL", "http://localhost:9090")
-        self.opensearch_url: str = get_val("OPENSEARCH_URL", "http://localhost:9200")
+        opensearch_url = os.environ.get("OPENSEARCH_URL", file_env.get("OPENSEARCH_URL", ""))
+        if not opensearch_url and get_bool("DISCOVER_DOCKER_PORTS", True):
+            # The demo publishes OpenSearch on a random host port.
+            opensearch_url = docker_host_url("opensearch", 9200) or ""
+        self.opensearch_url: str = opensearch_url or "http://localhost:9200"
         self.frontend_proxy_url: str = get_val("FRONTEND_PROXY_URL", "http://localhost:8080")
 
         # Fault Injection

@@ -9,7 +9,7 @@ class MetricDataPoint(BaseModel):
     """Represents a metric anomaly measurement."""
     metric_name: str
     service: str
-    baseline_value: float
+    baseline_value: Optional[float] = None  # None = no baseline data available
     observed_value: float
     unit: str = ""
     timestamp: str

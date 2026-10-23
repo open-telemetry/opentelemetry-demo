@@ -84,74 +84,100 @@ class PrometheusClient(TelemetryClient):
         except (IndexError, KeyError, ValueError, TypeError) as e:
             raise TelemetryDataError(f"Failed to extract scalar from result: {results[0]}") from e
 
+    # The demo's collector exports span metrics for every instrumented service,
+    # which covers gRPC and Kafka services that emit no HTTP server metrics.
+    SPAN_CALLS = "traces_span_metrics_calls_total"
+    SPAN_DURATION_BUCKET = "traces_span_metrics_duration_milliseconds_bucket"
+    INBOUND_KINDS = "SPAN_KIND_SERVER|SPAN_KIND_CONSUMER"
+    BASELINE_OFFSET = "30m"
+    INFRA_SERVICES = frozenset({
+        "agent", "chatbot", "mcp", "flagd", "flagd-ui", "telemetry-docs",
+        "load-generator", "otel-collector", "jaeger", "opamp-server",
+    })
+
+    def _scalar_or_none(self, promql: str) -> Optional[float]:
+        try:
+            val = self.query_scalar(promql)
+        except TelemetryDataError:
+            return None
+        if val is None or val != val:  # NaN from 0/0
+            return None
+        return val
+
     def get_service_metrics(
         self,
         service_name: str,
         lookback_seconds: int = 300,
     ) -> List[MetricDataPoint]:
-        """Retrieve key RED and health metrics for a target service."""
+        """RED + container metrics for a service, each with a baseline from 30 minutes earlier."""
         now_iso = datetime.now(timezone.utc).isoformat()
+        window = f"{max(int(lookback_seconds), 60)}s"
+        svc = f'service_name="{service_name}"'
+        inbound = f'{svc}, span_kind=~"{self.INBOUND_KINDS}"'
+        err = 'status_code="STATUS_CODE_ERROR"'
+
+        def ratio(sel: str) -> str:
+            total = f"sum(rate({self.SPAN_CALLS}{{{sel}}}[{window}]{{off}}))"
+            return f"(sum(rate({self.SPAN_CALLS}{{{sel}, {err}}}[{window}]{{off}})) or {total} * 0) / {total}"
+
+        queries = [
+            ("error_rate_ratio", "ratio", ratio(inbound)),
+            ("p95_latency_ms", "ms",
+             f"histogram_quantile(0.95, sum by (le) (rate({self.SPAN_DURATION_BUCKET}{{{inbound}}}[{window}]{{off}})))"),
+            ("requests_per_second", "req/s", f"sum(rate({self.SPAN_CALLS}{{{inbound}}}[{window}]{{off}}))"),
+            ("outbound_error_rate_ratio", "ratio", ratio(f'{svc}, span_kind=~"SPAN_KIND_CLIENT|SPAN_KIND_PRODUCER"')),
+            ("cpu_utilization_percent", "percent",
+             f'avg(avg_over_time(container_cpu_utilization_ratio{{container_name="{service_name}"}}[{window}]{{off}}))'),
+            ("memory_usage_bytes", "bytes",
+             f'avg(avg_over_time(container_memory_usage_total_bytes{{container_name="{service_name}"}}[{window}]{{off}}))'),
+        ]
+
         metrics: List[MetricDataPoint] = []
-
-        # 1. Error rate indicator (HTTP 5xx or gRPC non-zero status)
-        error_rate_query = (
-            f'sum(rate(http_server_duration_milliseconds_count{{http_response_status_code=~"5..", service_name=~".*{service_name}.*"}}[5m])) '
-            f'/ sum(rate(http_server_duration_milliseconds_count{{service_name=~".*{service_name}.*"}}[5m]))'
-        )
-        try:
-            err_val = self.query_scalar(error_rate_query)
-            if err_val is not None:
-                metrics.append(
-                    MetricDataPoint(
-                        metric_name="http_error_rate_ratio",
-                        service=service_name,
-                        baseline_value=0.0,
-                        observed_value=round(err_val, 4),
-                        unit="ratio",
-                        timestamp=now_iso,
-                    )
+        for name, unit, template in queries:
+            observed = self._scalar_or_none(template.replace("{off}", ""))
+            if observed is None:
+                continue
+            baseline = self._scalar_or_none(template.replace("{off}", f" offset {self.BASELINE_OFFSET}"))
+            metrics.append(
+                MetricDataPoint(
+                    metric_name=name,
+                    service=service_name,
+                    baseline_value=round(baseline, 4) if baseline is not None else None,
+                    observed_value=round(observed, 4),
+                    unit=unit,
+                    timestamp=now_iso,
                 )
-        except TelemetryDataError:
-            pass
-
-        # 2. Latency (p95 request duration in milliseconds)
-        latency_p95_query = (
-            f'histogram_quantile(0.95, sum(rate(http_server_duration_milliseconds_bucket{{service_name=~".*{service_name}.*"}}[5m])) by (le))'
-        )
-        try:
-            latency_val = self.query_scalar(latency_p95_query)
-            if latency_val is not None and latency_val > 0:
-                metrics.append(
-                    MetricDataPoint(
-                        metric_name="p95_request_latency",
-                        service=service_name,
-                        baseline_value=50.0,
-                        observed_value=round(latency_val, 2),
-                        unit="ms",
-                        timestamp=now_iso,
-                    )
-                )
-        except TelemetryDataError:
-            pass
-
-        # 3. Request count rate (throughput)
-        throughput_query = (
-            f'sum(rate(http_server_duration_milliseconds_count{{service_name=~".*{service_name}.*"}}[5m]))'
-        )
-        try:
-            tp_val = self.query_scalar(throughput_query)
-            if tp_val is not None:
-                metrics.append(
-                    MetricDataPoint(
-                        metric_name="requests_per_second",
-                        service=service_name,
-                        baseline_value=10.0,
-                        observed_value=round(tp_val, 2),
-                        unit="req/s",
-                        timestamp=now_iso,
-                    )
-                )
-        except TelemetryDataError:
-            pass
-
+            )
         return metrics
+
+    def get_services_overview(
+        self, lookback_seconds: int = 300, include_infra: bool = False
+    ) -> Dict[str, Dict[str, float]]:
+        """Per-service inbound error ratio, p95 latency and throughput, for triage."""
+        window = f"{max(int(lookback_seconds), 60)}s"
+        inbound = f'span_kind=~"{self.INBOUND_KINDS}"'
+        total = f"sum by (service_name) (rate({self.SPAN_CALLS}{{{inbound}}}[{window}]))"
+        queries = {
+            "error_rate_ratio": (
+                f'(sum by (service_name) (rate({self.SPAN_CALLS}{{{inbound}, status_code="STATUS_CODE_ERROR"}}[{window}])) '
+                f"or {total} * 0) / {total}"
+            ),
+            "p95_latency_ms": (
+                f"histogram_quantile(0.95, sum by (service_name, le) "
+                f"(rate({self.SPAN_DURATION_BUCKET}{{{inbound}}}[{window}])))"
+            ),
+            "requests_per_second": f"sum by (service_name) (rate({self.SPAN_CALLS}{{{inbound}}}[{window}]))",
+        }
+        overview: Dict[str, Dict[str, float]] = {}
+        for metric, promql in queries.items():
+            for row in self.query(promql).get("data", {}).get("result", []):
+                name = row.get("metric", {}).get("service_name")
+                try:
+                    val = float(row["value"][1])
+                except (KeyError, IndexError, TypeError, ValueError):
+                    continue
+                if not name or (not include_infra and name in self.INFRA_SERVICES):
+                    continue
+                if val == val:
+                    overview.setdefault(name, {})[metric] = round(val, 4)
+        return overview
