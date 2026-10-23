@@ -2,6 +2,7 @@
 
 import json
 
+from oncall.agent.diagnosis import diagnose, escalate_unknown
 from oncall.agent.llm import LLM, LLMError
 from oncall.agent.prompts import INVESTIGATE, SYSTEM
 from oncall.agent.runlog import RunLog
@@ -147,3 +148,27 @@ def investigate(
                 return done()
 
     return done()
+
+
+def investigate_and_diagnose(
+    alert: Alert,
+    tools: dict = TOOLS,
+    llm: LLM | None = None,
+    max_steps: int | None = None,
+    runlog: RunLog | None = None,
+    schemas: dict | None = None,
+) -> dict:
+    """Investigate, then diagnose. Returns investigate()'s dict plus "diagnosis"."""
+    settings = load_settings()
+    runlog = runlog or RunLog(runs_dir=settings.RUNS_DIR)
+    if llm is None:
+        try:
+            llm = LLM(settings)
+        except LLMError as exc:
+            result = investigate(alert, tools, None, max_steps, runlog, schemas)
+            result["diagnosis"] = escalate_unknown(f"LLM unavailable: {exc}")
+            runlog.log("decision", diagnosis=result["diagnosis"], valid=False)
+            return result
+    result = investigate(alert, tools, llm, max_steps, runlog, schemas)
+    result["diagnosis"] = diagnose(runlog, alert, llm)
+    return result
