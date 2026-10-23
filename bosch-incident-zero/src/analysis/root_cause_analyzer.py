@@ -3,6 +3,8 @@
 Evaluates multi-signal EvidenceBundles using rule-based diagnostic logic:
 - Rule 1: A service with error traces and matching error logs is a stronger candidate than one with downstream symptoms only.
 - Rule 2: A dependency showing errors before or during caller failures is an upstream cause.
+- Rule 2a: A failing outbound call whose callee never appears beneath it in the trace means the
+  callee was unreachable: the callee is the root cause, the caller is only impacted.
 - Rule 3: Latency increases without corresponding errors indicate performance issues rather than crashes.
 - Rule 4: A service with missing/unavailable telemetry is not automatically healthy.
 - Rule 5: Unavailable telemetry sources penalize diagnostic certainty.
@@ -94,7 +96,13 @@ class RootCauseAnalyzer:
         # 3. Detect candidate root causes
         raw_candidates: List[RootCauseCandidate] = []
 
-        # Check for dependency outages (Rule 2)
+        # Failing outbound calls seen in traces (Rule 2a) outrank log-based guesses (Rule 2)
+        span_candidates = self._detect_failed_dependency_calls(
+            service=service,
+            bundle=bundle,
+            metrics_info=metrics_info,
+            telemetry_info=telemetry_info,
+        )
         dep_candidates, dep_victim = self._detect_dependency_outages(
             service=service,
             bundle=bundle,
@@ -103,6 +111,10 @@ class RootCauseAnalyzer:
             metrics_info=metrics_info,
             telemetry_info=telemetry_info,
         )
+        span_services = {c.service for c in span_candidates}
+        dep_candidates = span_candidates + [c for c in dep_candidates if c.service not in span_services]
+        if span_candidates:
+            dep_victim = self._cascading_victim(service, span_candidates[0], metrics_info)
         raw_candidates.extend(dep_candidates)
 
         # Check for internal service errors (Rule 1)
@@ -148,8 +160,14 @@ class RootCauseAnalyzer:
 
         primary_root = candidates[0] if candidates else None
 
+        root_service = primary_root.service if primary_root else None
+        impacted_callers = sorted({
+            c.get("caller") for c in bundle.failed_dependency_calls
+            if c.get("callee") == root_service and c.get("caller") and c.get("caller") != root_service
+        })
         supporting_evidence: Dict[str, Any] = {
             "trace_ids": bundle.trace_ids,
+            "impacted_callers": impacted_callers,
             "metrics_summary": {m.metric_name: m.observed_value for m in bundle.metrics},
             "log_excerpts": bundle.log_excerpts,
             "signal_counts": {
@@ -305,6 +323,87 @@ class RootCauseAnalyzer:
     # Root Cause Candidate Detection Rules
     # --------------------------------------------------------------------------
 
+    def _detect_failed_dependency_calls(
+        self,
+        service: str,
+        bundle: EvidenceBundle,
+        metrics_info: Dict[str, Any],
+        telemetry_info: Dict[str, Any],
+    ) -> List[RootCauseCandidate]:
+        """Name the callee of failing outbound calls as root cause (Rule 2a)."""
+        by_callee: Dict[str, List[Dict[str, Any]]] = {}
+        for call in bundle.failed_dependency_calls:
+            callee = call.get("callee")
+            if callee and callee != service:
+                by_callee.setdefault(callee, []).append(call)
+
+        candidates: List[RootCauseCandidate] = []
+        for callee, calls in by_callee.items():
+            unreachable = [c for c in calls if not c.get("callee_reached")]
+            sample = (unreachable or calls)[0]
+            callers = sorted({c.get("caller") or "?" for c in calls})
+            traces = sorted({c.get("trace_id") for c in calls if c.get("trace_id")})
+            signals = [
+                f"traces: {len(calls)} failing call(s) {', '.join(callers)} -> {callee} "
+                f"({sample.get('operation')}): \"{sample.get('error')}\"",
+                f"traces: example trace {traces[0]}" if traces else "traces: no trace id recorded",
+            ]
+            score = 0.60
+            if len(traces) >= 2:
+                score += 0.15
+            if metrics_info["is_error_elevated"]:
+                score += 0.15
+                signals.append(f"metrics: elevated error rate {metrics_info['error_rate']} on {service}")
+            if unreachable:
+                failure_mode = FailureMode.DEPENDENCY_OUTAGE
+                signals.append(f"traces: no '{callee}' span beneath the failing call: '{callee}' was never reached")
+                reasoning = (
+                    f"'{callee}' was unreachable: {len(unreachable)} call(s) from {', '.join(callers)} failed with "
+                    f"\"{sample.get('error')}\" and no '{callee}' span exists beneath them. Under Rule 2a, "
+                    f"'{callee}' is the root cause and {', '.join(callers)} is impacted."
+                )
+            else:
+                failure_mode = FailureMode.INTERNAL_SERVICE_ERROR
+                reasoning = (
+                    f"'{callee}' received the calls from {', '.join(callers)} and failed itself without a failing "
+                    f"dependency of its own, so the fault is inside '{callee}' (Rule 2a)."
+                )
+            score += telemetry_info["penalty"]
+            candidates.append(
+                RootCauseCandidate(
+                    service=callee,
+                    failure_mode=failure_mode,
+                    confidence=max(0.0, min(0.95, round(score, 3))),
+                    rank=1,
+                    reasoning=reasoning,
+                    supporting_signals=signals,
+                    is_dependency=True,
+                    severity=IncidentSeverity.CRITICAL,
+                )
+            )
+        return sorted(candidates, key=lambda c: c.confidence, reverse=True)
+
+    @staticmethod
+    def _cascading_victim(
+        service: str, cause: RootCauseCandidate, metrics_info: Dict[str, Any]
+    ) -> RootCauseCandidate:
+        signals = [f"symptoms: cascading errors triggered by dependency failure in {cause.service}"]
+        if metrics_info["is_error_elevated"]:
+            signals.append(f"metrics: error rate {metrics_info['error_rate']}")
+        return RootCauseCandidate(
+            service=service,
+            failure_mode=FailureMode.CASCADING_SYMPTOMATIC_FAILURE,
+            confidence=max(0.1, min(0.45, round(cause.confidence * 0.5, 3))),
+            rank=2,
+            reasoning=(
+                f"'{service}' exhibits failure symptoms but is a dependent caller of failing service "
+                f"'{cause.service}'. Under Rule 1 & 2, it is classified as a cascading symptom."
+            ),
+            supporting_signals=signals,
+            is_dependency=False,
+            severity=IncidentSeverity.HIGH,
+        )
+
     def _detect_dependency_outages(
         self,
         service: str,
@@ -380,25 +479,7 @@ class RootCauseAnalyzer:
             )
 
         if candidates:
-            # Service itself is a cascading victim (Rule 1 & 2)
-            victim_signals = [f"symptoms: cascading errors triggered by dependency outage in {candidates[0].service}"]
-            if metrics_info["is_error_elevated"]:
-                victim_signals.append(f"metrics: error rate {metrics_info['error_rate']}")
-            victim_conf = max(0.1, min(0.45, round(candidates[0].confidence * 0.5, 3)))
-
-            victim_candidate = RootCauseCandidate(
-                service=service,
-                failure_mode=FailureMode.CASCADING_SYMPTOMATIC_FAILURE,
-                confidence=victim_conf,
-                rank=2,
-                reasoning=(
-                    f"'{service}' exhibits failure symptoms but is a dependent caller of failing service "
-                    f"'{candidates[0].service}'. Under Rule 1 & 2, it is classified as a cascading symptom."
-                ),
-                supporting_signals=victim_signals,
-                is_dependency=False,
-                severity=IncidentSeverity.HIGH,
-            )
+            victim_candidate = self._cascading_victim(service, candidates[0], metrics_info)
 
         return candidates, victim_candidate
 
