@@ -5,10 +5,10 @@ from __future__ import annotations
 import json
 import logging
 import re
-from datetime import UTC, datetime, timedelta
-from typing import Any, Literal
 import urllib.error
 import urllib.request
+from datetime import UTC, datetime, timedelta
+from typing import Any, Literal
 
 from oncall.config import load_settings
 from oncall.endpoints import discover_endpoints

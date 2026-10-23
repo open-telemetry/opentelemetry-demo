@@ -1,9 +1,9 @@
 """Unit tests for search_logs tool, message normalisation, and OpenSearch query handling."""
 
-from io import BytesIO
 import json
-from unittest.mock import MagicMock, patch
 import urllib.error
+from io import BytesIO
+from unittest.mock import MagicMock, patch
 
 from oncall.tools.logs import (
     _extract_log_fields,
