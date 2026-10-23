@@ -27,3 +27,4 @@ Added as the code needs them. Versions are the ones installed in `.venv` on 2026
 | pytest | 9.1.1 | Tests |
 
 The LLM provider SDK will be added when the provider is known.
+- Runtime LLM for the agent: Anthropic Claude Haiku (claude-haiku-5-5) via the `anthropic` Python SDK 2.2.0, using the driver's own API key.

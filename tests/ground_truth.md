@@ -15,3 +15,7 @@ must never read this file.
 | 2026-10-23T17:25:19+00:00 | reset | cache-unavailable | container | valkey-cart | - | verified | container valkey-cart: exited -> running and healthy (docker start valkey-cart) |
 | 2026-10-23T17:25:26+00:00 | reset | cache-unavailable | container | valkey-cart | - | verified | container valkey-cart is already running; nothing to start |
 | 2026-10-23T17:25:32+00:00 | inject | emitRawPii | - | - | - | refused | unknown incident 'emitRawPii'; `list` shows the allowlist |
+| 2026-10-23T17:37:08+00:00 | inject | cache-unavailable | container | valkey-cart | - | verified | container valkey-cart: running -> stopped (docker stop valkey-cart) |
+| 2026-10-23T17:39:57+00:00 | reset | cache-unavailable | container | valkey-cart | - | verified | container valkey-cart: exited -> running and healthy (docker start valkey-cart) |
+| 2026-10-23T17:42:05+00:00 | inject | payment-failure | flag | paymentFailure | 100% | verified | flag paymentFailure: 'off' -> '100%' (read all, change only this flag, write all, re-read) |
+| 2026-10-23T17:43:50+00:00 | reset | payment-failure | flag | paymentFailure | off | verified | flag paymentFailure: '100%' -> 'off' (read all, change only this flag, write all, re-read) |

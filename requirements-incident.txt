@@ -8,3 +8,4 @@ pytest
 # Uncomment it here once the provider is known, so the list stays honest.
 # anthropic    # LLM_PROVIDER=anthropic
 # openai       # LLM_PROVIDER=openai (also works for OpenAI-compatible servers via LLM_BASE_URL)
+anthropic==2.2.0

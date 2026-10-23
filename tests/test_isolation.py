@@ -39,3 +39,29 @@ def test_agent_side_never_imports_dev():
 
 def test_faultctl_never_imports_agent_side():
     assert offenders(["dev"], {"oncall", "tools"}) == []
+
+
+# The flag service name and the flag UI path may appear in exactly one agent-side file.
+SANITISER = REPO / "tools" / "sanitize.py"
+FORBIDDEN_TEXT = ("flagd", "/feature")
+
+
+def agent_side_files() -> list[Path]:
+    return sorted(
+        p for package in ("oncall", "tools") for p in (REPO / package).rglob("*")
+        if p.is_file() and "__pycache__" not in p.parts and p.suffix in {".py", ".md", ".json", ".txt", ".yaml", ".yml", ".toml"}
+    )
+
+
+def test_only_the_sanitiser_names_the_flag_service_or_ui_path():
+    leaks = [
+        f"{p.relative_to(REPO)}: {word!r}"
+        for p in agent_side_files() if p != SANITISER
+        for word in FORBIDDEN_TEXT if word in p.read_text(encoding="utf-8").lower()
+    ]
+    assert leaks == []
+
+
+def test_sanitiser_contains_no_url():
+    text = SANITISER.read_text(encoding="utf-8")
+    assert "://" not in text and "localhost" not in text
