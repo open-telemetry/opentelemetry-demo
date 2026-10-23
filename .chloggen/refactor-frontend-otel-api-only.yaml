@@ -1,0 +1,30 @@
+# Use this changelog template to create an entry for release notes.
+
+# One of 'breaking', 'deprecation', 'new_component', 'enhancement', 'bug_fix'
+change_type: enhancement
+
+# The name of the component, or a single word describing the area of concern, (e.g. frontend, checkout, collector, load-generator)
+component: frontend
+
+# A brief description of the change. Surround your text with quotes ("") if it needs to start with a backtick (`).
+note: The frontend server now depends only on @opentelemetry/api; the SDK and its instrumentations come from the OpenTelemetry Operator's Node.js auto-instrumentation image, copied in at build time
+
+# One or more tracking issues or pull requests related to the change. You can use the PR number here if no issue exists.
+issues: [606]
+
+# (Optional) One or more lines of additional information to render under the primary note.
+# These lines will be padded with 2 spaces and then inserted directly into the document.
+# Use a strip-chomping block scalar (|-) for multiline entries so no trailing
+# whitespace is emitted into CHANGELOG.md.
+subtext: |-
+  The browser cannot be instrumented this way, so the web SDK stays but moves to
+  devDependencies: the build stage still bundles it and the runtime image no
+  longer installs it. The browser tracer now starts from
+  instrumentation-client.ts instead of pages/_app.tsx, which keeps the web SDK
+  out of the server bundle. The Operator payload defaults to http/protobuf, so
+  deployments that point the frontend at a gRPC endpoint must set
+  OTEL_EXPORTER_OTLP_PROTOCOL=grpc, as compose.yaml now does. The server SDK
+  version now follows the Operator's auto-instrumentation image, whose
+  instrumentations still emit the old HTTP and gRPC semantic conventions by
+  default, so compose.yaml also sets OTEL_SEMCONV_STABILITY_OPT_IN=http to keep
+  the stable names the APM dashboard relies on.
