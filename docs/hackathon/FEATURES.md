@@ -1,8 +1,8 @@
 # Feature backlog (Incident Zero)
 
-Feature specs F01-F09 (Wave 0 Foundation + Wave 1 Eyes) and F11-F17 (Wave 2
-Brain). The issue board, with NN numbers and status, is [ISSUES.md](ISSUES.md).
-Rules: [RULES.md](RULES.md).
+Feature specs F01-F09 (Wave 0 Foundation + Wave 1 Eyes), F11-F17 (Wave 2
+Brain) and F18-F19 (faultctl + Action API). The issue board, with NN numbers
+and status, is [ISSUES.md](ISSUES.md). Rules: [RULES.md](RULES.md).
 
 Each feature = one ISSUES.md entry = one branch = one PR. Branch:
 `<type>/<NN>-<slug>`, NN = the two-digit number from ISSUES.md. The setup work
@@ -62,9 +62,9 @@ VERIFIED FACTS ABOUT OUR ENVIRONMENT (do not re-derive, but do verify live)
 - FORBIDDEN (disqualification): reading flagd files, flag UI, flag API, or
   any flag value to diagnose; hard-coding practice-incident answers into
   agent code or prompts; changing the system outside the Action API.
-- NOT AVAILABLE YET (starter kit from organisers): JSON schema, Action API,
-  faultctl, offline bundles, practice incident list. Until then, F03's
-  offline backend reads fixtures WE record from the live demo.
+- BUILT BY OUR TEAM (not provided by organisers): faultctl (F18), Action
+  API (F19), offline bundles (F03 recorder + F11 fixtures), template and
+  report schema (F16: oncall/report/schema.json IS the schema).
 
 SHARED CONTRACT (created in F01; changes need an interface-change entry)
 -----------------------------------------------------------------------
@@ -739,17 +739,18 @@ F16  Report output + JSON schema validation (provisional schema)
 Module: safety/report   Owner: P4 (after F05)   Priority: P0
 Needed by: 18:00   Size: M
 Goal: every run ends with a schema-valid JSON report - even on errors.
-The organisers' schema is NOT available yet: build against a provisional
-schema with an adapter so switching is a one-file change.
+We build the schema ourselves: oncall/report/schema.json IS the schema
+(no organiser schema is coming). Keep the adapter as identity so a later
+change stays a one-file change.
 
-Files: oncall/report/__init__.py, oncall/report/schema_provisional.json,
+Files: oncall/report/__init__.py, oncall/report/schema.json,
        oncall/report/output.py, oncall/report/adapter.py,
        oncall/tests/report/test_output.py
 Interfaces:
   def build_report(alert, diagnosis, run, actions=None,
                    verification=None) -> dict      # internal format
   def to_official(report: dict) -> dict            # adapter; identity
-                                                   # until real schema
+                                                   # (stays identity)
   def validate(report: dict, schema_path: str) -> list[str]
   def write(report: dict, out_dir="reports") -> tuple[Path, Path]
       # reports/<run_id>.json (validated) + reports/<run_id>.md
@@ -765,9 +766,8 @@ Provisional schema fields: incident_id, detected_at, alert{...},
 Behaviour: validate -> if invalid, one deterministic repair (fill
   required fields, coerce types) -> if still invalid, fallback_report.
   Never crash, never write an invalid file.
-  When the official schema arrives: drop it in as
-  oncall/report/schema_official.json, implement to_official(), switch
-  SCHEMA_PATH in config - nothing else changes.
+  SCHEMA_PATH in config points to oncall/report/schema.json;
+  to_official() stays identity.
 CLI: `python -m oncall.main investigate ...` writes the report at the
   end (small hook in main.py; coordinate with F09 owner).
 Acceptance:
@@ -814,3 +814,128 @@ CP2 MINIMUM CUT
 =====================================================================
 If short on time at 17:45: F12 + F16 working on 3 fixtures, F13 merged.
 F15/F14/F17 can slip to Day 2 morning; say so honestly at the checkpoint.
+
+
+=====================================================================
+F18-F19 - OUR OWN faultctl + ACTION API
+=====================================================================
+CONFIRMED: these are built by OUR team (not provided by organisers).
+NUMBERING: the old AGENT_BRIEF Day-2 numbers (F18-F23) are superseded.
+Day-2 Hands features will be specced as F20+ later. Older references in
+this file to F19/F21/F23 as Day-2 features use the superseded numbers.
+
+
+=====================================================================
+F18  faultctl: inject and reset incidents (human/test tool)
+=====================================================================
+Module: platform   Owner: P3 (or free teammate)   Reviewer: P4
+Priority: P0   Needed by: Day 1 19:00 latest (speeds up F11 + F17)
+Branch: feat/18-faultctl   Size: M
+Goal: one command to inject a known incident and one to reset everything,
+so scenarios are reproducible for recording (F11), testing and the
+demo. This is a HUMAN tool: the agent must never call it or import it.
+
+Files: scripts/faultctl/faultctl.py (+ faultctl.ps1 / faultctl.sh thin
+       wrappers), scripts/faultctl/scenarios.yaml,
+       scripts/faultctl/README.md, scripts/faultctl/test_faultctl.py
+       (NOT under oncall/ - keep it out of the agent's package)
+CLI:
+  faultctl list                       # scenarios with neutral ids only
+  faultctl inject <scenario-id>       # e.g. scenario-03
+  faultctl inject --combo s-01,s-06   # combined faults
+  faultctl status                     # what is currently injected
+  faultctl reset                      # undo EVERYTHING, verify healthy
+scenarios.yaml: id -> type + params (+ a human description). Types:
+  flag        set a demo failure flag on/off (mechanism: flagd UI/API on
+              the running demo - VERIFY the real write mechanism first;
+              do NOT edit tracked files under src/)
+  stop        docker stop <container>
+  restart_loop  repeatedly kill a container (bounded duration)
+  cpu_limit   docker update --cpus <n> <container>
+  mem_limit   docker update --memory <m> <container>
+  latency     (P2) network delay between two services, e.g. via a
+              netem sidecar (pumba) - only if time permits
+State: every inject writes scripts/faultctl/.state.json with the
+  ORIGINAL values (limits, flag values, container state) so reset
+  restores exactly. reset also restores anything missing from state to
+  defaults and then checks container_health shows all healthy.
+Safety: only touches containers of this compose project; refuses
+  unknown scenario ids; never touches anything outside the laptop.
+Separation rules (add to CI rules job):
+  - oncall/ must not import or reference scripts/faultctl (grep).
+  - scenarios.yaml ids are neutral; the mapping id -> cause also lives
+    in eval/expected.yaml for scoring. Nothing in oncall/ reads either.
+Acceptance:
+  [ ] inject -> effect visible in telemetry within 3 min (paste
+      get_metrics / container_health output) -> reset -> healthy again,
+      for: one flag scenario, one stop, one cpu_limit.
+  [ ] reset is idempotent (run twice, no errors) and restores limits.
+  [ ] combo inject + reset works.
+  [ ] Unit tests with docker/flag calls mocked.
+Depends on: nothing new (demo running; may reuse F07's docker helper
+  read-only functions - import, don't copy).
+Collides with: F11 (F11 switches from manual injection to faultctl once
+  this merges), F17 (live eval mode calls faultctl from eval/, never
+  from oncall/).
+
+
+=====================================================================
+F19  Action API: the only way the agent changes the system
+=====================================================================
+Module: safety   Owner: P4 (or free teammate)   Reviewer: P1
+Priority: P0   Needed by: Day 2 09:30 (Hands work starts)
+Branch: feat/19-action-api   Size: M
+Goal: the single, allowlisted, fully logged interface for changing the
+demo. The agent's executor (Day 2) will call ONLY this. Approval is NOT
+inside this module - the approval gate (F20+) sits in front of it.
+
+Files: oncall/safety/__init__.py, oncall/safety/action_api.py,
+       oncall/safety/allowlist.py, oncall/safety/actionlog.py,
+       oncall/tests/safety/test_action_api.py
+       (oncall/safety/ is the ONLY place allowed to mention flags - CI
+       rule already allows it)
+Interfaces:
+  ActionRequest = {"action": str, "target": str, "params": dict,
+                   "reason": str, "run_id": str, "dry_run": bool}
+  ActionResult  = {"request": ActionRequest, "allowed": bool,
+                   "executed": bool, "dry_run": bool, "ok": bool,
+                   "detail": str, "before": dict, "after": dict,
+                   "rollback": ActionRequest | None, "ts": str}
+  def execute(req: ActionRequest) -> ActionResult
+Actions (allowlist.py - exact names, targets and bounds):
+  restart_service   target in DEMO_SERVICES (not flagd, not otel stack,
+                    not jaeger/prometheus/opensearch/grafana)
+                    -> docker restart <container>
+                    rollback: none (idempotent)
+  toggle_flag       target = flag key, params {"enabled": false} ONLY
+                    (agent may only turn failure flags OFF); key must be
+                    in an explicit FLAG_ALLOWLIST - VERIFY write
+                    mechanism (same as faultctl)
+                    rollback: previous value recorded in "before"
+  throttle_load     target = "load-generator", params {"users": int}
+                    bounded 0..current; via Locust web API
+                    (POST /swarm user_count/spawn_rate; resolve the
+                    Locust port with docker compose port) - VERIFY
+                    rollback: previous user count
+  scale_service     Kubernetes only -> we run Docker Compose: always
+                    returns allowed=False, detail "not supported on
+                    compose" (documented limitation)
+Rules:
+  - Anything not in the allowlist -> allowed=False, executed=False,
+    logged. Never raises to the caller.
+  - dry_run=True -> validate + compute "before" + log, execute nothing.
+  - Every call (allowed or not, dry or real) appended to
+    runs/actions.jsonl (append-only, one line per call, with run_id).
+  - Records "before" state and a ready-made rollback request.
+  - The LLM never imports this module: only oncall/safety/executor.py
+    (Day 2) may. Add a CI grep: no import of oncall.safety.action_api
+    outside oncall/safety/ and oncall/tests/safety/.
+Acceptance:
+  [ ] Non-allowlisted action/target/params rejected and logged (tests).
+  [ ] Dry run executes nothing (test with docker mocked, assert no call).
+  [ ] Live: restart_service on a non-critical demo service works and is
+      logged; throttle_load reduces Locust users and rollback restores.
+  [ ] actions.jsonl lines are complete and append-only.
+Depends on: F01 (done). Uses read-only helpers from F07 for "before".
+Collides with: nothing now; Day-2 executor/approval/verify build on its
+  ActionResult contract (freeze it in the first commit).

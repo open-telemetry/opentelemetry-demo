@@ -52,6 +52,10 @@ The agent must:
 
 ### What the organisers provide (starter kit)
 
+> **Update:** faultctl, Action API, offline bundles, template and schema are
+> built by our team. Our provisional report schema (F16) IS the schema
+> (`oncall/report/schema.json`). See F18 and F19 in [FEATURES.md](FEATURES.md).
+
 | Provided | What it is | Notes |
 |---|---|---|
 | OpenTelemetry Demo | The microservices store + Locust, run with Docker Compose | Open source |

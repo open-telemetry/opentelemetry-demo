@@ -25,8 +25,11 @@ Feature specs are in [FEATURES.md](FEATURES.md).
 | 15 | F15 | Confidence and escalation rules | brain | P0 | F12, F13 | [#21](https://github.com/rhrishi-99/opentelemetry-demo/issues/21) | open |
 | 16 | F16 | Report output + JSON schema validation (provisional schema) | safety/report | P0 | F02, F12* | [#22](https://github.com/rhrishi-99/opentelemetry-demo/issues/22) | open |
 | 17 | F17 | Eval harness | eval | P0 | F11, F12, F16 | [#23](https://github.com/rhrishi-99/opentelemetry-demo/issues/23) | open |
+| 18 | F18 | faultctl inject/reset (human test tool) | platform | P0 | none | [#30](https://github.com/rhrishi-99/opentelemetry-demo/issues/30) | open |
+| 19 | F19 | Action API (allowlist + log + dry run) | safety | P0 | F01 | [#31](https://github.com/rhrishi-99/opentelemetry-demo/issues/31) | open |
 | 91 | D01 | Architecture sketch | eval-docs | — | none | [#11](https://github.com/rhrishi-99/opentelemetry-demo/issues/11) | open |
-| 93 | D93 | Verified telemetry facts | eval-docs | P0 | none | — | in PR (`docs/95-wave2-specs`, with D95) |
-| 95 | D95 | Wave 2 specs F11-F17 | eval-docs | P0 | none | — | in PR (`docs/95-wave2-specs`) |
+| 93 | D93 | Verified telemetry facts | eval-docs | P0 | none | PR #26 | merged |
+| 95 | D95 | Wave 2 specs F11-F17 | eval-docs | P0 | none | PR #26 | merged |
+| 96 | D96 | F18-F19 specs | eval-docs | P0 | none | — | in PR (`docs/96-f18-f19-specs`) |
 
 (* = needs only the Diagnosis contract from F12's first commit)
