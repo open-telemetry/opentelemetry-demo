@@ -12,7 +12,7 @@ This is a 5-person hackathon team building an **AI On-Call Engineer** for the Op
 You only ever do work in this order. Do not skip steps.
 
 ### Step 1 — Pick up an issue
-- Every change starts from a **GitHub issue** (feature, bug, or doc). The user tells you the issue number. If there is no issue, **stop and ask the user to create one** (or draft its text for them using `.github/ISSUE_TEMPLATE/feature.md`).
+- Every change starts from an **entry in `docs/hackathon/ISSUES.md`** (GitHub Issues is disabled on the fork). The user tells you the NN and F-number. If there is no entry, **stop and ask the user to add one**.
 - Read the issue fully: goal, acceptance criteria, files in scope, out of scope.
 - If the acceptance criteria are vague, **ask before writing code**. Do not invent requirements.
 
@@ -20,10 +20,10 @@ You only ever do work in this order. Do not skip steps.
 ```bash
 git checkout main
 git pull --rebase origin main
-git checkout -b <type>/<issue-number>-<short-slug>
+git checkout -b <type>/<NN>-<short-slug>
 ```
-Branch types: `feat/`, `fix/`, `docs/`, `test/`, `chore/`, `refactor/`.
-Examples: `feat/12-prometheus-metrics-tool`, `fix/31-approval-gate-timeout`.
+Branch types: `feat/`, `fix/`, `docs/`, `test/`, `chore/`, `refactor/`. NN is the two-digit number from `docs/hackathon/ISSUES.md`.
+Examples: `feat/04-get-metrics`, `fix/18-approval-timeout`.
 
 **Never commit on `main`. Never push to `main`. Never force-push to `main`.** (The pre-commit hook blocks it — do not bypass it with `--no-verify`.)
 
@@ -64,7 +64,7 @@ git rebase origin/main          # resolve conflicts, re-run tests after
 git push -u origin <branch>
 gh pr create --fill              # or via GitHub UI
 ```
-- Fill in **every section** of `.github/pull_request_template.md`. Link the issue with `Closes #<n>`.
+- Fill in **every section** of `.github/pull_request_template.md`. Reference the ISSUES.md entry (for example `F04`) in the PR description.
 - Keep PRs small (aim < 400 changed lines). Split big work into several PRs.
 
 ### Step 8 — Merge (only when all are true)

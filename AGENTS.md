@@ -1,3 +1,10 @@
+## Hackathon team rules (override everything below)
+
+This repo is used for the Bosch Incident Zero hackathon. For any work in `oncall/`, `docs/hackathon/`, `.claude/`, `.cursor/`, `scripts/` or `.github/`, the binding rules are `docs/hackathon/RULES.md`, the context is `docs/hackathon/TEAM_CONTEXT.md`, the backlog is `docs/hackathon/FEATURES.md`, and the issue board is `docs/hackathon/ISSUES.md`.
+
+- Never modify the demo services under `src/`. Changes there risk disqualification.
+- Keep the upstream `Assisted-by:` trailer convention for commits.
+
 # AGENTS.md
 
 This file is here to steer AI assisted PRs towards being high quality and valuable
