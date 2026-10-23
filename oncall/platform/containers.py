@@ -17,10 +17,14 @@ from oncall.tools.registry import register_tool
 
 TOOL = "container_health"
 
-# A container is flagged when it crosses any of these.
-MEM_PCT_MAX = 90.0  # % of the container's memory limit
-CPU_PCT_MAX = 90.0  # % of its CPU limit, or of one core if it has no limit
+# A container is flagged when it crosses any of these. Memory % is reported but
+# never flagged: on the live demo checkout runs at ~98% of its 20 MiB limit while
+# healthy, so only an actual OOM kill counts. CPU is flagged only for containers
+# that have a CPU limit (none do by default), because going over one core is
+# normal for a container without a limit, not starvation.
+CPU_PCT_MAX = 90.0  # % of the container's CPU limit
 RECENT_RESTART_MIN = 15  # restarted by Docker within this many minutes
+BUSIEST_IN_SUMMARY = 3  # healthy containers with the most CPU/memory use
 
 DOCKER_TIMEOUT_S = 15
 READ_ONLY_COMMANDS = ("ps", "inspect", "stats")
@@ -133,11 +137,11 @@ def _describe(info: dict, stats: dict | None) -> dict:
     state = info.get("State") or {}
     labels = (info.get("Config") or {}).get("Labels") or {}
     cpu_pct = mem_pct = None
+    cpu_limit = _cpu_limit_cores(info.get("HostConfig") or {})
     if stats:
         cpu_pct = _percent(stats.get("CPUPerc"))
-        limit = _cpu_limit_cores(info.get("HostConfig") or {})
-        if cpu_pct is not None and limit:
-            cpu_pct = cpu_pct / limit
+        if cpu_pct is not None and cpu_limit:
+            cpu_pct = cpu_pct / cpu_limit
         mem_pct = _percent(stats.get("MemPerc"))
     return {
         "name": (info.get("Name") or "").lstrip("/"),
@@ -148,7 +152,8 @@ def _describe(info: dict, stats: dict | None) -> dict:
         "oom_killed": bool(state.get("OOMKilled")),
         "exit_code": state.get("ExitCode"),
         "started_at": state.get("StartedAt"),
-        "cpu_pct": cpu_pct,
+        "cpu_pct": cpu_pct,  # % of the CPU limit, or of one core if there is none
+        "cpu_limited": cpu_limit is not None,
         "mem_pct": mem_pct,
     }
 
@@ -170,15 +175,25 @@ def _problems(c: dict, now: datetime) -> list[str]:
                 f"restarted {c['restart_count']} times, last start "
                 f"{minutes_ago:.0f} min ago"
             )
-    if c["mem_pct"] is not None and c["mem_pct"] > MEM_PCT_MAX:
-        problems.append(f"memory {c['mem_pct']:.0f}% of limit")
-    if c["cpu_pct"] is not None and c["cpu_pct"] > CPU_PCT_MAX:
+    if c["cpu_limited"] and c["cpu_pct"] is not None and c["cpu_pct"] > CPU_PCT_MAX:
         problems.append(f"CPU {c['cpu_pct']:.0f}% of limit")
     return problems
 
 
-def _fmt_pct(value: float | None) -> str:
-    return "n/a" if value is None else f"{value:.1f}%"
+def _fmt_pct(value: float | None, of: str) -> str:
+    return "n/a" if value is None else f"{value:.1f}% of {of}"
+
+
+def _busy(c: dict) -> float:
+    """How loaded a container is: its higher CPU or memory %, 0 if unknown."""
+    return max(c["cpu_pct"] or 0.0, c["mem_pct"] or 0.0)
+
+
+def _usage(c: dict) -> str:
+    cpu_of = "limit" if c["cpu_limited"] else "one core"
+    return (
+        f"cpu={_fmt_pct(c['cpu_pct'], cpu_of)}, mem={_fmt_pct(c['mem_pct'], 'limit')}"
+    )
 
 
 def _evidence_text(c: dict, problems: list[str]) -> str:
@@ -186,7 +201,7 @@ def _evidence_text(c: dict, problems: list[str]) -> str:
         f"{c['name']}: state={c['state']}, health={c['health'] or 'none'}, "
         f"restarts={c['restart_count']}, exit_code={c['exit_code']}, "
         f"oom_killed={str(c['oom_killed']).lower()}, started_at={c['started_at']}, "
-        f"cpu={_fmt_pct(c['cpu_pct'])}, mem={_fmt_pct(c['mem_pct'])}"
+        f"{_usage(c)}"
     )
     if problems:
         text += " | FLAGGED: " + "; ".join(problems)
@@ -224,7 +239,9 @@ def check_containers(
         )
 
     rows = [(c, _problems(c, now)) for c in containers]
-    rows.sort(key=lambda row: (not row[1], row[0]["name"]))  # flagged first
+    # Flagged first, then the busiest, so CPU/memory pressure survives the
+    # 20-item evidence cap even though it is not flagged.
+    rows.sort(key=lambda row: (not row[1], -_busy(row[0]), row[0]["name"]))
     flagged = [(c, p) for c, p in rows if p]
     if flagged:
         summary = f"{len(flagged)} of {len(rows)} containers unhealthy: " + "; ".join(
@@ -232,6 +249,10 @@ def check_containers(
         )
     else:
         summary = f"All {len(rows)} containers healthy."
+    busiest = [c for c, p in rows if not p and _busy(c) > 0][:BUSIEST_IN_SUMMARY]
+    if busiest:
+        usage = "; ".join(f"{c['name']} {_usage(c)}" for c in busiest)
+        summary = f"{summary.rstrip('.')}. Busiest: {usage}."
 
     ts = now.isoformat(timespec="seconds")
     evidence: list[Evidence] = [
