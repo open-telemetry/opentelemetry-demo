@@ -248,9 +248,19 @@ Checked against the files in this repo. Items marked *not verified live* still n
 
 - Upstream OpenTelemetry Demo 3.1.0 fork (`IMAGE_VERSION=3.1.0` in the root `.env`). The starter kit (JSON schema, Action API, faultctl, offline bundles, practice incident list) is not in the repo and has not been received.
 - Logs and metrics reach OpenSearch and Prometheus only with the observability overlay. The base collector config sends them to the `debug` exporter. Run with `compose.observability.yaml` or `compose.full.yaml`. *The collector config for `compose.full.yaml` is not yet verified.*
-- Jaeger, OpenSearch and Grafana host ports are random: compose lists them as bare ports. *Not verified live.* Resolve with `docker compose port <service> <port>`. Never hardcode a port.
-- Prometheus is at `http://localhost:9090` (fixed mapping). Span metric names are expected to be `traces_span_metrics_*`. *Not verified live.*
-- The frontend proxy (Envoy) is at `http://localhost:8080` (fixed mapping). Whether it routes to Jaeger or Grafana is *not verified*.
+- Jaeger, OpenSearch and Grafana host ports are random: compose lists them as bare ports. Resolve with `discover_endpoints()` (`docker compose port <service> <port>`). Never hardcode a port.
+- Prometheus is at `http://127.0.0.1:9090` (fixed mapping). Verified live:
+  - Span metrics: `traces_span_metrics_calls_total` and `traces_span_metrics_duration_milliseconds_{bucket,count,sum}`.
+  - Labels: `service_name`, `span_name`, `span_kind`, `status_code` (`STATUS_CODE_ERROR`, `STATUS_CODE_OK`, `STATUS_CODE_UNSET`). `error_type`, `error_message`, `rpc_grpc_status_code` and `http_response_status_code` are expected on error series; a healthy demo has no values for them yet, so re-check with an incident active.
+  - Metrics arrive by OTLP push, so a 1m `rate()` window returns nothing. Use windows of at least 5m.
+  - p95 latency: `histogram_quantile(0.95, sum by (le, service_name)(rate(traces_span_metrics_duration_milliseconds_bucket[5m])))`.
+- OpenSearch (URL from `discover_endpoints()`). Verified live:
+  - Logs are in daily indices `otel-logs-YYYY-MM-DD`. Query the pattern `otel-logs-*`, never a fixed index name.
+  - Fields: `resource.service.name`, `severity.text`, `severity.number`, `body`, `@timestamp`, `attributes.*`.
+  - `severity.text` case varies (`INFO`, `info`, `Information`, `error`, `ERROR`), so filter on `severity.number`: error is `>= 17`, warn is `>= 13`.
+- Jaeger (URL from `discover_endpoints()`, or through the proxy). Verified live: the API is under the `/jaeger/ui` base path and only the v3 API answers. `/jaeger/ui/api/v3/services` returns 200 on the direct port and through `http://127.0.0.1:8080`. `/api/services`, `/api/v3/services` and `/jaeger/ui/api/services` return 404.
+- The frontend proxy (Envoy) is at `http://127.0.0.1:8080` (fixed mapping) and routes `/jaeger/ui/` and `/grafana/`. On machines where WSL also listens on `[::1]:8080`, use `127.0.0.1`, not `localhost`.
+- Telemetry contains feature-flag data: `feature_flag_evaluation_*` metrics with `feature_flag_*` labels, `feature_flag.*` and `demo.feature_flag.*` span attributes, and `attributes.feature_flag_key`, `attributes.feature_flag_variant` and `attributes.feature_flag_provider_name` log fields. Using it is reading flag settings. See RULES.md hard rule 7.
 - `src/agent/` is the demo's own LangGraph agent service. Do not touch, import or reuse it. Its `run.py` calls `init_feature_flags()` at startup, which we must never do.
 - The demo has AI scenarios from upstream commit `3cb06d31` (subject "Add AI/LLM incident scenario (aiSlowResponse, aiRunawayAgent)"). They belong in the fault taxonomy for the diagnosis step, but diagnosis must still come from telemetry.
 - The repo has no Kubernetes or Helm chart. The Helm chart is published separately on Artifact Hub.
