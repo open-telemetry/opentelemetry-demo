@@ -36,9 +36,17 @@ def test_deepest_error_in_three_level_trace_and_downstream_service():
         },
         "spans": [
             _span("root-span", "checkout", {"http.status_code": 500}),
-            {**_span("middle-span", "charge", {"error": True}, "root-span"), "processID": "middle"},
             {
-                **_span("deep-span", "charge-provider", {"error": True, "error.message": "declined"}, "middle-span"),
+                **_span("middle-span", "charge", {"error": True}, "root-span"),
+                "processID": "middle",
+            },
+            {
+                **_span(
+                    "deep-span",
+                    "charge-provider",
+                    {"error": True, "error.message": "declined"},
+                    "middle-span",
+                ),
                 "processID": "deep",
             },
         ],
@@ -60,7 +68,9 @@ def test_search_traces_groups_errors_and_cites_spans():
     trace = {
         "traceID": "trace-123",
         "processes": {"p": {"serviceName": "payment"}},
-        "spans": [_span("span-1", "charge", {"error": True, "error.message": "declined"})],
+        "spans": [
+            _span("span-1", "charge", {"error": True, "error.message": "declined"})
+        ],
     }
     backend = type("Backend", (), {"jaeger_traces": lambda self, **kwargs: [trace]})()
     with patch("oncall.tools.traces.get_backend", return_value=backend):

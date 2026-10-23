@@ -37,13 +37,19 @@ def _span_service(trace: dict[str, Any], span: dict[str, Any], fallback: str) ->
 
 def _error_details(span: dict[str, Any]) -> tuple[bool, str, str]:
     tags = _tag_map(span)
-    status = tags.get("otel.status_code", tags.get("status.code", tags.get("status_code")))
+    status = tags.get(
+        "otel.status_code", tags.get("status.code", tags.get("status_code"))
+    )
     status_text = str(status or "ERROR")
-    status_error = str(status).upper() in {"ERROR", "STATUS_CODE_ERROR", "2"} or status == 2
+    status_error = (
+        str(status).upper() in {"ERROR", "STATUS_CODE_ERROR", "2"} or status == 2
+    )
     http_status = tags.get("http.status_code")
     if isinstance(http_status, int) and http_status >= 500:
         status_error = True
-    error_tag = tags.get("error") is True or str(tags.get("error", "")).lower() == "true"
+    error_tag = (
+        tags.get("error") is True or str(tags.get("error", "")).lower() == "true"
+    )
     message = next(
         (
             str(tags[key])
@@ -110,8 +116,7 @@ def _trace_errors(
             _span_service(trace, child, requested_service)
             for child in spans
             if any(
-                ref.get("refType") == "CHILD_OF"
-                and str(ref.get("spanID")) == span_id
+                ref.get("refType") == "CHILD_OF" and str(ref.get("spanID")) == span_id
                 for ref in child.get("references", [])
             )
         ]
@@ -134,7 +139,10 @@ def _trace_errors(
     description="Find grouped trace errors and the deepest failing span in a service call chain.",
     params={
         "properties": {
-            "service": {"type": "string", "description": "Service to search in Jaeger."},
+            "service": {
+                "type": "string",
+                "description": "Service to search in Jaeger.",
+            },
             "only_errors": {
                 "type": "boolean",
                 "default": True,
