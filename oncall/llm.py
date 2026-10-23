@@ -50,6 +50,7 @@ class ToolCall:
 class Reply:
     text: str
     tool_calls: list[ToolCall] = field(default_factory=list)
+    usage: dict = field(default_factory=dict)  # {"input_tokens": int, "output_tokens": int}; cache reads count as input
 
     def as_message(self) -> dict:
         """The reply in neutral form, ready to append to the message list."""
@@ -82,17 +83,24 @@ class AnthropicProvider:
                 else:
                     wire.append({"role": "user", "content": [block]})
 
+        # Prompt caching: mark the end of the system prompt and of the tool list, so those two
+        # stable blocks are re-read cheaply on later calls (ignored by the API if they are too short).
+        cache = {"type": "ephemeral"}
         kwargs = {"model": self.model, "max_tokens": max_tokens, "messages": wire}
         if system:
-            kwargs["system"] = system
+            kwargs["system"] = [{"type": "text", "text": system, "cache_control": cache}]
         if tools:
             kwargs["tools"] = [{"name": t.name, "description": t.description, "input_schema": t.parameters}
                                for t in tools]
+            kwargs["tools"][-1]["cache_control"] = cache
         response = self.client.messages.create(**kwargs)
 
         text = "".join(b.text for b in response.content if b.type == "text")
         calls = [ToolCall(b.id, b.name, dict(b.input)) for b in response.content if b.type == "tool_use"]
-        return Reply(text, calls)
+        u = response.usage
+        input_tokens = (u.input_tokens or 0) + (getattr(u, "cache_creation_input_tokens", 0) or 0) \
+            + (getattr(u, "cache_read_input_tokens", 0) or 0)
+        return Reply(text, calls, {"input_tokens": input_tokens, "output_tokens": u.output_tokens or 0})
 
 
 class OpenAIProvider:
@@ -134,7 +142,10 @@ class OpenAIProvider:
             except ValueError:
                 raise LLMError(f"tool call {c.function.name!r} had arguments that are not JSON")
             calls.append(ToolCall(c.id, c.function.name, arguments))
-        return Reply(message.content or "", calls)
+        usage = {}
+        if response.usage:
+            usage = {"input_tokens": response.usage.prompt_tokens or 0, "output_tokens": response.usage.completion_tokens or 0}
+        return Reply(message.content or "", calls, usage)
 
 
 PROVIDERS = {"anthropic": AnthropicProvider, "openai": OpenAIProvider}
