@@ -172,3 +172,31 @@ def test_clean_spans_does_not_modify_its_input():
     before = repr(s)
     clean_spans([s])
     assert repr(s) == before
+
+
+# --- the front proxy's route span for the flag service -----------------------------------
+
+ROUTE_SPAN = "router flagservice egress"
+
+
+def test_text_rule_matches_the_proxy_route_name_for_the_flag_service():
+    assert has_flag_text(ROUTE_SPAN) and has_flag_text("Router FlagService Egress")
+    assert is_blocked_name("flagservice") and is_blocked_name("opentelemetry-demo-flagservice-1")
+    assert not has_flag_text("router frontend egress")
+
+
+def test_clean_drops_a_record_whose_span_or_operation_name_is_the_route_span():
+    rows = [{"root_service": "frontend-proxy", "root_operation": ROUTE_SPAN, "duration_ms": 3153.8},
+            {"root_service": "frontend-proxy", "root_operation": "ingress", "duration_ms": 20.0}]
+    assert clean(rows) == [rows[1]]
+
+
+def test_clean_spans_drops_the_route_span_and_counts_it():
+    ordinary = span("ingress", service="frontend-proxy")
+    kept, removed = clean_spans([span(ROUTE_SPAN, service="frontend-proxy"), ordinary])
+    assert kept == [ordinary] and removed == 1
+
+
+def test_clean_spans_drops_a_span_on_the_flag_ui_path():
+    kept, removed = clean_spans([span("GET /feature/api/read", service="frontend-proxy"), span("GET /features")])
+    assert [s["name"] for s in kept] == ["GET /features"] and removed == 1

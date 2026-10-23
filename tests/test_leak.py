@@ -28,7 +28,7 @@ FLAG_KEYS = [
     "intlShippingSlowdown", "kafkaQueueProblems", "kafkaConsumerDead", "failedReadinessProbe",
     "loadGeneratorFloodHomepage", "cartMetricCardinalityOverflow", "emitRawPii", "aiRunawayAgent", "aiSlowResponse",
 ]
-OTHER_FORBIDDEN = ["feature_flag", "feature flag", "flagd", "openfeature", "/feature/"]
+OTHER_FORBIDDEN = ["feature_flag", "feature flag", "flagd", "flagservice", "openfeature", "/feature/"]
 
 
 def leaks(text: str) -> list[str]:

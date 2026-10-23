@@ -2,7 +2,8 @@
 
 This is the ONLY file allowed to name the flag service and the flag UI path. It removes:
   - any key (or {"key": ...} / {"name": ...} attribute or event entry) containing "feature_flag"
-  - any series, container, log or span that belongs to the flag service or its UI
+  - any series, container, log or span that belongs to the flag service or its UI, or whose name
+    refers to them (e.g. the front proxy's route span for the flag service)
   - any value that points at the flag UI path
   - any text (log line, message, value) that mentions the flag service, "feature_flag",
     "feature flag" or "openfeature"
@@ -14,8 +15,9 @@ so a half-filtered record never reaches the agent. Everything removed is counted
 import re
 from dataclasses import fields
 
-# Names of the flag backend and its UI, as service / container names.
-BLOCKED_SERVICES = {"flagd", "flagd-ui"}
+# Names of the flag backend and its UI, as service / container names. "flagservice" is the name the
+# front proxy gives the flag backend in its route and cluster names (e.g. "router <name> egress").
+BLOCKED_SERVICES = {"flagd", "flagd-ui", "flagservice"}
 FLAG_KEY_PREFIX = "feature_flag"  # matched anywhere in a key, so "demo.feature_flag.x" goes too
 
 # Fields that name the service, container or job a record belongs to.
@@ -40,7 +42,7 @@ _FLAG_TEXT = re.compile(
 # not "/features" or "/feature-x" (the path must not continue with a word character or hyphen).
 _FLAG_UI_PATH = re.compile(r"/feature(?![\w-])")
 # Matches a compose-style container name for a blocked service: "<project>-<service>-<n>".
-_COMPOSE_NAME = re.compile(r"^(?:[\w.-]+[-_])?flagd(?:-ui)?(?:[-_]\d+)?$")
+_COMPOSE_NAME = re.compile(r"^(?:[\w.-]+[-_])?flag(?:d(?:-ui)?|service)(?:[-_]\d+)?$")
 
 _DROP = object()
 
@@ -168,7 +170,7 @@ def attr_value(entry: dict):
 def _is_flag_span(span: dict) -> bool:
     if is_blocked_name(span.get("service")) or has_flag_text(span.get("scope")):
         return True
-    if _FLAG_SPAN_NAME.match(str(span.get("name", ""))):
+    if _FLAG_SPAN_NAME.match(str(span.get("name", ""))) or has_flag_text(span.get("name")):
         return True
     return any(
         a.get("key") in _TARGET_KEYS and has_flag_text(str(attr_value(a)))

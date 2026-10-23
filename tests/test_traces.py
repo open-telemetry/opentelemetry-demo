@@ -281,3 +281,21 @@ def test_fetch_returns_empty_list_for_no_traces():
     assert fetch("http://x", {}, FakeHttp(body, status=404)) == []
     with pytest.raises(JaegerError):
         fetch("http://x", {}, FakeHttp("nope", status=404))
+
+
+def test_the_proxy_route_span_for_the_flag_service_is_dropped_before_the_summary_is_built():
+    route = "router flagservice egress"
+    trace = [
+        span("a", None, "ingress", "frontend-proxy", 2, 0, 3200, {"code": 2, "message": "upstream request timeout"}),
+        span("b", "a", route, "frontend-proxy", 3, 5, 3150, {"code": 2, "message": "upstream request timeout"}),
+        span("c", "a", "GET /api/cart", "frontend", 2, 10, 60),
+    ]
+    result = run(FakeHttp(doc(*trace)), mode="slow")
+    summary = result.items[0]
+    assert route not in str(result.to_dict())
+    assert summary["span_count"] == 2 and summary["duration_ms"] == 3200.0  # the 3150 ms route span is not counted
+    assert summary["error_span_count"] == 1 and summary["deepest_error"]["span"] == "ingress"
+    assert summary["root_operation"] == "ingress"
+
+    only_route = [span("a", None, route, "frontend-proxy", 3, 0, 3150)]
+    assert run(FakeHttp(doc(*only_route)), mode="slow").state == "no_data"

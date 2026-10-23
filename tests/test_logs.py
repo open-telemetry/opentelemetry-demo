@@ -183,3 +183,12 @@ def test_asking_for_the_flag_service_makes_no_request():
     http = FakeHttp(answer([hit("x")]))
     result = run(http, service="flagd")
     assert result.state == "no_data" and http.calls == []
+
+
+def test_log_lines_that_mention_the_flag_service_route_are_removed():
+    hits = [hit("upstream connect error on router router flagservice egress", service="frontend-proxy", level="error"),
+            hit('"POST /flagservice/x HTTP/1.1" 503', service="frontend-proxy", level="error"),
+            hit("Wasn't able to connect to redis", service="cart", level="error")]
+    result = run(FakeHttp(answer(hits)))
+    assert [g["message"] for g in result.items] == ["Wasn't able to connect to redis"]
+    assert "flagservice" not in str(result.to_dict()).lower()
