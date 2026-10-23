@@ -1,7 +1,8 @@
 # Feature backlog (Incident Zero)
 
-Feature specs F01-F09 (Wave 0 Foundation + Wave 1 Eyes). The issue board, with
-NN numbers and status, is [ISSUES.md](ISSUES.md). Rules: [RULES.md](RULES.md).
+Feature specs F01-F09 (Wave 0 Foundation + Wave 1 Eyes) and F11-F17 (Wave 2
+Brain). The issue board, with NN numbers and status, is [ISSUES.md](ISSUES.md).
+Rules: [RULES.md](RULES.md).
 
 Each feature = one ISSUES.md entry = one branch = one PR. Branch:
 `<type>/<NN>-<slug>`, NN = the two-digit number from ISSUES.md. The setup work
@@ -489,3 +490,327 @@ on ONE incident, plus the sketch.
 Reality check: it's ~14:50; CP1 is 15:30. Aim to show the loop + 2-3
 tools live at CP1 even if F06-F08 aren't merged. Honest partial demo >
 broken full demo.
+
+
+=====================================================================
+WAVE 2 - BRAIN (F11-F17)  -> Checkpoint 2 at 18:30
+=====================================================================
+F10 is unused (the old sketch number, now D01). Same rules as F01-F09.
+
+CHECKPOINT 2 REQUIREMENT (what the mentor will test at 18:30)
+------------------------------------------------------------
+"Root cause with evidence and confidence; output in the JSON schema.
+Correct diagnosis on at least 3 practice incidents chosen by the mentor."
+Critical path: F09 -> F12 -> F16. F11 provides the incidents to test on.
+F13 + F15 make it safe/honest (judges + hidden test). F14 makes it
+automatic. F17 proves it.
+
+VERIFIED TELEMETRY FACTS (use exactly; see TEAM_CONTEXT "Verified repo facts")
+-----------------------------------------------------------------------------
+- Prometheus http://127.0.0.1:9090. traces_span_metrics_calls_total,
+  traces_span_metrics_duration_milliseconds_bucket. Labels service_name,
+  span_name, span_kind, status_code (STATUS_CODE_UNSET|OK|ERROR),
+  error_type, error_message, rpc_grpc_status_code,
+  http_response_status_code. rate() windows >= 5m (OTLP push).
+- Healthy baseline has NON-ZERO errors: load-generator ~0.05/s,
+  frontend-proxy ~0.015/s. Always compare to baseline.
+- Jaeger v3 via http://127.0.0.1:8080/jaeger/ui/api/v3/..., OTLP JSON,
+  hex ids, typed attributes.
+- Logs: OpenSearch otel-logs-*, resource.service.name, severity.number
+  (error>=17, warn>=13), body, @timestamp.
+- HARD RULES: scrub /feature[_.]flag/i everywhere; exclude service flagd;
+  load-generator is a CLIENT (symptom, never root cause). Never put
+  practice-incident answers in oncall/ code or prompts (eval/ only).
+- The demo also contains an LLM "agent" service and "chatbot"; they can
+  be incident targets like any other service.
+
+
+=====================================================================
+F11  Scenario library: record practice incidents as fixtures
+=====================================================================
+Module: platform/eval  Owner: integration-box person (has the demo)
+Priority: P0   Needed by: 17:15   Size: S (mostly human work + script)
+Goal: give everyone real incident data to develop and test the Brain on,
+before the organisers' bundles/faultctl arrive.
+
+Files: scripts/record_scenario.ps1 (+ .sh), eval/scenarios.md,
+       eval/expected.yaml, oncall/tests/fixtures/<scenario>/ (output of
+       F03 recorder)
+Procedure (HUMAN injects - the agent never touches flags):
+  1. Demo healthy 10 min -> record "baseline".
+  2. For each scenario: inject by hand (flag UI http://127.0.0.1:8080/feature
+     for app faults; `docker stop <svc>` / `docker update --cpus 0.1 <svc>`
+     by hand for infra faults), wait 3 min, record, undo, wait 3 min.
+  3. Neutral names only: scenario-01, scenario-02, ...
+Target set (covers app + infra + client-symptom cases):
+  scenario-01 payment fails on charge         (app error, deep in chain)
+  scenario-02 cart fails intermittently       (app error, partial rate)
+  scenario-03 ad service high CPU / GC         (resource/latency)
+  scenario-04 recommendation memory leak       (resource growth)
+  scenario-05 homepage traffic flood           (load surge, not a bug)
+  scenario-06 cart cache (valkey) stopped      (infra: dependency down)
+  scenario-07 a service container stopped      (infra: container down)
+eval/expected.yaml (ONLY place answers live):
+  scenario-01: {component: payment, category: app_error, action: ...}
+  ...  (written by the human who injected it)
+Acceptance:
+  [ ] baseline + >=4 scenarios recorded and committed (fixtures small:
+      cap recorder output, no raw dumps > 2 MB per scenario).
+  [ ] eval/expected.yaml filled; CI rule: nothing under oncall/ reads
+      eval/expected.yaml (add grep to rules job).
+Depends on: F03 (recorder)   Collides with: F17 (expected.yaml format -
+  F17 owner defines the schema of expected.yaml; agree first).
+
+
+=====================================================================
+F12  Diagnosis step
+=====================================================================
+Module: brain   Owner: P1   Priority: P0   Needed by: 17:45   Size: L
+Goal: turn the investigation into a structured, evidence-backed
+diagnosis that generalises to unseen and combined faults.
+
+Files: oncall/agent/diagnosis.py, oncall/agent/taxonomy.py,
+       oncall/agent/prompts.py (INVESTIGATE update + DIAGNOSE constant),
+       oncall/agent/loop.py (hook: after finish -> diagnose),
+       oncall/models.py (ADD Diagnosis TypedDict only - coordinate w/ P1
+       as F01 owner = same person), oncall/tests/agent/test_diagnosis.py
+Interfaces:
+  Diagnosis = {
+    "component": str | None,          # root-cause service/container
+    "category": Category,             # enum from taxonomy.py
+    "cause": str,                     # one-sentence specific cause
+    "confidence": float,              # 0..1 (LLM estimate; F15 adjusts)
+    "evidence_ids": list[str],        # must exist in run log (F13)
+    "affected_services": list[str],   # symptoms/blast radius
+    "alternatives": [{"hypothesis": str, "rejected_because": str}],
+    "decision": "act" | "escalate",
+    "reasoning": str                  # <= 800 chars, cites evidence ids
+  }
+  def diagnose(run: RunLog, alert: Alert, llm: LLM) -> Diagnosis
+    # LLM must answer via a forced tool call submit_diagnosis(schema)
+    # (structured output), never free text. One retry on invalid output,
+    # else return an escalate Diagnosis with category "unknown".
+taxonomy.py - GENERAL fault categories + the signals that indicate them
+(reasoning aids, NOT practice answers; no service names tied to causes):
+  app_error             ERROR spans originating in one service (deepest
+                        error span), error_type/error_message present,
+                        error logs in that service; container healthy
+  dependency_unavailable connection refused/timeout errors to a backing
+                        store or downstream; that dependency's container
+                        down/unhealthy or absent from traces
+  container_down        container not running / restarting / OOMKilled;
+                        callers show connection errors
+  resource_cpu          latency up, CPU high in container_health, GC
+                        logs/metrics up; error rate may be ~normal
+  resource_memory       memory % rising toward limit, restarts/OOM,
+                        latency degrading over time
+  network_degradation   latency/timeouts between two specific services,
+                        both containers healthy, no app exceptions
+  traffic_surge         RPS sharply up at entry (frontend/proxy),
+                        latency up broadly, few app exceptions
+  upstream_propagation  service shows errors only because a downstream
+                        it calls is failing (never the final answer -
+                        follow it down)
+  unknown               evidence insufficient/contradictory
+Investigation strategy (put in INVESTIGATE prompt):
+  1 TRIAGE   get_metrics(no service) for error_rate AND latency_p95 AND
+             rps; container_health(all).
+  2 LOCALISE follow the worst service down the call chain with
+             search_traces; the deepest ERROR span's service is the
+             candidate. Ignore load-generator/frontend-proxy as causes.
+  3 CHARACTERISE search_logs on the candidate; container_health on it;
+             deploy_history.
+  4 FALSIFY  name the best alternative hypothesis and run ONE tool call
+             that would distinguish them; record why it was rejected.
+  5 FINISH   only when the candidate has >=2 evidence items from >=2
+             different tools, or MAX_STEPS reached.
+Combined faults: if two candidates are independent (no parent/child in
+traces), list both in affected_services, set component to the one with
+earliest onset / strongest evidence, and decision=escalate unless one is
+clearly upstream of the other.
+Acceptance:
+  [ ] On fixtures scenario-01..04: correct component + category on >=3
+      (paste the Diagnosis JSONs).
+  [ ] Unit tests: invalid LLM output -> retry -> escalate fallback;
+      load-generator never returned as component (post-check in code).
+  [ ] grep: taxonomy/prompts contain no flag names and no
+      scenario->answer mappings.
+Depends on: F09 (merged), F02. Fixtures from F11 for the real test.
+Collides with: prompts.py/loop.py (F09 owner = same person), F13, F15,
+  F16 consume Diagnosis (contract defined HERE - freeze it early, push
+  the TypedDict in the first commit and tell the team).
+
+
+=====================================================================
+F13  Evidence validator
+=====================================================================
+Module: brain   Owner: P2 (after F04)   Priority: P0   Needed by: 18:00
+Size: S
+Goal: make "invented evidence is penalised" impossible.
+
+Files: oncall/agent/evidence.py, oncall/tests/agent/test_evidence.py
+Interfaces:
+  def validate(d: Diagnosis, run: RunLog) -> tuple[Diagnosis, list[str]]
+    # returns cleaned diagnosis + list of problems found
+Rules:
+  - Drop evidence_ids not in run.evidence_index().
+  - Any evidence id quoted in d.reasoning but not in the index -> remove
+    that sentence or flag it in problems.
+  - Numbers: if reasoning claims a metric value for an id, check it is
+    within 5% of the recorded value; else flag.
+  - If the remaining evidence for component < 2 items or comes from only
+    one tool -> lower confidence (multiply 0.6) and add problem.
+  - If zero valid evidence -> decision=escalate, category=unknown.
+Acceptance:
+  [ ] Fabricated trace id removed; wrong metric value flagged; zero
+      evidence -> escalate (unit tests with a synthetic RunLog).
+Depends on: F02, F12 contract (can start from the TypedDict).
+Collides with: F15 (run order: validate -> confidence).
+
+
+=====================================================================
+F14  Alert detector
+=====================================================================
+Module: platform   Owner: P3 (after F07)   Priority: P1 for CP2 (P0 for
+CP3)   Needed by: 18:15   Size: M
+Goal: incidents start the agent automatically ("Detect" step).
+
+Files: oncall/platform/alert.py, oncall/main.py (`watch` subcommand
+       only), oncall/tests/platform/test_alert.py
+Interfaces:
+  def check_once(backend, baseline: dict) -> list[Alert]
+  def watch(poll_s: int = ALERT_POLL_S, on_alert=investigate_and_diagnose)
+CLI: python -m oncall.main watch [--once] [--offline <scenario>]
+Logic:
+  - Reuse F04's PROMQL templates (import, don't copy). Windows [5m].
+  - Baseline: rolling 30 min median per service, captured at start
+    (fallback to config thresholds if no history).
+  - Fire when, for a non-client, non-flagd service:
+      error_rate > max(ALERT_ERROR_RATE, 3 x baseline) OR
+      p95 > max(ALERT_P95_MS, 2 x baseline) OR
+      container_health flags it (down/restarting/OOM).
+    Also fire on frontend-proxy/load-generator error spikes as a
+    user-facing symptom alert (service=None, description says so).
+  - Debounce: one alert per incident; suppress repeats for 10 min or
+    until signals return to baseline.
+  - Log every check result compactly to runs/watch.jsonl.
+Acceptance:
+  [ ] Healthy demo: 10 min of `watch` with zero alerts (paste log).
+  [ ] Injected scenario (by hand): alert within 2 poll cycles, agent
+      starts automatically, no duplicate alerts.
+  [ ] Unit tests for thresholds, client exclusion, debounce.
+Depends on: F03, F04, F07, F09.  Collides with: main.py (own subcommand
+  only), F04 (PROMQL dict ownership stays with F04).
+
+
+=====================================================================
+F15  Confidence and escalation rules
+=====================================================================
+Module: brain   Owner: P1 (or P4 if P1 is behind)   Priority: P0
+Needed by: 18:00   Size: S
+Goal: calibrated, explainable act/escalate decision ("a confident wrong
+fix scores worse than escalating").
+
+Files: oncall/agent/confidence.py, oncall/tests/agent/test_confidence.py
+Interfaces:
+  def assess(d: Diagnosis, run: RunLog) -> Diagnosis
+    # sets final confidence, decision, appends "confidence: ..." reasons
+Rules (deterministic, computed from the run log, applied as caps on the
+LLM's estimate):
+  - evidence from 1 tool only            -> cap 0.55
+  - < 2 evidence items for component     -> cap 0.5
+  - >1 independent unhealthy service     -> cap 0.5 (combined fault)
+  - category unknown / upstream_propagation as final -> cap 0.3
+  - component is a CLIENT_SERVICE or None -> decision escalate
+  - alternatives empty (not falsified)   -> -0.1
+  - container signal + matching trace/log signal agree -> +0.1 (max 0.95)
+  decision = act if confidence >= CONFIDENCE_MIN (0.7) else escalate.
+  Every adjustment is recorded in reasoning so the report explains it.
+Acceptance:
+  [ ] Unit tests per rule; a clear single-service case stays "act"; a
+      two-independent-services case becomes "escalate".
+  [ ] Log confidence + correctness per scenario for F17 calibration.
+Depends on: F12, F13.   Collides with: F13 (order), S2 calibration later.
+
+
+=====================================================================
+F16  Report output + JSON schema validation (provisional schema)
+=====================================================================
+Module: safety/report   Owner: P4 (after F05)   Priority: P0
+Needed by: 18:00   Size: M
+Goal: every run ends with a schema-valid JSON report - even on errors.
+The organisers' schema is NOT available yet: build against a provisional
+schema with an adapter so switching is a one-file change.
+
+Files: oncall/report/__init__.py, oncall/report/schema_provisional.json,
+       oncall/report/output.py, oncall/report/adapter.py,
+       oncall/tests/report/test_output.py
+Interfaces:
+  def build_report(alert, diagnosis, run, actions=None,
+                   verification=None) -> dict      # internal format
+  def to_official(report: dict) -> dict            # adapter; identity
+                                                   # until real schema
+  def validate(report: dict, schema_path: str) -> list[str]
+  def write(report: dict, out_dir="reports") -> tuple[Path, Path]
+      # reports/<run_id>.json (validated) + reports/<run_id>.md
+  def fallback_report(alert, run, error: str) -> dict
+      # minimal VALID escalate report when anything fails
+Provisional schema fields: incident_id, detected_at, alert{...},
+  root_cause{component, category, description}, confidence, decision,
+  evidence[{id, source, text, ts}], affected_services, alternatives,
+  timeline[{ts, event}], actions[], verification{}, prevention,
+  limitations, agent_version.
+  evidence[].text is copied from the run log (never re-generated).
+  timeline built from run log events.
+Behaviour: validate -> if invalid, one deterministic repair (fill
+  required fields, coerce types) -> if still invalid, fallback_report.
+  Never crash, never write an invalid file.
+  When the official schema arrives: drop it in as
+  oncall/report/schema_official.json, implement to_official(), switch
+  SCHEMA_PATH in config - nothing else changes.
+CLI: `python -m oncall.main investigate ...` writes the report at the
+  end (small hook in main.py; coordinate with F09 owner).
+Acceptance:
+  [ ] 100% of runs (incl. forced LLM failure) produce a valid JSON file
+      + readable markdown (tests).
+  [ ] Evidence text in report matches run log exactly (test).
+Depends on: F02, F12 contract.  Collides with: main.py (hook only),
+  F23 later (report writer extends this module - same owner).
+
+
+=====================================================================
+F17  Eval harness
+=====================================================================
+Module: eval   Owner: P5 (after F06)   Priority: P0   Needed by: 18:15
+Size: M
+Goal: one command shows how many practice scenarios we get right -
+feeds the CP2 rehearsal, the evaluation note and calibration.
+
+Files: eval/run_eval.py, eval/README.md, eval/results/.gitkeep
+       (results/*.json gitignored except summary.md)
+Interfaces:
+  python -m eval.run_eval [--scenarios scenario-01,...] [--live]
+  Default: OFFLINE on F11 fixtures (TELEMETRY_BACKEND=offline).
+Scoring per scenario (compare to eval/expected.yaml):
+  correct   component AND category match           = 1.0
+  partial   component match, category wrong        = 0.5
+  escalated decision=escalate with right component in affected/alts = 0.5
+  wrong     confident (act) and wrong component    = 0 and flagged RED
+  invalid   report not schema-valid                = 0 and flagged RED
+Output: table (scenario | expected | got | confidence | decision |
+  score | steps | tokens | seconds) + totals; save eval/results/summary.md
+  and per-run JSON. Also a calibration table: confidence bucket vs
+  accuracy.
+Rules: eval/ may read expected.yaml; oncall/ must never import eval/.
+Acceptance:
+  [ ] Runs all recorded scenarios offline in one command (paste table).
+  [ ] Deterministic enough: same scenario twice -> same component.
+Depends on: F11, F12, F16 (end-to-end); write the harness against stubs
+  now.   Collides with: F11 (expected.yaml format - F17 defines it).
+
+
+=====================================================================
+CP2 MINIMUM CUT
+=====================================================================
+If short on time at 17:45: F12 + F16 working on 3 fixtures, F13 merged.
+F15/F14/F17 can slip to Day 2 morning; say so honestly at the checkpoint.

@@ -18,5 +18,15 @@ Feature specs are in [FEATURES.md](FEATURES.md).
 | 07 | F07 | Tool: container_health (read-only Docker) | platform | P0 | F01 | [#8](https://github.com/rhrishi-99/opentelemetry-demo/issues/8) | open |
 | 08 | F08 | Tool: deploy_history | platform | P1 | F01 | [#9](https://github.com/rhrishi-99/opentelemetry-demo/issues/9) | open |
 | 09 | F09 | Investigation loop (Eyes) + LLM client + CLI | brain | P0 | F01, F02 | [#10](https://github.com/rhrishi-99/opentelemetry-demo/issues/10) | open |
+| 11 | F11 | Scenario library: record practice incidents as fixtures | platform/eval | P0 | F03 | [#17](https://github.com/rhrishi-99/opentelemetry-demo/issues/17) | open |
+| 12 | F12 | Diagnosis step + taxonomy | brain | P0 | F09, F02 | [#18](https://github.com/rhrishi-99/opentelemetry-demo/issues/18) | open |
+| 13 | F13 | Evidence validator | brain | P0 | F02, F12* | [#19](https://github.com/rhrishi-99/opentelemetry-demo/issues/19) | open |
+| 14 | F14 | Alert detector | platform | P1 (P0 for CP3) | F03, F04, F07, F09 | [#20](https://github.com/rhrishi-99/opentelemetry-demo/issues/20) | open |
+| 15 | F15 | Confidence and escalation rules | brain | P0 | F12, F13 | [#21](https://github.com/rhrishi-99/opentelemetry-demo/issues/21) | open |
+| 16 | F16 | Report output + JSON schema validation (provisional schema) | safety/report | P0 | F02, F12* | [#22](https://github.com/rhrishi-99/opentelemetry-demo/issues/22) | open |
+| 17 | F17 | Eval harness | eval | P0 | F11, F12, F16 | [#23](https://github.com/rhrishi-99/opentelemetry-demo/issues/23) | open |
 | 91 | D01 | Architecture sketch | eval-docs | — | none | [#11](https://github.com/rhrishi-99/opentelemetry-demo/issues/11) | open |
-| 93 | D93 | Verified telemetry facts | eval-docs | P0 | none | — | in PR (`docs/93-verified-telemetry-facts`) |
+| 93 | D93 | Verified telemetry facts | eval-docs | P0 | none | — | in PR (`docs/95-wave2-specs`, with D95) |
+| 95 | D95 | Wave 2 specs F11-F17 | eval-docs | P0 | none | — | in PR (`docs/95-wave2-specs`) |
+
+(* = needs only the Diagnosis contract from F12's first commit)
