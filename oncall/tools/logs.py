@@ -2,17 +2,14 @@
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
 import json
 import logging
 import re
-import urllib.error
-import urllib.request
-from datetime import UTC, datetime, timedelta
 from typing import Any, Literal
 
-from oncall.config import load_settings
-from oncall.endpoints import discover_endpoints
 from oncall.models import Evidence, ToolResult, make_error, make_result
+from oncall.tools.backends import BackendError, TelemetryBackend, get_backend
 from oncall.tools.registry import register_tool
 
 log = logging.getLogger(__name__)
@@ -61,44 +58,113 @@ def normalize_message(msg: str) -> str:
 
 
 def _extract_log_fields(hit: dict[str, Any]) -> tuple[str, str, str, str]:
-    """Extract (service, message, level, timestamp) from an OpenSearch hit."""
-    source = hit.get("_source", {})
+    """Extract (service, message, level, timestamp) from an OpenSearch log hit or _source dictionary."""
+    source = hit.get("_source", hit)
+    if not isinstance(source, dict):
+        source = {}
 
     # 1. Message extraction
-    raw_body = source.get("body") or source.get("message") or source.get("log") or ""
+    raw_body = (
+        source.get("body")
+        or source.get("message")
+        or source.get("log")
+        or (
+            source.get("attributes", {}).get("message")
+            if isinstance(source.get("attributes"), dict)
+            else None
+        )
+        or (
+            source.get("attributes", {}).get("exception.message")
+            if isinstance(source.get("attributes"), dict)
+            else None
+        )
+        or source.get("exception.message")
+        or ""
+    )
     if isinstance(raw_body, dict):
         message = str(
-            raw_body.get("message") or raw_body.get("body") or json.dumps(raw_body)
+            raw_body.get("message")
+            or raw_body.get("body")
+            or json.dumps(raw_body, sort_keys=True)
         )
     else:
         message = str(raw_body)
 
-    # 2. Service name extraction
+    # 2. Service name extraction (handling flattened, nested resource attributes, and container names)
+    res_attrs = (
+        source.get("resource", {}).get("attributes")
+        if isinstance(source.get("resource"), dict)
+        else {}
+    )
+    if not isinstance(res_attrs, dict):
+        res_attrs = {}
+
+    attrs = (
+        source.get("attributes") if isinstance(source.get("attributes"), dict) else {}
+    )
+    if not isinstance(attrs, dict):
+        attrs = {}
+
     service = (
-        source.get("service_name")
+        source.get("resource.attributes.service.name")
+        or res_attrs.get("service.name")
+        or res_attrs.get("service_name")
+        or attrs.get("service.name")
+        or attrs.get("service_name")
+        or source.get("service_name")
+        or source.get("service.name")
         or source.get("service")
-        or source.get("resource", {}).get("attributes", {}).get("service.name")
-        or source.get("attributes", {}).get("service.name")
+        or source.get("app")
+        or source.get("container_name")
         or "unknown"
     )
 
-    # 3. Log level extraction
-    lvl = (
-        source.get("severity_text")
-        or source.get("level")
-        or source.get("log.level")
-        or source.get("log", {}).get("level")
-        or "unknown"
-    )
+    # 3. Log level extraction (supporting severity_number, severity_text, level, and aliases)
+    sev_num = source.get("severity_number")
+    if isinstance(sev_num, int):
+        if sev_num >= 21:
+            lvl = "fatal"
+        elif sev_num >= 17:
+            lvl = "error"
+        elif sev_num >= 13:
+            lvl = "warn"
+        elif sev_num >= 9:
+            lvl = "info"
+        elif sev_num >= 5:
+            lvl = "debug"
+        else:
+            lvl = "trace"
+    else:
+        lvl = (
+            source.get("severity_text")
+            or source.get("level")
+            or source.get("log.level")
+            or (
+                source.get("log", {}).get("level")
+                if isinstance(source.get("log"), dict)
+                else None
+            )
+            or attrs.get("level")
+            or source.get("severity")
+            or "unknown"
+        )
 
-    # 4. Timestamp extraction
+    # 4. Timestamp extraction (supporting ISO strings and unix nanoseconds)
     ts = (
         source.get("@timestamp")
         or source.get("timestamp")
         or source.get("time")
-        or hit.get("_source", {}).get("observed_timestamp")
-        or datetime.now(UTC).isoformat()
+        or source.get("observed_timestamp")
     )
+    if not ts and "time_unix_nano" in source:
+        try:
+            nano = int(source["time_unix_nano"])
+            ts = datetime.fromtimestamp(nano / 1e9, tz=UTC).isoformat()
+        except (ValueError, TypeError, OverflowError):
+            ts = None
+
+    if not ts:
+        ts = datetime.now(UTC).isoformat()
 
     return str(service), message.strip(), str(lvl).lower(), str(ts)
 
@@ -149,8 +215,9 @@ def search_logs(
     since_min: int = 15,
     contains: str | None = None,
     limit: int = 200,
+    backend: TelemetryBackend | None = None,
 ) -> ToolResult:
-    """Query OpenSearch for logs, cluster by normalized pattern, and return top groups with evidence."""
+    """Query OpenSearch for logs, cluster by normalized pattern, and return concise top groups with evidence."""
     query_params: dict[str, Any] = {
         "service": service,
         "level": level,
@@ -159,90 +226,20 @@ def search_logs(
         "limit": limit,
     }
 
-    settings = load_settings()
-    endpoints = discover_endpoints(settings)
-    opensearch_url = endpoints.get("opensearch")
-
-    if not opensearch_url:
-        return make_error(
-            "search_logs",
-            query_params,
-            "OpenSearch endpoint could not be resolved. Ensure the observability overlay is running.",
-        )
-
-    # Determine index to query
-    index_name = settings.OPENSEARCH_LOG_INDEX or "_all"
-
-    # Build OpenSearch search query
-    now = datetime.now(UTC)
-    start_time = now - timedelta(minutes=max(1, since_min))
-    start_iso = start_time.isoformat()
-
-    must_clauses: list[dict[str, Any]] = [
-        {"range": {"@timestamp": {"gte": start_iso}}},
-    ]
-
-    if service:
-        must_clauses.append(
-            {
-                "bool": {
-                    "should": [
-                        {"term": {"service_name": service}},
-                        {"term": {"service": service}},
-                        {"term": {"resource.attributes.service.name": service}},
-                        {"wildcard": {"service_name": f"*{service}*"}},
-                    ],
-                    "minimum_should_match": 1,
-                }
-            }
-        )
-
-    if contains:
-        must_clauses.append(
-            {
-                "bool": {
-                    "should": [
-                        {"match_phrase": {"body": contains}},
-                        {"match_phrase": {"message": contains}},
-                    ],
-                    "minimum_should_match": 1,
-                }
-            }
-        )
-
-    search_body = {
-        "size": min(max(1, limit), 1000),
-        "sort": [{"@timestamp": {"order": "desc"}}],
-        "query": {"bool": {"must": must_clauses}},
-    }
-
-    url = f"{opensearch_url.rstrip('/')}/{index_name}/_search"
-    req = urllib.request.Request(
-        url,
-        data=json.dumps(search_body).encode("utf-8"),
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
-
     try:
-        with urllib.request.urlopen(req, timeout=5) as response:
-            res_data = json.loads(response.read().decode("utf-8"))
-    except urllib.error.HTTPError as exc:
-        err_msg = exc.read().decode("utf-8", errors="replace")
-        return make_error(
-            "search_logs",
-            query_params,
-            f"OpenSearch query failed with HTTP {exc.code}: {err_msg[:200]}",
+        be = backend or get_backend()
+        raw_logs = be.logs_search(
+            service=service,
+            level=level,
+            since_min=since_min,
+            limit=limit,
         )
-    except (urllib.error.URLError, OSError, TimeoutError) as exc:
-        return make_error(
-            "search_logs",
-            query_params,
-            f"Failed to connect to OpenSearch at {opensearch_url}: {exc}",
-        )
+    except BackendError as exc:
+        return make_error("search_logs", query_params, str(exc))
+    except Exception as exc:  # noqa: BLE001
+        return make_error("search_logs", query_params, f"{type(exc).__name__}: {exc}")
 
-    hits = res_data.get("hits", {}).get("hits", [])
-    if not hits:
+    if not raw_logs:
         summary = (
             f"No logs found for service='{service}' level>='{level}' in the last {since_min}m."
             if service
@@ -252,10 +249,15 @@ def search_logs(
 
     # Group and cluster logs
     groups: dict[str, dict[str, Any]] = {}
-    for hit in hits:
-        hit_service, hit_msg, hit_lvl, hit_ts = _extract_log_fields(hit)
+    contains_filter = contains.lower() if contains else None
+
+    for entry in raw_logs:
+        hit_service, hit_msg, hit_lvl, hit_ts = _extract_log_fields(entry)
 
         if not _matches_level(hit_lvl, level):
+            continue
+
+        if contains_filter and contains_filter not in hit_msg.lower():
             continue
 
         normalized = normalize_message(hit_msg)
@@ -271,9 +273,7 @@ def search_logs(
         groups[group_key]["count"] += 1
 
     if not groups:
-        summary = (
-            f"No logs matching level threshold '{level}' found in {len(hits)} entries."
-        )
+        summary = f"No logs matching level threshold '{level}' found in {len(raw_logs)} entries."
         return make_result("search_logs", query_params, summary, [])
 
     # Sort groups by frequency (highest count first)
@@ -281,24 +281,24 @@ def search_logs(
         groups.items(), key=lambda item: item[1]["count"], reverse=True
     )
 
-    # Build summary: top 10 groups
+    # Build concise summary: top 5 groups, concise line width (smaller output)
     summary_lines: list[str] = []
-    for _pattern, info in sorted_groups[:10]:
+    for _pattern, info in sorted_groups[:5]:
         svc = info["service"]
         first_line = info["first_line"].replace("\n", " ").strip()
-        if len(first_line) > 120:
-            first_line = first_line[:117] + "..."
+        if len(first_line) > 90:
+            first_line = first_line[:87] + "..."
         summary_lines.append(f"x{info['count']} [{svc}] {first_line}")
 
     summary = "\n".join(summary_lines)
 
-    # Build evidence: citable items from top groups
+    # Build concise evidence: top 5 items, truncated to 160 chars (smaller output)
     evidence_list: list[Evidence] = []
-    for _pattern, info in sorted_groups[:20]:
+    for _pattern, info in sorted_groups[:5]:
         svc = info["service"]
         ts = info["first_ts"]
         ev_id = f"log:{svc}@{ts}"
-        text_truncated = info["first_line"][:300]
+        text_truncated = info["first_line"][:160]
         evidence_list.append({"id": ev_id, "text": text_truncated, "ts": ts})
 
     return make_result("search_logs", query_params, summary, evidence_list)
