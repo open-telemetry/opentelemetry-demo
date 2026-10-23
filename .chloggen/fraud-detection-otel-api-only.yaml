@@ -1,0 +1,25 @@
+# Use this changelog template to create an entry for release notes.
+
+# One of 'breaking', 'deprecation', 'new_component', 'enhancement', 'bug_fix'
+change_type: enhancement
+
+# The name of the component, or a single word describing the area of concern, (e.g. frontend, checkout, collector, load-generator)
+component: fraud-detection
+
+# A brief description of the change. Surround your text with quotes ("") if it needs to start with a backtick (`).
+note: The Java agent now comes from the OpenTelemetry Operator's auto-instrumentation image instead of a GitHub release download, and unused OpenTelemetry SDK dependencies are dropped
+
+# One or more tracking issues or pull requests related to the change. You can use the PR number here if no issue exists.
+issues: [606]
+
+# (Optional) One or more lines of additional information to render under the primary note.
+# These lines will be padded with 2 spaces and then inserted directly into the document.
+# Use a strip-chomping block scalar (|-) for multiline entries so no trailing
+# whitespace is emitted into CHANGELOG.md.
+subtext: |-
+  opentelemetry-api stays: flagd's provider resolves GlobalOpenTelemetry at
+  runtime and log4j2.xml renders the agent's trace_id and span_id. The heap cap
+  -Xmx180m moves out of JAVA_TOOL_OPTIONS into JDK_JAVA_OPTIONS, because a
+  Dockerfile ENV is invisible to the Operator's mutating webhook, so the
+  Operator-set JAVA_TOOL_OPTIONS dropped it in Kubernetes. Override
+  JDK_JAVA_OPTIONS to tune the heap.

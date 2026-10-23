@@ -43,8 +43,6 @@ dependencies {
     implementation("io.grpc:grpc-netty:${grpcVersion}")
     implementation("io.grpc:grpc-services:${grpcVersion}")
     implementation("io.opentelemetry:opentelemetry-api:1.67.0")
-    implementation("io.opentelemetry:opentelemetry-sdk:1.67.0")
-    implementation("io.opentelemetry:opentelemetry-extension-annotations:1.18.0")
     implementation("org.apache.logging.log4j:log4j-core:2.26.1")
     implementation("org.slf4j:slf4j-api:2.0.20")
     implementation("com.google.protobuf:protobuf-kotlin:${protobufVersion}")
