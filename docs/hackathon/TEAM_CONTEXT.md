@@ -241,3 +241,16 @@ Shared conventions:
 - Writes a schema-valid report every time.
 - Says "I'm not sure, here's what I found" when evidence is weak.
 - README and evaluation note honestly state what works and what doesn't.
+
+## Verified repo facts
+
+Checked against the files in this repo. Items marked *not verified live* still need a run against the demo.
+
+- Upstream OpenTelemetry Demo 3.1.0 fork (`IMAGE_VERSION=3.1.0` in the root `.env`). The starter kit (JSON schema, Action API, faultctl, offline bundles, practice incident list) is not in the repo and has not been received.
+- Logs and metrics reach OpenSearch and Prometheus only with the observability overlay. The base collector config sends them to the `debug` exporter. Run with `compose.observability.yaml` or `compose.full.yaml`. *The collector config for `compose.full.yaml` is not yet verified.*
+- Jaeger, OpenSearch and Grafana host ports are random: compose lists them as bare ports. *Not verified live.* Resolve with `docker compose port <service> <port>`. Never hardcode a port.
+- Prometheus is at `http://localhost:9090` (fixed mapping). Span metric names are expected to be `traces_span_metrics_*`. *Not verified live.*
+- The frontend proxy (Envoy) is at `http://localhost:8080` (fixed mapping). Whether it routes to Jaeger or Grafana is *not verified*.
+- `src/agent/` is the demo's own LangGraph agent service. Do not touch, import or reuse it. Its `run.py` calls `init_feature_flags()` at startup, which we must never do.
+- The demo has AI scenarios from upstream commit `3cb06d31` (subject "Add AI/LLM incident scenario (aiSlowResponse, aiRunawayAgent)"). They belong in the fault taxonomy for the diagnosis step, but diagnosis must still come from telemetry.
+- The repo has no Kubernetes or Helm chart. The Helm chart is published separately on Artifact Hub.

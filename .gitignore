@@ -65,3 +65,7 @@ src/frontend/cypress/screenshots
 src/shipping/target/
 
 !src/currency/build
+
+# Hackathon agent (oncall/)
+oncall/.env
+runs/

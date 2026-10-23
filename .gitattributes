@@ -1,8 +1,8 @@
-
-
-* text=auto
-
-CHANGELOG.md merge=union
-
-gradlew text eol=lf
-src/flagd-ui/rel/overlays/bin/server text eol=lf
+*.sh text eol=lf
+scripts/hooks/* text eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.mdc text eol=lf
