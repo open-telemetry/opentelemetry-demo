@@ -31,17 +31,31 @@ VERIFIED FACTS ABOUT OUR ENVIRONMENT (do not re-derive, but do verify live)
      docker compose -f compose.yaml -f compose.observability.yaml up -d
   (or compose.full.yaml). Images: from the organisers' USB drive if ghcr.io
   is blocked.
-- Prometheus: http://localhost:9090 (stable). Metrics arrive via OTLP.
-  Span metrics from the collector's span_metrics connector; expected names
-  traces_span_metrics_calls_total and traces_span_metrics_duration_*
-  with labels like service_name, span_name, status_code -> VERIFY live with
-  GET /api/v1/label/__name__/values and /api/v1/labels.
+- Prometheus: http://127.0.0.1:9090 (stable). VERIFIED LIVE:
+  traces_span_metrics_calls_total and
+  traces_span_metrics_duration_milliseconds_{bucket,count,sum}; labels
+  service_name, span_name, span_kind, status_code (STATUS_CODE_ERROR /
+  _OK / _UNSET), plus error_type, error_message, rpc_grpc_status_code,
+  http_response_status_code on error series (not seen yet in a healthy
+  demo). Metrics arrive via OTLP push: rate() windows must be >= 5m (a 1m
+  window returns nothing).
 - Jaeger, OpenSearch, Grafana have RANDOM host ports. Resolve with
-  `docker compose port <service> <container_port>` (Jaeger UI/API 16686,
-  OpenSearch 9200), or via frontend-proxy http://localhost:8080 (check
-  whether /jaeger/ui/api/ works). Never hardcode.
-- Logs go to OpenSearch (observability overlay). Index name unknown ->
-  discover with GET /_cat/indices?v.
+  discover_endpoints() (Jaeger 16686, OpenSearch 9200). Never hardcode.
+- Jaeger API: base path /jaeger/ui, v3 only. VERIFIED LIVE:
+  /jaeger/ui/api/v3/services -> 200 (direct port and via
+  http://127.0.0.1:8080). /api/services, /api/v3/services and
+  /jaeger/ui/api/services -> 404.
+- Logs: OpenSearch index pattern otel-logs-* (daily indices, never a fixed
+  name). Fields resource.service.name, severity.text, severity.number,
+  body, @timestamp, attributes.*. severity.text case varies, so filter on
+  severity.number: error >= 17, warn >= 13.
+- FLAG DATA IS IN THE TELEMETRY (RULES.md hard rule 7): Prometheus
+  feature_flag_evaluation_* metrics with feature_flag_key,
+  feature_flag_result_variant, feature_flag_result_reason,
+  feature_flag_provider_name labels; span attributes feature_flag.* and
+  demo.feature_flag.*; log fields attributes.feature_flag_*. Using any of
+  it = reading flag settings = disqualification risk. scrub_flags() (F01)
+  removes it from every ToolResult.
 - Upstream src/agent is the demo's own LangGraph service; it reads flags.
   We never touch, import or imitate it.
 - FORBIDDEN (disqualification): reading flagd files, flag UI, flag API, or
@@ -90,6 +104,10 @@ Files:
   oncall/.env.example           (the root .env is upstream demo config; never edit it)
   oncall/tests/test_models.py, oncall/tests/test_registry.py,
   oncall/tests/test_endpoints.py
+  .github/workflows/oncall-ci.yml  rules job: fail on /feature[_.]flag/i in
+                                oncall/ outside oncall/safety/, allowlisting
+                                only oncall/models.py and
+                                oncall/tests/test_models.py
 
 Interfaces:
   def make_result(tool: str, query: dict, summary: str,
@@ -99,6 +117,13 @@ Interfaces:
       # params = JSON-schema "properties"+"required" for the LLM.
       # Registers fn in TOOLS[name] and its schema in TOOL_SCHEMAS[name].
       # Wraps fn so any exception becomes make_error(...).
+      # Applies scrub_flags() to every ToolResult before returning it.
+  def scrub_flags(obj: object) -> object
+      # Recursively removes any dict key matching /feature[_.]flag/i, drops
+      # OTLP/Jaeger attribute items {"key": <match>, "value": ...}, and
+      # replaces any line of a string that matches it (label name and
+      # value) with "[feature-flag data removed]" (RULES.md hard rule 7).
+      # Lives in oncall/models.py.
   def discover_endpoints() -> dict[str, str]
       # Returns {"prometheus":..., "jaeger":..., "opensearch":...}.
       # Order: env var if set -> `docker compose port` -> None.
@@ -118,6 +143,10 @@ Acceptance:
   [ ] `python -c "import oncall, oncall.models, oncall.config, oncall.tools"`
   [ ] A test registers a dummy tool; it appears in TOOLS and TOOL_SCHEMAS
       with a valid schema; an exception inside it returns ok=False.
+  [ ] A test: a ToolResult containing feature_flag_key in evidence text and
+      in nested dicts comes back scrubbed.
+  [ ] CI rules job fails on /feature[_.]flag/i outside oncall/safety/ and
+      the two allowlisted files.
   [ ] discover_endpoints() returns a dict without raising when Docker is
       not running (test with subprocess mocked).
   [ ] oncall/.env.example lists every key with a comment; oncall/.env is
@@ -224,12 +253,16 @@ Interfaces:
     agent's usual first call.
   - Each value reported as now vs baseline (same window, offset back) with
     delta and ratio.
-PromQL templates (VERIFY names/labels live, adjust, document in docstring):
+  - window_min minimum is 5 (metrics arrive by OTLP push; shorter rate()
+    windows return nothing). Reject or clamp smaller values.
+  - Never group by or filter on feature_flag_* labels, and never query the
+    feature_flag_evaluation_* metrics (RULES.md hard rule 7).
+PromQL templates (names verified live; see VERIFIED FACTS above):
   error_rate: sum by (service_name) (rate(traces_span_metrics_calls_total
               {status_code="STATUS_CODE_ERROR"}[W])) / sum by (service_name)
               (rate(traces_span_metrics_calls_total[W]))
   latency_p95: histogram_quantile(0.95, sum by (le, service_name)
-              (rate(traces_span_metrics_duration_<unit>_bucket[W])))
+              (rate(traces_span_metrics_duration_milliseconds_bucket[W])))
   rps:        sum by (service_name)(rate(traces_span_metrics_calls_total[W]))
   top_errors: topk(5, sum by (service_name, span_name)(rate(
               traces_span_metrics_calls_total{status_code="STATUS_CODE_ERROR"}[W])))
@@ -245,7 +278,8 @@ Acceptance:
       empty data + backend error.
 Depends on: F01, F03    Collides with: F05-F08 (__init__.py line), F14
 (alert detector reuses the same PromQL - put templates in a module-level
-dict PROMQL that F14 can import).
+dict PROMQL that F14 can import; F14 has the same >= 5m window minimum and
+the same feature_flag_* ban).
 
 
 =====================================================================
@@ -268,6 +302,9 @@ Logic:
   - Summary: top 5 patterns, e.g. "12/20 traces: checkout -> payment
     'charge' failed: <msg>; deepest error in payment".
   - Report downstream service of each failing span (child spans' service).
+  - Drop every feature_flag.* and demo.feature_flag.* span attribute before
+    grouping or building evidence (RULES.md hard rule 7). Use the API at
+    /jaeger/ui/api/v3/ (see VERIFIED FACTS).
 Evidence: id "trace:<trace_id>/span:<span_name>", text = service + status
   + error message (truncated 200 chars), ts = span start.
 Acceptance:
@@ -295,7 +332,11 @@ Logic:
   - Query OpenSearch; normalise each message (strip uuids, hex, numbers,
     timestamps) -> group, count, keep first exact line + ts.
   - Summary: top 10 groups "x47 [cart] Can't access cart storage ..."
-  - level is a minimum (error includes fatal; warn includes error).
+  - level is a minimum (error includes fatal; warn includes error). Filter
+    on severity.number (error >= 17, warn >= 13), not severity.text.
+  - Query the index pattern otel-logs-*, never a fixed index name.
+  - Drop every attributes.feature_flag_* field from log docs before
+    grouping or building evidence (RULES.md hard rule 7).
 Evidence: id "log:<service>@<iso_ts>", text = exact original line
   (truncated 300 chars).
 Acceptance:

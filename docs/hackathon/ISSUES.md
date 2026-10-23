@@ -19,3 +19,4 @@ Feature specs are in [FEATURES.md](FEATURES.md).
 | 08 | F08 | Tool: deploy_history | platform | P1 | F01 | [#9](https://github.com/rhrishi-99/opentelemetry-demo/issues/9) | open |
 | 09 | F09 | Investigation loop (Eyes) + LLM client + CLI | brain | P0 | F01, F02 | [#10](https://github.com/rhrishi-99/opentelemetry-demo/issues/10) | open |
 | 91 | D01 | Architecture sketch | eval-docs | — | none | [#11](https://github.com/rhrishi-99/opentelemetry-demo/issues/11) | open |
+| 93 | D93 | Verified telemetry facts | eval-docs | P0 | none | — | in PR (`docs/93-verified-telemetry-facts`) |
