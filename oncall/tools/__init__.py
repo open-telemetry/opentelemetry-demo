@@ -6,3 +6,4 @@ __all__ = ["TOOLS", "TOOL_SCHEMAS", "register_tool"]
 
 # --- tool imports ---
 import oncall.platform.containers  # noqa: F401
+from oncall.platform import deploys  # noqa: F401
