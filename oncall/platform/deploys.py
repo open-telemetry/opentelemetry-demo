@@ -58,7 +58,7 @@ def take_snapshot(settings: Settings | None = None) -> bool:
     """Snapshot image ids at agent start. Returns False (never raises) on failure."""
     settings = settings or load_settings()
     try:
-        ids = containers.compose_container_ids(settings.compose_files)
+        ids = containers.compose_container_ids(settings.COMPOSE_PROJECT_NAME)
         infos = containers.inspect_containers(ids)
     except containers.DockerError as exc:
         log.warning("deploy snapshot not taken: %s", exc)
@@ -141,16 +141,13 @@ def find_changes(
 
 @register_tool(
     TOOL,
-    "Recent changes to the demo's containers: which were restarted, created "
-    "or switched to a different image within the last `window_min` minutes, "
-    "newest first. Use it to answer 'did something change just before the "
-    "incident?'. There is no real deploy system: this is derived from Docker "
-    "container start times. An empty list means nothing changed.",
+    "Containers restarted, recreated or given a new image in the last "
+    "window_min minutes (from Docker start times). Empty = nothing changed.",
     {
         "properties": {
             "window_min": {
                 "type": "integer",
-                "description": "How many minutes back to look. Default 60.",
+                "default": 60,
             }
         }
     },
@@ -178,7 +175,7 @@ def deploy_history(window_min: int = 60) -> ToolResult:
                 now,
             )
 
-        ids = containers.compose_container_ids(settings.compose_files)
+        ids = containers.compose_container_ids(settings.COMPOSE_PROJECT_NAME)
         infos = containers.inspect_containers(ids)
         path = snapshot_path(settings)
         snapshot = read_snapshot(path)

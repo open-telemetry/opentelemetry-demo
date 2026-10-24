@@ -1,0 +1,22 @@
+{
+ "data": [
+  "quote",
+  "email",
+  "telemetry-docs",
+  "payment",
+  "ad",
+  "load-generator",
+  "product-catalog",
+  "shipping",
+  "frontend-proxy",
+  "currency",
+  "frontend-web",
+  "checkout",
+  "image-provider",
+  "cart",
+  "frontend",
+  "recommendation"
+ ],
+ "kwargs": {},
+ "op": "jaeger_services"
+}

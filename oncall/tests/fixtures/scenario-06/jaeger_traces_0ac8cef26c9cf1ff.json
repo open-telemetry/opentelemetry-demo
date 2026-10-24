@@ -1,0 +1,10 @@
+{
+ "data": [],
+ "kwargs": {
+  "service": "email",
+  "tags": {
+   "error": "true"
+  }
+ },
+ "op": "jaeger_traces"
+}

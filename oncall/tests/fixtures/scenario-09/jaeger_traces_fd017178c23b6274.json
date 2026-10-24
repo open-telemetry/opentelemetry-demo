@@ -1,0 +1,299 @@
+{
+ "data": [
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "browser_change_currency",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "aaab15ff08f47630",
+     "startTimeUnixNano": "1792787192253410607",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "78514b4a8d6f9629d46e2ad3f7e15be9"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "browser_add_to_cart",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "9de5c3053c828e06",
+     "startTimeUnixNano": "1792787189458460991",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "1cc20d2ae9738c315fa4c7d9467c9eaf"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "82e615ee847bce2d",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "94a543e4568bce6a",
+     "startTimeUnixNano": "1792787191908667000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "55536b34a15f0b36",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "82e615ee847bce2d",
+     "startTimeUnixNano": "1792787191908411000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "fceacdfaa2ae3990",
+     "service": "cart",
+     "serviceVersion": "3.1.0",
+     "spanId": "980b2cf64e92a58b",
+     "startTimeUnixNano": "1792787191914086600",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "POST /oteldemo.CartService/GetCart",
+     "parentSpanId": "3a002e672e62cfa3",
+     "service": "cart",
+     "serviceVersion": "3.1.0",
+     "spanId": "54b02ffecafa2d5a",
+     "startTimeUnixNano": "1792787191913864000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetCart"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.CartService/GetCart",
+     "parentSpanId": "cc44befcc58623a1",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "3a002e672e62cfa3",
+     "startTimeUnixNano": "1792787191911000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "e76462a6e42f0624",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "6b3760d0d965daac",
+     "startTimeUnixNano": "1792787191911000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 1,
+     "name": "executing api route (pages) /api/cart",
+     "parentSpanId": "e76462a6e42f0624",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "cc44befcc58623a1",
+     "startTimeUnixNano": "1792787191911000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/cart",
+     "parentSpanId": "a55905981159d53f",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "e76462a6e42f0624",
+     "startTimeUnixNano": "1792787191910000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/cart",
+     "parentSpanId": "94a543e4568bce6a",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "a55905981159d53f",
+     "startTimeUnixNano": "1792787191910000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_view_cart",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "f97f2c69c143ca22",
+     "startTimeUnixNano": "1792787191905358677",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": "f97f2c69c143ca22",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "55536b34a15f0b36",
+     "startTimeUnixNano": "1792787191906843653",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "3df2d6f13bb48dc019c12275f23c0ad7"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "browser_add_to_cart",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "5a153edfce7724b5",
+     "startTimeUnixNano": "1792787184602356977",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "ce050ff2b2f73c4b08b6d368a6327624"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "9d51f800b9e1cd1c",
+     "startTimeUnixNano": "1792787184624986518",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "9d51f800b9e1cd1c",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "bb751860b5c71759",
+     "startTimeUnixNano": "1792787184626369199",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    }
+   ],
+   "traceId": "87005ccdadba19c1e02645dc610b1e4c"
+  }
+ ],
+ "kwargs": {
+  "service": "load-generator",
+  "tags": null
+ },
+ "op": "jaeger_traces"
+}

@@ -206,8 +206,8 @@ def test_investigate_and_diagnose(tmp_path):
 
 
 AGENT_DIR = Path(diagnosis.__file__).parent
-# Flag wording (feature_flag / feature.flag / the flag service name, written
-# "flag-?d" so this file passes CI's own grep) and answer-style mappings such
+# Flag wording ("feature" + "_", "." or " " + "flag", and the flag service name,
+# written so this file passes CI's own greps) and answer-style mappings such
 # as "scenario-01" or "scenario 3".
 FORBIDDEN = re.compile(r"feature[_. ]?flag|flag-?d|scenario[- ]?\d", re.IGNORECASE)
 

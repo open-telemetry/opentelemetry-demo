@@ -1,6 +1,6 @@
 """container_health tool: read-only health of the demo's Docker containers.
 
-Docker is only ever asked to *describe* containers: `docker compose ps`,
+Docker is only ever asked to *describe* containers: `docker ps`,
 `docker inspect` and `docker stats`. Nothing here starts, stops, restarts or
 changes a container (hackathon hard rule; a test scans this file to prove it).
 """
@@ -11,8 +11,10 @@ import subprocess
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
+from oncall.agent.taxonomy import CLIENT_SERVICES
 from oncall.config import Settings, load_settings
 from oncall.models import Evidence, ToolResult, make_error, make_result
+from oncall.safety.exclusions import is_excluded
 from oncall.tools.registry import register_tool
 
 TOOL = "container_health"
@@ -25,6 +27,9 @@ TOOL = "container_health"
 CPU_PCT_MAX = 90.0  # % of the container's CPU limit
 RECENT_RESTART_MIN = 15  # restarted by Docker within this many minutes
 BUSIEST_IN_SUMMARY = 3  # healthy containers with the most CPU/memory use
+# Healthy containers kept as evidence (the busiest); the rest are only counted,
+# which keeps the result small for the LLM's context.
+HEALTHY_EVIDENCE = 5
 
 DOCKER_TIMEOUT_S = 15
 READ_ONLY_COMMANDS = ("ps", "inspect", "stats")
@@ -71,13 +76,10 @@ def _run_docker(args: list[str]) -> str:
     return proc.stdout
 
 
-def compose_container_ids(compose_files: list[str]) -> list[str]:
+def compose_container_ids(project: str) -> list[str]:
     """IDs of every container in this compose project, running or not."""
-    args = ["compose"]
-    for f in compose_files:
-        args += ["-f", f]
-    args += ["ps", "--all", "--quiet"]
-    return _run_docker(args).split()
+    label = f"label=com.docker.compose.project={project}"
+    return _run_docker(["ps", "--all", "--quiet", "--filter", label]).split()
 
 
 def inspect_containers(ids: list[str]) -> list[dict]:
@@ -158,8 +160,18 @@ def _describe(info: dict, stats: dict | None) -> dict:
     }
 
 
+def _is_client(c: dict) -> bool:
+    return (c["service"] or c["name"]) in CLIENT_SERVICES
+
+
 def _problems(c: dict, now: datetime) -> list[str]:
-    """Reasons this container looks unhealthy; empty list means healthy."""
+    """Reasons this container looks unhealthy; empty list means healthy.
+
+    Clients (the load generator) are never unhealthy: their state and usage are
+    reported, but they are a traffic source, not a root-cause candidate.
+    """
+    if _is_client(c):
+        return []
     problems = []
     if c["state"] != "running":
         problems.append(f"not running (state={c['state']}, exit_code={c['exit_code']})")
@@ -197,27 +209,45 @@ def _usage(c: dict) -> str:
 
 
 def _evidence_text(c: dict, problems: list[str]) -> str:
+    if not problems:
+        text = (
+            f"{c['name']}: state={c['state']}, health={c['health'] or 'none'}, "
+            f"{_usage(c)}"
+        )
+        if _is_client(c):
+            text += " | client (traffic generator), never marked unhealthy"
+        return text
     text = (
         f"{c['name']}: state={c['state']}, health={c['health'] or 'none'}, "
         f"restarts={c['restart_count']}, exit_code={c['exit_code']}, "
         f"oom_killed={str(c['oom_killed']).lower()}, started_at={c['started_at']}, "
         f"{_usage(c)}"
     )
-    if problems:
-        text += " | FLAGGED: " + "; ".join(problems)
-    return text
+    return text + " | FLAGGED: " + "; ".join(problems)
 
 
 def check_containers(
-    infos: list[dict], stats: list[dict], service: str | None, now: datetime
+    infos: list[dict],
+    stats: list[dict],
+    service: str | None,
+    now: datetime,
+    max_healthy: int | None = HEALTHY_EVIDENCE,
 ) -> ToolResult:
-    """Turn raw `docker inspect` + `docker stats` output into a ToolResult."""
+    """Turn raw `docker inspect` + `docker stats` output into a ToolResult.
+
+    Evidence holds every flagged container and the `max_healthy` busiest healthy
+    ones (all of them when None).
+    """
     query = {"service": service}
     stats_by_name = {s.get("Name"): s for s in stats}
+    if is_excluded(service):
+        return make_error(TOOL, query, "service is not available to inspect")
     containers = []
     for info in infos:
         name = (info.get("Name") or "").lstrip("/")
-        containers.append(_describe(info, stats_by_name.get(name)))
+        c = _describe(info, stats_by_name.get(name))
+        if not (is_excluded(c["service"]) or is_excluded(c["name"])):
+            containers.append(c)
 
     if service:
         known = sorted({c["service"] or c["name"] for c in containers})
@@ -251,29 +281,33 @@ def check_containers(
         summary = f"All {len(rows)} containers healthy."
     busiest = [c for c, p in rows if not p and _busy(c) > 0][:BUSIEST_IN_SUMMARY]
     if busiest:
-        usage = "; ".join(f"{c['name']} {_usage(c)}" for c in busiest)
+        usage = "; ".join(
+            f"{c['name']}{' (client)' if _is_client(c) else ''} {_usage(c)}"
+            for c in busiest
+        )
         summary = f"{summary.rstrip('.')}. Busiest: {usage}."
 
     ts = now.isoformat(timespec="seconds")
+    healthy = [(c, p) for c, p in rows if not p]
+    kept = flagged + (healthy if max_healthy is None else healthy[:max_healthy])
+    if len(kept) < len(rows):
+        summary = f"{summary.rstrip('.')}. Evidence lists {len(kept)} of {len(rows)}."
     evidence: list[Evidence] = [
         {"id": f"container:{c['name']}", "text": _evidence_text(c, p), "ts": ts}
-        for c, p in rows
+        for c, p in kept
     ]
     return make_result(TOOL, query, summary, evidence)
 
 
 @register_tool(
     TOOL,
-    "Read-only health check of the demo's Docker containers: state, healthcheck, "
-    "restart count, OOM kill, exit code, CPU and memory use. Use it to spot "
-    "infrastructure faults: a container that is stopped, crash-looping, killed "
-    "for running out of memory, or starved of CPU or memory. Unhealthy "
-    "containers are listed first.",
+    "Docker container state, restarts, OOM kills, CPU and memory. Spots "
+    "stopped, crash-looping, OOM-killed or CPU-limited containers.",
     {
         "properties": {
             "service": {
                 "type": "string",
-                "description": "Compose service name, e.g. 'cart'. Omit to check all.",
+                "description": "Omit to check all containers.",
             }
         }
     },
@@ -292,7 +326,7 @@ def container_health(service: str | None = None) -> ToolResult:
                 fixture.get("inspect", []), fixture.get("stats", []), service, now
             )
 
-        infos = inspect_containers(compose_container_ids(settings.compose_files))
+        infos = inspect_containers(compose_container_ids(settings.COMPOSE_PROJECT_NAME))
         running = [
             i["Id"] for i in infos if (i.get("State") or {}).get("Status") == "running"
         ]

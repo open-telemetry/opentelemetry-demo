@@ -69,3 +69,12 @@ src/shipping/target/
 # Hackathon agent (oncall/)
 oncall/.env
 runs/
+scripts/faultctl/.state.json
+
+# Incident reports written by the on-call agent
+reports/
+
+# Eval run output; only the summary is kept
+eval/results/*
+!eval/results/summary.md
+!eval/results/.gitkeep

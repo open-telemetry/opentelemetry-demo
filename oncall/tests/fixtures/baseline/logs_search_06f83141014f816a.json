@@ -1,0 +1,8 @@
+{
+ "data": [],
+ "kwargs": {
+  "level": "warn",
+  "service": "product-catalog"
+ },
+ "op": "logs_search"
+}

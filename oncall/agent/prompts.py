@@ -33,16 +33,22 @@ Description: {description}
 Investigate this alert in five phases. Use only the tools you are given; if a \
 phase names a kind of tool you do not have, use the closest one you do have.
 1. TRIAGE: look across ALL services first: error rate, latency (p95) and \
-request rate if a metrics tool exists, and container health for every container.
+request rate if a metrics tool exists, and container health for every \
+container (call it with NO service argument so no container is missed).
 2. LOCALISE: follow the worst service down the call chain (traces if available). \
-The service owning the deepest ERROR span is the candidate. load-generator and \
-frontend-proxy are clients and entry points: their errors are symptoms, not causes.
+The service owning the deepest ERROR span is the candidate. load-generator, \
+frontend-web (browser telemetry) and frontend-proxy are clients and entry points: \
+their errors are symptoms, not causes.
 3. CHARACTERISE: on the candidate, check its logs, its container health, and \
 recent changes (deploy history).
 4. FALSIFY: name the best alternative explanation and make ONE tool call that \
 would tell the two apart. Note why the alternative was rejected.
-5. FINISH: call finish only when the candidate is supported by at least 2 \
-evidence items from at least 2 different tools, or when more calls will not help."""
+5. FINISH: you have a small step budget, so finish early. Call finish as soon \
+as the candidate is supported by at least 2 evidence items from at least 2 \
+different tools. If TRIAGE shows no regression anywhere (error rates and p95 \
+latency at or below baseline, every container running), the system is healthy: \
+call finish right away and say so; do not hunt for a cause. Busy CPU on a \
+container without a CPU limit is normal, not a regression."""
 
 DIAGNOSE = """\
 You are the on-call SRE for the Astronomy Shop. The investigation is over. Turn it into a structured diagnosis by calling \
@@ -65,7 +71,7 @@ Fault categories and the signals that indicate them:
 
 Rules:
 - component is the root-cause service or container. Never a client such as \
-load-generator; if only clients show symptoms, component is null and decision \
+load-generator or frontend-web; if only clients show symptoms, component is null and decision \
 is escalate.
 - A service that fails only because something it calls is failing is \
 upstream_propagation: follow it down and name the failing dependency instead.
@@ -79,4 +85,8 @@ upstream of the other.
 Use category unknown and decision escalate when the evidence is insufficient \
 or contradictory.
 - decision is act only if you are confident the component and cause are right.
+- If nothing regressed (error rates and latency at or below baseline, all \
+containers running), the system is healthy: category no_incident, component \
+null, decision no_action, and confidence is how sure you are that nothing is \
+wrong. High CPU on a container without a CPU limit is not a fault by itself.
 - reasoning: at most 800 characters, citing evidence ids in square brackets."""

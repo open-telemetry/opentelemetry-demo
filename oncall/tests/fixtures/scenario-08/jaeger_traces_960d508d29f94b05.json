@@ -1,0 +1,215 @@
+{
+ "data": [
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "e862f673570219c9",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "faca2c8bf2c7dcbe",
+     "startTimeUnixNano": "1792786799862000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "4ba78d2e26641cc77725ee072c4bfd69"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "c02c2b9406c33593",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "f1e549fd5ed47946",
+     "startTimeUnixNano": "1792786799996000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "55d5f6e6424583f6",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "c02c2b9406c33593",
+     "startTimeUnixNano": "1792786799991173000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "55d5f6e6424583f6",
+     "startTimeUnixNano": "1792786799990912000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "fb5ace97751446f802ff180a1096e42d"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "25e398688394f04a",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "cd8eaad77767da72",
+     "startTimeUnixNano": "1792786799967000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "0"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "138f2bccf7be3326",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "0e1db51a49b22542",
+     "startTimeUnixNano": "1792786799964212000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "0"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "0e1db51a49b22542",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "e9037d946da28f8b",
+     "startTimeUnixNano": "1792786799964826000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "c509a68ffe21f7430aaa4d3865fce5e5"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "06adddafbfc6b0d5",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "95fcdd391af672fb",
+     "startTimeUnixNano": "1792786799471000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "7c85cbd392bf5979",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "06adddafbfc6b0d5",
+     "startTimeUnixNano": "1792786799469037000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "7c85cbd392bf5979",
+     "startTimeUnixNano": "1792786799468712000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "16fbb71ebfc912ce59ef0316c7fc89f8"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "8b63ab97648082bf",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "dd9afa64a0473a32",
+     "startTimeUnixNano": "1792786799825000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "126503d47b70d4c4fb922a5ab7b461b7"
+  }
+ ],
+ "kwargs": {
+  "service": "frontend",
+  "tags": null
+ },
+ "op": "jaeger_traces"
+}

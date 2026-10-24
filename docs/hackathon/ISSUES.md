@@ -27,6 +27,7 @@ Feature specs are in [FEATURES.md](FEATURES.md).
 | 17 | F17 | Eval harness | eval | P0 | F11, F12, F16 | [#23](https://github.com/rhrishi-99/opentelemetry-demo/issues/23) | open |
 | 18 | F18 | faultctl inject/reset (human test tool) | platform | P0 | none | [#30](https://github.com/rhrishi-99/opentelemetry-demo/issues/30) | open |
 | 19 | F19 | Action API (allowlist + log + dry run) | safety | P0 | F01 | [#31](https://github.com/rhrishi-99/opentelemetry-demo/issues/31) | open |
+| 21 | F21 | Demo UI (Streamlit) | ui | P1 | F12 | — | in progress (`feat/21-demo-ui`) |
 | 91 | D01 | Architecture sketch | eval-docs | — | none | [#11](https://github.com/rhrishi-99/opentelemetry-demo/issues/11) | open |
 | 93 | D93 | Verified telemetry facts | eval-docs | P0 | none | PR #26 | merged |
 | 95 | D95 | Wave 2 specs F11-F17 | eval-docs | P0 | none | PR #26 | merged |

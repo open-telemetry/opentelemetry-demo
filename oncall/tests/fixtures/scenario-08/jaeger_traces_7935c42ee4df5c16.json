@@ -1,0 +1,789 @@
+{
+ "data": [
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "7e1b53ad33b54336",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "dc3dfe283bdee988",
+     "startTimeUnixNano": "1792786783362463000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "df1f88dca5f5de5c",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "7e1b53ad33b54336",
+     "startTimeUnixNano": "1792786783362305000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "df1f88dca5f5de5c",
+     "startTimeUnixNano": "1792786783352000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.CurrencyService/GetSupportedCurrencies"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.CurrencyService/GetSupportedCurrencies",
+     "parentSpanId": "2245053cda0ff17a",
+     "service": "currency",
+     "serviceVersion": "3.1.0",
+     "spanId": "94cd3aeccc692c6b",
+     "startTimeUnixNano": "1792786783373352940",
+     "status": {
+      "code": "OK",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "bb1cfccc8853092a",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "4f6782f8a14186cc",
+     "startTimeUnixNano": "1792786783370000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 1,
+     "name": "executing api route (pages) /api/currency",
+     "parentSpanId": "bb1cfccc8853092a",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "f913c02e457c723a",
+     "startTimeUnixNano": "1792786783371000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/currency",
+     "parentSpanId": "7b0ebe4ca62eddcd",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "bb1cfccc8853092a",
+     "startTimeUnixNano": "1792786783370000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetSupportedCurrencies"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.CurrencyService/GetSupportedCurrencies",
+     "parentSpanId": "f913c02e457c723a",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "2245053cda0ff17a",
+     "startTimeUnixNano": "1792786783371000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/currency",
+     "parentSpanId": "dc3dfe283bdee988",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "7b0ebe4ca62eddcd",
+     "startTimeUnixNano": "1792786783369000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "bccbe64957e060ee9706d81a83b8bd4d"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "2dd7d177d402b73e",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "b6d799d1f589d5a7",
+     "startTimeUnixNano": "1792786779263234000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "208e7255090df3d6",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "2dd7d177d402b73e",
+     "startTimeUnixNano": "1792786779262973000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.CurrencyService/GetSupportedCurrencies"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.CurrencyService/GetSupportedCurrencies",
+     "parentSpanId": "f7b17c2400bce2a9",
+     "service": "currency",
+     "serviceVersion": "3.1.0",
+     "spanId": "e27a071785d18f3d",
+     "startTimeUnixNano": "1792786779267795419",
+     "status": {
+      "code": "OK",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "208e7255090df3d6",
+     "startTimeUnixNano": "1792786779249000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/currency",
+     "parentSpanId": "b6d799d1f589d5a7",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "e572fc0fb29199b2",
+     "startTimeUnixNano": "1792786779265000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "3bb2b4d898edec23",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "3f01573839f6a13c",
+     "startTimeUnixNano": "1792786779265000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 1,
+     "name": "executing api route (pages) /api/currency",
+     "parentSpanId": "3bb2b4d898edec23",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "461aaa81a3a7e1b8",
+     "startTimeUnixNano": "1792786779266000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/currency",
+     "parentSpanId": "e572fc0fb29199b2",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "3bb2b4d898edec23",
+     "startTimeUnixNano": "1792786779265000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetSupportedCurrencies"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.CurrencyService/GetSupportedCurrencies",
+     "parentSpanId": "461aaa81a3a7e1b8",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "f7b17c2400bce2a9",
+     "startTimeUnixNano": "1792786779266000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "e72dcfafd534b5a64d76355288d20f19"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "0ff72464f237d270",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "fa01705349c897fe",
+     "startTimeUnixNano": "1792786775135499000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "8e1ad3e8bcac78df",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "0ff72464f237d270",
+     "startTimeUnixNano": "1792786775135303000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "8e1ad3e8bcac78df",
+     "startTimeUnixNano": "1792786775114000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetSupportedCurrencies"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.CurrencyService/GetSupportedCurrencies",
+     "parentSpanId": "54522a83e0fe47e1",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "ce0bd8f54de30ec6",
+     "startTimeUnixNano": "1792786775141000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "e0b64d8e2ee62be2",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "5182213f4431a076",
+     "startTimeUnixNano": "1792786775140000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 1,
+     "name": "executing api route (pages) /api/currency",
+     "parentSpanId": "e0b64d8e2ee62be2",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "54522a83e0fe47e1",
+     "startTimeUnixNano": "1792786775140000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/currency",
+     "parentSpanId": "1894611f3f26260a",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "e0b64d8e2ee62be2",
+     "startTimeUnixNano": "1792786775139000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/currency",
+     "parentSpanId": "fa01705349c897fe",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "1894611f3f26260a",
+     "startTimeUnixNano": "1792786775139000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.CurrencyService/GetSupportedCurrencies"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.CurrencyService/GetSupportedCurrencies",
+     "parentSpanId": "ce0bd8f54de30ec6",
+     "service": "currency",
+     "serviceVersion": "3.1.0",
+     "spanId": "684afec32a9230b8",
+     "startTimeUnixNano": "1792786775143531379",
+     "status": {
+      "code": "OK",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "76ea1cd952e74822d432af0b71cf3df9"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "8b216d08cd70732f",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "20f31c10f2c6287e",
+     "startTimeUnixNano": "1792786760878592000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "15d45830ee5287a5",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "8b216d08cd70732f",
+     "startTimeUnixNano": "1792786760878424000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "15d45830ee5287a5",
+     "startTimeUnixNano": "1792786760866000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.CurrencyService/GetSupportedCurrencies"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.CurrencyService/GetSupportedCurrencies",
+     "parentSpanId": "be185fa93e5d7734",
+     "service": "currency",
+     "serviceVersion": "3.1.0",
+     "spanId": "be11cf78cd2f81e7",
+     "startTimeUnixNano": "1792786760890571186",
+     "status": {
+      "code": "OK",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetSupportedCurrencies"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.CurrencyService/GetSupportedCurrencies",
+     "parentSpanId": "cc4a707b1a794b0d",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "be185fa93e5d7734",
+     "startTimeUnixNano": "1792786760888000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "4c0536c1b6e2a790",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "41aaa976b02aa68e",
+     "startTimeUnixNano": "1792786760886000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 1,
+     "name": "executing api route (pages) /api/currency",
+     "parentSpanId": "4c0536c1b6e2a790",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "cc4a707b1a794b0d",
+     "startTimeUnixNano": "1792786760888000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/currency",
+     "parentSpanId": "1e211ce43299390a",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "4c0536c1b6e2a790",
+     "startTimeUnixNano": "1792786760886000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/currency",
+     "parentSpanId": "20f31c10f2c6287e",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "1e211ce43299390a",
+     "startTimeUnixNano": "1792786760885000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "992fcdaeb06cd32297588146e6d19bde"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "29261e7f2d860143",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "b70b885906255dfd",
+     "startTimeUnixNano": "1792786756647209000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "6b5c577f10427462",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "29261e7f2d860143",
+     "startTimeUnixNano": "1792786756647009000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "6b5c577f10427462",
+     "startTimeUnixNano": "1792786756632000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/currency",
+     "parentSpanId": "b70b885906255dfd",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "92967e3e2d20f5e6",
+     "startTimeUnixNano": "1792786756650000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "5ddf85c4ac1c59b9",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "d657424f7503801e",
+     "startTimeUnixNano": "1792786756652000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 1,
+     "name": "executing api route (pages) /api/currency",
+     "parentSpanId": "5ddf85c4ac1c59b9",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "879f1a4973e26102",
+     "startTimeUnixNano": "1792786756652000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/currency",
+     "parentSpanId": "92967e3e2d20f5e6",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "5ddf85c4ac1c59b9",
+     "startTimeUnixNano": "1792786756651000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetSupportedCurrencies"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.CurrencyService/GetSupportedCurrencies",
+     "parentSpanId": "879f1a4973e26102",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "b8395c98f1bb7a74",
+     "startTimeUnixNano": "1792786756653000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.CurrencyService/GetSupportedCurrencies"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.CurrencyService/GetSupportedCurrencies",
+     "parentSpanId": "b8395c98f1bb7a74",
+     "service": "currency",
+     "serviceVersion": "3.1.0",
+     "spanId": "eb3bb3af1f3951b2",
+     "startTimeUnixNano": "1792786756654933835",
+     "status": {
+      "code": "OK",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "a5bc77021cbe2dc40b57e1cf58e22958"
+  }
+ ],
+ "kwargs": {
+  "service": "currency",
+  "tags": null
+ },
+ "op": "jaeger_traces"
+}

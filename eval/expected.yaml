@@ -1,0 +1,46 @@
+# Answers for the recorded practice scenarios (F11). The ONLY place answers
+# live: nothing under oncall/ may read this file (CI rules job greps for it).
+# Written by the human who injected each scenario with scripts/faultctl.
+#
+# component / category: the expected answer. accept_components /
+# accept_categories: other answers that are also right for the same fault.
+scenarios:
+  baseline:
+    component: null
+    category: no_incident
+    decision: no_action
+  scenario-06:
+    component: valkey-cart
+    category: dependency_unavailable
+    accept_categories: [container_down]
+  scenario-07:
+    component: email
+    category: container_down
+    accept_categories: [dependency_unavailable]
+  scenario-08:
+    component: product-catalog
+    category: resource_cpu
+  scenario-09:
+    component: recommendation
+    category: resource_memory
+  # Flag scenarios (scripts/faultctl type "flag"); not recorded yet, so the
+  # default eval run skips them until oncall/tests/fixtures/<id>/ exists.
+  scenario-01:
+    component: payment
+    category: app_error
+  scenario-02:
+    component: cart
+    category: app_error
+  scenario-03:
+    component: ad
+    category: resource_cpu
+  scenario-04:
+    component: recommendation
+    category: resource_memory
+  scenario-05:
+    component: frontend
+    category: traffic_surge
+    accept_components: [frontend-proxy]
+  scenario-10:
+    component: product-catalog
+    category: app_error

@@ -1,0 +1,10 @@
+{
+ "data": [],
+ "kwargs": {
+  "service": "frontend",
+  "tags": {
+   "error": "true"
+  }
+ },
+ "op": "jaeger_traces"
+}

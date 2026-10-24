@@ -252,7 +252,7 @@ Checked against the files in this repo. Items marked *not verified live* still n
 
 - Upstream OpenTelemetry Demo 3.1.0 fork (`IMAGE_VERSION=3.1.0` in the root `.env`). The starter kit (JSON schema, Action API, faultctl, offline bundles, practice incident list) is not in the repo and has not been received.
 - Logs and metrics reach OpenSearch and Prometheus only with the observability overlay. The base collector config sends them to the `debug` exporter. Run with `compose.observability.yaml` or `compose.full.yaml`. *The collector config for `compose.full.yaml` is not yet verified.*
-- Jaeger, OpenSearch and Grafana host ports are random: compose lists them as bare ports. Resolve with `discover_endpoints()` (`docker compose port <service> <port>`). Never hardcode a port.
+- Jaeger, OpenSearch and Grafana host ports are random: compose lists them as bare ports. Resolve with `resolve_endpoints()` (published port of the `COMPOSE_PROJECT_NAME` container, found by compose labels). Never hardcode a port.
 - Prometheus is at `http://127.0.0.1:9090` (fixed mapping). Verified live:
   - Span metrics: `traces_span_metrics_calls_total` and `traces_span_metrics_duration_milliseconds_{bucket,count,sum}`.
   - Labels: `service_name`, `span_name`, `span_kind`, `status_code` (`STATUS_CODE_ERROR`, `STATUS_CODE_OK`, `STATUS_CODE_UNSET`). `error_type`, `error_message`, `rpc_grpc_status_code` and `http_response_status_code` are expected on error series; a healthy demo has no values for them yet, so re-check with an incident active.

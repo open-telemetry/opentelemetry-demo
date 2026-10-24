@@ -1,0 +1,33 @@
+{
+ "data": {
+  "data": {
+   "result": [
+    {
+     "metric": {
+      "span_name": "POST"
+     },
+     "value": [
+      1792784995,
+      "0.06759040216289287"
+     ]
+    },
+    {
+     "metric": {
+      "span_name": "GET"
+     },
+     "value": [
+      1792784995,
+      "0"
+     ]
+    }
+   ],
+   "resultType": "vector"
+  },
+  "status": "success"
+ },
+ "kwargs": {
+  "baseline": true,
+  "promql": "topk(5, sum by (span_name) (rate(traces_span_metrics_calls_total{service_name=\"load-generator\",{exclude},status_code=\"STATUS_CODE_ERROR\"}[{window}])))"
+ },
+ "op": "prom_query"
+}

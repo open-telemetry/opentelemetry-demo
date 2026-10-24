@@ -1,0 +1,1645 @@
+{
+ "captured_at": "2026-10-23T20:20:07Z",
+ "deploy_snapshot": null,
+ "inspect": [
+  {
+   "Config": {
+    "Image": "ghcr.io/open-telemetry/demo:latest-frontend-proxy",
+    "Labels": {
+     "com.docker.compose.service": "frontend-proxy"
+    }
+   },
+   "Created": "2026-10-23T10:04:11.203803657Z",
+   "HostConfig": {
+    "CpuPeriod": 0,
+    "CpuQuota": 0,
+    "Memory": 94371840,
+    "NanoCpus": 0
+   },
+   "Id": "9f6daf474cf1decc3108a67a4990c913b6924ad3ddf3f8680bfda2de08c534f0",
+   "Image": "sha256:70c6f04a45247c0f37bc9c1b348f6497ed490db0e30ae1dfb9150b5ee02df480",
+   "Name": "/frontend-proxy",
+   "RestartCount": 0,
+   "State": {
+    "Dead": false,
+    "Error": "",
+    "ExitCode": 0,
+    "FinishedAt": "0001-01-01T00:00:00Z",
+    "Health": {
+     "FailingStreak": 0,
+     "Log": [
+      {
+       "End": "2026-10-23T20:19:47.679935717Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:47.56382143Z"
+      },
+      {
+       "End": "2026-10-23T20:19:52.780381357Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:52.681638723Z"
+      },
+      {
+       "End": "2026-10-23T20:19:57.922178018Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:57.78176666Z"
+      },
+      {
+       "End": "2026-10-23T20:20:00.841611972Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:20:00.732316744Z"
+      },
+      {
+       "End": "2026-10-23T20:20:06.134975758Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:20:05.842262674Z"
+      }
+     ],
+     "Status": "healthy"
+    },
+    "OOMKilled": false,
+    "Paused": false,
+    "Pid": 28048,
+    "Restarting": false,
+    "Running": true,
+    "StartedAt": "2026-10-23T10:05:08.22532401Z",
+    "Status": "running"
+   }
+  },
+  {
+   "Config": {
+    "Image": "ghcr.io/open-telemetry/demo:latest-load-generator",
+    "Labels": {
+     "com.docker.compose.service": "load-generator"
+    }
+   },
+   "Created": "2026-10-23T10:04:10.988337261Z",
+   "HostConfig": {
+    "CpuPeriod": 0,
+    "CpuQuota": 0,
+    "Memory": 1572864000,
+    "NanoCpus": 0
+   },
+   "Id": "99441b52446b17d42a8f1640996ebc8246a1c9043156ee492dfc59cf23621e64",
+   "Image": "sha256:3f2ac7f878823aaa8816c23cdc8f01fab4950077610dc4858d03b8bba9929d16",
+   "Name": "/load-generator",
+   "RestartCount": 0,
+   "State": {
+    "Dead": false,
+    "Error": "",
+    "ExitCode": 0,
+    "FinishedAt": "0001-01-01T00:00:00Z",
+    "Health": {
+     "FailingStreak": 0,
+     "Log": [
+      {
+       "End": "2026-10-23T20:19:44.876025096Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:44.722763549Z"
+      },
+      {
+       "End": "2026-10-23T20:19:50.119135765Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:49.877619818Z"
+      },
+      {
+       "End": "2026-10-23T20:19:55.285561723Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:55.121141967Z"
+      },
+      {
+       "End": "2026-10-23T20:20:00.420370697Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:20:00.286803095Z"
+      },
+      {
+       "End": "2026-10-23T20:20:03.407558311Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:20:03.230308411Z"
+      }
+     ],
+     "Status": "healthy"
+    },
+    "OOMKilled": false,
+    "Paused": false,
+    "Pid": 27860,
+    "Restarting": false,
+    "Running": true,
+    "StartedAt": "2026-10-23T10:05:07.038591371Z",
+    "Status": "running"
+   }
+  },
+  {
+   "Config": {
+    "Image": "ghcr.io/open-telemetry/demo:latest-frontend",
+    "Labels": {
+     "com.docker.compose.service": "frontend"
+    }
+   },
+   "Created": "2026-10-23T10:04:10.688269825Z",
+   "HostConfig": {
+    "CpuPeriod": 0,
+    "CpuQuota": 0,
+    "Memory": 262144000,
+    "NanoCpus": 0
+   },
+   "Id": "ce38faa46f7bb2b8276ad8a048cc419fdf789783669755eea3ac0809850887b6",
+   "Image": "sha256:f4bc426cf2b4f6cb4d5a796b914d87874ac46f9f665cdb331e61f6dc0140584c",
+   "Name": "/frontend",
+   "RestartCount": 0,
+   "State": {
+    "Dead": false,
+    "Error": "",
+    "ExitCode": 0,
+    "FinishedAt": "0001-01-01T00:00:00Z",
+    "Health": {
+     "FailingStreak": 0,
+     "Log": [
+      {
+       "End": "2026-10-23T20:19:22.716036485Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:22.466407182Z"
+      },
+      {
+       "End": "2026-10-23T20:19:32.887750397Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:32.716966986Z"
+      },
+      {
+       "End": "2026-10-23T20:19:40.911419627Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:40.723057686Z"
+      },
+      {
+       "End": "2026-10-23T20:19:51.099001605Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:50.912013799Z"
+      },
+      {
+       "End": "2026-10-23T20:19:59.100773296Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:20:00.281138886Z"
+      }
+     ],
+     "Status": "healthy"
+    },
+    "OOMKilled": false,
+    "Paused": false,
+    "Pid": 27357,
+    "Restarting": false,
+    "Running": true,
+    "StartedAt": "2026-10-23T10:05:02.47024529Z",
+    "Status": "running"
+   }
+  },
+  {
+   "Config": {
+    "Image": "ghcr.io/open-telemetry/demo:latest-checkout",
+    "Labels": {
+     "com.docker.compose.service": "checkout"
+    }
+   },
+   "Created": "2026-10-23T10:04:10.354046096Z",
+   "HostConfig": {
+    "CpuPeriod": 0,
+    "CpuQuota": 0,
+    "Memory": 20971520,
+    "NanoCpus": 0
+   },
+   "Id": "c6ea97e2fce53e13c133c6ec9d40fdfdcb411883c20bca75f375c0af0c6e6364",
+   "Image": "sha256:4ee9a8102114f78888e3a43798120e1ddc54e0eb2d673705668a0b8c198b935c",
+   "Name": "/checkout",
+   "RestartCount": 0,
+   "State": {
+    "Dead": false,
+    "Error": "",
+    "ExitCode": 0,
+    "FinishedAt": "0001-01-01T00:00:00Z",
+    "Health": {
+     "FailingStreak": 0,
+     "Log": [
+      {
+       "End": "2026-10-23T20:19:46.020616939Z",
+       "ExitCode": 0,
+       "Output": "status: SERVING\n",
+       "Start": "2026-10-23T20:19:45.595135047Z"
+      },
+      {
+       "End": "2026-10-23T20:19:51.493766768Z",
+       "ExitCode": 0,
+       "Output": "status: SERVING\n",
+       "Start": "2026-10-23T20:19:51.02119848Z"
+      },
+      {
+       "End": "2026-10-23T20:19:56.951962292Z",
+       "ExitCode": 0,
+       "Output": "status: SERVING\n",
+       "Start": "2026-10-23T20:19:56.495460896Z"
+      },
+      {
+       "End": "2026-10-23T20:20:00.329312717Z",
+       "ExitCode": 0,
+       "Output": "status: SERVING\n",
+       "Start": "2026-10-23T20:19:59.762711265Z"
+      },
+      {
+       "End": "2026-10-23T20:20:06.309265614Z",
+       "ExitCode": 0,
+       "Output": "status: SERVING\n",
+       "Start": "2026-10-23T20:20:05.330741877Z"
+      }
+     ],
+     "Status": "healthy"
+    },
+    "OOMKilled": false,
+    "Paused": false,
+    "Pid": 26950,
+    "Restarting": false,
+    "Running": true,
+    "StartedAt": "2026-10-23T10:04:57.136122524Z",
+    "Status": "running"
+   }
+  },
+  {
+   "Config": {
+    "Image": "ghcr.io/open-telemetry/demo:latest-recommendation",
+    "Labels": {
+     "com.docker.compose.service": "recommendation"
+    }
+   },
+   "Created": "2026-10-23T10:04:10.315352855Z",
+   "HostConfig": {
+    "CpuPeriod": 0,
+    "CpuQuota": 0,
+    "Memory": 524288000,
+    "NanoCpus": 0
+   },
+   "Id": "cac3b9781f0362e3c331b046a6afb542f7d8b9ee7bf7710d0cf9b1bd5243488f",
+   "Image": "sha256:038fcf8b9c511a1700be9d201351388e390f727db2628541d9af4f84f76632dc",
+   "Name": "/recommendation",
+   "RestartCount": 0,
+   "State": {
+    "Dead": false,
+    "Error": "",
+    "ExitCode": 0,
+    "FinishedAt": "0001-01-01T00:00:00Z",
+    "Health": {
+     "FailingStreak": 0,
+     "Log": [
+      {
+       "End": "2026-10-23T20:19:47.720570334Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:47.621417144Z"
+      },
+      {
+       "End": "2026-10-23T20:19:52.805004656Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:52.721338265Z"
+      },
+      {
+       "End": "2026-10-23T20:19:57.918714095Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:57.808138752Z"
+      },
+      {
+       "End": "2026-10-23T20:20:00.864487722Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:20:00.728765641Z"
+      },
+      {
+       "End": "2026-10-23T20:20:06.178502694Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:20:05.866111091Z"
+      }
+     ],
+     "Status": "healthy"
+    },
+    "OOMKilled": false,
+    "Paused": false,
+    "Pid": 25755,
+    "Restarting": false,
+    "Running": true,
+    "StartedAt": "2026-10-23T10:04:42.040894055Z",
+    "Status": "running"
+   }
+  },
+  {
+   "Config": {
+    "Image": "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib:0.160.0",
+    "Labels": {
+     "com.docker.compose.service": "otel-collector"
+    }
+   },
+   "Created": "2026-10-23T10:04:09.590712406Z",
+   "HostConfig": {
+    "CpuPeriod": 0,
+    "CpuQuota": 0,
+    "Memory": 419430400,
+    "NanoCpus": 0
+   },
+   "Id": "f8ab04dcea67d3f1bf26b69bd5699f010bd6dd72e3a83d47cfb913ad63f266f2",
+   "Image": "sha256:799dc6cf12c96192af37b5bdba804da8c10b3bc563b43cb90c3f3c58d9572ad6",
+   "Name": "/otel-collector",
+   "RestartCount": 0,
+   "State": {
+    "Dead": false,
+    "Error": "",
+    "ExitCode": 0,
+    "FinishedAt": "0001-01-01T00:00:00Z",
+    "OOMKilled": false,
+    "Paused": false,
+    "Pid": 24780,
+    "Restarting": false,
+    "Running": true,
+    "StartedAt": "2026-10-23T10:04:38.547958327Z",
+    "Status": "running"
+   }
+  },
+  {
+   "Config": {
+    "Image": "ghcr.io/open-telemetry/demo:latest-currency",
+    "Labels": {
+     "com.docker.compose.service": "currency"
+    }
+   },
+   "Created": "2026-10-23T10:04:09.200314046Z",
+   "HostConfig": {
+    "CpuPeriod": 0,
+    "CpuQuota": 0,
+    "Memory": 20971520,
+    "NanoCpus": 0
+   },
+   "Id": "a00bbce4c7ca96729e7d8c184de21710c227a130f4354f7ab6deacff3621ff0b",
+   "Image": "sha256:34e3e26d21260d6e34149d34dc0cccc5c8c25f82dc2acf16f9e994ab30c91286",
+   "Name": "/currency",
+   "RestartCount": 0,
+   "State": {
+    "Dead": false,
+    "Error": "",
+    "ExitCode": 0,
+    "FinishedAt": "0001-01-01T00:00:00Z",
+    "Health": {
+     "FailingStreak": 0,
+     "Log": [
+      {
+       "End": "2026-10-23T20:19:47.368920443Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:47.161065006Z"
+      },
+      {
+       "End": "2026-10-23T20:19:52.472560135Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:52.369718794Z"
+      },
+      {
+       "End": "2026-10-23T20:19:57.597756119Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:57.474050192Z"
+      },
+      {
+       "End": "2026-10-23T20:20:00.509385175Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:20:00.40826484Z"
+      },
+      {
+       "End": "2026-10-23T20:20:05.655442888Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:20:05.509899203Z"
+      }
+     ],
+     "Status": "healthy"
+    },
+    "OOMKilled": false,
+    "Paused": false,
+    "Pid": 25121,
+    "Restarting": false,
+    "Running": true,
+    "StartedAt": "2026-10-23T10:04:39.400771695Z",
+    "Status": "running"
+   }
+  },
+  {
+   "Config": {
+    "Image": "ghcr.io/open-telemetry/demo:latest-product-catalog",
+    "Labels": {
+     "com.docker.compose.service": "product-catalog"
+    }
+   },
+   "Created": "2026-10-23T10:04:09.200248885Z",
+   "HostConfig": {
+    "CpuPeriod": 100000,
+    "CpuQuota": 10000,
+    "Memory": 20971520,
+    "NanoCpus": 0
+   },
+   "Id": "0f72f02f5644a927eacb1fb2e1696d91f8bf218943eeb46aac754c6691988a25",
+   "Image": "sha256:f9b3dc42da48e8135c245fddab13dce9d0fa374da9bdb81493b98fe49bc39435",
+   "Name": "/product-catalog",
+   "RestartCount": 0,
+   "State": {
+    "Dead": false,
+    "Error": "",
+    "ExitCode": 0,
+    "FinishedAt": "0001-01-01T00:00:00Z",
+    "Health": {
+     "FailingStreak": 12,
+     "Log": [
+      {
+       "End": "2026-10-23T20:19:25.189374755Z",
+       "ExitCode": 2,
+       "Output": "timeout: failed to connect service \":3550\" within 1s\n",
+       "Start": "2026-10-23T20:19:19.893066522Z"
+      },
+      {
+       "End": "2026-10-23T20:19:32.12612165Z",
+       "ExitCode": 2,
+       "Output": "timeout: failed to connect service \":3550\" within 1s\n",
+       "Start": "2026-10-23T20:19:30.191118416Z"
+      },
+      {
+       "End": "2026-10-23T20:19:42.221462774Z",
+       "ExitCode": 2,
+       "Output": "timeout: failed to connect service \":3550\" within 1s\n",
+       "Start": "2026-10-23T20:19:37.126991538Z"
+      },
+      {
+       "End": "2026-10-23T20:19:52.923898791Z",
+       "ExitCode": 2,
+       "Output": "timeout: failed to connect service \":3550\" within 1s\n",
+       "Start": "2026-10-23T20:19:47.221987595Z"
+      },
+      {
+       "End": "2026-10-23T20:20:01.239376596Z",
+       "ExitCode": 2,
+       "Output": "timeout: failed to connect service \":3550\" within 1s\n",
+       "Start": "2026-10-23T20:19:57.92510212Z"
+      }
+     ],
+     "Status": "healthy"
+    },
+    "OOMKilled": false,
+    "Paused": false,
+    "Pid": 25241,
+    "Restarting": false,
+    "Running": true,
+    "StartedAt": "2026-10-23T10:04:39.741734367Z",
+    "Status": "running"
+   }
+  },
+  {
+   "Config": {
+    "Image": "ghcr.io/open-telemetry/demo:latest-quote",
+    "Labels": {
+     "com.docker.compose.service": "quote"
+    }
+   },
+   "Created": "2026-10-23T10:04:09.190058028Z",
+   "HostConfig": {
+    "CpuPeriod": 0,
+    "CpuQuota": 0,
+    "Memory": 41943040,
+    "NanoCpus": 0
+   },
+   "Id": "6b9150af3ab02d4a25882531944fce717c8c25d105a62194267a736d7d1b6f67",
+   "Image": "sha256:bba82a2319f6583dedd3548cfe912d8453445aef5e31e83b956d6b6a1d2a09fb",
+   "Name": "/quote",
+   "RestartCount": 0,
+   "State": {
+    "Dead": false,
+    "Error": "",
+    "ExitCode": 0,
+    "FinishedAt": "0001-01-01T00:00:00Z",
+    "Health": {
+     "FailingStreak": 0,
+     "Log": [
+      {
+       "End": "2026-10-23T20:19:45.077744337Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:44.951939166Z"
+      },
+      {
+       "End": "2026-10-23T20:19:50.264474006Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:50.07930689Z"
+      },
+      {
+       "End": "2026-10-23T20:19:55.372401218Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:55.266144369Z"
+      },
+      {
+       "End": "2026-10-23T20:20:00.485728995Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:20:00.37382743Z"
+      },
+      {
+       "End": "2026-10-23T20:20:03.401487926Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:20:03.29574144Z"
+      }
+     ],
+     "Status": "healthy"
+    },
+    "OOMKilled": false,
+    "Paused": false,
+    "Pid": 25219,
+    "Restarting": false,
+    "Running": true,
+    "StartedAt": "2026-10-23T10:04:39.393334767Z",
+    "Status": "running"
+   }
+  },
+  {
+   "Config": {
+    "Image": "ghcr.io/open-telemetry/demo:latest-cart",
+    "Labels": {
+     "com.docker.compose.service": "cart"
+    }
+   },
+   "Created": "2026-10-23T10:04:09.1776159Z",
+   "HostConfig": {
+    "CpuPeriod": 0,
+    "CpuQuota": 0,
+    "Memory": 167772160,
+    "NanoCpus": 0
+   },
+   "Id": "b26e9dc0609631a1798c9cdb7e93af47ff9e7cfb7228257e75b58c768f04cfb1",
+   "Image": "sha256:bdaeb95f35a89df92d53ebd934cf6e4ee43cb462332e928b6f57aa55f162bb72",
+   "Name": "/cart",
+   "RestartCount": 0,
+   "State": {
+    "Dead": false,
+    "Error": "",
+    "ExitCode": 0,
+    "FinishedAt": "0001-01-01T00:00:00Z",
+    "OOMKilled": false,
+    "Paused": false,
+    "Pid": 25297,
+    "Restarting": false,
+    "Running": true,
+    "StartedAt": "2026-10-23T10:04:39.732027607Z",
+    "Status": "running"
+   }
+  },
+  {
+   "Config": {
+    "Image": "ghcr.io/open-telemetry/demo:latest-email",
+    "Labels": {
+     "com.docker.compose.service": "email"
+    }
+   },
+   "Created": "2026-10-23T10:04:09.177495096Z",
+   "HostConfig": {
+    "CpuPeriod": 0,
+    "CpuQuota": 0,
+    "Memory": 104857600,
+    "NanoCpus": 0
+   },
+   "Id": "11831f868d91e24d97ce36f43c94bb81d405c7cd28a2436ac8fab01cf584547b",
+   "Image": "sha256:eb4f7ef9d9f5c740a75bf25bc64bd73dc7fb6c48add1da8dc81de4a6e0e732c6",
+   "Name": "/email",
+   "RestartCount": 0,
+   "State": {
+    "Dead": false,
+    "Error": "",
+    "ExitCode": 0,
+    "FinishedAt": "2026-10-23T20:11:38.921422756Z",
+    "Health": {
+     "FailingStreak": 0,
+     "Log": [
+      {
+       "End": "2026-10-23T20:19:43.423281886Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:43.158813177Z"
+      },
+      {
+       "End": "2026-10-23T20:19:48.697546787Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:48.426041604Z"
+      },
+      {
+       "End": "2026-10-23T20:19:53.918139292Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:53.69817989Z"
+      },
+      {
+       "End": "2026-10-23T20:19:59.230451294Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:58.919279925Z"
+      },
+      {
+       "End": "2026-10-23T20:20:02.361194532Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:20:02.040504125Z"
+      }
+     ],
+     "Status": "healthy"
+    },
+    "OOMKilled": false,
+    "Paused": false,
+    "Pid": 91853,
+    "Restarting": false,
+    "Running": true,
+    "StartedAt": "2026-10-23T20:15:29.721135871Z",
+    "Status": "running"
+   }
+  },
+  {
+   "Config": {
+    "Image": "ghcr.io/open-telemetry/demo:latest-opensearch",
+    "Labels": {
+     "com.docker.compose.service": "opensearch"
+    }
+   },
+   "Created": "2026-10-23T10:04:09.167668348Z",
+   "HostConfig": {
+    "CpuPeriod": 0,
+    "CpuQuota": 0,
+    "Memory": 1073741824,
+    "NanoCpus": 0
+   },
+   "Id": "542905ee8cb9938b6abbb62c0151a73287fb6db2e99b76d30ce4b49e196a513e",
+   "Image": "sha256:16cd8d64646126b56754b2c596b0950202d13df1f9ce088a22a7408637a106e1",
+   "Name": "/opensearch",
+   "RestartCount": 0,
+   "State": {
+    "Dead": false,
+    "Error": "",
+    "ExitCode": 0,
+    "FinishedAt": "0001-01-01T00:00:00Z",
+    "Health": {
+     "FailingStreak": 0,
+     "Log": [
+      {
+       "End": "2026-10-23T20:19:43.804089675Z",
+       "ExitCode": 0,
+       "Output": "{\"cluster_name\":\"demo-cluster\",\"status\":\"yellow\",\"timed_out\":false,\"number_of_nodes\":1,\"number_of_data_nodes\":1,\"discovered_master\":true,\"discovered_cluster_manager\":true,\"active_primary_shards\":1,\"active_shards\":1,\"relocating_shards\":0,\"initializing_shards\":0,\"unassigned_shards\":1,\"delayed_unassigned_shards\":0,\"number_of_pending_tasks\":0,\"number_of_in_flight_fetch\":0,\"task_max_waiting_in_queue_millis\":0,\"active_shards_percent_as_number\":50.0}\n",
+       "Start": "2026-10-23T20:19:43.69763338Z"
+      },
+      {
+       "End": "2026-10-23T20:19:48.90468363Z",
+       "ExitCode": 0,
+       "Output": "{\"cluster_name\":\"demo-cluster\",\"status\":\"yellow\",\"timed_out\":false,\"number_of_nodes\":1,\"number_of_data_nodes\":1,\"discovered_master\":true,\"discovered_cluster_manager\":true,\"active_primary_shards\":1,\"active_shards\":1,\"relocating_shards\":0,\"initializing_shards\":0,\"unassigned_shards\":1,\"delayed_unassigned_shards\":0,\"number_of_pending_tasks\":0,\"number_of_in_flight_fetch\":0,\"task_max_waiting_in_queue_millis\":0,\"active_shards_percent_as_number\":50.0}\n",
+       "Start": "2026-10-23T20:19:48.806050806Z"
+      },
+      {
+       "End": "2026-10-23T20:19:54.00775445Z",
+       "ExitCode": 0,
+       "Output": "{\"cluster_name\":\"demo-cluster\",\"status\":\"yellow\",\"timed_out\":false,\"number_of_nodes\":1,\"number_of_data_nodes\":1,\"discovered_master\":true,\"discovered_cluster_manager\":true,\"active_primary_shards\":1,\"active_shards\":1,\"relocating_shards\":0,\"initializing_shards\":0,\"unassigned_shards\":1,\"delayed_unassigned_shards\":0,\"number_of_pending_tasks\":0,\"number_of_in_flight_fetch\":0,\"task_max_waiting_in_queue_millis\":0,\"active_shards_percent_as_number\":50.0}\n",
+       "Start": "2026-10-23T20:19:53.906261115Z"
+      },
+      {
+       "End": "2026-10-23T20:19:59.147736552Z",
+       "ExitCode": 0,
+       "Output": "{\"cluster_name\":\"demo-cluster\",\"status\":\"yellow\",\"timed_out\":false,\"number_of_nodes\":1,\"number_of_data_nodes\":1,\"discovered_master\":true,\"discovered_cluster_manager\":true,\"active_primary_shards\":1,\"active_shards\":1,\"relocating_shards\":0,\"initializing_shards\":0,\"unassigned_shards\":1,\"delayed_unassigned_shards\":0,\"number_of_pending_tasks\":0,\"number_of_in_flight_fetch\":0,\"task_max_waiting_in_queue_millis\":0,\"active_shards_percent_as_number\":50.0}\n",
+       "Start": "2026-10-23T20:19:59.008804253Z"
+      },
+      {
+       "End": "2026-10-23T20:20:02.090830203Z",
+       "ExitCode": 0,
+       "Output": "{\"cluster_name\":\"demo-cluster\",\"status\":\"yellow\",\"timed_out\":false,\"number_of_nodes\":1,\"number_of_data_nodes\":1,\"discovered_master\":true,\"discovered_cluster_manager\":true,\"active_primary_shards\":1,\"active_shards\":1,\"relocating_shards\":0,\"initializing_shards\":0,\"unassigned_shards\":1,\"delayed_unassigned_shards\":0,\"number_of_pending_tasks\":0,\"number_of_in_flight_fetch\":0,\"task_max_waiting_in_queue_millis\":0,\"active_shards_percent_as_number\":50.0}\n",
+       "Start": "2026-10-23T20:20:01.958744746Z"
+      }
+     ],
+     "Status": "healthy"
+    },
+    "OOMKilled": false,
+    "Paused": false,
+    "Pid": 23431,
+    "Restarting": false,
+    "Running": true,
+    "StartedAt": "2026-10-23T10:04:11.835104279Z",
+    "Status": "running"
+   }
+  },
+  {
+   "Config": {
+    "Image": "ghcr.io/open-telemetry/demo:latest-payment",
+    "Labels": {
+     "com.docker.compose.service": "payment"
+    }
+   },
+   "Created": "2026-10-23T10:04:09.133008465Z",
+   "HostConfig": {
+    "CpuPeriod": 0,
+    "CpuQuota": 0,
+    "Memory": 146800640,
+    "NanoCpus": 0
+   },
+   "Id": "708983a17c7b11cf0f504626584b6a2e63fc88d3d01090e9a03fe8c4f3a6030c",
+   "Image": "sha256:cd678d01b41e375f9a9f0b81ace50056489bfbf8fca49d2775b3d6b1bb69d0e2",
+   "Name": "/payment",
+   "RestartCount": 0,
+   "State": {
+    "Dead": false,
+    "Error": "",
+    "ExitCode": 0,
+    "FinishedAt": "0001-01-01T00:00:00Z",
+    "Health": {
+     "FailingStreak": 0,
+     "Log": [
+      {
+       "End": "2026-10-23T20:19:38.893355853Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:37.424693328Z"
+      },
+      {
+       "End": "2026-10-23T20:19:45.502930715Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:43.894886773Z"
+      },
+      {
+       "End": "2026-10-23T20:19:52.014900724Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:50.503782992Z"
+      },
+      {
+       "End": "2026-10-23T20:19:58.382898256Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:57.017165484Z"
+      },
+      {
+       "End": "2026-10-23T20:20:03.021239549Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:20:01.192657684Z"
+      }
+     ],
+     "Status": "healthy"
+    },
+    "OOMKilled": false,
+    "Paused": false,
+    "Pid": 24979,
+    "Restarting": false,
+    "Running": true,
+    "StartedAt": "2026-10-23T10:04:39.289162176Z",
+    "Status": "running"
+   }
+  },
+  {
+   "Config": {
+    "Image": "ghcr.io/open-telemetry/demo:latest-image-provider",
+    "Labels": {
+     "com.docker.compose.service": "image-provider"
+    }
+   },
+   "Created": "2026-10-23T10:04:09.114798997Z",
+   "HostConfig": {
+    "CpuPeriod": 0,
+    "CpuQuota": 0,
+    "Memory": 125829120,
+    "NanoCpus": 0
+   },
+   "Id": "10269d327d1ac67af41c52a3cd14ef92baec3e2675d3e8152f3a9f3154fef34a",
+   "Image": "sha256:4e24466db7ba6742bc6226f891ed7a803462483ca20e91d7f431e9d7b18b1827",
+   "Name": "/image-provider",
+   "RestartCount": 0,
+   "State": {
+    "Dead": false,
+    "Error": "",
+    "ExitCode": 0,
+    "FinishedAt": "0001-01-01T00:00:00Z",
+    "Health": {
+     "FailingStreak": 0,
+     "Log": [
+      {
+       "End": "2026-10-23T20:19:47.677973152Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:47.568842562Z"
+      },
+      {
+       "End": "2026-10-23T20:19:52.80007598Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:52.679517627Z"
+      },
+      {
+       "End": "2026-10-23T20:19:57.894822848Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:57.801828308Z"
+      },
+      {
+       "End": "2026-10-23T20:20:00.862022846Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:20:00.707566844Z"
+      },
+      {
+       "End": "2026-10-23T20:20:06.145722606Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:20:05.862922247Z"
+      }
+     ],
+     "Status": "healthy"
+    },
+    "OOMKilled": false,
+    "Paused": false,
+    "Pid": 25220,
+    "Restarting": false,
+    "Running": true,
+    "StartedAt": "2026-10-23T10:04:39.375527252Z",
+    "Status": "running"
+   }
+  },
+  {
+   "Config": {
+    "Image": "ghcr.io/open-telemetry/demo:latest-shipping",
+    "Labels": {
+     "com.docker.compose.service": "shipping"
+    }
+   },
+   "Created": "2026-10-23T10:04:09.106037648Z",
+   "HostConfig": {
+    "CpuPeriod": 0,
+    "CpuQuota": 0,
+    "Memory": 20971520,
+    "NanoCpus": 0
+   },
+   "Id": "3ecba874f789983ddfa4c4adcb98fbe2b37bbd0ccba26b5de8ecd18d95667e5d",
+   "Image": "sha256:4ff2640cc86c07aecad1dd1402660d4ed3c00aeaf20e1e80de2db9584b58be93",
+   "Name": "/shipping",
+   "RestartCount": 0,
+   "State": {
+    "Dead": false,
+    "Error": "",
+    "ExitCode": 0,
+    "FinishedAt": "0001-01-01T00:00:00Z",
+    "Health": {
+     "FailingStreak": 0,
+     "Log": [
+      {
+       "End": "2026-10-23T20:19:47.712545072Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:47.617319214Z"
+      },
+      {
+       "End": "2026-10-23T20:19:52.802773806Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:52.714199117Z"
+      },
+      {
+       "End": "2026-10-23T20:19:57.913512792Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:57.804545279Z"
+      },
+      {
+       "End": "2026-10-23T20:20:00.836577979Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:20:00.728330758Z"
+      },
+      {
+       "End": "2026-10-23T20:20:06.117571084Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:20:05.837125563Z"
+      }
+     ],
+     "Status": "healthy"
+    },
+    "OOMKilled": false,
+    "Paused": false,
+    "Pid": 25122,
+    "Restarting": false,
+    "Running": true,
+    "StartedAt": "2026-10-23T10:04:39.343044193Z",
+    "Status": "running"
+   }
+  },
+  {
+   "Config": {
+    "Image": "ghcr.io/open-telemetry/demo:latest-ad",
+    "Labels": {
+     "com.docker.compose.service": "ad"
+    }
+   },
+   "Created": "2026-10-23T10:04:09.098001803Z",
+   "HostConfig": {
+    "CpuPeriod": 0,
+    "CpuQuota": 0,
+    "Memory": 314572800,
+    "NanoCpus": 0
+   },
+   "Id": "5cfb6948141acf3c1df5d2ff0371cc288ffee1343d0b0586bfe6e39a699f5972",
+   "Image": "sha256:4dfc4c3d9d7faa70f27b008529d0a6869272edd4b3fbd1bde81fa923461f3484",
+   "Name": "/ad",
+   "RestartCount": 0,
+   "State": {
+    "Dead": false,
+    "Error": "",
+    "ExitCode": 0,
+    "FinishedAt": "0001-01-01T00:00:00Z",
+    "Health": {
+     "FailingStreak": 0,
+     "Log": [
+      {
+       "End": "2026-10-23T20:19:47.04714264Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:46.941109962Z"
+      },
+      {
+       "End": "2026-10-23T20:19:52.138403953Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:52.048896618Z"
+      },
+      {
+       "End": "2026-10-23T20:19:57.242624131Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:57.139910562Z"
+      },
+      {
+       "End": "2026-10-23T20:20:00.152995433Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:20:00.052862153Z"
+      },
+      {
+       "End": "2026-10-23T20:20:05.259171968Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:20:05.153722537Z"
+      }
+     ],
+     "Status": "healthy"
+    },
+    "OOMKilled": false,
+    "Paused": false,
+    "Pid": 25228,
+    "Restarting": false,
+    "Running": true,
+    "StartedAt": "2026-10-23T10:04:39.412162346Z",
+    "Status": "running"
+   }
+  },
+  {
+   "Config": {
+    "Image": "grafana/grafana:13.2.1",
+    "Labels": {
+     "com.docker.compose.service": "grafana"
+    }
+   },
+   "Created": "2026-10-23T10:04:08.738234739Z",
+   "HostConfig": {
+    "CpuPeriod": 0,
+    "CpuQuota": 0,
+    "Memory": 524288000,
+    "NanoCpus": 0
+   },
+   "Id": "3b47164a1de8f83b6af928a3b062884bbac307884a1b5508fe4d8b3081343ded",
+   "Image": "sha256:f772d434e8fab0049deb2b1b30abd43342bcfca1537614aa8d36080232cf4283",
+   "Name": "/grafana",
+   "RestartCount": 0,
+   "State": {
+    "Dead": false,
+    "Error": "",
+    "ExitCode": 0,
+    "FinishedAt": "0001-01-01T00:00:00Z",
+    "OOMKilled": false,
+    "Paused": false,
+    "Pid": 23429,
+    "Restarting": false,
+    "Running": true,
+    "StartedAt": "2026-10-23T10:04:11.987949165Z",
+    "Status": "running"
+   }
+  },
+  {
+   "Config": {
+    "Image": "ghcr.io/open-telemetry/demo:latest-telemetry-docs",
+    "Labels": {
+     "com.docker.compose.service": "telemetry-docs"
+    }
+   },
+   "Created": "2026-10-23T10:04:08.659889668Z",
+   "HostConfig": {
+    "CpuPeriod": 0,
+    "CpuQuota": 0,
+    "Memory": 104857600,
+    "NanoCpus": 0
+   },
+   "Id": "f8d4c04caa1988f1b0bc94aeca92e80c35f85d51716096a3d128699385a88edd",
+   "Image": "sha256:07925597316a1af879dffcce4041e390abe81938b30f76e34fc4a66869b7e350",
+   "Name": "/telemetry-docs",
+   "RestartCount": 0,
+   "State": {
+    "Dead": false,
+    "Error": "",
+    "ExitCode": 0,
+    "FinishedAt": "0001-01-01T00:00:00Z",
+    "Health": {
+     "FailingStreak": 0,
+     "Log": [
+      {
+       "End": "2026-10-23T20:19:47.047311408Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:46.938527293Z"
+      },
+      {
+       "End": "2026-10-23T20:19:52.144616371Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:52.04870554Z"
+      },
+      {
+       "End": "2026-10-23T20:19:57.2372884Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:57.145502885Z"
+      },
+      {
+       "End": "2026-10-23T20:20:00.150974652Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:20:00.047117041Z"
+      },
+      {
+       "End": "2026-10-23T20:20:05.248574349Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:20:05.152112318Z"
+      }
+     ],
+     "Status": "healthy"
+    },
+    "OOMKilled": false,
+    "Paused": false,
+    "Pid": 23445,
+    "Restarting": false,
+    "Running": true,
+    "StartedAt": "2026-10-23T10:04:11.954464736Z",
+    "Status": "running"
+   }
+  },
+  {
+   "Config": {
+    "Image": "postgres:18.6",
+    "Labels": {
+     "com.docker.compose.service": "astronomy-db"
+    }
+   },
+   "Created": "2026-10-23T10:04:08.655261968Z",
+   "HostConfig": {
+    "CpuPeriod": 0,
+    "CpuQuota": 0,
+    "Memory": 83886080,
+    "NanoCpus": 0
+   },
+   "Id": "be99ab3ea7b2c3fa184bc6ada4776589a8a427344634b8fb2e12dfd03907783a",
+   "Image": "sha256:edb0c08dc33befd0262ab3b5cf1c4f3f8cfd8b09e88c05b45adee29d6761ddb6",
+   "Name": "/astronomy-db",
+   "RestartCount": 0,
+   "State": {
+    "Dead": false,
+    "Error": "",
+    "ExitCode": 0,
+    "FinishedAt": "0001-01-01T00:00:00Z",
+    "Health": {
+     "FailingStreak": 0,
+     "Log": [
+      {
+       "End": "2026-10-23T20:19:44.879605878Z",
+       "ExitCode": 0,
+       "Output": "/var/run/postgresql:5432 - accepting connections\n",
+       "Start": "2026-10-23T20:19:44.7322783Z"
+      },
+      {
+       "End": "2026-10-23T20:19:50.325250375Z",
+       "ExitCode": 0,
+       "Output": "/var/run/postgresql:5432 - accepting connections\n",
+       "Start": "2026-10-23T20:19:49.880761053Z"
+      },
+      {
+       "End": "2026-10-23T20:19:55.632391544Z",
+       "ExitCode": 0,
+       "Output": "/var/run/postgresql:5432 - accepting connections\n",
+       "Start": "2026-10-23T20:19:55.328069977Z"
+      },
+      {
+       "End": "2026-10-23T20:20:00.191312621Z",
+       "ExitCode": 0,
+       "Output": "/var/run/postgresql:5432 - accepting connections\n",
+       "Start": "2026-10-23T20:20:00.633277912Z"
+      },
+      {
+       "End": "2026-10-23T20:20:04.123790981Z",
+       "ExitCode": 0,
+       "Output": "/var/run/postgresql:5432 - accepting connections\n",
+       "Start": "2026-10-23T20:20:03.820358993Z"
+      }
+     ],
+     "Status": "healthy"
+    },
+    "OOMKilled": false,
+    "Paused": false,
+    "Pid": 23458,
+    "Restarting": false,
+    "Running": true,
+    "StartedAt": "2026-10-23T10:04:12.023379821Z",
+    "Status": "running"
+   }
+  },
+  {
+   "Config": {
+    "Image": "ghcr.io/valkey-io/valkey:9.1.2-alpine3.24",
+    "Labels": {
+     "com.docker.compose.service": "valkey-cart"
+    }
+   },
+   "Created": "2026-10-23T10:04:08.641267942Z",
+   "HostConfig": {
+    "CpuPeriod": 0,
+    "CpuQuota": 0,
+    "Memory": 20971520,
+    "NanoCpus": 0
+   },
+   "Id": "fe965af4343315bd4eec6d604a0d8d099059b85bb78403e1f465ad4f38162ede",
+   "Image": "sha256:48332870af354a799964c0012ae1194a0bf2bf894eb508f945810596dc2d8d11",
+   "Name": "/valkey-cart",
+   "RestartCount": 0,
+   "State": {
+    "Dead": false,
+    "Error": "",
+    "ExitCode": 0,
+    "FinishedAt": "2026-10-23T20:06:58.627489262Z",
+    "Health": {
+     "FailingStreak": 0,
+     "Log": [
+      {
+       "End": "2026-10-23T20:19:47.366505322Z",
+       "ExitCode": 0,
+       "Output": "PONG\n",
+       "Start": "2026-10-23T20:19:47.172519855Z"
+      },
+      {
+       "End": "2026-10-23T20:19:52.477284582Z",
+       "ExitCode": 0,
+       "Output": "PONG\n",
+       "Start": "2026-10-23T20:19:52.368539601Z"
+      },
+      {
+       "End": "2026-10-23T20:19:57.597994194Z",
+       "ExitCode": 0,
+       "Output": "PONG\n",
+       "Start": "2026-10-23T20:19:57.478392617Z"
+      },
+      {
+       "End": "2026-10-23T20:20:00.50767707Z",
+       "ExitCode": 0,
+       "Output": "PONG\n",
+       "Start": "2026-10-23T20:20:00.408072672Z"
+      },
+      {
+       "End": "2026-10-23T20:20:05.654245411Z",
+       "ExitCode": 0,
+       "Output": "PONG\n",
+       "Start": "2026-10-23T20:20:05.508451205Z"
+      }
+     ],
+     "Status": "healthy"
+    },
+    "OOMKilled": false,
+    "Paused": false,
+    "Pid": 62731,
+    "Restarting": false,
+    "Running": true,
+    "StartedAt": "2026-10-23T20:10:15.592055778Z",
+    "Status": "running"
+   }
+  },
+  {
+   "Config": {
+    "Image": "quay.io/jaegertracing/jaeger:2.21.0",
+    "Labels": {
+     "com.docker.compose.service": "jaeger"
+    }
+   },
+   "Created": "2026-10-23T10:04:08.632377762Z",
+   "HostConfig": {
+    "CpuPeriod": 0,
+    "CpuQuota": 0,
+    "Memory": 1258291200,
+    "NanoCpus": 0
+   },
+   "Id": "ce06b9010ca148b3463f91df17a538152501a83e28da9990f3edc8fbadcb0caa",
+   "Image": "sha256:3d0ac795ff98aa04d1be04311d2dac6c25b4bfc8322dc02e53bc5b170c5018c3",
+   "Name": "/jaeger",
+   "RestartCount": 0,
+   "State": {
+    "Dead": false,
+    "Error": "",
+    "ExitCode": 0,
+    "FinishedAt": "0001-01-01T00:00:00Z",
+    "OOMKilled": false,
+    "Paused": false,
+    "Pid": 23447,
+    "Restarting": false,
+    "Running": true,
+    "StartedAt": "2026-10-23T10:04:11.980120726Z",
+    "Status": "running"
+   }
+  },
+  {
+   "Config": {
+    "Image": "quay.io/prometheus/prometheus:v3.13.3",
+    "Labels": {
+     "com.docker.compose.service": "prometheus"
+    }
+   },
+   "Created": "2026-10-23T10:04:08.616248654Z",
+   "HostConfig": {
+    "CpuPeriod": 0,
+    "CpuQuota": 0,
+    "Memory": 209715200,
+    "NanoCpus": 0
+   },
+   "Id": "f33d0dc2efb1d0cd86b32b331a3a516361757bb77efaadafb096167ab8e5e4ba",
+   "Image": "sha256:6976aa8a60fec930796ce5772b8d12da7a318a5daa8d40d69c5c7819a05eeed7",
+   "Name": "/prometheus",
+   "RestartCount": 0,
+   "State": {
+    "Dead": false,
+    "Error": "",
+    "ExitCode": 0,
+    "FinishedAt": "0001-01-01T00:00:00Z",
+    "OOMKilled": false,
+    "Paused": false,
+    "Pid": 23463,
+    "Restarting": false,
+    "Running": true,
+    "StartedAt": "2026-10-23T10:04:12.0324392Z",
+    "Status": "running"
+   }
+  },
+  {
+   "Config": {
+    "Image": "ghcr.io/open-telemetry/demo:latest-opamp-server",
+    "Labels": {
+     "com.docker.compose.service": "opamp-server"
+    }
+   },
+   "Created": "2026-10-23T10:04:08.375007945Z",
+   "HostConfig": {
+    "CpuPeriod": 0,
+    "CpuQuota": 0,
+    "Memory": 68157440,
+    "NanoCpus": 0
+   },
+   "Id": "737fbe79f706bad028ebe997d17fad0595f5b952929c4e793074a4f632031f5a",
+   "Image": "sha256:205efa8231a4787d9d982f9356b600466e72744a3a04950deaff04947e688890",
+   "Name": "/opamp-server",
+   "RestartCount": 0,
+   "State": {
+    "Dead": false,
+    "Error": "",
+    "ExitCode": 0,
+    "FinishedAt": "0001-01-01T00:00:00Z",
+    "Health": {
+     "FailingStreak": 0,
+     "Log": [
+      {
+       "End": "2026-10-23T20:19:47.3726427Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:47.160543879Z"
+      },
+      {
+       "End": "2026-10-23T20:19:52.47626093Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:52.379185745Z"
+      },
+      {
+       "End": "2026-10-23T20:19:57.601340045Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:19:57.477120622Z"
+      },
+      {
+       "End": "2026-10-23T20:20:00.499787171Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:20:00.411728736Z"
+      },
+      {
+       "End": "2026-10-23T20:20:05.675609962Z",
+       "ExitCode": 0,
+       "Output": "",
+       "Start": "2026-10-23T20:20:05.502416891Z"
+      }
+     ],
+     "Status": "healthy"
+    },
+    "OOMKilled": false,
+    "Paused": false,
+    "Pid": 23428,
+    "Restarting": false,
+    "Running": true,
+    "StartedAt": "2026-10-23T10:04:11.928297331Z",
+    "Status": "running"
+   }
+  }
+ ],
+ "stats": [
+  {
+   "BlockIO": "67.7MB / 4.06MB",
+   "CPUPerc": "4.03%",
+   "Container": "9f6daf474cf1decc3108a67a4990c913b6924ad3ddf3f8680bfda2de08c534f0",
+   "ID": "9f6daf474cf1",
+   "MemPerc": "49.38%",
+   "MemUsage": "44.45MiB / 90MiB",
+   "Name": "frontend-proxy",
+   "NetIO": "6.31GB / 6.69GB",
+   "PIDs": "30"
+  },
+  {
+   "BlockIO": "523MB / 52.8GB",
+   "CPUPerc": "19.00%",
+   "Container": "99441b52446b17d42a8f1640996ebc8246a1c9043156ee492dfc59cf23621e64",
+   "ID": "99441b52446b",
+   "MemPerc": "51.65%",
+   "MemUsage": "774.7MiB / 1.465GiB",
+   "Name": "load-generator",
+   "NetIO": "6.43GB / 466MB",
+   "PIDs": "148"
+  },
+  {
+   "BlockIO": "81.3MB / 9.27MB",
+   "CPUPerc": "5.31%",
+   "Container": "ce38faa46f7bb2b8276ad8a048cc419fdf789783669755eea3ac0809850887b6",
+   "ID": "ce38faa46f7b",
+   "MemPerc": "77.00%",
+   "MemUsage": "192.5MiB / 250MiB",
+   "Name": "frontend",
+   "NetIO": "160MB / 1.09GB",
+   "PIDs": "12"
+  },
+  {
+   "BlockIO": "188GB / 7.04GB",
+   "CPUPerc": "0.04%",
+   "Container": "c6ea97e2fce53e13c133c6ec9d40fdfdcb411883c20bca75f375c0af0c6e6364",
+   "ID": "c6ea97e2fce5",
+   "MemPerc": "60.72%",
+   "MemUsage": "12.14MiB / 20MiB",
+   "Name": "checkout",
+   "NetIO": "3.77MB / 14MB",
+   "PIDs": "18"
+  },
+  {
+   "BlockIO": "37.3MB / 38.5MB",
+   "CPUPerc": "1.96%",
+   "Container": "cac3b9781f0362e3c331b046a6afb542f7d8b9ee7bf7710d0cf9b1bd5243488f",
+   "ID": "cac3b9781f03",
+   "MemPerc": "39.85%",
+   "MemUsage": "199.3MiB / 500MiB",
+   "Name": "recommendation",
+   "NetIO": "55MB / 39.2MB",
+   "PIDs": "59"
+  },
+  {
+   "BlockIO": "251MB / 5.66MB",
+   "CPUPerc": "13.14%",
+   "Container": "f8ab04dcea67d3f1bf26b69bd5699f010bd6dd72e3a83d47cfb913ad63f266f2",
+   "ID": "f8ab04dcea67",
+   "MemPerc": "32.38%",
+   "MemUsage": "129.5MiB / 400MiB",
+   "Name": "otel-collector",
+   "NetIO": "1.28GB / 962MB",
+   "PIDs": "18"
+  },
+  {
+   "BlockIO": "27.6MB / 0B",
+   "CPUPerc": "0.31%",
+   "Container": "a00bbce4c7ca96729e7d8c184de21710c227a130f4354f7ab6deacff3621ff0b",
+   "ID": "a00bbce4c7ca",
+   "MemPerc": "44.08%",
+   "MemUsage": "8.816MiB / 20MiB",
+   "Name": "currency",
+   "NetIO": "6.97MB / 15.6MB",
+   "PIDs": "20"
+  },
+  {
+   "BlockIO": "218GB / 12.7GB",
+   "CPUPerc": "10.59%",
+   "Container": "0f72f02f5644a927eacb1fb2e1696d91f8bf218943eeb46aac754c6691988a25",
+   "ID": "0f72f02f5644",
+   "MemPerc": "74.38%",
+   "MemUsage": "14.88MiB / 20MiB",
+   "Name": "product-catalog",
+   "NetIO": "175MB / 253MB",
+   "PIDs": "25"
+  },
+  {
+   "BlockIO": "36.7MB / 6.62MB",
+   "CPUPerc": "0.02%",
+   "Container": "6b9150af3ab02d4a25882531944fce717c8c25d105a62194267a736d7d1b6f67",
+   "ID": "6b9150af3ab0",
+   "MemPerc": "78.39%",
+   "MemUsage": "31.36MiB / 40MiB",
+   "Name": "quote",
+   "NetIO": "2.38MB / 10MB",
+   "PIDs": "1"
+  },
+  {
+   "BlockIO": "77.2MB / 4.23MB",
+   "CPUPerc": "0.16%",
+   "Container": "b26e9dc0609631a1798c9cdb7e93af47ff9e7cfb7228257e75b58c768f04cfb1",
+   "ID": "b26e9dc06096",
+   "MemPerc": "51.33%",
+   "MemUsage": "82.12MiB / 160MiB",
+   "Name": "cart",
+   "NetIO": "14.8MB / 59.1MB",
+   "PIDs": "30"
+  },
+  {
+   "BlockIO": "11.3MB / 0B",
+   "CPUPerc": "28.17%",
+   "Container": "11831f868d91e24d97ce36f43c94bb81d405c7cd28a2436ac8fab01cf584547b",
+   "ID": "11831f868d91",
+   "MemPerc": "50.76%",
+   "MemUsage": "50.76MiB / 100MiB",
+   "Name": "email",
+   "NetIO": "23.1kB / 35.8kB",
+   "PIDs": "25"
+  },
+  {
+   "BlockIO": "336MB / 2.27GB",
+   "CPUPerc": "5.84%",
+   "Container": "542905ee8cb9938b6abbb62c0151a73287fb6db2e99b76d30ce4b49e196a513e",
+   "ID": "542905ee8cb9",
+   "MemPerc": "87.16%",
+   "MemUsage": "892.5MiB / 1GiB",
+   "Name": "opensearch",
+   "NetIO": "655MB / 27.4MB",
+   "PIDs": "99"
+  },
+  {
+   "BlockIO": "261MB / 95.4MB",
+   "CPUPerc": "96.55%",
+   "Container": "708983a17c7b11cf0f504626584b6a2e63fc88d3d01090e9a03fe8c4f3a6030c",
+   "ID": "708983a17c7b",
+   "MemPerc": "90.78%",
+   "MemUsage": "127.1MiB / 140MiB",
+   "Name": "payment",
+   "NetIO": "1.42MB / 5.23MB",
+   "PIDs": "18"
+  },
+  {
+   "BlockIO": "27.1MB / 2.87MB",
+   "CPUPerc": "0.08%",
+   "Container": "10269d327d1ac67af41c52a3cd14ef92baec3e2675d3e8152f3a9f3154fef34a",
+   "ID": "10269d327d1a",
+   "MemPerc": "9.61%",
+   "MemUsage": "11.53MiB / 120MiB",
+   "Name": "image-provider",
+   "NetIO": "37MB / 5.25GB",
+   "PIDs": "19"
+  },
+  {
+   "BlockIO": "15.2MB / 590kB",
+   "CPUPerc": "0.30%",
+   "Container": "3ecba874f789983ddfa4c4adcb98fbe2b37bbd0ccba26b5de8ecd18d95667e5d",
+   "ID": "3ecba874f789",
+   "MemPerc": "64.26%",
+   "MemUsage": "12.85MiB / 20MiB",
+   "Name": "shipping",
+   "NetIO": "4.42MB / 9.82MB",
+   "PIDs": "20"
+  },
+  {
+   "BlockIO": "93.4MB / 32.8MB",
+   "CPUPerc": "0.26%",
+   "Container": "5cfb6948141acf3c1df5d2ff0371cc288ffee1343d0b0586bfe6e39a699f5972",
+   "ID": "5cfb6948141a",
+   "MemPerc": "78.72%",
+   "MemUsage": "236.2MiB / 300MiB",
+   "Name": "ad",
+   "NetIO": "3.25MB / 18.7MB",
+   "PIDs": "53"
+  },
+  {
+   "BlockIO": "512MB / 1.16GB",
+   "CPUPerc": "3.20%",
+   "Container": "3b47164a1de8f83b6af928a3b062884bbac307884a1b5508fe4d8b3081343ded",
+   "ID": "3b47164a1de8",
+   "MemPerc": "53.96%",
+   "MemUsage": "269.8MiB / 500MiB",
+   "Name": "grafana",
+   "NetIO": "226MB / 18.3MB",
+   "PIDs": "182"
+  },
+  {
+   "BlockIO": "26.6MB / 8.19kB",
+   "CPUPerc": "0.34%",
+   "Container": "f8d4c04caa1988f1b0bc94aeca92e80c35f85d51716096a3d128699385a88edd",
+   "ID": "f8d4c04caa19",
+   "MemPerc": "9.46%",
+   "MemUsage": "9.457MiB / 100MiB",
+   "Name": "telemetry-docs",
+   "NetIO": "926kB / 2.56MB",
+   "PIDs": "17"
+  },
+  {
+   "BlockIO": "271MB / 189MB",
+   "CPUPerc": "4.46%",
+   "Container": "be99ab3ea7b2c3fa184bc6ada4776589a8a427344634b8fb2e12dfd03907783a",
+   "ID": "be99ab3ea7b2",
+   "MemPerc": "92.15%",
+   "MemUsage": "73.72MiB / 80MiB",
+   "Name": "astronomy-db",
+   "NetIO": "77.6MB / 165MB",
+   "PIDs": "55"
+  },
+  {
+   "BlockIO": "1.57MB / 77.8kB",
+   "CPUPerc": "0.36%",
+   "Container": "fe965af4343315bd4eec6d604a0d8d099059b85bb78403e1f465ad4f38162ede",
+   "ID": "fe965af43433",
+   "MemPerc": "24.47%",
+   "MemUsage": "4.895MiB / 20MiB",
+   "Name": "valkey-cart",
+   "NetIO": "239kB / 743kB",
+   "PIDs": "9"
+  },
+  {
+   "BlockIO": "77.9MB / 958kB",
+   "CPUPerc": "0.58%",
+   "Container": "ce06b9010ca148b3463f91df17a538152501a83e28da9990f3edc8fbadcb0caa",
+   "ID": "ce06b9010ca1",
+   "MemPerc": "34.71%",
+   "MemUsage": "416.5MiB / 1.172GiB",
+   "Name": "jaeger",
+   "NetIO": "164MB / 111MB",
+   "PIDs": "17"
+  },
+  {
+   "BlockIO": "94.9MB / 74.9MB",
+   "CPUPerc": "2.03%",
+   "Container": "f33d0dc2efb1d0cd86b32b331a3a516361757bb77efaadafb096167ab8e5e4ba",
+   "ID": "f33d0dc2efb1",
+   "MemPerc": "56.11%",
+   "MemUsage": "112.2MiB / 200MiB",
+   "Name": "prometheus",
+   "NetIO": "60.6MB / 11.9MB",
+   "PIDs": "18"
+  },
+  {
+   "BlockIO": "17.1MB / 102kB",
+   "CPUPerc": "0.00%",
+   "Container": "737fbe79f706bad028ebe997d17fad0595f5b952929c4e793074a4f632031f5a",
+   "ID": "737fbe79f706",
+   "MemPerc": "19.89%",
+   "MemUsage": "12.93MiB / 65MiB",
+   "Name": "opamp-server",
+   "NetIO": "675kB / 474kB",
+   "PIDs": "16"
+  }
+ ]
+}

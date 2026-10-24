@@ -9,6 +9,7 @@ import pytest
 
 from oncall.platform import containers
 from oncall.platform.containers import DockerError, check_containers
+from oncall.safety.exclusions import EXCLUDED_SERVICES
 from oncall.tools import TOOL_SCHEMAS, TOOLS
 
 NOW = datetime(2026, 10, 23, 12, 0, 0, tzinfo=UTC)
@@ -262,9 +263,48 @@ def test_busiest_healthy_containers_survive_the_evidence_cap():
         _stats("zz-recommendation", mem="97.00%")
     ]
     result = check_containers(infos, stats, None, NOW)
-    assert len(result["evidence"]) == 20
+    assert len(result["evidence"]) == containers.HEALTHY_EVIDENCE
     assert result["evidence"][0]["id"] == "container:zz-recommendation"
+    assert f"Evidence lists {containers.HEALTHY_EVIDENCE} of 25." in result["summary"]
+    full = check_containers(infos, stats, None, NOW, max_healthy=None)
+    assert len(full["evidence"]) == 20
     assert (
         "Busiest: zz-recommendation cpu=1.5% of one core, mem=97.0% of limit"
         in (result["summary"])
     )
+
+
+def test_load_generator_cpu_reported_never_unhealthy():
+    infos = [
+        _inspect("load-generator", status="exited", exit_code=1, nano_cpus=500_000_000),
+        _inspect("cart"),
+    ]
+    stats = [_stats("load-generator", cpu="230.00%"), _stats("cart")]
+    result = check_containers(infos, stats, None, NOW)
+    assert result["summary"].startswith("All 2 containers healthy.")
+    assert "load-generator (client) cpu=" in result["summary"]
+    lg = next(e for e in result["evidence"] if e["id"] == "container:load-generator")
+    assert "FLAGGED" not in lg["text"]
+    assert "never marked unhealthy" in lg["text"]
+
+
+def test_excluded_containers_left_out():
+    infos = [_inspect(name) for name in sorted(EXCLUDED_SERVICES)] + [_inspect("cart")]
+    result = check_containers(infos, [], None, NOW)
+    assert [e["id"] for e in result["evidence"]] == ["container:cart"]
+    for name in EXCLUDED_SERVICES:
+        assert name not in result["summary"]
+        assert not check_containers(infos, [], name, NOW)["ok"]
+
+
+def test_every_flagged_container_kept_healthy_ones_compact():
+    infos = [_inspect(f"down{i}", status="exited") for i in range(7)] + [
+        _inspect(f"ok{i}") for i in range(10)
+    ]
+    result = check_containers(infos, [], None, NOW)
+    ids = [e["id"] for e in result["evidence"]]
+    assert sum(i.startswith("container:down") for i in ids) == 7
+    assert sum(i.startswith("container:ok") for i in ids) == containers.HEALTHY_EVIDENCE
+    healthy = next(e["text"] for e in result["evidence"] if e["id"] == "container:ok0")
+    assert healthy.startswith("ok0: state=running, health=none, cpu=")
+    assert "started_at" not in healthy

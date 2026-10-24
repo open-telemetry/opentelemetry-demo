@@ -31,10 +31,12 @@ def cmd_investigate(args: argparse.Namespace) -> int:
     from oncall.agent.loop import investigate_and_diagnose
     from oncall.agent.runlog import RunLog
     from oncall.config import load_settings
+    from oncall.report.output import report_run
 
     runlog = RunLog(runs_dir=load_settings().RUNS_DIR)
     alert = _manual_alert(args.service, args.description)
     result = investigate_and_diagnose(alert, runlog=runlog)
+    json_path, md_path = report_run(alert, result["diagnosis"], runlog)
 
     print(f"run_id:  {result['run_id']}")
     print(f"stopped: {result['stopped']} after {result['steps']} steps")
@@ -44,8 +46,9 @@ def cmd_investigate(args: argparse.Namespace) -> int:
     print(f"summary:\n{result['summary']}")
     print(f"diagnosis:\n{json.dumps(result['diagnosis'], indent=2)}")
     print(f"run log: {runlog.path}")
+    print(f"report:  {json_path} + {md_path.name}")
     print(f"tokens:  {runlog.token_usage()}")
-    return 0 if result["stopped"] == "finish" else 1
+    return 0 if result["stopped"] in ("finish", "max_steps") else 1
 
 
 def main(argv: list[str] | None = None) -> int:

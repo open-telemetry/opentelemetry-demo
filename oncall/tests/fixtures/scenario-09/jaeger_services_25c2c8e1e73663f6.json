@@ -1,0 +1,22 @@
+{
+ "data": [
+  "currency",
+  "frontend-web",
+  "checkout",
+  "image-provider",
+  "cart",
+  "frontend",
+  "recommendation",
+  "quote",
+  "email",
+  "telemetry-docs",
+  "payment",
+  "ad",
+  "load-generator",
+  "product-catalog",
+  "shipping",
+  "frontend-proxy"
+ ],
+ "kwargs": {},
+ "op": "jaeger_services"
+}

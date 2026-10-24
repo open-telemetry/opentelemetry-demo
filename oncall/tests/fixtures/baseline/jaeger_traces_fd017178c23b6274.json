@@ -1,0 +1,332 @@
+{
+ "data": [
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "browser_change_currency",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "5772727f45319b5b",
+     "startTimeUnixNano": "1792785881802512200",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "797cf4ed08aac864e3df806bc597f41c"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": "308"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "c8c7b05a3f083016",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "382ff0382aa54b08",
+     "startTimeUnixNano": "1792785883922168000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "308"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "af33a261880e4899",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "c8c7b05a3f083016",
+     "startTimeUnixNano": "1792785883921804000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetAds"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.AdService/GetAds",
+     "parentSpanId": "427f9e99c5318971",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "c15be48c75d79ae3",
+     "startTimeUnixNano": "1792785883933000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "5cd841702bbc258d",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "316fee8c3fd52e4a",
+     "startTimeUnixNano": "1792785883932000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 1,
+     "name": "executing api route (pages) /api/data",
+     "parentSpanId": "5cd841702bbc258d",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "427f9e99c5318971",
+     "startTimeUnixNano": "1792785883932000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/data",
+     "parentSpanId": "552cc54cb1ebef69",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "5cd841702bbc258d",
+     "startTimeUnixNano": "1792785883931000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 308
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "382ff0382aa54b08",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "a377ea0950546152",
+     "startTimeUnixNano": "1792785883923000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/data",
+     "parentSpanId": "a9c8805da0170db2",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "552cc54cb1ebef69",
+     "startTimeUnixNano": "1792785883931000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "d8b704bc904b4afc",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "a9c8805da0170db2",
+     "startTimeUnixNano": "1792785883930752000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "af33a261880e4899",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "d8b704bc904b4afc",
+     "startTimeUnixNano": "1792785883930404000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "getAdsByCategory",
+     "parentSpanId": "744c2067d6cba71f",
+     "service": "ad",
+     "serviceVersion": "3.1.0",
+     "spanId": "5c3f0cd819e1c8d9",
+     "startTimeUnixNano": "1792785883935448993",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetAds"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.AdService/GetAds",
+     "parentSpanId": "c15be48c75d79ae3",
+     "service": "ad",
+     "serviceVersion": "3.1.0",
+     "spanId": "744c2067d6cba71f",
+     "startTimeUnixNano": "1792785883934381091",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": "f6333e68d5008321",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "af33a261880e4899",
+     "startTimeUnixNano": "1792785883919717130",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_get_ads",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "f6333e68d5008321",
+     "startTimeUnixNano": "1792785883918277002",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "a6722b950de57b83980ea3ddbc67a42c"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "c29cac78e529450d",
+     "startTimeUnixNano": "1792785880915039777",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "d076deacc7154a3786932a5a008a5fe3"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "1ac2382828871479",
+     "startTimeUnixNano": "1792785882763728841",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "ca69f6c71e81b3cc80455e8028735726"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "6f858a6c7086f067",
+     "startTimeUnixNano": "1792785881496095923",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "83919bb3d1ae173fb42a8a533eb483db"
+  }
+ ],
+ "kwargs": {
+  "service": "load-generator",
+  "tags": null
+ },
+ "op": "jaeger_traces"
+}
