@@ -177,6 +177,115 @@ class ToolTests(unittest.TestCase):
                 self.assertEqual(result['observations'][0]['unit'], unit)
                 self.assertNotIn('SEL', self.server.requests[-1]['query']['query'][0])
 
+    def test_fractional_metric_windows_match_millisecond_backend_precision(self):
+        start = '2026-10-24T04:30:46.194510Z'
+        end = '2026-10-24T04:35:46.194510Z'
+        expected = {'start': '2026-10-24T04:30:46.195000Z',
+                    'end': '2026-10-24T04:35:46.194000Z'}
+
+        def rounded_response(backend, route, params):
+            self.assertEqual((backend, route), ('prometheus', '/api/v1/query_range'))
+            values = []
+            for bound in ('start', 'end'):
+                when = timestamp(params[bound])
+                when = when.replace(microsecond=when.microsecond // 1000 * 1000)
+                values.append([when.timestamp(), '1'])
+            response = metric_response()
+            response['data']['result'][0]['values'] = values
+            return response
+
+        for metric in ('request_rate', 'error_rate', 'latency_p95_ms', 'service_presence'):
+            with self.subTest(metric=metric), patch.object(
+                    self.tools.http, 'json', side_effect=rounded_response) as queried:
+                result = self.metrics(metric=metric, start=start, end=end)
+            self.assertEqual(result['status'], 'ok', result)
+            self.assertEqual(result['window'], {'start': start, 'end': end})
+            self.assertEqual(result['request']['start'], start)
+            self.assertEqual(result['request']['end'], end)
+            provenance = result['provenance']
+            self.assertEqual(provenance['requested_window'], result['window'])
+            self.assertEqual(provenance['effective_window'], expected)
+            self.assertEqual(provenance['timestamp_precision'], 'milliseconds')
+            self.assertTrue(provenance['request_sent'])
+            self.assertEqual(provenance['query'], queried.call_args.kwargs['params'])
+            self.assertEqual(provenance['query']['start'], expected['start'])
+            self.assertEqual(provenance['query']['end'], expected['end'])
+            for sample in result['observations'][0]['samples']:
+                self.assertLessEqual(timestamp(start), timestamp(sample['timestamp']))
+                self.assertLessEqual(timestamp(sample['timestamp']), timestamp(end))
+
+    def test_aligned_millisecond_metric_windows_remain_unchanged(self):
+        start = '2026-01-02T10:00:00.123000Z'
+        end = '2026-01-02T10:05:00.123000Z'
+        self.reply('prometheus', metric_response(when=timestamp(end).timestamp()))
+        result = self.metrics(start=start, end=end)
+        self.assertEqual(result['status'], 'ok')
+        self.assertEqual(result['provenance']['effective_window'], {'start': start, 'end': end})
+        query = self.server.requests[-1]['query']
+        self.assertEqual(query['start'], [start])
+        self.assertEqual(query['end'], [end])
+
+    def test_metric_window_rounding_carries_into_next_day(self):
+        start = '2026-01-02T23:59:59.999510Z'
+        end = '2026-01-03T00:00:30.000510Z'
+        expected = {'start': '2026-01-03T00:00:00Z', 'end': '2026-01-03T00:00:30Z'}
+        self.reply('prometheus', metric_response(when=timestamp(expected['end']).timestamp()))
+        result = self.metrics(start=start, end=end)
+        self.assertEqual(result['status'], 'ok')
+        self.assertEqual(result['provenance']['effective_window'], expected)
+
+    def test_metric_window_with_one_millisecond_evaluation_is_valid(self):
+        start = '2026-01-02T10:00:00.194510Z'
+        end = '2026-01-02T10:00:00.195510Z'
+        effective = '2026-01-02T10:00:00.195000Z'
+        self.reply('prometheus', metric_response(when=timestamp(effective).timestamp()))
+        result = self.metrics(start=start, end=end)
+        self.assertEqual(result['status'], 'ok')
+        self.assertEqual(result['provenance']['effective_window'], {'start': effective, 'end': effective})
+        self.assertEqual(len(result['observations'][0]['samples']), 1)
+
+    def test_metric_window_without_millisecond_evaluation_does_not_query(self):
+        start = '2026-01-02T10:00:00.194510Z'
+        end = '2026-01-02T10:00:00.194900Z'
+        result = self.metrics(start=start, end=end)
+        self.assertEqual(result['status'], 'no_data')
+        self.assertEqual(result['observations'], [])
+        self.assertEqual(result['window'], {'start': start, 'end': end})
+        self.assertEqual(result['provenance']['requested_window'], result['window'])
+        self.assertIsNone(result['provenance']['effective_window'])
+        self.assertIsNone(result['provenance']['query'])
+        self.assertFalse(result['provenance']['request_sent'])
+        self.assertTrue(result['warnings'])
+        self.assertEqual(self.server.requests, [])
+
+    def test_metric_window_at_datetime_limit_does_not_overflow(self):
+        result = self.metrics(start='9999-12-31T23:59:59.999510Z', end='9999-12-31T23:59:59.999900Z')
+        self.assertEqual(result['status'], 'no_data')
+        self.assertEqual(self.server.requests, [])
+
+    def test_metric_window_normalization_preserves_timezone_semantics(self):
+        start = '2026-01-02T15:30:00.194510+05:30'
+        end = '2026-01-02T15:35:00.194510+05:30'
+        self.reply('prometheus', metric_response(when=timestamp('2026-01-02T10:05:00.194000Z').timestamp()))
+        result = self.metrics(start=start, end=end)
+        self.assertEqual(result['status'], 'ok')
+        self.assertEqual(result['window'], {'start': '2026-01-02T10:00:00.194510Z',
+                                            'end': '2026-01-02T10:05:00.194510Z'})
+        self.assertEqual(result['provenance']['effective_window'],
+                         {'start': '2026-01-02T10:00:00.195000Z', 'end': '2026-01-02T10:05:00.194000Z'})
+
+    def test_metric_window_normalization_keeps_strict_response_bounds(self):
+        start = '2026-01-02T10:00:00.194510Z'
+        end = '2026-01-02T10:05:00.194510Z'
+        for when in ('2026-01-02T10:00:00.194000Z', '2026-01-02T10:05:00.195000Z',
+                     '2026-01-02T10:00:00.194750Z', '2026-01-02T10:05:00.194250Z'):
+            with self.subTest(when=when):
+                self.reply('prometheus', metric_response(when=timestamp(when).timestamp()))
+                result = self.metrics(start=start, end=end)
+                self.assertEqual(result['status'], 'error')
+                self.assertEqual(result['error']['code'], 'malformed_response')
+                self.assertEqual(result['observations'], [])
+
     def test_missing_metrics_are_no_data_not_zero(self):
         self.reply('prometheus', {'status': 'success', 'data': {'resultType': 'matrix', 'result': []}})
         result = self.metrics()

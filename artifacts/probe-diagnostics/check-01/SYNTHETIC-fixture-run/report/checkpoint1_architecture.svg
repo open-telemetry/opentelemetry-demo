@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="840" viewBox="0 0 1200 840">
+<rect width="1200" height="840" fill="white"/>
+<text x="25" y="30" font-family="sans-serif" font-size="20">Eyes acceptance architecture - configuration and execution status are recorded in artifacts</text>
+<rect x="20" y="50" width="1160" height="48" rx="6" fill="#eef6fc" stroke="#174466"/>
+<text x="32" y="79" font-family="sans-serif" font-size="14">Existing demo + load generator -&gt; OpenTelemetry Collector</text>
+<path d="M600 98v16" stroke="#174466"/>
+<rect x="20" y="114" width="1160" height="48" rx="6" fill="#eef6fc" stroke="#174466"/>
+<text x="32" y="143" font-family="sans-serif" font-size="14">Collector -&gt; Prometheus (metrics), OpenSearch (logs), Jaeger (traces)</text>
+<path d="M600 162v16" stroke="#174466"/>
+<rect x="20" y="178" width="1160" height="48" rx="6" fill="#eef6fc" stroke="#174466"/>
+<text x="32" y="207" font-family="sans-serif" font-size="14">F02 constrained read tools: telemetry + Docker health/events + optional deployment audit</text>
+<path d="M600 226v16" stroke="#174466"/>
+<rect x="20" y="242" width="1160" height="48" rx="6" fill="#eef6fc" stroke="#174466"/>
+<text x="32" y="271" font-family="sans-serif" font-size="14">F01 deterministic thresholds + freshness + SQLite incident deduplication</text>
+<path d="M600 290v16" stroke="#174466"/>
+<rect x="20" y="306" width="1160" height="48" rx="6" fill="#eef6fc" stroke="#174466"/>
+<text x="32" y="335" font-family="sans-serif" font-size="14">One F03 investigator -&gt; evidence-dependent read queries -&gt; evidence store</text>
+<path d="M600 354v16" stroke="#174466"/>
+<rect x="20" y="370" width="1160" height="48" rx="6" fill="#eef6fc" stroke="#174466"/>
+<text x="32" y="399" font-family="sans-serif" font-size="14">Configured inference: fixture: fixture-model</text>
+<path d="M600 418v16" stroke="#174466"/>
+<rect x="20" y="434" width="1160" height="48" rx="6" fill="#eef6fc" stroke="#174466"/>
+<text x="32" y="463" font-family="sans-serif" font-size="14">Model routing: fixture</text>
+<path d="M600 482v16" stroke="#174466"/>
+<rect x="20" y="498" width="1160" height="48" rx="6" fill="#eef6fc" stroke="#174466"/>
+<text x="32" y="527" font-family="sans-serif" font-size="14">Outputs: incident report, execution log, model identity, evidence, acceptance checks</text>
+<rect x="20" y="562" width="1160" height="48" rx="6" fill="#eef6fc" stroke="#174466"/>
+<text x="32" y="591" font-family="sans-serif" font-size="14">Separate operator path: readiness -&gt; shipping pause lease -&gt; independent reset watchdog</text>
+<rect x="20" y="626" width="1160" height="48" rx="6" fill="#eef6fc" stroke="#174466"/>
+<text x="32" y="655" font-family="sans-serif" font-size="14">Operator controls and injection journal are never registered as agent tools</text>
+<rect x="20" y="690" width="1160" height="48" rx="6" fill="#eef6fc" stroke="#174466"/>
+<text x="32" y="719" font-family="sans-serif" font-size="14">Deployment history is unavailable unless an audit feed is configured; root cause unproven</text>
+<rect x="20" y="754" width="1160" height="48" rx="6" fill="#eef6fc" stroke="#174466"/>
+<text x="32" y="783" font-family="sans-serif" font-size="14">Proposed later: diagnosis ranking, approval-gated remediation, recovery verification</text>
+</svg>

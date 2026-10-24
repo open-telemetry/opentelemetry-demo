@@ -58,6 +58,10 @@ Configuration uses `api_key_env = "GEMINI_API_KEY"` and the existing OpenAI-comp
 
 Cloud settings include timeout, retries, requests per minute, input context character budget, maximum output tokens and temperature. The context character budget is an application bound, not the provider's token context size.
 
+New Gemini operator configurations use a 60-second per-request timeout. Existing operator files are never rewritten; update timeout_seconds under [models.cloud] to 60 if they still contain 30. A measured 34.8-second first-byte latency exceeds the old timeout.
+
+The model probe derives its request budget from every selected provider's timeout, retry count and retry rate-limit waits, plus five seconds of scheduling headroom. For cloud-only with timeout_seconds = 60, retries = 1 and requests_per_minute = 12, model_probe_budget_seconds is 130. Diagnostics disable retries and therefore use 65 seconds for one 60-second attempt. Socket timeouts are I/O inactivity limits; these budgets are not an operating-system wall-clock watchdog. The investigation's workflow.max_seconds remains a separate setting.
+
 Existing local Ollama configuration and local-only, cloud-only, local-first and cloud-first routes remain supported through the unchanged Router. Configure only installed/available providers. Both providers selected for a fallback route must pass configuration validation; missing cloud credentials are not silently bypassed. Refer to [existing Eyes configuration](../eyes/operator.example.toml). No local backend is installed by this package.
 
 ### Readiness, without injection

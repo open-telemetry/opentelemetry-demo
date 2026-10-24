@@ -1,0 +1,19 @@
+EXPECTED FAILURE: the new fractional-window regression against unchanged HEAD source.
+
+test_fractional_metric_windows_match_millisecond_backend_precision (test_f02.ToolTests.test_fractional_metric_windows_match_millisecond_backend_precision) ... FAIL
+
+======================================================================
+FAIL: test_fractional_metric_windows_match_millisecond_backend_precision (test_f02.ToolTests.test_fractional_metric_windows_match_millisecond_backend_precision)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Siobhan\PES\Internships\Bosch\opentelemetry-demo\incident_tools\f02\tests\test_f02.py", line 201, in test_fractional_metric_windows_match_millisecond_backend_precision
+    self.assertEqual(result['status'], 'ok', result)
+AssertionError: 'error' != 'ok'
+- error
++ ok
+ : {'schema_version': 'f02.v1', 'origin': 'fixture', 'collected_at': '2026-01-02T10:06:00Z', 'observations': [], 'warnings': [], 'tool': 'query_metrics', 'service': 'checkout', 'window': {'start': '2026-10-24T04:30:46.194510Z', 'end': '2026-10-24T04:35:46.194510Z'}, 'status': 'error', 'error': {'code': 'malformed_response', 'message': 'Backend response failed schema, timestamp, identifier, or numeric validation'}, 'evidence_id': 'f02-011e4c39a659907a357f15f1'}
+
+----------------------------------------------------------------------
+Ran 1 test in 0.522s
+
+FAILED (failures=1)

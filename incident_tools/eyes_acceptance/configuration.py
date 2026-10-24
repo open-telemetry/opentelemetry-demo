@@ -53,7 +53,7 @@ backend = "openai-compatible"
 endpoint = ENDPOINT
 model = MODEL
 api_key_env = "GEMINI_API_KEY"
-timeout_seconds = 30
+timeout_seconds = 60
 retries = 1
 requests_per_minute = 12
 max_output_tokens = 2048
@@ -63,6 +63,16 @@ temperature = 0.0
     eyes = eyes.replace("ENDPOINT", json.dumps(GEMINI_ENDPOINT)).replace("MODEL", json.dumps(model))
     (directory / "eyes.toml").write_text(eyes, encoding="utf-8")
     return str(directory / "eyes.toml")
+
+
+def model_probe_budget(router):
+    budget = 5.0
+    for slot in router.order:
+        provider = router.cfg[slot]
+        attempts = provider["retries"] + 1
+        budget += attempts * provider["timeout_seconds"]
+        budget += (attempts - 1) * 60 / provider["requests_per_minute"]
+    return budget
 
 
 def readiness(config, live=False, probe_model=False, clock=utc_now):
@@ -116,11 +126,12 @@ def readiness(config, live=False, probe_model=False, clock=utc_now):
             if result.get("status") != "ok":
                 warnings.append(name + ": " + result.get("status", "unknown"))
     model_probe = None
+    probe_budget = model_probe_budget(router) if probe_model and router else None
     if probe_model and router:
         try:
             answer, identity = router.decide([
                 {"role": "system", "content": 'Return exactly the JSON object {"ready":true}. No markdown.'},
-                {"role": "user", "content": "Connection check only; no incident or telemetry."}], 45)
+                {"role": "user", "content": "Connection check only; no incident or telemetry."}], probe_budget)
             if answer != {"ready": True}:
                 raise ValueError("Probe response")
             model_probe = identity
@@ -129,6 +140,7 @@ def readiness(config, live=False, probe_model=False, clock=utc_now):
     result = {"configuration_usable": not issues, "model_configuration_usable": not model_issues,
               "issues": issues, "model_issues": model_issues, "warnings": warnings,
               "live_probes_executed": live, "model_probe": model_probe,
+              "model_probe_budget_seconds": probe_budget,
               "telemetry": checks, "artifact_dir": artifact_dir,
               "model_configuration": router.public_configuration if router else {},
               "note": "Configuration validation does not establish provider connectivity or live acceptance."}

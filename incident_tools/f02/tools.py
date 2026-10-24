@@ -1,7 +1,7 @@
 """Agent-callable observations. No arbitrary URLs, queries, commands, or writes."""
 import base64
 import hashlib
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import json
 from pathlib import Path
 import re
@@ -161,8 +161,20 @@ class ObservabilityTools:
         if name != 'service_presence':
             selector += ',span_kind="SPAN_KIND_SERVER"'
         expr = template.replace('SEL', selector)
-        query = {'query': expr, 'start': args['start'], 'end': args['end'], 'step': args['step_seconds']}
         route = '/api/v1/query_range'
+        requested_window = {'start': args['start'], 'end': args['end']}
+        query_end = end - timedelta(microseconds=end.microsecond % 1000)
+        if start > query_end:
+            provenance = self._provenance('prometheus', route, None)
+            provenance.update(requested_window=requested_window, effective_window=None,
+                              timestamp_precision='milliseconds', request_sent=False)
+            return [], provenance, ['Requested window contains no millisecond evaluation timestamp; no backend query sent.']
+        query_start = start + timedelta(microseconds=(-start.microsecond) % 1000)
+        effective_window = {'start': iso(query_start), 'end': iso(query_end)}
+        query = {'query': expr, **effective_window, 'step': args['step_seconds']}
+        provenance = self._provenance('prometheus', route, query)
+        provenance.update(requested_window=requested_window, effective_window=effective_window,
+                          timestamp_precision='milliseconds', request_sent=True)
         response = self.http.json('prometheus', route, params=query)
         if response.get('status') != 'success' or response.get('data', {}).get('resultType') != 'matrix':
             raise ToolError('query_failed', 'Prometheus returned an error or unsupported result type')
@@ -187,6 +199,8 @@ class ObservabilityTools:
                 when = finite(pair[0])
                 if not start.timestamp() <= when <= end.timestamp():
                     raise ValueError('Out-of-window metric sample')
+                if not query_start.timestamp() <= when <= query_end.timestamp():
+                    raise ValueError('Metric sample outside effective query window')
                 try:
                     value = finite(pair[1])
                 except ValueError:
@@ -203,7 +217,7 @@ class ObservabilityTools:
                 rows.append({'metric': name, 'unit': unit, 'labels': {k: v for k, v in labels.items() if k in ('service_name', 'status_code', 'span_kind', 'le', '__name__', 'job', 'instance')},
                              'samples': samples, 'source_id': 'promql:' + digest({'query': expr, 'labels': labels}),
                              'temporal_semantics': 'Prometheus evaluation times; underlying sample freshness is not independently verified'})
-        return rows, self._provenance('prometheus', route, query), list(dict.fromkeys(warnings))
+        return rows, provenance, list(dict.fromkeys(warnings))
 
     def _search_logs(self, args, start, end):
         cfg = self.config.section('opensearch')

@@ -1,0 +1,186 @@
+{
+  "incident": {
+    "id": "incident-897caa6016a74d8f9da9ed8344105c74",
+    "service": "checkout",
+    "window": {
+      "start": "2026-01-01T11:56:00Z",
+      "end": "2026-01-01T12:01:00Z"
+    },
+    "detected_at": "2026-01-01T12:01:00Z",
+    "state": "open",
+    "investigation": "running",
+    "alerts": [
+      {
+        "metric": "latency_p95_ms",
+        "threshold": 1000,
+        "value": 1500,
+        "timestamp": "2026-01-01T12:01:00Z",
+        "source_time": "2026-01-01T12:01:00Z",
+        "evidence_id": "fixture-10",
+        "freshness_evidence_id": "fresh-7b8b89097786da711fb1efbe",
+        "coverage_evidence_id": "fixture-9",
+        "query": "fixture metric expression"
+      }
+    ],
+    "origin": "fixture"
+  },
+  "evidence": [
+    {
+      "tool": "search_traces",
+      "service": "checkout",
+      "window": {
+        "start": "2026-01-01T11:56:00Z",
+        "end": "2026-01-01T12:01:00Z"
+      },
+      "origin": "fixture",
+      "status": "ok",
+      "warnings": [],
+      "collected_at": "2026-01-01T12:01:30Z",
+      "evidence_id": "fixture-15",
+      "observations": [
+        {
+          "source_id": "fixture-source",
+          "samples": [
+            {
+              "timestamp": "2026-01-01T12:01:30Z",
+              "value": 500
+            }
+          ],
+          "symptom": "timeout"
+        }
+      ],
+      "provenance": {
+        "query": "fixture metric expression"
+      }
+    },
+    {
+      "tool": "search_logs",
+      "service": "checkout",
+      "window": {
+        "start": "2026-01-01T11:56:00Z",
+        "end": "2026-01-01T12:01:00Z"
+      },
+      "origin": "fixture",
+      "status": "ok",
+      "warnings": [],
+      "collected_at": "2026-01-01T12:01:30Z",
+      "evidence_id": "fixture-16",
+      "observations": [
+        {
+          "source_id": "fixture-source",
+          "samples": [
+            {
+              "timestamp": "2026-01-01T12:01:30Z",
+              "value": 500
+            }
+          ],
+          "symptom": "timeout"
+        }
+      ],
+      "provenance": {
+        "query": "fixture metric expression"
+      }
+    }
+  ],
+  "decisions": [
+    {
+      "step": 0,
+      "decision": {
+        "action": "tool",
+        "tool": "search_traces",
+        "arguments": {
+          "service": "checkout",
+          "start": "2026-01-01T11:56:00Z",
+          "end": "2026-01-01T12:01:00Z"
+        },
+        "rationale": "Investigate slow requests"
+      },
+      "model": {
+        "model": "fixture-model",
+        "slot": "fixture",
+        "backend": "fixture",
+        "provider": "operator-configured compatible provider"
+      },
+      "at": "2026-10-24T04:42:35.038013Z",
+      "based_on_evidence": []
+    },
+    {
+      "step": 1,
+      "decision": {
+        "action": "tool",
+        "tool": "search_logs",
+        "arguments": {
+          "service": "checkout",
+          "start": "2026-01-01T11:56:00Z",
+          "end": "2026-01-01T12:01:00Z"
+        },
+        "rationale": "Trace showed timeout; inspect matching logs",
+        "based_on_evidence_ids": [
+          "fixture-15"
+        ]
+      },
+      "model": {
+        "model": "fixture-model",
+        "slot": "fixture",
+        "backend": "fixture",
+        "provider": "operator-configured compatible provider"
+      },
+      "at": "2026-10-24T04:42:35.040312Z",
+      "based_on_evidence": [
+        "fixture-15"
+      ]
+    },
+    {
+      "step": 2,
+      "decision": {
+        "action": "finish",
+        "interpretations": [
+          {
+            "text": "Timeout symptoms require further investigation",
+            "evidence_ids": [
+              "fixture-16"
+            ]
+          }
+        ],
+        "limitations": [
+          "Synthetic test data"
+        ]
+      },
+      "model": {
+        "model": "fixture-model",
+        "slot": "fixture",
+        "backend": "fixture",
+        "provider": "operator-configured compatible provider"
+      },
+      "at": "2026-10-24T04:42:35.041332Z",
+      "based_on_evidence": [
+        "fixture-15",
+        "fixture-16"
+      ]
+    }
+  ],
+  "interpretations": [
+    {
+      "text": "Timeout symptoms require further investigation",
+      "evidence_ids": [
+        "fixture-16"
+      ]
+    }
+  ],
+  "limitations": [
+    "Synthetic test data",
+    "Interpretations are model hypotheses; reference validation does not prove semantic entailment. Root cause is not established by this Eyes report."
+  ],
+  "stop_reason": "model_finished",
+  "finished_at": "2026-10-24T04:42:35.041332Z",
+  "model_configuration": {
+    "route": "fixture",
+    "providers": {
+      "fixture": {
+        "model": "fixture-model"
+      }
+    }
+  },
+  "origin": "fixture",
+  "adaptive_choices_recorded": true
+}
