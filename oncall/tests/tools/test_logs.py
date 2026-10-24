@@ -1,9 +1,18 @@
 """Unit tests for search_logs tool, message normalisation, OTel field extraction, and offline replay."""
 
+import json
+from pathlib import Path
 from unittest.mock import MagicMock
 
-from oncall.tools.backends import BackendError, OfflineBackend
+import httpx
+
+from oncall.safety.exclusions import EXCLUDED_SERVICES
+from oncall.tools.backends import BackendError, LiveBackend, OfflineBackend
 from oncall.tools.logs import (
+    MAX_EVIDENCE_TEXT,
+    MAX_GROUPS,
+    MAX_LINE_CHARS,
+    UNATTRIBUTED,
     _extract_log_fields,
     _matches_level,
     normalize_message,
@@ -117,29 +126,121 @@ def test_backend_error_returns_ok_false():
     assert "OpenSearch index 'unknown' not found" in (res["error"] or "")
 
 
-def test_offline_backend_real_shaped_fixture_and_smaller_output():
-    """Test using OfflineBackend with the real-shaped baseline fixture and smaller output guarantees."""
+def test_offline_replay_of_recorded_baseline():
+    """The recorded baseline replays for any limit/window the agent picks."""
     backend = OfflineBackend(scenario="baseline")
-    res = search_logs(
-        service=None, level="error", since_min=15, limit=50, backend=backend
-    )
-
+    res = search_logs(level="error", since_min=30, limit=50, backend=backend)
     assert res["ok"] is True
-    assert res["error"] is None
+    assert res["evidence"]
+    lines = res["summary"].splitlines()
+    assert len(lines) <= 1 + MAX_GROUPS
+    assert all(e["id"].startswith("log:") and "@" in e["id"] for e in res["evidence"])
+    assert all(len(e["text"]) <= MAX_EVIDENCE_TEXT + 20 for e in res["evidence"])
 
-    # Cartservice had 2 log entries differing only by retry number (1/3 vs 2/3) -> grouped into 1 group with count 2
-    assert "x2 [cartservice]" in res["summary"]
-    # Paymentservice had 1 fatal log -> count 1
-    assert "x1 [paymentservice]" in res["summary"]
 
-    # Smaller output checks:
-    summary_lines = res["summary"].splitlines()
-    assert len(summary_lines) <= 5
-    for line in summary_lines:
-        assert len(line) <= 95
+REAL_SAMPLE = Path(__file__).parents[1] / "fixtures" / "opensearch" / "logs_sample.json"
 
-    assert len(res["evidence"]) <= 5
-    for ev in res["evidence"]:
-        assert len(ev["text"]) <= 160
-        assert ev["id"].startswith("log:")
-        assert "@" in ev["id"]
+
+def _real_docs() -> list[dict]:
+    return json.loads(REAL_SAMPLE.read_text(encoding="utf-8"))
+
+
+def _backend_returning(docs: list[dict]) -> MagicMock:
+    backend = MagicMock()
+    backend.logs_search.return_value = docs
+    return backend
+
+
+def test_real_opensearch_docs_parse_service_and_level():
+    parsed = [_extract_log_fields(d) for d in _real_docs()]
+    assert all(svc != UNATTRIBUTED for svc, _, _, _ in parsed)
+    by_service = {svc: lvl for svc, _, lvl, _ in parsed}
+    assert by_service["frontend"] == "error"
+    assert by_service["cart"] == "info"
+    assert {lvl for _, _, lvl, _ in parsed} == {"error", "warn", "info"}
+
+
+def test_real_docs_filtered_by_level_threshold():
+    docs = _real_docs()
+    errors = search_logs(level="error", backend=_backend_returning(docs))
+    warns = search_logs(level="warn", backend=_backend_returning(docs))
+    assert errors["summary"].startswith("6 log lines level>='error'")
+    assert "x4 [frontend] API request failed" in errors["summary"]
+    assert warns["summary"].startswith("8 log lines level>='warn'")
+
+
+def test_output_budget_and_unique_ids():
+    docs = [
+        {
+            "@timestamp": "2026-10-23T19:00:00Z",
+            "severity": {"text": "error", "number": 17},
+            "resource": {"service.name": "cart"},
+            "body": f"failure kind {chr(65 + i)} " + "x" * 400,
+        }
+        for i in range(25)
+    ]
+    res = search_logs(backend=_backend_returning(docs))
+    lines = res["summary"].splitlines()
+    assert len(lines) == 1 + MAX_GROUPS
+    assert all(len(line) <= MAX_LINE_CHARS + 20 for line in lines[1:])
+    assert len(res["evidence"]) == MAX_GROUPS
+    assert all(len(e["text"]) <= MAX_EVIDENCE_TEXT + 20 for e in res["evidence"])
+    ids = [e["id"] for e in res["evidence"]]
+    assert len(set(ids)) == len(ids)
+    assert all(ids_part.startswith("log:cart:") for ids_part in ids)
+
+
+def test_excluded_services_dropped():
+    docs = [
+        {
+            "severity": {"number": 17},
+            "resource": {"service.name": name},
+            "body": "boom",
+        }
+        for name in [*EXCLUDED_SERVICES, "cart"]
+    ]
+    res = search_logs(backend=_backend_returning(docs))
+    assert res["summary"].startswith("1 log lines")
+    for name in EXCLUDED_SERVICES:
+        assert f"[{name}]" not in res["summary"]
+
+
+def test_live_query_uses_severity_number_and_service_keyword(monkeypatch):
+    sent = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        sent["url"] = str(request.url)
+        sent["body"] = json.loads(request.content)
+        return httpx.Response(200, json={"hits": {"hits": []}})
+
+    backend = LiveBackend(
+        prom_url="http://p", jaeger_url="http://j", opensearch_url="http://o"
+    )
+    monkeypatch.setattr(
+        backend, "_client", lambda: httpx.Client(transport=httpx.MockTransport(handler))
+    )
+    backend.logs_search(service="product-catalog", level="warn", since_min=10, limit=5)
+    assert sent["url"] == "http://o/otel-logs-*/_search"
+    query = sent["body"]["query"]["bool"]
+    assert {"term": {"resource.service.name.keyword": "product-catalog"}} in query[
+        "filter"
+    ]
+    assert {"range": {"severity.number": {"gte": 13}}} in query["filter"]
+    assert query["must_not"] == [
+        {"terms": {"resource.service.name.keyword": sorted(EXCLUDED_SERVICES)}}
+    ]
+    assert sent["body"]["size"] == 5
+
+
+def test_summary_says_when_limit_was_reached():
+    docs = [
+        {"severity": {"number": 17}, "resource": {"service.name": "cart"}, "body": "x"}
+    ] * 3
+    assert (
+        "limit reached"
+        in search_logs(limit=3, backend=_backend_returning(docs))["summary"]
+    )
+    assert (
+        "limit reached"
+        not in search_logs(limit=4, backend=_backend_returning(docs))["summary"]
+    )

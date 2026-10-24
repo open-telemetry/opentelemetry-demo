@@ -15,15 +15,17 @@ class Settings:
     JAEGER_URL: str | None = None
     OPENSEARCH_URL: str | None = None
     OPENSEARCH_LOG_INDEX: str | None = None
-    COMPOSE_FILES: str = "compose.yaml,compose.observability.yaml"
+    COMPOSE_PROJECT_NAME: str = "opentelemetry-demo"
     TELEMETRY_BACKEND: str = "live"
     OFFLINE_DIR: str | None = None
     LLM_PROVIDER: str | None = None
     LLM_MODEL: str | None = None
     LLM_API_KEY: str | None = None
     LLM_BASE_URL: str | None = None
-    LLM_MAX_TOKENS: int = 4096
-    MAX_STEPS: int = 12
+    LLM_FALLBACKS: str | None = None
+    LLM_MAX_TOKENS: int = 1500
+    LLM_MAX_PROMPT_TOKENS: int = 6000
+    MAX_STEPS: int = 8
     CONFIDENCE_MIN: float = 0.7
     RUNS_DIR: str = "runs"
     ACTION_API_URL: str | None = None
@@ -33,10 +35,6 @@ class Settings:
     ALERT_ERROR_RATE: float = 0.05
     ALERT_P95_MS: int = 1000
     ALERT_POLL_S: int = 15
-
-    @property
-    def compose_files(self) -> list[str]:
-        return [f.strip() for f in self.COMPOSE_FILES.split(",") if f.strip()]
 
 
 def _parse_bool(value: str) -> bool:
@@ -56,6 +54,15 @@ def _convert(raw: str, default: object) -> object:
     if isinstance(default, float):
         return float(raw)
     return raw
+
+
+def secret(name: str, env_file: str | Path | None = None) -> str | None:
+    """A named secret (e.g. an API key variable): process env, then oncall/.env."""
+    path = Path(env_file) if env_file else DEFAULT_ENV_FILE
+    value = os.environ.get(name)
+    if not value and path.is_file():
+        value = dotenv_values(path).get(name)
+    return value or None
 
 
 def load_settings(env_file: str | Path | None = None) -> Settings:

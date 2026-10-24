@@ -122,17 +122,20 @@ Interfaces:
   def scrub_flags(obj: object) -> object
       # Recursively removes any dict key matching /feature[_.]flag/i, drops
       # OTLP/Jaeger attribute items {"key": <match>, "value": ...}, and
-      # replaces any line of a string that matches it (label name and
-      # value) with "[feature-flag data removed]" (RULES.md hard rule 7).
+      # replaces the matching token of a string (label pair or phrase)
+      # with "[redacted]", keeping the rest (RULES.md hard rule 7).
       # Lives in oncall/models.py.
   def discover_endpoints() -> dict[str, str]
       # Returns {"prometheus":..., "jaeger":..., "opensearch":...}.
-      # Order: env var if set -> `docker compose port` -> None.
-      # Never raises; missing ones are None + a warning.
+      # Order: process env -> oncall/.env -> host port Docker publishes for
+      # the COMPOSE_PROJECT_NAME container -> defaults (Prometheus
+      # 127.0.0.1:9090, Jaeger 127.0.0.1:8080/jaeger/ui, OpenSearch None).
+      # Never raises. resolve_endpoints() is the cached form every tool,
+      # LiveBackend and the UI use.
 
 Config keys (declare ALL now so nobody else edits config.py):
   PROM_URL, JAEGER_URL, OPENSEARCH_URL, OPENSEARCH_LOG_INDEX,
-  COMPOSE_FILES (default "compose.yaml,compose.observability.yaml"),
+  COMPOSE_PROJECT_NAME (default "opentelemetry-demo"),
   TELEMETRY_BACKEND (live|offline), OFFLINE_DIR,
   LLM_PROVIDER, LLM_MODEL, LLM_API_KEY, LLM_BASE_URL, LLM_MAX_TOKENS,
   MAX_STEPS (12), CONFIDENCE_MIN (0.7), RUNS_DIR ("runs"),

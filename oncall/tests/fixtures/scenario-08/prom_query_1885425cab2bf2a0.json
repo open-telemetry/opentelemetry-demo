@@ -1,0 +1,159 @@
+{
+ "data": {
+  "data": {
+   "result": [
+    {
+     "metric": {
+      "service_name": "frontend-web"
+     },
+     "value": [
+      1792786799.522,
+      "0.2264321835610235"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "payment"
+     },
+     "value": [
+      1792786799.522,
+      "0.05750658630121232"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "telemetry-docs"
+     },
+     "value": [
+      1792786799.522,
+      "0.20846137534189466"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "currency"
+     },
+     "value": [
+      1792786799.522,
+      "0.6757023890392447"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "recommendation"
+     },
+     "value": [
+      1792786799.522,
+      "1.4232880109550048"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "email"
+     },
+     "value": [
+      1792786799.522,
+      "0.10063652602712156"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "image-provider"
+     },
+     "value": [
+      1792786799.522,
+      "1.7000384575295893"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "frontend-proxy"
+     },
+     "value": [
+      1792786799.522,
+      "16.206074852010396"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "checkout"
+     },
+     "value": [
+      1792786799.522,
+      "0.35222784109492544"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "cart"
+     },
+     "value": [
+      1792786799.522,
+      "1.8869348630085292"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "quote"
+     },
+     "value": [
+      1792786799.522,
+      "0.2587796383554555"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "frontend"
+     },
+     "value": [
+      1792786799.522,
+      "18.815436205427904"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "ad"
+     },
+     "value": [
+      1792786799.522,
+      "0.3090979013690162"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "shipping"
+     },
+     "value": [
+      1792786799.522,
+      "0.19767889041041736"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "product-catalog"
+     },
+     "value": [
+      1792786799.522,
+      "5.567356386286118"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "load-generator"
+     },
+     "value": [
+      1792786799.522,
+      "1.297492353421103"
+     ]
+    }
+   ],
+   "resultType": "vector"
+  },
+  "status": "success"
+ },
+ "kwargs": {
+  "baseline": false,
+  "promql": "sum by (service_name) (rate(traces_span_metrics_calls_total{{exclude}}[{window}]))"
+ },
+ "op": "prom_query"
+}

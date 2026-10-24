@@ -1,0 +1,45 @@
+{
+ "data": [
+  {
+   "@timestamp": "2026-10-23T20:10:19.35Z",
+   "attributes": {
+    "exception.message": "13 INTERNAL: shipping quote failure: failed POST to shipping service: expected 200, got 400",
+    "exception.type": "13"
+   },
+   "body": "Checkout failed to place order",
+   "resource": {
+    "service.name": "frontend",
+    "service.version": "3.1.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   },
+   "spanId": "4dac3e63360ac914",
+   "traceId": "f53108e86e6b3071a90ea4c865c4fe30"
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:35.882Z",
+   "attributes": {
+    "exception.message": "9 FAILED_PRECONDITION: Can't access cart storage. System.ApplicationException: Wasn't able to connect to redis\n   at cart.cartstore.ValkeyCartStore.EnsureRedisConnected() in /usr/src/app/src/cartstore/ValkeyCartStore.cs:line 103\n   at cart.cartstore.ValkeyCartStore.GetCartAsync(String userId) in /usr/src/app/src/cartstore/ValkeyCartStore.cs:line 210",
+    "exception.type": "9"
+   },
+   "body": "API request failed",
+   "resource": {
+    "service.name": "frontend",
+    "service.version": "3.1.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   },
+   "spanId": "8882f232c8dca885",
+   "traceId": "882362b4560091a52a8ccb316eae69ba"
+  }
+ ],
+ "kwargs": {
+  "level": "warn",
+  "service": "frontend"
+ },
+ "op": "logs_search"
+}

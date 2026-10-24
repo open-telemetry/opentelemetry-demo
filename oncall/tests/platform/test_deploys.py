@@ -194,5 +194,5 @@ def test_reuses_container_health_docker_helper():
 
 def test_tool_is_registered():
     schema = TOOL_SCHEMAS["deploy_history"]["input_schema"]
-    assert schema["properties"]["window_min"]["type"] == "integer"
+    assert schema["properties"]["window_min"]["type"] == ["integer", "null"]
     assert schema["required"] == []

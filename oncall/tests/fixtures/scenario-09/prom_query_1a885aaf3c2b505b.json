@@ -1,0 +1,14 @@
+{
+ "data": {
+  "data": {
+   "result": [],
+   "resultType": "vector"
+  },
+  "status": "success"
+ },
+ "kwargs": {
+  "baseline": false,
+  "promql": "sum (rate(traces_span_metrics_calls_total{service_name=\"image-provider\",{exclude},status_code=\"STATUS_CODE_ERROR\"}[{window}])) / sum (rate(traces_span_metrics_calls_total{service_name=\"image-provider\",{exclude}}[{window}]))"
+ },
+ "op": "prom_query"
+}

@@ -1,0 +1,10 @@
+{
+ "data": [],
+ "kwargs": {
+  "service": "image-provider",
+  "tags": {
+   "error": "true"
+  }
+ },
+ "op": "jaeger_traces"
+}

@@ -109,8 +109,9 @@ def test_stops_at_max_steps(runlog):
     result = run(llm, runlog, max_steps=3)
     assert result["stopped"] == "max_steps"
     assert result["steps"] == 3
-    assert llm.calls == 3
+    assert llm.calls == 3 + 1  # three steps, then one forced-finish call
     assert runlog.events("finish")[0]["stopped"] == "max_steps"
+    assert result["summary"].startswith("Investigation stopped (max_steps)")
 
 
 def test_unknown_tool_reported_back(runlog):

@@ -1,0 +1,2709 @@
+{
+ "data": [
+  {
+   "@timestamp": "2026-10-23T20:10:05.131007001Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:10:05.13116649Z",
+   "attributes": {
+    "exception.message": "unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "franz-go: Metadata failed",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:10:05.131237206Z",
+   "attributes": {
+    "exception.message": "franz-go: Metadata failed: unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:10:05.130908855Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:10:05.130938978Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:10:00.403976793Z",
+   "attributes": {
+    "exception.message": "dial tcp: lookup valkey-cart: i/o timeout",
+    "exception.type": "*net.OpError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:57.127140643Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:57.127312923Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:57.127621821Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:49.122682396Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:49.122784198Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:49.122921727Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:47.611982175Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:47.611921907Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:47.611949427Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:46.928601368Z",
+   "attributes": {
+    "exception.message": "error reading process name for pid 59730: open /hostfs/proc/59730/status: no such file or directory",
+    "exception.type": "go.opentelemetry.io/collector/scraper/scrapererror.PartialScrapeError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:45.974850537Z",
+   "attributes": {
+    "exception.message": "not retryable error: Permanent error: rpc error: code = InvalidArgument desc = error exporting items, request to http://prometheus:9090/api/v1/otlp/v1/metrics responded with HTTP Status Code 400",
+    "exception.type": "go.opentelemetry.io/collector/consumer/consumererror.permanent"
+   },
+   "body": "Exporting failed. Dropping data.",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:39.60928827Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:39.609344854Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:39.609374089Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:31.605667022Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:31.605748441Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:31.6056568Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:23.602137131Z",
+   "attributes": {
+    "exception.message": "unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: no such host",
+    "exception.type": "*net.OpError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:23.601574985Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:23.601624983Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:23.601609706Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:18.123003603Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:18.122982617Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:18.122963897Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:10.120275055Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:10.120156248Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:10.120203198Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:03.601461782Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:03.601532312Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:09:03.601437358Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:55.598611791Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:55.598685892Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:55.598893818Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:51.136266155Z",
+   "attributes": {
+    "exception.message": "error reading process name for pid 54651: open /hostfs/proc/54651/status: no such file or directory",
+    "exception.type": "go.opentelemetry.io/collector/scraper/scrapererror.PartialScrapeError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:50.173033602Z",
+   "attributes": {
+    "exception.message": "not retryable error: Permanent error: rpc error: code = InvalidArgument desc = error exporting items, request to http://prometheus:9090/api/v1/otlp/v1/metrics responded with HTTP Status Code 400",
+    "exception.type": "go.opentelemetry.io/collector/consumer/consumererror.permanent"
+   },
+   "body": "Exporting failed. Dropping data.",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:49.649692994Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:49.649909248Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:49.649962327Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:41.640351854Z",
+   "attributes": {
+    "exception.message": "franz-go: ListGroupsByType failed: request ListGroups has 1 separate shard errors, first: unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*kadm.ShardErrors"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:41.639673823Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:41.639793456Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:41.639897016Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:35.882Z",
+   "attributes": {
+    "exception.message": "9 FAILED_PRECONDITION: Can't access cart storage. System.ApplicationException: Wasn't able to connect to redis\n   at cart.cartstore.ValkeyCartStore.EnsureRedisConnected() in /usr/src/app/src/cartstore/ValkeyCartStore.cs:line 103\n   at cart.cartstore.ValkeyCartStore.GetCartAsync(String userId) in /usr/src/app/src/cartstore/ValkeyCartStore.cs:line 210",
+    "exception.type": "9"
+   },
+   "body": "API request failed",
+   "resource": {
+    "service.name": "frontend",
+    "service.version": "3.1.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   },
+   "spanId": "8882f232c8dca885",
+   "traceId": "882362b4560091a52a8ccb316eae69ba"
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:35.7767362Z",
+   "attributes": {},
+   "body": "Wasn't able to connect to redis",
+   "resource": {
+    "service.name": "cart",
+    "service.version": "3.1.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "Error"
+   },
+   "spanId": "64dc4437c7dbc511",
+   "traceId": "882362b4560091a52a8ccb316eae69ba"
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:33.635871096Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:33.635940474Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:33.635781826Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:28.831283252Z",
+   "attributes": {
+    "exception.message": "dial tcp: lookup valkey-cart: i/o timeout",
+    "exception.type": "*net.OpError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:25.632417095Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:25.632534267Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:25.632547074Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:19.752058841Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:19.751950095Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:19.751988417Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:11.746518057Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:11.746611227Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:11.746618698Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:03.74120774Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:03.74088657Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:08:03.740914456Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:55.736034111Z",
+   "attributes": {
+    "exception.message": "unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "franz-go: Metadata failed",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:55.736143644Z",
+   "attributes": {
+    "exception.message": "franz-go: Metadata failed: unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:55.735713071Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:55.735669696Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:55.735797058Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:55.266331519Z",
+   "attributes": {
+    "exception.message": "error reading process name for pid 49414: open /hostfs/proc/49414/status: no such file or directory; error reading process name for pid 49415: open /hostfs/proc/49415/status: no such file or directory; error reading process name for pid 49416: open /hostfs/proc/49416/status: no such file or directory; error reading process name for pid 49445: open /hostfs/proc/49445/status: no such file or directo",
+    "exception.type": "go.opentelemetry.io/collector/scraper/scrapererror.PartialScrapeError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:54.302875438Z",
+   "attributes": {
+    "exception.message": "not retryable error: Permanent error: rpc error: code = InvalidArgument desc = error exporting items, request to http://prometheus:9090/api/v1/otlp/v1/metrics responded with HTTP Status Code 400",
+    "exception.type": "go.opentelemetry.io/collector/consumer/consumererror.permanent"
+   },
+   "body": "Exporting failed. Dropping data.",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:49.736797501Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:49.736865622Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:49.736880626Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:41.731826292Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:41.731818591Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:41.731876537Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:33.727375605Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:33.727313817Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:33.727230526Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:27.843043714Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:27.842761979Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:27.842982345Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:19.840135207Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:19.840121706Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:19.839910751Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:11.836359826Z",
+   "attributes": {
+    "exception.message": "unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:11.835770941Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:11.835787226Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:11.835824665Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:03.832627254Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:03.832643349Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:07:03.832675069Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:58.475981995Z",
+   "attributes": {
+    "exception.message": "not retryable error: Permanent error: rpc error: code = InvalidArgument desc = error exporting items, request to http://prometheus:9090/api/v1/otlp/v1/metrics responded with HTTP Status Code 400",
+    "exception.type": "go.opentelemetry.io/collector/consumer/consumererror.permanent"
+   },
+   "body": "Exporting failed. Dropping data.",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:57.863054756Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:57.863110326Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:57.863041688Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:49.859592023Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:49.859620354Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:49.859561374Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:41.855502667Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:41.855543501Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:41.85552172Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:33.851176156Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:33.851280199Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:33.850670009Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:28.014104113Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:28.014039023Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:28.014259149Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:28.014369919Z",
+   "attributes": {
+    "exception.message": "franz-go: ListGroupsByType failed: request ListGroups has 1 separate shard errors, first: unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*kadm.ShardErrors"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:20.010402528Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:20.01039177Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:20.010494195Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:12.006281857Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:12.006315118Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:12.006348868Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:04.001543239Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:04.001480687Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:04.001442178Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:03.810102877Z",
+   "attributes": {
+    "exception.message": "pq: syntax error at or near \"$3\" at position 4:10 (42601)",
+    "exception.type": "*pq.Error"
+   },
+   "body": "failed to prepare statement for EXPLAIN",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:03.810873257Z",
+   "attributes": {
+    "exception.message": "pq: syntax error at or near \"$3\" at position 4:10 (42601)",
+    "exception.type": "*pq.Error"
+   },
+   "body": "failed to explain query",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:03.788176081Z",
+   "attributes": {
+    "exception.message": "pq: syntax error at or near \"$12\" at position 13:13 (42601)",
+    "exception.type": "*pq.Error"
+   },
+   "body": "failed to explain query",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:03.785759272Z",
+   "attributes": {
+    "exception.message": "pq: syntax error at or near \"$12\" at position 13:13 (42601)",
+    "exception.type": "*pq.Error"
+   },
+   "body": "failed to prepare statement for EXPLAIN",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:06:02.770027487Z",
+   "attributes": {
+    "exception.message": "not retryable error: Permanent error: rpc error: code = InvalidArgument desc = error exporting items, request to http://prometheus:9090/api/v1/otlp/v1/metrics responded with HTTP Status Code 400",
+    "exception.type": "go.opentelemetry.io/collector/consumer/consumererror.permanent"
+   },
+   "body": "Exporting failed. Dropping data.",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:58.13803662Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:58.137795409Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:58.137968873Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:50.133389584Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:50.133432424Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:50.133617658Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:42.12804786Z",
+   "attributes": {
+    "exception.message": "franz-go: Metadata failed: unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:42.127615076Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:42.127801123Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:42.127903601Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:42.127857672Z",
+   "attributes": {
+    "exception.message": "unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "franz-go: Metadata failed",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:36.299338149Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:36.299418116Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:36.299445643Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:28.294049242Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:28.293852924Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:28.29394371Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:20.287021772Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:20.287345196Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:20.287511256Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:12.283651386Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:12.283694196Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:12.283637576Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:07.078844702Z",
+   "attributes": {
+    "exception.message": "not retryable error: Permanent error: rpc error: code = InvalidArgument desc = error exporting items, request to http://prometheus:9090/api/v1/otlp/v1/metrics responded with HTTP Status Code 400",
+    "exception.type": "go.opentelemetry.io/collector/consumer/consumererror.permanent"
+   },
+   "body": "Exporting failed. Dropping data.",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:06.412776195Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:06.412836141Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:05:06.412811462Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:58.408144808Z",
+   "attributes": {
+    "exception.message": "unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:58.407842568Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:58.407827271Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:58.407867488Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:50.404324411Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:50.40431935Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:50.404353108Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:42.401476576Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:42.401553113Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:42.401676821Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:36.585713222Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:36.58571384Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:36.585812869Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:28.579504233Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:28.579706632Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:28.579731337Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:20.574551994Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:20.574541655Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:20.574617326Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:12.571176836Z",
+   "attributes": {
+    "exception.message": "franz-go: ListGroupsByType failed: request ListGroups has 1 separate shard errors, first: unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*kadm.ShardErrors"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:12.570911964Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:12.570979223Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:12.570929433Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:12.358873795Z",
+   "attributes": {
+    "exception.message": "error reading process name for pid 27611: open /hostfs/proc/27611/status: no such file or directory",
+    "exception.type": "go.opentelemetry.io/collector/scraper/scrapererror.PartialScrapeError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:11.400088223Z",
+   "attributes": {
+    "exception.message": "not retryable error: Permanent error: rpc error: code = InvalidArgument desc = error exporting items, request to http://prometheus:9090/api/v1/otlp/v1/metrics responded with HTTP Status Code 400",
+    "exception.type": "go.opentelemetry.io/collector/consumer/consumererror.permanent"
+   },
+   "body": "Exporting failed. Dropping data.",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:06.703133669Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:06.703191125Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:06.703303994Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:03:58.698596628Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:03:58.698687847Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:03:58.698801907Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:03:50.694341889Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:03:50.694392323Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:03:50.69448203Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:03:44.807639681Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:03:44.807920769Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:03:44.807856275Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:03:36.802536611Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:03:36.802589589Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:03:36.80261803Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:03:28.798367351Z",
+   "attributes": {
+    "exception.message": "unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "franz-go: Metadata failed",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:03:28.798551883Z",
+   "attributes": {
+    "exception.message": "franz-go: Metadata failed: unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:03:28.797405756Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:03:28.797439328Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:03:28.797463572Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:03:20.793457967Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:03:20.793698877Z",
+   "attributes": {},
+   "body": "unable to open connection to broker",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "warn"
+   }
+  }
+ ],
+ "kwargs": {
+  "level": "warn",
+  "service": null
+ },
+ "op": "logs_search"
+}

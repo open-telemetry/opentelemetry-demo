@@ -1,0 +1,870 @@
+{
+ "data": [
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "28a99cea86a6ac04",
+     "startTimeUnixNano": "1792786514947000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/cart",
+     "parentSpanId": "f9619df2ff9f5b33",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "f390a82d7b27ae32",
+     "startTimeUnixNano": "1792786514963000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "a610ba5d5aa7f10f",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "62a13f3c3ed8be0d",
+     "startTimeUnixNano": "1792786514964000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 1,
+     "name": "executing api route (pages) /api/cart",
+     "parentSpanId": "a610ba5d5aa7f10f",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "60f61e793ddaa290",
+     "startTimeUnixNano": "1792786514965000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/cart",
+     "parentSpanId": "f390a82d7b27ae32",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "a610ba5d5aa7f10f",
+     "startTimeUnixNano": "1792786514964000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetCart"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.CartService/GetCart",
+     "parentSpanId": "60f61e793ddaa290",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "c56324529a8ba6c4",
+     "startTimeUnixNano": "1792786514965000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "07b728e8ac1dffd9",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "f9619df2ff9f5b33",
+     "startTimeUnixNano": "1792786514961537000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "28a99cea86a6ac04",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "07b728e8ac1dffd9",
+     "startTimeUnixNano": "1792786514961317000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "6c9046404a0d493d",
+     "service": "cart",
+     "serviceVersion": "3.1.0",
+     "spanId": "607c36ce153b2dc3",
+     "startTimeUnixNano": "1792786514967270200",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "POST /oteldemo.CartService/GetCart",
+     "parentSpanId": "c56324529a8ba6c4",
+     "service": "cart",
+     "serviceVersion": "3.1.0",
+     "spanId": "0958af813dda9971",
+     "startTimeUnixNano": "1792786514966979400",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "8650fcd6bb7447979be68b8dc676599a"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "documentFetch",
+     "parentSpanId": "c686ba984d1a28c4",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "dff979b0584253da",
+     "startTimeUnixNano": "1792786514062199951",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "c686ba984d1a28c4",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "a4c537f8e708f8a7",
+     "startTimeUnixNano": "1792786514113800049",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "c686ba984d1a28c4",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "1cfba2e86699eb81",
+     "startTimeUnixNano": "1792786514114800000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "c686ba984d1a28c4",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "9f4c5f19c72ab212",
+     "startTimeUnixNano": "1792786514114900049",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "c686ba984d1a28c4",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "d3a09669abb9ef60",
+     "startTimeUnixNano": "1792786514114800098",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "c686ba984d1a28c4",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "e4eb796b1e5854f1",
+     "startTimeUnixNano": "1792786514114800098",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "c686ba984d1a28c4",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "a341a2bd1c13fa1a",
+     "startTimeUnixNano": "1792786514114700000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "c686ba984d1a28c4",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "945c0e336d48dff7",
+     "startTimeUnixNano": "1792786514114699903",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "c686ba984d1a28c4",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "86ceaa76df18f078",
+     "startTimeUnixNano": "1792786514114799903",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "c686ba984d1a28c4",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "3662fdc66153a9e5",
+     "startTimeUnixNano": "1792786514115800049",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "c686ba984d1a28c4",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "daf1c989805ba93b",
+     "startTimeUnixNano": "1792786514115600098",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "c686ba984d1a28c4",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "cdc47444c50851f6",
+     "startTimeUnixNano": "1792786514115600098",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "c686ba984d1a28c4",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "c24f0aead696b5d1",
+     "startTimeUnixNano": "1792786514115600000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "c686ba984d1a28c4",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "d7393fbf58c78a3b",
+     "startTimeUnixNano": "1792786514115499903",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "c686ba984d1a28c4",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "3146e70bcfa8a880",
+     "startTimeUnixNano": "1792786514115699903",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "c686ba984d1a28c4",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "c36ca771fa87c7bb",
+     "startTimeUnixNano": "1792786514115699903",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "c686ba984d1a28c4",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "3324ce4ba7ee522e",
+     "startTimeUnixNano": "1792786514115700049",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "c686ba984d1a28c4",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "9b346e9dd1164277",
+     "startTimeUnixNano": "1792786514115800049",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "c686ba984d1a28c4",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "0270c67b8d3a1dc5",
+     "startTimeUnixNano": "1792786514474800049",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "c686ba984d1a28c4",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "65c5a8ab8724aa72",
+     "startTimeUnixNano": "1792786514624599951",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "documentLoad",
+     "parentSpanId": null,
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "c686ba984d1a28c4",
+     "startTimeUnixNano": "1792786514062500000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "5d7f98fde2a1b4d83c8f7b3470799bec"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "f4e9c1693e32fabf",
+     "startTimeUnixNano": "1792786514837000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/cart",
+     "parentSpanId": "fcdc15d06861789b",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "9544e6cdc3c5c0d8",
+     "startTimeUnixNano": "1792786514860000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "001f0ead20688bc7",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "ca17f5d48594b6df",
+     "startTimeUnixNano": "1792786514861000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 1,
+     "name": "executing api route (pages) /api/cart",
+     "parentSpanId": "001f0ead20688bc7",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "899fd58ca095ead5",
+     "startTimeUnixNano": "1792786514862000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/cart",
+     "parentSpanId": "9544e6cdc3c5c0d8",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "001f0ead20688bc7",
+     "startTimeUnixNano": "1792786514861000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetCart"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.CartService/GetCart",
+     "parentSpanId": "899fd58ca095ead5",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "0a4f1c21c42cf2dd",
+     "startTimeUnixNano": "1792786514862000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "6c90570722b89a9e",
+     "service": "cart",
+     "serviceVersion": "3.1.0",
+     "spanId": "aede930c3de6f846",
+     "startTimeUnixNano": "1792786514866909800",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "POST /oteldemo.CartService/GetCart",
+     "parentSpanId": "0a4f1c21c42cf2dd",
+     "service": "cart",
+     "serviceVersion": "3.1.0",
+     "spanId": "f6e0888eb67745a6",
+     "startTimeUnixNano": "1792786514866662400",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "77fa205b953b19d1",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "fcdc15d06861789b",
+     "startTimeUnixNano": "1792786514858714000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "f4e9c1693e32fabf",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "77fa205b953b19d1",
+     "startTimeUnixNano": "1792786514858329000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "09a4c12081bb6e0d028adcd2c28a1287"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": null,
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "d865d29e0518625b",
+     "startTimeUnixNano": "1792786514803000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "POST",
+     "parentSpanId": "d865d29e0518625b",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "2eecf9440b201667",
+     "startTimeUnixNano": "1792786514817075000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "893f27930b6df0151c73a144998c5ad2"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "737adb0c581664a2",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "f1ff242ac9a182cf",
+     "startTimeUnixNano": "1792786514858954000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "a98453a4cb41d4cf",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "737adb0c581664a2",
+     "startTimeUnixNano": "1792786514858776000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "a98453a4cb41d4cf",
+     "startTimeUnixNano": "1792786514840000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/currency",
+     "parentSpanId": "f1ff242ac9a182cf",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "caa3f8092f007a43",
+     "startTimeUnixNano": "1792786514863000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "16865de6617cf2b1",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "02bd02ea334b90a1",
+     "startTimeUnixNano": "1792786514864000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 1,
+     "name": "executing api route (pages) /api/currency",
+     "parentSpanId": "16865de6617cf2b1",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "4565d0e9b2ca5989",
+     "startTimeUnixNano": "1792786514864000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/currency",
+     "parentSpanId": "caa3f8092f007a43",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "16865de6617cf2b1",
+     "startTimeUnixNano": "1792786514863000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetSupportedCurrencies"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.CurrencyService/GetSupportedCurrencies",
+     "parentSpanId": "4565d0e9b2ca5989",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "1f1ea7d1ebd1268c",
+     "startTimeUnixNano": "1792786514865000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.CurrencyService/GetSupportedCurrencies"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.CurrencyService/GetSupportedCurrencies",
+     "parentSpanId": "1f1ea7d1ebd1268c",
+     "service": "currency",
+     "serviceVersion": "3.1.0",
+     "spanId": "bb14ba9f24bf3146",
+     "startTimeUnixNano": "1792786514866859832",
+     "status": {
+      "code": "OK",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "14b80fb86d3d75e9abad6bb3f990c36c"
+  }
+ ],
+ "kwargs": {
+  "service": "frontend-web",
+  "tags": null
+ },
+ "op": "jaeger_traces"
+}

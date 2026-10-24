@@ -8,7 +8,7 @@ from typing import get_args
 
 from oncall.models import Category
 
-CLIENT_SERVICES = ("load-generator",)
+CLIENT_SERVICES = ("load-generator", "frontend-web")
 
 CATEGORIES: dict[str, str] = {
     "app_error": (
@@ -45,6 +45,11 @@ CATEGORIES: dict[str, str] = {
         "failing; never the final answer, follow it down"
     ),
     "unknown": "evidence is insufficient or contradictory",
+    "no_incident": (
+        "no regression anywhere: error rates and p95 latency at or below their "
+        "baselines, all containers running; only known background noise "
+        "(clients, collector export errors). Decision no_action"
+    ),
 }
 
 assert set(CATEGORIES) == set(get_args(Category)), "taxonomy out of sync with models"

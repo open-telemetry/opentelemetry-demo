@@ -1,0 +1,65 @@
+{
+ "data": {
+  "data": {
+   "result": [
+    {
+     "metric": {
+      "service_name": "load-generator",
+      "span_name": "POST"
+     },
+     "value": [
+      1792784400,
+      "0.053901817838806605"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "frontend-proxy",
+      "span_name": "router jaeger egress"
+     },
+     "value": [
+      1792784400,
+      "0.013475454459701651"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "frontend-proxy",
+      "span_name": "router grafana egress"
+     },
+     "value": [
+      1792784400,
+      "0"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "frontend-proxy",
+      "span_name": "POST"
+     },
+     "value": [
+      1792784400,
+      "0"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "frontend-proxy",
+      "span_name": "GET"
+     },
+     "value": [
+      1792784400,
+      "0"
+     ]
+    }
+   ],
+   "resultType": "vector"
+  },
+  "status": "success"
+ },
+ "kwargs": {
+  "baseline": true,
+  "promql": "topk(5, sum by (service_name, span_name) (rate(traces_span_metrics_calls_total{{exclude},status_code=\"STATUS_CODE_ERROR\"}[{window}])))"
+ },
+ "op": "prom_query"
+}

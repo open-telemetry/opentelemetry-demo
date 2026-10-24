@@ -9,6 +9,7 @@ from datetime import UTC, datetime
 from typing import Any, Literal
 
 from oncall.models import Evidence, ToolResult, make_error, make_result
+from oncall.safety.exclusions import is_excluded
 from oncall.tools.backends import BackendError, TelemetryBackend, get_backend
 from oncall.tools.registry import register_tool
 
@@ -45,6 +46,12 @@ MIN_RANKS: dict[str, int] = {
     "warn": 30,
     "error": 40,
 }
+
+# Output budget: the agent's LLM has a small context, so keep results compact.
+MAX_GROUPS = 10
+MAX_LINE_CHARS = 120
+MAX_EVIDENCE_TEXT = 200
+UNATTRIBUTED = "unattributed"
 
 
 def normalize_message(msg: str) -> str:
@@ -90,23 +97,25 @@ def _extract_log_fields(hit: dict[str, Any]) -> tuple[str, str, str, str]:
     else:
         message = str(raw_body)
 
-    # 2. Service name extraction (handling flattened, nested resource attributes, and container names)
-    res_attrs = (
-        source.get("resource", {}).get("attributes")
-        if isinstance(source.get("resource"), dict)
-        else {}
+    # 2. Service name: the demo's OpenSearch keeps resource attributes as literal
+    # dotted keys (resource["service.name"]); older shapes nest them under
+    # resource.attributes or flatten them.
+    resource = (
+        source.get("resource") if isinstance(source.get("resource"), dict) else {}
     )
+    res_attrs = resource.get("attributes")
     if not isinstance(res_attrs, dict):
         res_attrs = {}
+    res_service = resource.get("service")
 
     attrs = (
         source.get("attributes") if isinstance(source.get("attributes"), dict) else {}
     )
-    if not isinstance(attrs, dict):
-        attrs = {}
 
     service = (
-        source.get("resource.attributes.service.name")
+        resource.get("service.name")
+        or (res_service.get("name") if isinstance(res_service, dict) else None)
+        or source.get("resource.attributes.service.name")
         or res_attrs.get("service.name")
         or res_attrs.get("service_name")
         or attrs.get("service.name")
@@ -116,11 +125,16 @@ def _extract_log_fields(hit: dict[str, Any]) -> tuple[str, str, str, str]:
         or source.get("service")
         or source.get("app")
         or source.get("container_name")
-        or "unknown"
+        or UNATTRIBUTED
     )
 
     # 3. Log level extraction (supporting severity_number, severity_text, level, and aliases)
-    sev_num = source.get("severity_number")
+    severity = source.get("severity")
+    sev_num = (
+        severity.get("number")
+        if isinstance(severity, dict)
+        else source.get("severity_number")
+    )
     if isinstance(sev_num, int):
         if sev_num >= 21:
             lvl = "fatal"
@@ -145,7 +159,7 @@ def _extract_log_fields(hit: dict[str, Any]) -> tuple[str, str, str, str]:
                 else None
             )
             or attrs.get("level")
-            or source.get("severity")
+            or (severity.get("text") if isinstance(severity, dict) else severity)
             or "unknown"
         )
 
@@ -155,6 +169,7 @@ def _extract_log_fields(hit: dict[str, Any]) -> tuple[str, str, str, str]:
         or source.get("timestamp")
         or source.get("time")
         or source.get("observed_timestamp")
+        or source.get("observedTimestamp")
     )
     if not ts and "time_unix_nano" in source:
         try:
@@ -178,32 +193,27 @@ def _matches_level(log_level: str, min_level: str) -> bool:
 
 @register_tool(
     name="search_logs",
-    description="Search service logs in OpenSearch, normalising and clustering similar error messages.",
+    description="Search logs, grouped into message patterns.",
     params={
         "properties": {
             "service": {
                 "type": "string",
-                "description": "Optional service name filter (e.g. 'cartservice', 'frontend').",
             },
             "level": {
                 "type": "string",
                 "enum": ["error", "warn", "info"],
                 "default": "error",
-                "description": "Minimum severity level threshold (error includes fatal, warn includes error).",
             },
             "since_min": {
                 "type": "integer",
                 "default": 15,
-                "description": "Time window to search back in minutes.",
             },
             "contains": {
                 "type": "string",
-                "description": "Optional substring to filter messages.",
             },
             "limit": {
                 "type": "integer",
                 "default": 200,
-                "description": "Maximum number of log entries to retrieve before clustering.",
             },
         },
         "required": [],
@@ -254,7 +264,7 @@ def search_logs(
     for entry in raw_logs:
         hit_service, hit_msg, hit_lvl, hit_ts = _extract_log_fields(entry)
 
-        if not _matches_level(hit_lvl, level):
+        if is_excluded(hit_service) or not _matches_level(hit_lvl, level):
             continue
 
         if contains_filter and contains_filter not in hit_msg.lower():
@@ -281,24 +291,32 @@ def search_logs(
         groups.items(), key=lambda item: item[1]["count"], reverse=True
     )
 
-    # Build concise summary: top 5 groups, concise line width (smaller output)
-    summary_lines: list[str] = []
-    for _pattern, info in sorted_groups[:5]:
-        svc = info["service"]
-        first_line = info["first_line"].replace("\n", " ").strip()
-        if len(first_line) > 90:
-            first_line = first_line[:87] + "..."
-        summary_lines.append(f"x{info['count']} [{svc}] {first_line}")
-
-    summary = "\n".join(summary_lines)
-
-    # Build concise evidence: top 5 items, truncated to 160 chars (smaller output)
+    top = sorted_groups[:MAX_GROUPS]
+    total = sum(info["count"] for info in groups.values())
+    scope = f"service='{service}' " if service else ""
+    more = " (newest only: limit reached)" if len(raw_logs) >= limit else ""
+    header = (
+        f"{total} log lines{more} {scope}level>='{level}' in the last "
+        f"{since_min}m, {len(groups)} patterns (top {len(top)}):"
+    )
+    summary_lines = [header]
     evidence_list: list[Evidence] = []
-    for _pattern, info in sorted_groups[:5]:
+    for rank, (_pattern, info) in enumerate(top, 1):
         svc = info["service"]
+        first_line = " ".join(info["first_line"].split())
+        if len(first_line) > MAX_LINE_CHARS:
+            first_line = first_line[: MAX_LINE_CHARS - 3] + "..."
+        summary_lines.append(f"x{info['count']} [{svc}] {first_line}")
         ts = info["first_ts"]
-        ev_id = f"log:{svc}@{ts}"
-        text_truncated = info["first_line"][:160]
-        evidence_list.append({"id": ev_id, "text": text_truncated, "ts": ts})
+        evidence_list.append(
+            {
+                "id": f"log:{svc}:{rank}@{ts}",
+                "text": f"x{info['count']} [{svc}] "
+                + " ".join(info["first_line"].split())[:MAX_EVIDENCE_TEXT],
+                "ts": ts,
+            }
+        )
 
-    return make_result("search_logs", query_params, summary, evidence_list)
+    return make_result(
+        "search_logs", query_params, "\n".join(summary_lines), evidence_list
+    )

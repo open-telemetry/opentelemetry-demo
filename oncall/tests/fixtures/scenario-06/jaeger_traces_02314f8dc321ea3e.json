@@ -1,0 +1,2189 @@
+{
+ "data": [
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "fd96513b7819f5e0",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "409965411bd8f1cd",
+     "startTimeUnixNano": "1792786199541342260",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "ad6f869341b96f46",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "3422930473b0410b",
+     "startTimeUnixNano": "1792786199952588661",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "83fa1114b966ded7",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "0cc3fc38f1a0692d",
+     "startTimeUnixNano": "1792786199982778501",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "321ad2ad3fee1191",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "ab63984b51c94520",
+     "startTimeUnixNano": "1792786200090020234",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "4f0907ef76f22481",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "e5a26f5955addee2",
+     "startTimeUnixNano": "1792786200090300824",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/ListProducts"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/ListProducts",
+     "parentSpanId": "c4cb859ee403875d",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "fd96513b7819f5e0",
+     "startTimeUnixNano": "1792786199457981002",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "4e3900e78822fb87",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "83fa1114b966ded7",
+     "startTimeUnixNano": "1792786199761142714",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "385446ac05a4fecc",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "ad6f869341b96f46",
+     "startTimeUnixNano": "1792786199760926587",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "bb2512fa10bd4c47",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "4f0907ef76f22481",
+     "startTimeUnixNano": "1792786199767336057",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "35fe67c55bd6d213",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "321ad2ad3fee1191",
+     "startTimeUnixNano": "1792786199760843572",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "c952598b8b2a6d60",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "54db21f05bcae4de",
+     "startTimeUnixNano": "1792786199413338000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "27c09197d8879782",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "c952598b8b2a6d60",
+     "startTimeUnixNano": "1792786199413074000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "27c09197d8879782",
+     "startTimeUnixNano": "1792786199400000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "get_product_list",
+     "parentSpanId": "3397c38695900b48",
+     "service": "recommendation",
+     "serviceVersion": "3.1.0",
+     "spanId": "40d43055d6d45d40",
+     "startTimeUnixNano": "1792786199419772097",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "ListProducts"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/ListProducts",
+     "parentSpanId": "40d43055d6d45d40",
+     "service": "recommendation",
+     "serviceVersion": "3.1.0",
+     "spanId": "c4cb859ee403875d",
+     "startTimeUnixNano": "1792786199419881857",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "ListRecommendations"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.RecommendationService/ListRecommendations",
+     "parentSpanId": "f8e4f5cdafb0a28f",
+     "service": "recommendation",
+     "serviceVersion": "3.1.0",
+     "spanId": "3397c38695900b48",
+     "startTimeUnixNano": "1792786199417943594",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/recommendations",
+     "parentSpanId": "54db21f05bcae4de",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "b0cd05e701598391",
+     "startTimeUnixNano": "1792786199414000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "1dac85586616aef5",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "55c5e45c5aeeaed2",
+     "startTimeUnixNano": "1792786199415000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 1,
+     "name": "executing api route (pages) /api/recommendations",
+     "parentSpanId": "1dac85586616aef5",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "0ec8940310ba5689",
+     "startTimeUnixNano": "1792786199415000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/recommendations",
+     "parentSpanId": "b0cd05e701598391",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "1dac85586616aef5",
+     "startTimeUnixNano": "1792786199414000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "ListRecommendations"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.RecommendationService/ListRecommendations",
+     "parentSpanId": "0ec8940310ba5689",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "f8e4f5cdafb0a28f",
+     "startTimeUnixNano": "1792786199415000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "0ec8940310ba5689",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "4e3900e78822fb87",
+     "startTimeUnixNano": "1792786199726000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "0ec8940310ba5689",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "385446ac05a4fecc",
+     "startTimeUnixNano": "1792786199725000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "0ec8940310ba5689",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "bb2512fa10bd4c47",
+     "startTimeUnixNano": "1792786199726000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "0ec8940310ba5689",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "35fe67c55bd6d213",
+     "startTimeUnixNano": "1792786199725000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "e0884c90b9312c175beb4d9fa0555fc0"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "rpc.method": "ListRecommendations"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.RecommendationService/ListRecommendations",
+     "parentSpanId": "ebcaab491a0611df",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "e1140ba19d88e0cd",
+     "startTimeUnixNano": "1792786195941000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "c185e956f42c5b21",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "d74551c59823b576",
+     "startTimeUnixNano": "1792786195941000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "b1fd3b47854b493a",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "4c85b285fe6399bc",
+     "startTimeUnixNano": "1792786195938859000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "654f3ea973d79440",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "b1fd3b47854b493a",
+     "startTimeUnixNano": "1792786195938663000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "7a6685dd4ed2b80c",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "263d6c1a6462e740",
+     "startTimeUnixNano": "1792786196604010484",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "858b20e96ed97f5c",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "f073bb04ffeb2a96",
+     "startTimeUnixNano": "1792786198508696462",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "ed313a2c0f4e0fa8",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "c60b9777f4fd526d",
+     "startTimeUnixNano": "1792786198881691335",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "80bb030573e4821c",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "974c10f4c9165a2f",
+     "startTimeUnixNano": "1792786198940474718",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "1cf7193b1b32bfea",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "b739a1255dfaa456",
+     "startTimeUnixNano": "1792786199051862139",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/ListProducts"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/ListProducts",
+     "parentSpanId": "fcc320d7ca33b6a1",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "7a6685dd4ed2b80c",
+     "startTimeUnixNano": "1792786196266257514",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "b7539e7668bc70b5",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "ed313a2c0f4e0fa8",
+     "startTimeUnixNano": "1792786197861158529",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "10dffab2e8304b04",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "858b20e96ed97f5c",
+     "startTimeUnixNano": "1792786197999689032",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "336d537a7abab42b",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "80bb030573e4821c",
+     "startTimeUnixNano": "1792786197955667209",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "d276821b5c6c4dcd",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "1cf7193b1b32bfea",
+     "startTimeUnixNano": "1792786197861158236",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_get_recommendations",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "f0b8f56490ad8bd4",
+     "startTimeUnixNano": "1792786195937024401",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": "f0b8f56490ad8bd4",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "654f3ea973d79440",
+     "startTimeUnixNano": "1792786195937792892",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "get_product_list",
+     "parentSpanId": "55b84bda753fde6e",
+     "service": "recommendation",
+     "serviceVersion": "3.1.0",
+     "spanId": "5a1ef09e503cf89a",
+     "startTimeUnixNano": "1792786195942739365",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "ListProducts"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/ListProducts",
+     "parentSpanId": "5a1ef09e503cf89a",
+     "service": "recommendation",
+     "serviceVersion": "3.1.0",
+     "spanId": "fcc320d7ca33b6a1",
+     "startTimeUnixNano": "1792786195942783093",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "ListRecommendations"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.RecommendationService/ListRecommendations",
+     "parentSpanId": "e1140ba19d88e0cd",
+     "service": "recommendation",
+     "serviceVersion": "3.1.0",
+     "spanId": "55b84bda753fde6e",
+     "startTimeUnixNano": "1792786195942537165",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/recommendations",
+     "parentSpanId": "4c85b285fe6399bc",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "cfcf09a4a52c6400",
+     "startTimeUnixNano": "1792786195939000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 1,
+     "name": "executing api route (pages) /api/recommendations",
+     "parentSpanId": "c185e956f42c5b21",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "ebcaab491a0611df",
+     "startTimeUnixNano": "1792786195941000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/recommendations",
+     "parentSpanId": "cfcf09a4a52c6400",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "c185e956f42c5b21",
+     "startTimeUnixNano": "1792786195940000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "ebcaab491a0611df",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "b7539e7668bc70b5",
+     "startTimeUnixNano": "1792786197399000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "ebcaab491a0611df",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "10dffab2e8304b04",
+     "startTimeUnixNano": "1792786197400000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "ebcaab491a0611df",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "336d537a7abab42b",
+     "startTimeUnixNano": "1792786197400000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "ebcaab491a0611df",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "d276821b5c6c4dcd",
+     "startTimeUnixNano": "1792786197400000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "f977c1404743ea6a6c7a86e028f5c015"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "get_product_list",
+     "parentSpanId": "fe3bab551288b31e",
+     "service": "recommendation",
+     "serviceVersion": "3.1.0",
+     "spanId": "b65269dfe169cb70",
+     "startTimeUnixNano": "1792786194510155342",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "ListProducts"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/ListProducts",
+     "parentSpanId": "b65269dfe169cb70",
+     "service": "recommendation",
+     "serviceVersion": "3.1.0",
+     "spanId": "e956f94bd6b41cd3",
+     "startTimeUnixNano": "1792786194510206425",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "ListRecommendations"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.RecommendationService/ListRecommendations",
+     "parentSpanId": "8883ed54b5a39d2a",
+     "service": "recommendation",
+     "serviceVersion": "3.1.0",
+     "spanId": "fe3bab551288b31e",
+     "startTimeUnixNano": "1792786194509707121",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "b2b2fd1475f36c88",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "e10acd0021bf730f",
+     "startTimeUnixNano": "1792786194671334053",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/ListProducts"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/ListProducts",
+     "parentSpanId": "e956f94bd6b41cd3",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "b2b2fd1475f36c88",
+     "startTimeUnixNano": "1792786194530626901",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "ListRecommendations"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.RecommendationService/ListRecommendations",
+     "parentSpanId": "8ad06c76a8038962",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "8883ed54b5a39d2a",
+     "startTimeUnixNano": "1792786194508000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "8ad06c76a8038962",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "de8d114d7959c000",
+     "startTimeUnixNano": "1792786194829000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "Convert"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.CurrencyService/Convert",
+     "parentSpanId": "8ad06c76a8038962",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "9e6bbdc58c0ff31f",
+     "startTimeUnixNano": "1792786197004000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "5ab1e3cd168e5b53",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "222060dc93e2f14e",
+     "startTimeUnixNano": "1792786194508000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.CurrencyService/Convert"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.CurrencyService/Convert",
+     "parentSpanId": "9e6bbdc58c0ff31f",
+     "service": "currency",
+     "serviceVersion": "3.1.0",
+     "spanId": "650df797c42034ff",
+     "startTimeUnixNano": "1792786197007291808",
+     "status": {
+      "code": "OK",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.CurrencyService/Convert"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.CurrencyService/Convert",
+     "parentSpanId": "e15f16af471a9ecc",
+     "service": "currency",
+     "serviceVersion": "3.1.0",
+     "spanId": "1f6dfa8ef52d6ac2",
+     "startTimeUnixNano": "1792786197869010900",
+     "status": {
+      "code": "OK",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.CurrencyService/Convert"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.CurrencyService/Convert",
+     "parentSpanId": "69983ab917b1d3c7",
+     "service": "currency",
+     "serviceVersion": "3.1.0",
+     "spanId": "bc609c06dbbde169",
+     "startTimeUnixNano": "1792786198002197837",
+     "status": {
+      "code": "OK",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.CurrencyService/Convert"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.CurrencyService/Convert",
+     "parentSpanId": "e6994878de64dc0f",
+     "service": "currency",
+     "serviceVersion": "3.1.0",
+     "spanId": "88de831012006a40",
+     "startTimeUnixNano": "1792786198757881512",
+     "status": {
+      "code": "OK",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "507b74f080e56d98",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "d482f07dba72c891",
+     "startTimeUnixNano": "1792786196452375424",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "1dd964a50f5685a2",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "020a301a6abf1e9b",
+     "startTimeUnixNano": "1792786197151219690",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "ad146271ae20d181",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "08c5d4978cba0510",
+     "startTimeUnixNano": "1792786197233039395",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "c0f01940f0458518",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "33ba87c84c4f981a",
+     "startTimeUnixNano": "1792786197552106458",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "de8d114d7959c000",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "507b74f080e56d98",
+     "startTimeUnixNano": "1792786195451801047",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "c8569b199aaa7d82",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "1dd964a50f5685a2",
+     "startTimeUnixNano": "1792786195597671420",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "771c3a4b6ab4db0e",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "ad146271ae20d181",
+     "startTimeUnixNano": "1792786195571289645",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "d74b38e193c7507b",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "c0f01940f0458518",
+     "startTimeUnixNano": "1792786195469779831",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "0"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "9b274a2144d85fb1",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "5a75b279ecc58933",
+     "startTimeUnixNano": "1792786194505899000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "0"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "5a75b279ecc58933",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "0ba2bd53ff79bd35",
+     "startTimeUnixNano": "1792786194506218000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "0ba2bd53ff79bd35",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "59f24ecae5da71fb",
+     "startTimeUnixNano": "1792786194506000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 1,
+     "name": "executing api route (pages) /api/recommendations",
+     "parentSpanId": "5ab1e3cd168e5b53",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "8ad06c76a8038962",
+     "startTimeUnixNano": "1792786194508000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/recommendations",
+     "parentSpanId": "59f24ecae5da71fb",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "5ab1e3cd168e5b53",
+     "startTimeUnixNano": "1792786194507000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "8ad06c76a8038962",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "c8569b199aaa7d82",
+     "startTimeUnixNano": "1792786194829000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "Convert"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.CurrencyService/Convert",
+     "parentSpanId": "8ad06c76a8038962",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "e15f16af471a9ecc",
+     "startTimeUnixNano": "1792786197867000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "8ad06c76a8038962",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "771c3a4b6ab4db0e",
+     "startTimeUnixNano": "1792786194829000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "Convert"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.CurrencyService/Convert",
+     "parentSpanId": "8ad06c76a8038962",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "69983ab917b1d3c7",
+     "startTimeUnixNano": "1792786197999000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "8ad06c76a8038962",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "d74b38e193c7507b",
+     "startTimeUnixNano": "1792786194829000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "Convert"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.CurrencyService/Convert",
+     "parentSpanId": "8ad06c76a8038962",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "e6994878de64dc0f",
+     "startTimeUnixNano": "1792786198756000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "f24d720d2e3ba5c6eb8ea1171877b2be"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "get_product_list",
+     "parentSpanId": "5dcbdbdd60ba7da8",
+     "service": "recommendation",
+     "serviceVersion": "3.1.0",
+     "spanId": "6b930a8bb6972ed2",
+     "startTimeUnixNano": "1792786194470216854",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "ListProducts"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/ListProducts",
+     "parentSpanId": "6b930a8bb6972ed2",
+     "service": "recommendation",
+     "serviceVersion": "3.1.0",
+     "spanId": "2619e13a30f0701d",
+     "startTimeUnixNano": "1792786194470269077",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "ListRecommendations"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.RecommendationService/ListRecommendations",
+     "parentSpanId": "d2b61fb84961f959",
+     "service": "recommendation",
+     "serviceVersion": "3.1.0",
+     "spanId": "5dcbdbdd60ba7da8",
+     "startTimeUnixNano": "1792786194469991144",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "de68addd1427222d",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "f962b3e19366fe89",
+     "startTimeUnixNano": "1792786194542301520",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/ListProducts"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/ListProducts",
+     "parentSpanId": "2619e13a30f0701d",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "de68addd1427222d",
+     "startTimeUnixNano": "1792786194487563186",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "ListRecommendations"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.RecommendationService/ListRecommendations",
+     "parentSpanId": "39862691374ba1e2",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "d2b61fb84961f959",
+     "startTimeUnixNano": "1792786194468000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "39862691374ba1e2",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "dfb96ca9a7ecb85a",
+     "startTimeUnixNano": "1792786194675000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "39862691374ba1e2",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "2c8dfcdf107574f1",
+     "startTimeUnixNano": "1792786194675000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "fd8599bd85b54d9e",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "8e81d7edff9029e9",
+     "startTimeUnixNano": "1792786194466000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "0"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "c4f260f7024ee3cd",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "d9bf57b0a8a2ea4f",
+     "startTimeUnixNano": "1792786194464636000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "0"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "d9bf57b0a8a2ea4f",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "0f500b8d17efa8be",
+     "startTimeUnixNano": "1792786194464881000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "4f9cff8f9bb79f54",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "fc9298d1b50a59a9",
+     "startTimeUnixNano": "1792786195429957535",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "be2113ba1b7875b9",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "bc8ff9543f476e53",
+     "startTimeUnixNano": "1792786196632128560",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "c0f193a0a7d33cbc",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "83abe2c5d48c4a1a",
+     "startTimeUnixNano": "1792786196917796182",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "90bba0a69a370d70",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "27b6f03e32775551",
+     "startTimeUnixNano": "1792786197253304980",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "dfb96ca9a7ecb85a",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "4f9cff8f9bb79f54",
+     "startTimeUnixNano": "1792786194744934708",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "2c8dfcdf107574f1",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "be2113ba1b7875b9",
+     "startTimeUnixNano": "1792786194742800290",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "86d85d744b55f5bb",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "c0f193a0a7d33cbc",
+     "startTimeUnixNano": "1792786194747218870",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "de06ea275509fb80",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "90bba0a69a370d70",
+     "startTimeUnixNano": "1792786194747354363",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "0f500b8d17efa8be",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "9460a996b727b0cc",
+     "startTimeUnixNano": "1792786194465000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 1,
+     "name": "executing api route (pages) /api/recommendations",
+     "parentSpanId": "fd8599bd85b54d9e",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "39862691374ba1e2",
+     "startTimeUnixNano": "1792786194467000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/recommendations",
+     "parentSpanId": "9460a996b727b0cc",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "fd8599bd85b54d9e",
+     "startTimeUnixNano": "1792786194466000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "39862691374ba1e2",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "86d85d744b55f5bb",
+     "startTimeUnixNano": "1792786194675000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "39862691374ba1e2",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "de06ea275509fb80",
+     "startTimeUnixNano": "1792786194675000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "a047f00cfdac5c7ab6c4567c3b929018"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "get_product_list",
+     "parentSpanId": "bb83f92a41deb27d",
+     "service": "recommendation",
+     "serviceVersion": "3.1.0",
+     "spanId": "501edcd8f9ff1280",
+     "startTimeUnixNano": "1792786194443382353",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "ListProducts"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/ListProducts",
+     "parentSpanId": "501edcd8f9ff1280",
+     "service": "recommendation",
+     "serviceVersion": "3.1.0",
+     "spanId": "9c63bad698a71c86",
+     "startTimeUnixNano": "1792786194443426899",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "ListRecommendations"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.RecommendationService/ListRecommendations",
+     "parentSpanId": "0355bb3378520895",
+     "service": "recommendation",
+     "serviceVersion": "3.1.0",
+     "spanId": "bb83f92a41deb27d",
+     "startTimeUnixNano": "1792786194443213697",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "2db31e9bd1cff0d9",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "f422d2b2ff8f83d4",
+     "startTimeUnixNano": "1792786194542724970",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "4885ecd071d95cc1",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "f740d5f7aa3cbce3",
+     "startTimeUnixNano": "1792786195169125390",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/ListProducts"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/ListProducts",
+     "parentSpanId": "9c63bad698a71c86",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "2db31e9bd1cff0d9",
+     "startTimeUnixNano": "1792786194485507444",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "ListRecommendations"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.RecommendationService/ListRecommendations",
+     "parentSpanId": "ab7a93d431f596d1",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "0355bb3378520895",
+     "startTimeUnixNano": "1792786194441000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "ab7a93d431f596d1",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "5eeaed57c6a18ae1",
+     "startTimeUnixNano": "1792786194674000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "ab7a93d431f596d1",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "075ed13e442f570b",
+     "startTimeUnixNano": "1792786194674000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "ab7a93d431f596d1",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "c7959df5c9192d76",
+     "startTimeUnixNano": "1792786194674000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "ab7a93d431f596d1",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "1dde8826e8d6b878",
+     "startTimeUnixNano": "1792786194674000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "01472b94daee9a11",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "b37308d1f232bd37",
+     "startTimeUnixNano": "1792786194441000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 1,
+     "name": "executing api route (pages) /api/recommendations",
+     "parentSpanId": "01472b94daee9a11",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "ab7a93d431f596d1",
+     "startTimeUnixNano": "1792786194441000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/recommendations",
+     "parentSpanId": "182ec890d3423ea5",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "01472b94daee9a11",
+     "startTimeUnixNano": "1792786194440000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/recommendations",
+     "parentSpanId": "c8e762189e0077a8",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "182ec890d3423ea5",
+     "startTimeUnixNano": "1792786194439000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "01c80d689a3f2448",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "e72cc129976f1f2a",
+     "startTimeUnixNano": "1792786195413607110",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "8d0589cda837ffd0",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "2829b036ab212a52",
+     "startTimeUnixNano": "1792786196322810376",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "ccceb7a3b313dcbe",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "c6f953419b20ec72",
+     "startTimeUnixNano": "1792786196322822515",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "5eeaed57c6a18ae1",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "4885ecd071d95cc1",
+     "startTimeUnixNano": "1792786194743286614",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "075ed13e442f570b",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "01c80d689a3f2448",
+     "startTimeUnixNano": "1792786194742982266",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "c7959df5c9192d76",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "8d0589cda837ffd0",
+     "startTimeUnixNano": "1792786194744688155",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "1dde8826e8d6b878",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "ccceb7a3b313dcbe",
+     "startTimeUnixNano": "1792786194742811881",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "e88c54a863ada3b6",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "c8e762189e0077a8",
+     "startTimeUnixNano": "1792786194439227000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "3cdc55ad17f532ce",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "e88c54a863ada3b6",
+     "startTimeUnixNano": "1792786194438937000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "0e2bdb8b7fe9cb047ec1de5d372b1db0"
+  }
+ ],
+ "kwargs": {
+  "service": "recommendation",
+  "tags": null
+ },
+ "op": "jaeger_traces"
+}

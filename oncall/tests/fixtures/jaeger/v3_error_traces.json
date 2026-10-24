@@ -1,0 +1,4226 @@
+{
+ "result": {
+  "resourceSpans": [
+   {
+    "resource": {
+     "attributes": [
+      {
+       "key": "service.name",
+       "value": {
+        "stringValue": "frontend-web"
+       }
+      }
+     ]
+    },
+    "scopeSpans": [
+     {
+      "scope": {
+       "name": "@opentelemetry/instrumentation-fetch",
+       "version": "0.223.0"
+      },
+      "spans": [
+       {
+        "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+        "spanId": "925a73128a439efd",
+        "flags": 257,
+        "name": "GET",
+        "kind": 3,
+        "startTimeUnixNano": "1792782780644000000",
+        "endTimeUnixNano": "1792782781284000000",
+        "attributes": [
+         {
+          "key": "demo.synthetic_request",
+          "value": {
+           "stringValue": "true"
+          }
+         },
+         {
+          "key": "error.type",
+          "value": {
+           "stringValue": "500"
+          }
+         },
+         {
+          "key": "http.request.method",
+          "value": {
+           "stringValue": "GET"
+          }
+         },
+         {
+          "key": "http.response.status_code",
+          "value": {
+           "intValue": "500"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "frontend-proxy"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "8080"
+          }
+         },
+         {
+          "key": "url.full",
+          "value": {
+           "stringValue": "http://frontend-proxy:8080/api/recommendations?productIds=&sessionId=f48cc2b7-5a36-4fbf-935b-18169e5693df&currencyCode=USD"
+          }
+         }
+        ],
+        "events": [
+         {
+          "timeUnixNano": "1792782780646400098",
+          "name": "connectEnd",
+          "attributes": []
+         },
+         {
+          "timeUnixNano": "1792782780646400098",
+          "name": "connectStart",
+          "attributes": []
+         },
+         {
+          "timeUnixNano": "1792782780646400098",
+          "name": "domainLookupEnd",
+          "attributes": []
+         },
+         {
+          "timeUnixNano": "1792782780646400098",
+          "name": "domainLookupStart",
+          "attributes": []
+         },
+         {
+          "timeUnixNano": "1792782780646400098",
+          "name": "fetchStart",
+          "attributes": []
+         },
+         {
+          "timeUnixNano": "1792782780658400098",
+          "name": "requestStart",
+          "attributes": []
+         },
+         {
+          "timeUnixNano": "1792782781280000098",
+          "name": "responseEnd",
+          "attributes": []
+         },
+         {
+          "timeUnixNano": "1792782781278700098",
+          "name": "responseStart",
+          "attributes": []
+         }
+        ],
+        "status": {
+         "code": 2
+        }
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "resource": {
+     "attributes": [
+      {
+       "key": "service.name",
+       "value": {
+        "stringValue": "product-catalog"
+       }
+      },
+      {
+       "key": "service.version",
+       "value": {
+        "stringValue": "3.1.0"
+       }
+      }
+     ]
+    },
+    "scopeSpans": [
+     {
+      "scope": {
+       "name": "github.com/XSAM/otelsql",
+       "version": "0.44.0"
+      },
+      "spans": [
+       {
+        "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+        "spanId": "7429e16bb5002aa0",
+        "parentSpanId": "0fbc65a4723d0cbb",
+        "flags": 257,
+        "name": "astronomy-db",
+        "kind": 3,
+        "startTimeUnixNano": "1792782780746959604",
+        "endTimeUnixNano": "1792782780760767260",
+        "attributes": [
+         {
+          "key": "db.query.text",
+          "value": {
+           "stringValue": "\n\t\tSELECT p.id, p.name, p.description, p.picture, \n\t\t       p.price_currency_code, p.price_units, p.price_nanos, p.categories\n\t\tFROM catalog.products p\n\t\tORDER BY p.id\n\t"
+          }
+         },
+         {
+          "key": "db.system.name",
+          "value": {
+           "stringValue": "postgresql"
+          }
+         },
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "sql.conn.query"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "astronomy-db"
+          }
+         }
+        ],
+        "status": {},
+        "events": []
+       },
+       {
+        "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+        "spanId": "9e317fad560cf4ba",
+        "parentSpanId": "5bc1fb013fe78d8d",
+        "flags": 257,
+        "name": "astronomy-db",
+        "kind": 3,
+        "startTimeUnixNano": "1792782781191566715",
+        "endTimeUnixNano": "1792782781287832957",
+        "attributes": [
+         {
+          "key": "db.query.text",
+          "value": {
+           "stringValue": "\n\t\tSELECT p.id, p.name, p.description, p.picture, \n\t\t       p.price_currency_code, p.price_units, p.price_nanos, p.categories\n\t\tFROM catalog.products p\n\t\tWHERE p.id = $1\n\t"
+          }
+         },
+         {
+          "key": "db.system.name",
+          "value": {
+           "stringValue": "postgresql"
+          }
+         },
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "sql.conn.query"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "astronomy-db"
+          }
+         }
+        ],
+        "status": {},
+        "events": []
+       }
+      ]
+     },
+     {
+      "scope": {
+       "name": "go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc",
+       "version": "0.72.0"
+      },
+      "spans": [
+       {
+        "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+        "spanId": "0fbc65a4723d0cbb",
+        "parentSpanId": "cc9817e691af3f24",
+        "flags": 769,
+        "name": "oteldemo.ProductCatalogService/ListProducts",
+        "kind": 2,
+        "startTimeUnixNano": "1792782780680833822",
+        "endTimeUnixNano": "1792782780794123819",
+        "attributes": [
+         {
+          "key": "demo.product.count",
+          "value": {
+           "intValue": "10"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "oteldemo.ProductCatalogService/ListProducts"
+          }
+         },
+         {
+          "key": "rpc.response.status_code",
+          "value": {
+           "stringValue": "OK"
+          }
+         },
+         {
+          "key": "rpc.system.name",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "172.22.0.18"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "3550"
+          }
+         }
+        ],
+        "status": {},
+        "events": []
+       },
+       {
+        "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+        "spanId": "ceddd64df10c1491",
+        "parentSpanId": "a447923960e9c5de",
+        "flags": 769,
+        "name": "oteldemo.ProductCatalogService/GetProduct",
+        "kind": 2,
+        "startTimeUnixNano": "1792782780836336015",
+        "endTimeUnixNano": "1792782781194237920",
+        "attributes": [
+         {
+          "key": "demo.product.id",
+          "value": {
+           "stringValue": "OLJCESPC7Z"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "oteldemo.ProductCatalogService/GetProduct"
+          }
+         },
+         {
+          "key": "rpc.response.status_code",
+          "value": {
+           "stringValue": "INTERNAL"
+          }
+         },
+         {
+          "key": "rpc.system.name",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "172.22.0.18"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "3550"
+          }
+         }
+        ],
+        "events": [
+         {
+          "timeUnixNano": "1792782781185458897",
+          "name": "Error: product lookup failed",
+          "attributes": []
+         }
+        ],
+        "status": {
+         "message": "Error: product lookup failed",
+         "code": 2
+        }
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "resource": {
+     "attributes": [
+      {
+       "key": "service.name",
+       "value": {
+        "stringValue": "frontend-proxy"
+       }
+      },
+      {
+       "key": "service.version",
+       "value": {
+        "stringValue": "3.1.0"
+       }
+      }
+     ]
+    },
+    "scopeSpans": [
+     {
+      "scope": {
+       "name": "envoy",
+       "version": "9e5580933739775e8bce696a57a2e1bc99368f23/1.40.0/Clean/RELEASE/BoringSSL"
+      },
+      "spans": [
+       {
+        "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+        "spanId": "8059d42b1762b818",
+        "parentSpanId": "1ef20cf6312aaada",
+        "flags": 257,
+        "name": "router frontend egress",
+        "kind": 3,
+        "startTimeUnixNano": "1792782780660254000",
+        "endTimeUnixNano": "1792782781279375000",
+        "attributes": [
+         {
+          "key": "component",
+          "value": {
+           "stringValue": "proxy"
+          }
+         },
+         {
+          "key": "error",
+          "value": {
+           "stringValue": "true"
+          }
+         },
+         {
+          "key": "http.protocol",
+          "value": {
+           "stringValue": "HTTP/1.1"
+          }
+         },
+         {
+          "key": "http.status_code",
+          "value": {
+           "stringValue": "500"
+          }
+         },
+         {
+          "key": "peer.address",
+          "value": {
+           "stringValue": "172.22.0.24:8080"
+          }
+         },
+         {
+          "key": "response_flags",
+          "value": {
+           "stringValue": "-"
+          }
+         },
+         {
+          "key": "upstream_address",
+          "value": {
+           "stringValue": "172.22.0.24:8080"
+          }
+         },
+         {
+          "key": "upstream_cluster",
+          "value": {
+           "stringValue": "frontend"
+          }
+         },
+         {
+          "key": "upstream_cluster.name",
+          "value": {
+           "stringValue": "frontend"
+          }
+         }
+        ],
+        "status": {
+         "code": 2
+        },
+        "events": []
+       },
+       {
+        "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+        "spanId": "1ef20cf6312aaada",
+        "parentSpanId": "925a73128a439efd",
+        "flags": 769,
+        "name": "GET",
+        "kind": 2,
+        "startTimeUnixNano": "1792782780660005000",
+        "endTimeUnixNano": "1792782781279423000",
+        "attributes": [
+         {
+          "key": "component",
+          "value": {
+           "stringValue": "proxy"
+          }
+         },
+         {
+          "key": "downstream_cluster",
+          "value": {
+           "stringValue": "-"
+          }
+         },
+         {
+          "key": "error",
+          "value": {
+           "stringValue": "true"
+          }
+         },
+         {
+          "key": "guid:x-request-id",
+          "value": {
+           "stringValue": "173f0bb6-5b09-93a4-b6a6-5db9c2ec2ae9"
+          }
+         },
+         {
+          "key": "http.method",
+          "value": {
+           "stringValue": "GET"
+          }
+         },
+         {
+          "key": "http.protocol",
+          "value": {
+           "stringValue": "HTTP/1.1"
+          }
+         },
+         {
+          "key": "http.status_code",
+          "value": {
+           "stringValue": "500"
+          }
+         },
+         {
+          "key": "http.url",
+          "value": {
+           "stringValue": "http://frontend-proxy:8080/api/recommendations?productIds=&sessionId=f48cc2b7-5a36-4fbf-935b-18169e5693df&currencyCode=USD"
+          }
+         },
+         {
+          "key": "node_id",
+          "value": {
+           "stringValue": ""
+          }
+         },
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "ingress"
+          }
+         },
+         {
+          "key": "peer.address",
+          "value": {
+           "stringValue": "172.22.0.25"
+          }
+         },
+         {
+          "key": "request_size",
+          "value": {
+           "stringValue": "0"
+          }
+         },
+         {
+          "key": "response_flags",
+          "value": {
+           "stringValue": "-"
+          }
+         },
+         {
+          "key": "response_size",
+          "value": {
+           "stringValue": "21"
+          }
+         },
+         {
+          "key": "upstream_cluster",
+          "value": {
+           "stringValue": "frontend"
+          }
+         },
+         {
+          "key": "upstream_cluster.name",
+          "value": {
+           "stringValue": "frontend"
+          }
+         },
+         {
+          "key": "user_agent",
+          "value": {
+           "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36"
+          }
+         },
+         {
+          "key": "zone",
+          "value": {
+           "stringValue": ""
+          }
+         }
+        ],
+        "status": {
+         "code": 2
+        },
+        "events": []
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "resource": {
+     "attributes": [
+      {
+       "key": "service.name",
+       "value": {
+        "stringValue": "recommendation"
+       }
+      },
+      {
+       "key": "service.version",
+       "value": {
+        "stringValue": "3.1.0"
+       }
+      }
+     ]
+    },
+    "scopeSpans": [
+     {
+      "scope": {
+       "name": "recommendation"
+      },
+      "spans": [
+       {
+        "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+        "spanId": "41f1945e31303517",
+        "parentSpanId": "ac9c8840d4c469d6",
+        "flags": 257,
+        "name": "get_product_list",
+        "kind": 1,
+        "startTimeUnixNano": "1792782780665897378",
+        "endTimeUnixNano": "1792782780801622183",
+        "attributes": [
+         {
+          "key": "demo.product.count",
+          "value": {
+           "intValue": "10"
+          }
+         },
+         {
+          "key": "demo.product.filtered.count",
+          "value": {
+           "intValue": "10"
+          }
+         },
+         {
+          "key": "demo.product.filtered.list",
+          "value": {
+           "arrayValue": {
+            "values": [
+             {
+              "stringValue": "9SIQT8TOJO"
+             },
+             {
+              "stringValue": "OLJCESPC7Z"
+             },
+             {
+              "stringValue": "2ZYFJ3GM2N"
+             },
+             {
+              "stringValue": "6E92ZMYYFZ"
+             },
+             {
+              "stringValue": "L9ECAV7KIM"
+             }
+            ]
+           }
+          }
+         }
+        ],
+        "events": [],
+        "status": {}
+       }
+      ]
+     },
+     {
+      "scope": {
+       "name": "io.opentelemetry.grpc-1.6",
+       "version": "2.31.1-alpha"
+      },
+      "spans": [
+       {
+        "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+        "spanId": "cc9817e691af3f24",
+        "parentSpanId": "41f1945e31303517",
+        "flags": 257,
+        "name": "oteldemo.ProductCatalogService/ListProducts",
+        "kind": 3,
+        "startTimeUnixNano": "1792782780665968184",
+        "endTimeUnixNano": "1792782780801595604",
+        "attributes": [
+         {
+          "key": "network.peer.port",
+          "value": {
+           "intValue": "3550"
+          }
+         },
+         {
+          "key": "network.type",
+          "value": {
+           "stringValue": "ipv4"
+          }
+         },
+         {
+          "key": "rpc.grpc.status_code",
+          "value": {
+           "intValue": "0"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "ListProducts"
+          }
+         },
+         {
+          "key": "rpc.service",
+          "value": {
+           "stringValue": "oteldemo.ProductCatalogService"
+          }
+         },
+         {
+          "key": "rpc.system",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "product-catalog"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "3550"
+          }
+         }
+        ],
+        "events": [
+         {
+          "timeUnixNano": "1792782780666155694",
+          "name": "message",
+          "attributes": [
+           {
+            "key": "message.id",
+            "value": {
+             "intValue": "1"
+            }
+           },
+           {
+            "key": "message.type",
+            "value": {
+             "stringValue": "SENT"
+            }
+           }
+          ]
+         },
+         {
+          "timeUnixNano": "1792782780801569267",
+          "name": "message",
+          "attributes": [
+           {
+            "key": "message.id",
+            "value": {
+             "intValue": "1"
+            }
+           },
+           {
+            "key": "message.type",
+            "value": {
+             "stringValue": "RECEIVED"
+            }
+           }
+          ]
+         }
+        ],
+        "status": {}
+       },
+       {
+        "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+        "spanId": "ac9c8840d4c469d6",
+        "parentSpanId": "d11fe386df804e45",
+        "flags": 769,
+        "name": "oteldemo.RecommendationService/ListRecommendations",
+        "kind": 2,
+        "startTimeUnixNano": "1792782780665671181",
+        "endTimeUnixNano": "1792782780802083424",
+        "attributes": [
+         {
+          "key": "demo.product.recommended.count",
+          "value": {
+           "intValue": "5"
+          }
+         },
+         {
+          "key": "network.peer.port",
+          "value": {
+           "intValue": "50994"
+          }
+         },
+         {
+          "key": "network.type",
+          "value": {
+           "stringValue": "ipv4"
+          }
+         },
+         {
+          "key": "rpc.grpc.status_code",
+          "value": {
+           "intValue": "0"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "ListRecommendations"
+          }
+         },
+         {
+          "key": "rpc.service",
+          "value": {
+           "stringValue": "oteldemo.RecommendationService"
+          }
+         },
+         {
+          "key": "rpc.system",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "recommendation"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "9001"
+          }
+         }
+        ],
+        "events": [
+         {
+          "timeUnixNano": "1792782780665881604",
+          "name": "message",
+          "attributes": [
+           {
+            "key": "message.id",
+            "value": {
+             "intValue": "1"
+            }
+           },
+           {
+            "key": "message.type",
+            "value": {
+             "stringValue": "RECEIVED"
+            }
+           }
+          ]
+         },
+         {
+          "timeUnixNano": "1792782780801765616",
+          "name": "message",
+          "attributes": [
+           {
+            "key": "message.id",
+            "value": {
+             "intValue": "1"
+            }
+           },
+           {
+            "key": "message.type",
+            "value": {
+             "stringValue": "SENT"
+            }
+           }
+          ]
+         }
+        ],
+        "status": {}
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "resource": {
+     "attributes": [
+      {
+       "key": "service.name",
+       "value": {
+        "stringValue": "frontend"
+       }
+      },
+      {
+       "key": "service.version",
+       "value": {
+        "stringValue": "3.1.0"
+       }
+      }
+     ]
+    },
+    "scopeSpans": [
+     {
+      "scope": {
+       "name": "next.js",
+       "version": "16.4.2"
+      },
+      "spans": [
+       {
+        "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+        "spanId": "9bc17b5260db2264",
+        "parentSpanId": "fbe609d1c96ff5be",
+        "flags": 257,
+        "name": "prepare route module",
+        "kind": 1,
+        "startTimeUnixNano": "1792782780662000000",
+        "endTimeUnixNano": "1792782780662679932",
+        "attributes": [
+         {
+          "key": "next.span_category",
+          "value": {
+           "stringValue": "nextjs"
+          }
+         },
+         {
+          "key": "next.span_name",
+          "value": {
+           "stringValue": "prepare route module"
+          }
+         },
+         {
+          "key": "next.span_type",
+          "value": {
+           "stringValue": "RouteModule.prepare"
+          }
+         }
+        ],
+        "status": {},
+        "events": []
+       },
+       {
+        "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+        "spanId": "3e0ff38a2c7330e5",
+        "parentSpanId": "fbe609d1c96ff5be",
+        "flags": 257,
+        "name": "executing api route (pages) /api/recommendations",
+        "kind": 1,
+        "startTimeUnixNano": "1792782780663000000",
+        "endTimeUnixNano": "1792782781278357356",
+        "attributes": [
+         {
+          "key": "http.status_code",
+          "value": {
+           "intValue": "500"
+          }
+         },
+         {
+          "key": "next.span_category",
+          "value": {
+           "stringValue": "nextjs"
+          }
+         },
+         {
+          "key": "next.span_name",
+          "value": {
+           "stringValue": "executing api route (pages) /api/recommendations"
+          }
+         },
+         {
+          "key": "next.span_type",
+          "value": {
+           "stringValue": "Node.runHandler"
+          }
+         }
+        ],
+        "events": [
+         {
+          "timeUnixNano": "1792782781276291348",
+          "name": "exception",
+          "attributes": [
+           {
+            "key": "exception.message",
+            "value": {
+             "stringValue": "Error: product lookup failed"
+            }
+           },
+           {
+            "key": "exception.type",
+            "value": {
+             "stringValue": "13"
+            }
+           }
+          ]
+         }
+        ],
+        "status": {
+         "code": 2
+        }
+       },
+       {
+        "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+        "spanId": "fbe609d1c96ff5be",
+        "parentSpanId": "fef051a9edc764f2",
+        "flags": 257,
+        "name": "GET /api/recommendations",
+        "kind": 2,
+        "startTimeUnixNano": "1792782780661000000",
+        "endTimeUnixNano": "1792782781278255697",
+        "attributes": [
+         {
+          "key": "error.type",
+          "value": {
+           "stringValue": "500"
+          }
+         },
+         {
+          "key": "http.method",
+          "value": {
+           "stringValue": "GET"
+          }
+         },
+         {
+          "key": "http.route",
+          "value": {
+           "stringValue": "/api/recommendations"
+          }
+         },
+         {
+          "key": "http.status_code",
+          "value": {
+           "intValue": "500"
+          }
+         },
+         {
+          "key": "http.target",
+          "value": {
+           "stringValue": "/api/recommendations?productIds=&sessionId=f48cc2b7-5a36-4fbf-935b-18169e5693df&currencyCode=USD"
+          }
+         },
+         {
+          "key": "next.route",
+          "value": {
+           "stringValue": "/api/recommendations"
+          }
+         },
+         {
+          "key": "next.rsc",
+          "value": {
+           "boolValue": false
+          }
+         },
+         {
+          "key": "next.span_category",
+          "value": {
+           "stringValue": "nextjs"
+          }
+         },
+         {
+          "key": "next.span_name",
+          "value": {
+           "stringValue": "GET /api/recommendations"
+          }
+         },
+         {
+          "key": "next.span_type",
+          "value": {
+           "stringValue": "BaseServer.handleRequest"
+          }
+         }
+        ],
+        "status": {
+         "code": 2
+        },
+        "events": []
+       }
+      ]
+     },
+     {
+      "scope": {
+       "name": "@opentelemetry/instrumentation-http",
+       "version": "0.223.0"
+      },
+      "spans": [
+       {
+        "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+        "spanId": "fef051a9edc764f2",
+        "parentSpanId": "8059d42b1762b818",
+        "flags": 769,
+        "name": "GET /api/recommendations",
+        "kind": 2,
+        "startTimeUnixNano": "1792782780661000000",
+        "endTimeUnixNano": "1792782781279027371",
+        "attributes": [
+         {
+          "key": "http.request.method",
+          "value": {
+           "stringValue": "GET"
+          }
+         },
+         {
+          "key": "http.response.status_code",
+          "value": {
+           "intValue": "500"
+          }
+         },
+         {
+          "key": "http.route",
+          "value": {
+           "stringValue": "/api/recommendations"
+          }
+         },
+         {
+          "key": "network.peer.port",
+          "value": {
+           "intValue": "38068"
+          }
+         },
+         {
+          "key": "network.protocol.version",
+          "value": {
+           "stringValue": "1.1"
+          }
+         },
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "GET"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "frontend-proxy"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "8080"
+          }
+         },
+         {
+          "key": "url.path",
+          "value": {
+           "stringValue": "/api/recommendations"
+          }
+         },
+         {
+          "key": "url.query",
+          "value": {
+           "stringValue": "productIds=&sessionId=f48cc2b7-5a36-4fbf-935b-18169e5693df&currencyCode=USD"
+          }
+         },
+         {
+          "key": "url.scheme",
+          "value": {
+           "stringValue": "http"
+          }
+         }
+        ],
+        "status": {
+         "code": 2
+        },
+        "events": []
+       }
+      ]
+     },
+     {
+      "scope": {
+       "name": "@opentelemetry/instrumentation-grpc",
+       "version": "0.223.0"
+      },
+      "spans": [
+       {
+        "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+        "spanId": "d11fe386df804e45",
+        "parentSpanId": "3e0ff38a2c7330e5",
+        "flags": 257,
+        "name": "oteldemo.RecommendationService/ListRecommendations",
+        "kind": 3,
+        "startTimeUnixNano": "1792782780664000000",
+        "endTimeUnixNano": "1792782780802928837",
+        "attributes": [
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "grpc.oteldemo.RecommendationService/ListRecommendations"
+          }
+         },
+         {
+          "key": "rpc.grpc.status_code",
+          "value": {
+           "intValue": "0"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "ListRecommendations"
+          }
+         },
+         {
+          "key": "rpc.service",
+          "value": {
+           "stringValue": "oteldemo.RecommendationService"
+          }
+         },
+         {
+          "key": "rpc.system",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "recommendation"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "9001"
+          }
+         }
+        ],
+        "status": {},
+        "events": []
+       },
+       {
+        "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+        "spanId": "a447923960e9c5de",
+        "parentSpanId": "3e0ff38a2c7330e5",
+        "flags": 257,
+        "name": "oteldemo.ProductCatalogService/GetProduct",
+        "kind": 3,
+        "startTimeUnixNano": "1792782780803000000",
+        "endTimeUnixNano": "1792782781276602162",
+        "attributes": [
+         {
+          "key": "grpc.error_message",
+          "value": {
+           "stringValue": "Error: product lookup failed"
+          }
+         },
+         {
+          "key": "grpc.error_name",
+          "value": {
+           "stringValue": "Error"
+          }
+         },
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "grpc.oteldemo.ProductCatalogService/GetProduct"
+          }
+         },
+         {
+          "key": "rpc.grpc.status_code",
+          "value": {
+           "intValue": "13"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "GetProduct"
+          }
+         },
+         {
+          "key": "rpc.service",
+          "value": {
+           "stringValue": "oteldemo.ProductCatalogService"
+          }
+         },
+         {
+          "key": "rpc.system",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "product-catalog"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "3550"
+          }
+         }
+        ],
+        "status": {
+         "code": 2
+        },
+        "events": []
+       },
+       {
+        "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+        "spanId": "f6efaf46893e152a",
+        "parentSpanId": "3e0ff38a2c7330e5",
+        "flags": 257,
+        "name": "oteldemo.ProductCatalogService/GetProduct",
+        "kind": 3,
+        "startTimeUnixNano": "1792782780803000000",
+        "endTimeUnixNano": "1792782781829665991",
+        "attributes": [
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "grpc.oteldemo.ProductCatalogService/GetProduct"
+          }
+         },
+         {
+          "key": "rpc.grpc.status_code",
+          "value": {
+           "intValue": "0"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "GetProduct"
+          }
+         },
+         {
+          "key": "rpc.service",
+          "value": {
+           "stringValue": "oteldemo.ProductCatalogService"
+          }
+         },
+         {
+          "key": "rpc.system",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "product-catalog"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "3550"
+          }
+         }
+        ],
+        "status": {},
+        "events": []
+       },
+       {
+        "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+        "spanId": "931d39862b997313",
+        "parentSpanId": "3e0ff38a2c7330e5",
+        "flags": 257,
+        "name": "oteldemo.ProductCatalogService/GetProduct",
+        "kind": 3,
+        "startTimeUnixNano": "1792782780803000000",
+        "endTimeUnixNano": "1792782781830237416",
+        "attributes": [
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "grpc.oteldemo.ProductCatalogService/GetProduct"
+          }
+         },
+         {
+          "key": "rpc.grpc.status_code",
+          "value": {
+           "intValue": "0"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "GetProduct"
+          }
+         },
+         {
+          "key": "rpc.service",
+          "value": {
+           "stringValue": "oteldemo.ProductCatalogService"
+          }
+         },
+         {
+          "key": "rpc.system",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "product-catalog"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "3550"
+          }
+         }
+        ],
+        "status": {},
+        "events": []
+       },
+       {
+        "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+        "spanId": "bf2300f7ea9e246a",
+        "parentSpanId": "3e0ff38a2c7330e5",
+        "flags": 257,
+        "name": "oteldemo.ProductCatalogService/GetProduct",
+        "kind": 3,
+        "startTimeUnixNano": "1792782780803000000",
+        "endTimeUnixNano": "1792782781988092549",
+        "attributes": [
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "grpc.oteldemo.ProductCatalogService/GetProduct"
+          }
+         },
+         {
+          "key": "rpc.grpc.status_code",
+          "value": {
+           "intValue": "0"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "GetProduct"
+          }
+         },
+         {
+          "key": "rpc.service",
+          "value": {
+           "stringValue": "oteldemo.ProductCatalogService"
+          }
+         },
+         {
+          "key": "rpc.system",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "product-catalog"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "3550"
+          }
+         }
+        ],
+        "status": {},
+        "events": []
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "resource": {
+     "attributes": [
+      {
+       "key": "service.name",
+       "value": {
+        "stringValue": "product-catalog"
+       }
+      },
+      {
+       "key": "service.version",
+       "value": {
+        "stringValue": "3.1.0"
+       }
+      }
+     ]
+    },
+    "scopeSpans": [
+     {
+      "scope": {
+       "name": "github.com/XSAM/otelsql",
+       "version": "0.44.0"
+      },
+      "spans": [
+       {
+        "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+        "spanId": "2705a4df8e0524dd",
+        "parentSpanId": "86819fc592fcbee5",
+        "flags": 257,
+        "name": "astronomy-db",
+        "kind": 3,
+        "startTimeUnixNano": "1792782781399503843",
+        "endTimeUnixNano": "1792782781667671688",
+        "attributes": [
+         {
+          "key": "db.query.text",
+          "value": {
+           "stringValue": "\n\t\tSELECT p.id, p.name, p.description, p.picture, \n\t\t       p.price_currency_code, p.price_units, p.price_nanos, p.categories\n\t\tFROM catalog.products p\n\t\tWHERE p.id = $1\n\t"
+          }
+         },
+         {
+          "key": "db.system.name",
+          "value": {
+           "stringValue": "postgresql"
+          }
+         },
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "sql.conn.query"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "astronomy-db"
+          }
+         }
+        ],
+        "status": {},
+        "events": []
+       },
+       {
+        "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+        "spanId": "b512320dbb35cbd1",
+        "parentSpanId": "1773b53cd326b7c7",
+        "flags": 257,
+        "name": "astronomy-db",
+        "kind": 3,
+        "startTimeUnixNano": "1792782781664551420",
+        "endTimeUnixNano": "1792782781807229746",
+        "attributes": [
+         {
+          "key": "db.query.text",
+          "value": {
+           "stringValue": "\n\t\tSELECT p.id, p.name, p.description, p.picture, \n\t\t       p.price_currency_code, p.price_units, p.price_nanos, p.categories\n\t\tFROM catalog.products p\n\t\tWHERE p.id = $1\n\t"
+          }
+         },
+         {
+          "key": "db.system.name",
+          "value": {
+           "stringValue": "postgresql"
+          }
+         },
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "sql.conn.query"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "astronomy-db"
+          }
+         }
+        ],
+        "status": {},
+        "events": []
+       }
+      ]
+     },
+     {
+      "scope": {
+       "name": "go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc",
+       "version": "0.72.0"
+      },
+      "spans": [
+       {
+        "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+        "spanId": "86819fc592fcbee5",
+        "parentSpanId": "931d39862b997313",
+        "flags": 769,
+        "name": "oteldemo.ProductCatalogService/GetProduct",
+        "kind": 2,
+        "startTimeUnixNano": "1792782780837019834",
+        "endTimeUnixNano": "1792782781827431154",
+        "attributes": [
+         {
+          "key": "demo.product.id",
+          "value": {
+           "stringValue": "9SIQT8TOJO"
+          }
+         },
+         {
+          "key": "demo.product.name",
+          "value": {
+           "stringValue": "Optical Tube Assembly"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "oteldemo.ProductCatalogService/GetProduct"
+          }
+         },
+         {
+          "key": "rpc.response.status_code",
+          "value": {
+           "stringValue": "OK"
+          }
+         },
+         {
+          "key": "rpc.system.name",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "172.22.0.18"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "3550"
+          }
+         }
+        ],
+        "events": [
+         {
+          "timeUnixNano": "1792782781724146270",
+          "name": "Product Found",
+          "attributes": []
+         }
+        ],
+        "status": {}
+       },
+       {
+        "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+        "spanId": "5bc1fb013fe78d8d",
+        "parentSpanId": "f6efaf46893e152a",
+        "flags": 769,
+        "name": "oteldemo.ProductCatalogService/GetProduct",
+        "kind": 2,
+        "startTimeUnixNano": "1792782780836651539",
+        "endTimeUnixNano": "1792782781827534112",
+        "attributes": [
+         {
+          "key": "demo.product.id",
+          "value": {
+           "stringValue": "6E92ZMYYFZ"
+          }
+         },
+         {
+          "key": "demo.product.name",
+          "value": {
+           "stringValue": "Solar Filter"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "oteldemo.ProductCatalogService/GetProduct"
+          }
+         },
+         {
+          "key": "rpc.response.status_code",
+          "value": {
+           "stringValue": "OK"
+          }
+         },
+         {
+          "key": "rpc.system.name",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "172.22.0.18"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "3550"
+          }
+         }
+        ],
+        "events": [
+         {
+          "timeUnixNano": "1792782781469910837",
+          "name": "Product Found",
+          "attributes": []
+         }
+        ],
+        "status": {}
+       },
+       {
+        "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+        "spanId": "1773b53cd326b7c7",
+        "parentSpanId": "bf2300f7ea9e246a",
+        "flags": 769,
+        "name": "oteldemo.ProductCatalogService/GetProduct",
+        "kind": 2,
+        "startTimeUnixNano": "1792782780834659634",
+        "endTimeUnixNano": "1792782781986975297",
+        "attributes": [
+         {
+          "key": "demo.product.id",
+          "value": {
+           "stringValue": "2ZYFJ3GM2N"
+          }
+         },
+         {
+          "key": "demo.product.name",
+          "value": {
+           "stringValue": "Roof Binoculars"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "oteldemo.ProductCatalogService/GetProduct"
+          }
+         },
+         {
+          "key": "rpc.response.status_code",
+          "value": {
+           "stringValue": "OK"
+          }
+         },
+         {
+          "key": "rpc.system.name",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "172.22.0.18"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "3550"
+          }
+         }
+        ],
+        "events": [
+         {
+          "timeUnixNano": "1792782781902900830",
+          "name": "Product Found",
+          "attributes": []
+         }
+        ],
+        "status": {}
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "resource": {
+     "attributes": [
+      {
+       "key": "service.name",
+       "value": {
+        "stringValue": "frontend"
+       }
+      },
+      {
+       "key": "service.version",
+       "value": {
+        "stringValue": "3.1.0"
+       }
+      }
+     ]
+    },
+    "scopeSpans": [
+     {
+      "scope": {
+       "name": "@opentelemetry/instrumentation-grpc",
+       "version": "0.223.0"
+      },
+      "spans": [
+       {
+        "traceId": "049e9b56dc01fa97298f99230a3c672a",
+        "spanId": "01eef7db313eec1e",
+        "parentSpanId": "8917f8e13fa6cea1",
+        "flags": 257,
+        "name": "oteldemo.ProductCatalogService/GetProduct",
+        "kind": 3,
+        "startTimeUnixNano": "1792782768813000000",
+        "endTimeUnixNano": "1792782769236242523",
+        "attributes": [
+         {
+          "key": "grpc.error_message",
+          "value": {
+           "stringValue": "Error: product lookup failed"
+          }
+         },
+         {
+          "key": "grpc.error_name",
+          "value": {
+           "stringValue": "Error"
+          }
+         },
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "grpc.oteldemo.ProductCatalogService/GetProduct"
+          }
+         },
+         {
+          "key": "rpc.grpc.status_code",
+          "value": {
+           "intValue": "13"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "GetProduct"
+          }
+         },
+         {
+          "key": "rpc.service",
+          "value": {
+           "stringValue": "oteldemo.ProductCatalogService"
+          }
+         },
+         {
+          "key": "rpc.system",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "product-catalog"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "3550"
+          }
+         }
+        ],
+        "status": {
+         "code": 2
+        },
+        "events": []
+       }
+      ]
+     },
+     {
+      "scope": {
+       "name": "next.js",
+       "version": "16.4.2"
+      },
+      "spans": [
+       {
+        "traceId": "049e9b56dc01fa97298f99230a3c672a",
+        "spanId": "b79383844e0ac67b",
+        "parentSpanId": "b1f99462c430dee1",
+        "flags": 257,
+        "name": "prepare route module",
+        "kind": 1,
+        "startTimeUnixNano": "1792782768812000000",
+        "endTimeUnixNano": "1792782768812547627",
+        "attributes": [
+         {
+          "key": "next.span_category",
+          "value": {
+           "stringValue": "nextjs"
+          }
+         },
+         {
+          "key": "next.span_name",
+          "value": {
+           "stringValue": "prepare route module"
+          }
+         },
+         {
+          "key": "next.span_type",
+          "value": {
+           "stringValue": "RouteModule.prepare"
+          }
+         }
+        ],
+        "status": {},
+        "events": []
+       },
+       {
+        "traceId": "049e9b56dc01fa97298f99230a3c672a",
+        "spanId": "8917f8e13fa6cea1",
+        "parentSpanId": "b1f99462c430dee1",
+        "flags": 257,
+        "name": "executing api route (pages) /api/products/[productId]/index",
+        "kind": 1,
+        "startTimeUnixNano": "1792782768812000000",
+        "endTimeUnixNano": "1792782769236963029",
+        "attributes": [
+         {
+          "key": "http.status_code",
+          "value": {
+           "intValue": "500"
+          }
+         },
+         {
+          "key": "next.span_category",
+          "value": {
+           "stringValue": "nextjs"
+          }
+         },
+         {
+          "key": "next.span_name",
+          "value": {
+           "stringValue": "executing api route (pages) /api/products/[productId]/index"
+          }
+         },
+         {
+          "key": "next.span_type",
+          "value": {
+           "stringValue": "Node.runHandler"
+          }
+         }
+        ],
+        "events": [
+         {
+          "timeUnixNano": "1792782769235563336",
+          "name": "exception",
+          "attributes": [
+           {
+            "key": "exception.message",
+            "value": {
+             "stringValue": "Error: product lookup failed"
+            }
+           },
+           {
+            "key": "exception.type",
+            "value": {
+             "stringValue": "13"
+            }
+           }
+          ]
+         }
+        ],
+        "status": {
+         "code": 2
+        }
+       },
+       {
+        "traceId": "049e9b56dc01fa97298f99230a3c672a",
+        "spanId": "b1f99462c430dee1",
+        "parentSpanId": "8587f94b057117cf",
+        "flags": 257,
+        "name": "GET /api/products/[productId]/index",
+        "kind": 2,
+        "startTimeUnixNano": "1792782768811000000",
+        "endTimeUnixNano": "1792782769237115311",
+        "attributes": [
+         {
+          "key": "error.type",
+          "value": {
+           "stringValue": "500"
+          }
+         },
+         {
+          "key": "http.method",
+          "value": {
+           "stringValue": "GET"
+          }
+         },
+         {
+          "key": "http.route",
+          "value": {
+           "stringValue": "/api/products/[productId]/index"
+          }
+         },
+         {
+          "key": "http.status_code",
+          "value": {
+           "intValue": "500"
+          }
+         },
+         {
+          "key": "http.target",
+          "value": {
+           "stringValue": "/api/products/OLJCESPC7Z"
+          }
+         },
+         {
+          "key": "next.route",
+          "value": {
+           "stringValue": "/api/products/[productId]/index"
+          }
+         },
+         {
+          "key": "next.rsc",
+          "value": {
+           "boolValue": false
+          }
+         },
+         {
+          "key": "next.span_category",
+          "value": {
+           "stringValue": "nextjs"
+          }
+         },
+         {
+          "key": "next.span_name",
+          "value": {
+           "stringValue": "GET /api/products/[productId]/index"
+          }
+         },
+         {
+          "key": "next.span_type",
+          "value": {
+           "stringValue": "BaseServer.handleRequest"
+          }
+         }
+        ],
+        "status": {
+         "code": 2
+        },
+        "events": []
+       }
+      ]
+     },
+     {
+      "scope": {
+       "name": "@opentelemetry/instrumentation-http",
+       "version": "0.223.0"
+      },
+      "spans": [
+       {
+        "traceId": "049e9b56dc01fa97298f99230a3c672a",
+        "spanId": "8587f94b057117cf",
+        "parentSpanId": "60619c5428b14a87",
+        "flags": 769,
+        "name": "GET /api/products/[productId]/index",
+        "kind": 2,
+        "startTimeUnixNano": "1792782768811000000",
+        "endTimeUnixNano": "1792782769237618525",
+        "attributes": [
+         {
+          "key": "http.request.method",
+          "value": {
+           "stringValue": "GET"
+          }
+         },
+         {
+          "key": "http.response.status_code",
+          "value": {
+           "intValue": "500"
+          }
+         },
+         {
+          "key": "http.route",
+          "value": {
+           "stringValue": "/api/products/[productId]/index"
+          }
+         },
+         {
+          "key": "network.peer.port",
+          "value": {
+           "intValue": "46908"
+          }
+         },
+         {
+          "key": "network.protocol.version",
+          "value": {
+           "stringValue": "1.1"
+          }
+         },
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "GET"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "frontend-proxy"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "8080"
+          }
+         },
+         {
+          "key": "url.path",
+          "value": {
+           "stringValue": "/api/products/OLJCESPC7Z"
+          }
+         },
+         {
+          "key": "url.scheme",
+          "value": {
+           "stringValue": "http"
+          }
+         }
+        ],
+        "status": {
+         "code": 2
+        },
+        "events": []
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "resource": {
+     "attributes": [
+      {
+       "key": "service.name",
+       "value": {
+        "stringValue": "product-catalog"
+       }
+      },
+      {
+       "key": "service.version",
+       "value": {
+        "stringValue": "3.1.0"
+       }
+      }
+     ]
+    },
+    "scopeSpans": [
+     {
+      "scope": {
+       "name": "go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc",
+       "version": "0.72.0"
+      },
+      "spans": [
+       {
+        "traceId": "049e9b56dc01fa97298f99230a3c672a",
+        "spanId": "2d75ce2ca8484c0f",
+        "parentSpanId": "01eef7db313eec1e",
+        "flags": 769,
+        "name": "oteldemo.ProductCatalogService/GetProduct",
+        "kind": 2,
+        "startTimeUnixNano": "1792782768955076174",
+        "endTimeUnixNano": "1792782769285011944",
+        "attributes": [
+         {
+          "key": "demo.product.id",
+          "value": {
+           "stringValue": "OLJCESPC7Z"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "oteldemo.ProductCatalogService/GetProduct"
+          }
+         },
+         {
+          "key": "rpc.response.status_code",
+          "value": {
+           "stringValue": "INTERNAL"
+          }
+         },
+         {
+          "key": "rpc.system.name",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "172.22.0.18"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "3550"
+          }
+         }
+        ],
+        "events": [
+         {
+          "timeUnixNano": "1792782769219589030",
+          "name": "Error: product lookup failed",
+          "attributes": []
+         }
+        ],
+        "status": {
+         "message": "Error: product lookup failed",
+         "code": 2
+        }
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "resource": {
+     "attributes": [
+      {
+       "key": "service.name",
+       "value": {
+        "stringValue": "load-generator"
+       }
+      },
+      {
+       "key": "service.version",
+       "value": {
+        "stringValue": "3.1.0"
+       }
+      }
+     ]
+    },
+    "scopeSpans": [
+     {
+      "scope": {
+       "name": "opentelemetry.instrumentation.requests",
+       "version": "0.63b0"
+      },
+      "spans": [
+       {
+        "traceId": "049e9b56dc01fa97298f99230a3c672a",
+        "spanId": "90d399c5246dd1c6",
+        "parentSpanId": "4bca9908d30499ba",
+        "flags": 256,
+        "name": "GET",
+        "kind": 3,
+        "startTimeUnixNano": "1792782768808528559",
+        "endTimeUnixNano": "1792782769239608750",
+        "attributes": [
+         {
+          "key": "http.method",
+          "value": {
+           "stringValue": "GET"
+          }
+         },
+         {
+          "key": "http.status_code",
+          "value": {
+           "intValue": "500"
+          }
+         },
+         {
+          "key": "http.url",
+          "value": {
+           "stringValue": "http://frontend-proxy:8080/api/products/OLJCESPC7Z"
+          }
+         }
+        ],
+        "status": {
+         "code": 2
+        },
+        "events": []
+       }
+      ]
+     },
+     {
+      "scope": {
+       "name": "locustfile"
+      },
+      "spans": [
+       {
+        "traceId": "049e9b56dc01fa97298f99230a3c672a",
+        "spanId": "4bca9908d30499ba",
+        "flags": 256,
+        "name": "user_browse_product",
+        "kind": 1,
+        "startTimeUnixNano": "1792782768807367041",
+        "endTimeUnixNano": "1792782769240039632",
+        "attributes": [
+         {
+          "key": "demo.product.id",
+          "value": {
+           "stringValue": "OLJCESPC7Z"
+          }
+         }
+        ],
+        "status": {},
+        "events": []
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "resource": {
+     "attributes": [
+      {
+       "key": "service.name",
+       "value": {
+        "stringValue": "frontend-proxy"
+       }
+      },
+      {
+       "key": "service.version",
+       "value": {
+        "stringValue": "3.1.0"
+       }
+      }
+     ]
+    },
+    "scopeSpans": [
+     {
+      "scope": {
+       "name": "envoy",
+       "version": "9e5580933739775e8bce696a57a2e1bc99368f23/1.40.0/Clean/RELEASE/BoringSSL"
+      },
+      "spans": [
+       {
+        "traceId": "049e9b56dc01fa97298f99230a3c672a",
+        "spanId": "60619c5428b14a87",
+        "parentSpanId": "9e488a97c3ddb6af",
+        "flags": 257,
+        "name": "router frontend egress",
+        "kind": 3,
+        "startTimeUnixNano": "1792782768809740000",
+        "endTimeUnixNano": "1792782769237969000",
+        "attributes": [
+         {
+          "key": "component",
+          "value": {
+           "stringValue": "proxy"
+          }
+         },
+         {
+          "key": "error",
+          "value": {
+           "stringValue": "true"
+          }
+         },
+         {
+          "key": "http.protocol",
+          "value": {
+           "stringValue": "HTTP/1.1"
+          }
+         },
+         {
+          "key": "http.status_code",
+          "value": {
+           "stringValue": "500"
+          }
+         },
+         {
+          "key": "peer.address",
+          "value": {
+           "stringValue": "172.22.0.24:8080"
+          }
+         },
+         {
+          "key": "response_flags",
+          "value": {
+           "stringValue": "-"
+          }
+         },
+         {
+          "key": "upstream_address",
+          "value": {
+           "stringValue": "172.22.0.24:8080"
+          }
+         },
+         {
+          "key": "upstream_cluster",
+          "value": {
+           "stringValue": "frontend"
+          }
+         },
+         {
+          "key": "upstream_cluster.name",
+          "value": {
+           "stringValue": "frontend"
+          }
+         }
+        ],
+        "status": {
+         "code": 2
+        },
+        "events": []
+       },
+       {
+        "traceId": "049e9b56dc01fa97298f99230a3c672a",
+        "spanId": "9e488a97c3ddb6af",
+        "parentSpanId": "90d399c5246dd1c6",
+        "flags": 769,
+        "name": "GET",
+        "kind": 2,
+        "startTimeUnixNano": "1792782768809498000",
+        "endTimeUnixNano": "1792782769238011000",
+        "attributes": [
+         {
+          "key": "component",
+          "value": {
+           "stringValue": "proxy"
+          }
+         },
+         {
+          "key": "downstream_cluster",
+          "value": {
+           "stringValue": "-"
+          }
+         },
+         {
+          "key": "error",
+          "value": {
+           "stringValue": "true"
+          }
+         },
+         {
+          "key": "guid:x-request-id",
+          "value": {
+           "stringValue": "33d0c40b-7083-965d-846c-457d98ecc759"
+          }
+         },
+         {
+          "key": "http.method",
+          "value": {
+           "stringValue": "GET"
+          }
+         },
+         {
+          "key": "http.protocol",
+          "value": {
+           "stringValue": "HTTP/1.1"
+          }
+         },
+         {
+          "key": "http.status_code",
+          "value": {
+           "stringValue": "500"
+          }
+         },
+         {
+          "key": "http.url",
+          "value": {
+           "stringValue": "http://frontend-proxy:8080/api/products/OLJCESPC7Z"
+          }
+         },
+         {
+          "key": "node_id",
+          "value": {
+           "stringValue": ""
+          }
+         },
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "ingress"
+          }
+         },
+         {
+          "key": "peer.address",
+          "value": {
+           "stringValue": "172.22.0.25"
+          }
+         },
+         {
+          "key": "request_size",
+          "value": {
+           "stringValue": "0"
+          }
+         },
+         {
+          "key": "response_flags",
+          "value": {
+           "stringValue": "-"
+          }
+         },
+         {
+          "key": "response_size",
+          "value": {
+           "stringValue": "21"
+          }
+         },
+         {
+          "key": "upstream_cluster",
+          "value": {
+           "stringValue": "frontend"
+          }
+         },
+         {
+          "key": "upstream_cluster.name",
+          "value": {
+           "stringValue": "frontend"
+          }
+         },
+         {
+          "key": "user_agent",
+          "value": {
+           "stringValue": "python-requests/2.34.2"
+          }
+         },
+         {
+          "key": "zone",
+          "value": {
+           "stringValue": ""
+          }
+         }
+        ],
+        "status": {
+         "code": 2
+        },
+        "events": []
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "resource": {
+     "attributes": [
+      {
+       "key": "service.name",
+       "value": {
+        "stringValue": "frontend"
+       }
+      },
+      {
+       "key": "service.version",
+       "value": {
+        "stringValue": "3.1.0"
+       }
+      }
+     ]
+    },
+    "scopeSpans": [
+     {
+      "scope": {
+       "name": "@opentelemetry/instrumentation-grpc",
+       "version": "0.223.0"
+      },
+      "spans": [
+       {
+        "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+        "spanId": "3c6aabed762be3ab",
+        "parentSpanId": "551c3f8e9f9303ca",
+        "flags": 257,
+        "name": "oteldemo.RecommendationService/ListRecommendations",
+        "kind": 3,
+        "startTimeUnixNano": "1792782767748000000",
+        "endTimeUnixNano": "1792782768710833264",
+        "attributes": [
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "grpc.oteldemo.RecommendationService/ListRecommendations"
+          }
+         },
+         {
+          "key": "rpc.grpc.status_code",
+          "value": {
+           "intValue": "0"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "ListRecommendations"
+          }
+         },
+         {
+          "key": "rpc.service",
+          "value": {
+           "stringValue": "oteldemo.RecommendationService"
+          }
+         },
+         {
+          "key": "rpc.system",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "recommendation"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "9001"
+          }
+         }
+        ],
+        "status": {},
+        "events": []
+       },
+       {
+        "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+        "spanId": "06bb5520da874897",
+        "parentSpanId": "551c3f8e9f9303ca",
+        "flags": 257,
+        "name": "oteldemo.ProductCatalogService/GetProduct",
+        "kind": 3,
+        "startTimeUnixNano": "1792782768711000000",
+        "endTimeUnixNano": "1792782769074465644",
+        "attributes": [
+         {
+          "key": "grpc.error_message",
+          "value": {
+           "stringValue": "Error: product lookup failed"
+          }
+         },
+         {
+          "key": "grpc.error_name",
+          "value": {
+           "stringValue": "Error"
+          }
+         },
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "grpc.oteldemo.ProductCatalogService/GetProduct"
+          }
+         },
+         {
+          "key": "rpc.grpc.status_code",
+          "value": {
+           "intValue": "13"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "GetProduct"
+          }
+         },
+         {
+          "key": "rpc.service",
+          "value": {
+           "stringValue": "oteldemo.ProductCatalogService"
+          }
+         },
+         {
+          "key": "rpc.system",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "product-catalog"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "3550"
+          }
+         }
+        ],
+        "status": {
+         "code": 2
+        },
+        "events": []
+       }
+      ]
+     },
+     {
+      "scope": {
+       "name": "next.js",
+       "version": "16.4.2"
+      },
+      "spans": [
+       {
+        "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+        "spanId": "bda42c312ff409d8",
+        "parentSpanId": "db3bda4d7e251582",
+        "flags": 257,
+        "name": "prepare route module",
+        "kind": 1,
+        "startTimeUnixNano": "1792782767746000000",
+        "endTimeUnixNano": "1792782767746842115",
+        "attributes": [
+         {
+          "key": "next.span_category",
+          "value": {
+           "stringValue": "nextjs"
+          }
+         },
+         {
+          "key": "next.span_name",
+          "value": {
+           "stringValue": "prepare route module"
+          }
+         },
+         {
+          "key": "next.span_type",
+          "value": {
+           "stringValue": "RouteModule.prepare"
+          }
+         }
+        ],
+        "status": {},
+        "events": []
+       },
+       {
+        "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+        "spanId": "551c3f8e9f9303ca",
+        "parentSpanId": "db3bda4d7e251582",
+        "flags": 257,
+        "name": "executing api route (pages) /api/recommendations",
+        "kind": 1,
+        "startTimeUnixNano": "1792782767748000000",
+        "endTimeUnixNano": "1792782769076865331",
+        "attributes": [
+         {
+          "key": "http.status_code",
+          "value": {
+           "intValue": "500"
+          }
+         },
+         {
+          "key": "next.span_category",
+          "value": {
+           "stringValue": "nextjs"
+          }
+         },
+         {
+          "key": "next.span_name",
+          "value": {
+           "stringValue": "executing api route (pages) /api/recommendations"
+          }
+         },
+         {
+          "key": "next.span_type",
+          "value": {
+           "stringValue": "Node.runHandler"
+          }
+         }
+        ],
+        "events": [
+         {
+          "timeUnixNano": "1792782769074895969",
+          "name": "exception",
+          "attributes": [
+           {
+            "key": "exception.message",
+            "value": {
+             "stringValue": "Error: product lookup failed"
+            }
+           },
+           {
+            "key": "exception.type",
+            "value": {
+             "stringValue": "13"
+            }
+           }
+          ]
+         }
+        ],
+        "status": {
+         "code": 2
+        }
+       },
+       {
+        "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+        "spanId": "db3bda4d7e251582",
+        "parentSpanId": "99fef0cd644d222b",
+        "flags": 257,
+        "name": "GET /api/recommendations",
+        "kind": 2,
+        "startTimeUnixNano": "1792782767745000000",
+        "endTimeUnixNano": "1792782769076437161",
+        "attributes": [
+         {
+          "key": "error.type",
+          "value": {
+           "stringValue": "500"
+          }
+         },
+         {
+          "key": "http.method",
+          "value": {
+           "stringValue": "GET"
+          }
+         },
+         {
+          "key": "http.route",
+          "value": {
+           "stringValue": "/api/recommendations"
+          }
+         },
+         {
+          "key": "http.status_code",
+          "value": {
+           "intValue": "500"
+          }
+         },
+         {
+          "key": "http.target",
+          "value": {
+           "stringValue": "/api/recommendations?productIds=&sessionId=3838a605-3f65-4c23-b080-a230c7ffb285&currencyCode=USD"
+          }
+         },
+         {
+          "key": "next.route",
+          "value": {
+           "stringValue": "/api/recommendations"
+          }
+         },
+         {
+          "key": "next.rsc",
+          "value": {
+           "boolValue": false
+          }
+         },
+         {
+          "key": "next.span_category",
+          "value": {
+           "stringValue": "nextjs"
+          }
+         },
+         {
+          "key": "next.span_name",
+          "value": {
+           "stringValue": "GET /api/recommendations"
+          }
+         },
+         {
+          "key": "next.span_type",
+          "value": {
+           "stringValue": "BaseServer.handleRequest"
+          }
+         }
+        ],
+        "status": {
+         "code": 2
+        },
+        "events": []
+       }
+      ]
+     },
+     {
+      "scope": {
+       "name": "@opentelemetry/instrumentation-http",
+       "version": "0.223.0"
+      },
+      "spans": [
+       {
+        "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+        "spanId": "99fef0cd644d222b",
+        "parentSpanId": "31695ff9ce83c7eb",
+        "flags": 769,
+        "name": "GET /api/recommendations",
+        "kind": 2,
+        "startTimeUnixNano": "1792782767745000000",
+        "endTimeUnixNano": "1792782769077145003",
+        "attributes": [
+         {
+          "key": "http.request.method",
+          "value": {
+           "stringValue": "GET"
+          }
+         },
+         {
+          "key": "http.response.status_code",
+          "value": {
+           "intValue": "500"
+          }
+         },
+         {
+          "key": "http.route",
+          "value": {
+           "stringValue": "/api/recommendations"
+          }
+         },
+         {
+          "key": "network.peer.port",
+          "value": {
+           "intValue": "46874"
+          }
+         },
+         {
+          "key": "network.protocol.version",
+          "value": {
+           "stringValue": "1.1"
+          }
+         },
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "GET"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "frontend-proxy"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "8080"
+          }
+         },
+         {
+          "key": "url.path",
+          "value": {
+           "stringValue": "/api/recommendations"
+          }
+         },
+         {
+          "key": "url.query",
+          "value": {
+           "stringValue": "productIds=&sessionId=3838a605-3f65-4c23-b080-a230c7ffb285&currencyCode=USD"
+          }
+         },
+         {
+          "key": "url.scheme",
+          "value": {
+           "stringValue": "http"
+          }
+         }
+        ],
+        "status": {
+         "code": 2
+        },
+        "events": []
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "resource": {
+     "attributes": [
+      {
+       "key": "service.name",
+       "value": {
+        "stringValue": "frontend-web"
+       }
+      }
+     ]
+    },
+    "scopeSpans": [
+     {
+      "scope": {
+       "name": "@opentelemetry/instrumentation-fetch",
+       "version": "0.223.0"
+      },
+      "spans": [
+       {
+        "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+        "spanId": "390a8354b359c02d",
+        "flags": 257,
+        "name": "GET",
+        "kind": 3,
+        "startTimeUnixNano": "1792782767735000000",
+        "endTimeUnixNano": "1792782769082000000",
+        "attributes": [
+         {
+          "key": "demo.synthetic_request",
+          "value": {
+           "stringValue": "true"
+          }
+         },
+         {
+          "key": "error.type",
+          "value": {
+           "stringValue": "500"
+          }
+         },
+         {
+          "key": "http.request.method",
+          "value": {
+           "stringValue": "GET"
+          }
+         },
+         {
+          "key": "http.response.status_code",
+          "value": {
+           "intValue": "500"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "frontend-proxy"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "8080"
+          }
+         },
+         {
+          "key": "url.full",
+          "value": {
+           "stringValue": "http://frontend-proxy:8080/api/recommendations?productIds=&sessionId=3838a605-3f65-4c23-b080-a230c7ffb285&currencyCode=USD"
+          }
+         }
+        ],
+        "events": [
+         {
+          "timeUnixNano": "1792782767735999951",
+          "name": "connectEnd",
+          "attributes": []
+         },
+         {
+          "timeUnixNano": "1792782767735999951",
+          "name": "connectStart",
+          "attributes": []
+         },
+         {
+          "timeUnixNano": "1792782767735999951",
+          "name": "domainLookupEnd",
+          "attributes": []
+         },
+         {
+          "timeUnixNano": "1792782767735999951",
+          "name": "domainLookupStart",
+          "attributes": []
+         },
+         {
+          "timeUnixNano": "1792782767735999951",
+          "name": "fetchStart",
+          "attributes": []
+         },
+         {
+          "timeUnixNano": "1792782767743099951",
+          "name": "requestStart",
+          "attributes": []
+         },
+         {
+          "timeUnixNano": "1792782769078999951",
+          "name": "responseEnd",
+          "attributes": []
+         },
+         {
+          "timeUnixNano": "1792782769077099951",
+          "name": "responseStart",
+          "attributes": []
+         }
+        ],
+        "status": {
+         "code": 2
+        }
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "resource": {
+     "attributes": [
+      {
+       "key": "service.name",
+       "value": {
+        "stringValue": "frontend-proxy"
+       }
+      },
+      {
+       "key": "service.version",
+       "value": {
+        "stringValue": "3.1.0"
+       }
+      }
+     ]
+    },
+    "scopeSpans": [
+     {
+      "scope": {
+       "name": "envoy",
+       "version": "9e5580933739775e8bce696a57a2e1bc99368f23/1.40.0/Clean/RELEASE/BoringSSL"
+      },
+      "spans": [
+       {
+        "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+        "spanId": "31695ff9ce83c7eb",
+        "parentSpanId": "6fdf4f5491821823",
+        "flags": 257,
+        "name": "router frontend egress",
+        "kind": 3,
+        "startTimeUnixNano": "1792782767744359000",
+        "endTimeUnixNano": "1792782769077355000",
+        "attributes": [
+         {
+          "key": "component",
+          "value": {
+           "stringValue": "proxy"
+          }
+         },
+         {
+          "key": "error",
+          "value": {
+           "stringValue": "true"
+          }
+         },
+         {
+          "key": "http.protocol",
+          "value": {
+           "stringValue": "HTTP/1.1"
+          }
+         },
+         {
+          "key": "http.status_code",
+          "value": {
+           "stringValue": "500"
+          }
+         },
+         {
+          "key": "peer.address",
+          "value": {
+           "stringValue": "172.22.0.24:8080"
+          }
+         },
+         {
+          "key": "response_flags",
+          "value": {
+           "stringValue": "-"
+          }
+         },
+         {
+          "key": "upstream_address",
+          "value": {
+           "stringValue": "172.22.0.24:8080"
+          }
+         },
+         {
+          "key": "upstream_cluster",
+          "value": {
+           "stringValue": "frontend"
+          }
+         },
+         {
+          "key": "upstream_cluster.name",
+          "value": {
+           "stringValue": "frontend"
+          }
+         }
+        ],
+        "status": {
+         "code": 2
+        },
+        "events": []
+       },
+       {
+        "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+        "spanId": "6fdf4f5491821823",
+        "parentSpanId": "390a8354b359c02d",
+        "flags": 769,
+        "name": "GET",
+        "kind": 2,
+        "startTimeUnixNano": "1792782767744035000",
+        "endTimeUnixNano": "1792782769077450000",
+        "attributes": [
+         {
+          "key": "component",
+          "value": {
+           "stringValue": "proxy"
+          }
+         },
+         {
+          "key": "downstream_cluster",
+          "value": {
+           "stringValue": "-"
+          }
+         },
+         {
+          "key": "error",
+          "value": {
+           "stringValue": "true"
+          }
+         },
+         {
+          "key": "guid:x-request-id",
+          "value": {
+           "stringValue": "3ea4cd65-16f7-9f70-a138-2093221050c9"
+          }
+         },
+         {
+          "key": "http.method",
+          "value": {
+           "stringValue": "GET"
+          }
+         },
+         {
+          "key": "http.protocol",
+          "value": {
+           "stringValue": "HTTP/1.1"
+          }
+         },
+         {
+          "key": "http.status_code",
+          "value": {
+           "stringValue": "500"
+          }
+         },
+         {
+          "key": "http.url",
+          "value": {
+           "stringValue": "http://frontend-proxy:8080/api/recommendations?productIds=&sessionId=3838a605-3f65-4c23-b080-a230c7ffb285&currencyCode=USD"
+          }
+         },
+         {
+          "key": "node_id",
+          "value": {
+           "stringValue": ""
+          }
+         },
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "ingress"
+          }
+         },
+         {
+          "key": "peer.address",
+          "value": {
+           "stringValue": "172.22.0.25"
+          }
+         },
+         {
+          "key": "request_size",
+          "value": {
+           "stringValue": "0"
+          }
+         },
+         {
+          "key": "response_flags",
+          "value": {
+           "stringValue": "-"
+          }
+         },
+         {
+          "key": "response_size",
+          "value": {
+           "stringValue": "21"
+          }
+         },
+         {
+          "key": "upstream_cluster",
+          "value": {
+           "stringValue": "frontend"
+          }
+         },
+         {
+          "key": "upstream_cluster.name",
+          "value": {
+           "stringValue": "frontend"
+          }
+         },
+         {
+          "key": "user_agent",
+          "value": {
+           "stringValue": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36"
+          }
+         },
+         {
+          "key": "zone",
+          "value": {
+           "stringValue": ""
+          }
+         }
+        ],
+        "status": {
+         "code": 2
+        },
+        "events": []
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "resource": {
+     "attributes": [
+      {
+       "key": "service.name",
+       "value": {
+        "stringValue": "product-catalog"
+       }
+      },
+      {
+       "key": "service.version",
+       "value": {
+        "stringValue": "3.1.0"
+       }
+      }
+     ]
+    },
+    "scopeSpans": [
+     {
+      "scope": {
+       "name": "github.com/XSAM/otelsql",
+       "version": "0.44.0"
+      },
+      "spans": [
+       {
+        "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+        "spanId": "9b9dbb3471be6d0f",
+        "parentSpanId": "e528c9f1c0b517f2",
+        "flags": 257,
+        "name": "astronomy-db",
+        "kind": 3,
+        "startTimeUnixNano": "1792782767955449291",
+        "endTimeUnixNano": "1792782768083975440",
+        "attributes": [
+         {
+          "key": "db.query.text",
+          "value": {
+           "stringValue": "\n\t\tSELECT p.id, p.name, p.description, p.picture, \n\t\t       p.price_currency_code, p.price_units, p.price_nanos, p.categories\n\t\tFROM catalog.products p\n\t\tORDER BY p.id\n\t"
+          }
+         },
+         {
+          "key": "db.system.name",
+          "value": {
+           "stringValue": "postgresql"
+          }
+         },
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "sql.conn.query"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "astronomy-db"
+          }
+         }
+        ],
+        "status": {},
+        "events": []
+       },
+       {
+        "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+        "spanId": "87248688d755f1cf",
+        "parentSpanId": "4e0ad209a09738ff",
+        "flags": 257,
+        "name": "astronomy-db",
+        "kind": 3,
+        "startTimeUnixNano": "1792782769288327308",
+        "endTimeUnixNano": "1792782769317502899",
+        "attributes": [
+         {
+          "key": "db.query.text",
+          "value": {
+           "stringValue": "\n\t\tSELECT p.id, p.name, p.description, p.picture, \n\t\t       p.price_currency_code, p.price_units, p.price_nanos, p.categories\n\t\tFROM catalog.products p\n\t\tWHERE p.id = $1\n\t"
+          }
+         },
+         {
+          "key": "db.system.name",
+          "value": {
+           "stringValue": "postgresql"
+          }
+         },
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "sql.conn.query"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "astronomy-db"
+          }
+         }
+        ],
+        "status": {},
+        "events": []
+       },
+       {
+        "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+        "spanId": "fa12ab1e27e9248b",
+        "parentSpanId": "99b079029a5e61ee",
+        "flags": 257,
+        "name": "astronomy-db",
+        "kind": 3,
+        "startTimeUnixNano": "1792782769455764724",
+        "endTimeUnixNano": "1792782769532298392",
+        "attributes": [
+         {
+          "key": "db.query.text",
+          "value": {
+           "stringValue": "\n\t\tSELECT p.id, p.name, p.description, p.picture, \n\t\t       p.price_currency_code, p.price_units, p.price_nanos, p.categories\n\t\tFROM catalog.products p\n\t\tWHERE p.id = $1\n\t"
+          }
+         },
+         {
+          "key": "db.system.name",
+          "value": {
+           "stringValue": "postgresql"
+          }
+         },
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "sql.conn.query"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "astronomy-db"
+          }
+         }
+        ],
+        "status": {},
+        "events": []
+       },
+       {
+        "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+        "spanId": "3adba448081ede81",
+        "parentSpanId": "a052c1dfd65334be",
+        "flags": 257,
+        "name": "astronomy-db",
+        "kind": 3,
+        "startTimeUnixNano": "1792782769455717791",
+        "endTimeUnixNano": "1792782769548309394",
+        "attributes": [
+         {
+          "key": "db.query.text",
+          "value": {
+           "stringValue": "\n\t\tSELECT p.id, p.name, p.description, p.picture, \n\t\t       p.price_currency_code, p.price_units, p.price_nanos, p.categories\n\t\tFROM catalog.products p\n\t\tWHERE p.id = $1\n\t"
+          }
+         },
+         {
+          "key": "db.system.name",
+          "value": {
+           "stringValue": "postgresql"
+          }
+         },
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "sql.conn.query"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "astronomy-db"
+          }
+         }
+        ],
+        "status": {},
+        "events": []
+       }
+      ]
+     },
+     {
+      "scope": {
+       "name": "go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc",
+       "version": "0.72.0"
+      },
+      "spans": [
+       {
+        "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+        "spanId": "e528c9f1c0b517f2",
+        "parentSpanId": "e0ea40f669055657",
+        "flags": 769,
+        "name": "oteldemo.ProductCatalogService/ListProducts",
+        "kind": 2,
+        "startTimeUnixNano": "1792782767821197909",
+        "endTimeUnixNano": "1792782768629433212",
+        "attributes": [
+         {
+          "key": "demo.product.count",
+          "value": {
+           "intValue": "10"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "oteldemo.ProductCatalogService/ListProducts"
+          }
+         },
+         {
+          "key": "rpc.response.status_code",
+          "value": {
+           "stringValue": "OK"
+          }
+         },
+         {
+          "key": "rpc.system.name",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "172.22.0.18"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "3550"
+          }
+         }
+        ],
+        "status": {},
+        "events": []
+       },
+       {
+        "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+        "spanId": "b47b9318e1176f35",
+        "parentSpanId": "06bb5520da874897",
+        "flags": 769,
+        "name": "oteldemo.ProductCatalogService/GetProduct",
+        "kind": 2,
+        "startTimeUnixNano": "1792782768780262710",
+        "endTimeUnixNano": "1792782769061553434",
+        "attributes": [
+         {
+          "key": "demo.product.id",
+          "value": {
+           "stringValue": "OLJCESPC7Z"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "oteldemo.ProductCatalogService/GetProduct"
+          }
+         },
+         {
+          "key": "rpc.response.status_code",
+          "value": {
+           "stringValue": "INTERNAL"
+          }
+         },
+         {
+          "key": "rpc.system.name",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "172.22.0.18"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "3550"
+          }
+         }
+        ],
+        "events": [
+         {
+          "timeUnixNano": "1792782769054516654",
+          "name": "Error: product lookup failed",
+          "attributes": []
+         }
+        ],
+        "status": {
+         "message": "Error: product lookup failed",
+         "code": 2
+        }
+       },
+       {
+        "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+        "spanId": "4e0ad209a09738ff",
+        "parentSpanId": "07a879b7f56b5650",
+        "flags": 769,
+        "name": "oteldemo.ProductCatalogService/GetProduct",
+        "kind": 2,
+        "startTimeUnixNano": "1792782768808755223",
+        "endTimeUnixNano": "1792782769482310182",
+        "attributes": [
+         {
+          "key": "demo.product.id",
+          "value": {
+           "stringValue": "6E92ZMYYFZ"
+          }
+         },
+         {
+          "key": "demo.product.name",
+          "value": {
+           "stringValue": "Solar Filter"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "oteldemo.ProductCatalogService/GetProduct"
+          }
+         },
+         {
+          "key": "rpc.response.status_code",
+          "value": {
+           "stringValue": "OK"
+          }
+         },
+         {
+          "key": "rpc.system.name",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "172.22.0.18"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "3550"
+          }
+         }
+        ],
+        "events": [
+         {
+          "timeUnixNano": "1792782769395977799",
+          "name": "Product Found",
+          "attributes": []
+         }
+        ],
+        "status": {}
+       },
+       {
+        "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+        "spanId": "99b079029a5e61ee",
+        "parentSpanId": "01068fb197a67456",
+        "flags": 769,
+        "name": "oteldemo.ProductCatalogService/GetProduct",
+        "kind": 2,
+        "startTimeUnixNano": "1792782768780248529",
+        "endTimeUnixNano": "1792782769609960742",
+        "attributes": [
+         {
+          "key": "demo.product.id",
+          "value": {
+           "stringValue": "66VCHSJNUP"
+          }
+         },
+         {
+          "key": "demo.product.name",
+          "value": {
+           "stringValue": "Starsense Explorer Refractor Telescope"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "oteldemo.ProductCatalogService/GetProduct"
+          }
+         },
+         {
+          "key": "rpc.response.status_code",
+          "value": {
+           "stringValue": "OK"
+          }
+         },
+         {
+          "key": "rpc.system.name",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "172.22.0.18"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "3550"
+          }
+         }
+        ],
+        "events": [
+         {
+          "timeUnixNano": "1792782769590749706",
+          "name": "Product Found",
+          "attributes": []
+         }
+        ],
+        "status": {}
+       },
+       {
+        "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+        "spanId": "a052c1dfd65334be",
+        "parentSpanId": "4763d16b673ce1aa",
+        "flags": 769,
+        "name": "oteldemo.ProductCatalogService/GetProduct",
+        "kind": 2,
+        "startTimeUnixNano": "1792782768808760489",
+        "endTimeUnixNano": "1792782769650190253",
+        "attributes": [
+         {
+          "key": "demo.product.id",
+          "value": {
+           "stringValue": "HQTGWGPNH4"
+          }
+         },
+         {
+          "key": "demo.product.name",
+          "value": {
+           "stringValue": "The Comet Book"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "oteldemo.ProductCatalogService/GetProduct"
+          }
+         },
+         {
+          "key": "rpc.response.status_code",
+          "value": {
+           "stringValue": "OK"
+          }
+         },
+         {
+          "key": "rpc.system.name",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "172.22.0.18"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "3550"
+          }
+         }
+        ],
+        "events": [
+         {
+          "timeUnixNano": "1792782769609746607",
+          "name": "Product Found",
+          "attributes": []
+         }
+        ],
+        "status": {}
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "resource": {
+     "attributes": [
+      {
+       "key": "service.name",
+       "value": {
+        "stringValue": "recommendation"
+       }
+      },
+      {
+       "key": "service.version",
+       "value": {
+        "stringValue": "3.1.0"
+       }
+      }
+     ]
+    },
+    "scopeSpans": [
+     {
+      "scope": {
+       "name": "recommendation"
+      },
+      "spans": [
+       {
+        "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+        "spanId": "7fe985ac88d1816e",
+        "parentSpanId": "b5b702a7987eabd9",
+        "flags": 257,
+        "name": "get_product_list",
+        "kind": 1,
+        "startTimeUnixNano": "1792782767750114748",
+        "endTimeUnixNano": "1792782768707663902",
+        "attributes": [
+         {
+          "key": "demo.product.count",
+          "value": {
+           "intValue": "10"
+          }
+         },
+         {
+          "key": "demo.product.filtered.count",
+          "value": {
+           "intValue": "10"
+          }
+         },
+         {
+          "key": "demo.product.filtered.list",
+          "value": {
+           "arrayValue": {
+            "values": [
+             {
+              "stringValue": "66VCHSJNUP"
+             },
+             {
+              "stringValue": "OLJCESPC7Z"
+             },
+             {
+              "stringValue": "6E92ZMYYFZ"
+             },
+             {
+              "stringValue": "HQTGWGPNH4"
+             },
+             {
+              "stringValue": "0PUK6V6EV0"
+             }
+            ]
+           }
+          }
+         }
+        ],
+        "events": [],
+        "status": {}
+       }
+      ]
+     },
+     {
+      "scope": {
+       "name": "io.opentelemetry.grpc-1.6",
+       "version": "2.31.1-alpha"
+      },
+      "spans": [
+       {
+        "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+        "spanId": "e0ea40f669055657",
+        "parentSpanId": "7fe985ac88d1816e",
+        "flags": 257,
+        "name": "oteldemo.ProductCatalogService/ListProducts",
+        "kind": 3,
+        "startTimeUnixNano": "1792782767750177358",
+        "endTimeUnixNano": "1792782768707627374",
+        "attributes": [
+         {
+          "key": "network.peer.port",
+          "value": {
+           "intValue": "3550"
+          }
+         },
+         {
+          "key": "network.type",
+          "value": {
+           "stringValue": "ipv4"
+          }
+         },
+         {
+          "key": "rpc.grpc.status_code",
+          "value": {
+           "intValue": "0"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "ListProducts"
+          }
+         },
+         {
+          "key": "rpc.service",
+          "value": {
+           "stringValue": "oteldemo.ProductCatalogService"
+          }
+         },
+         {
+          "key": "rpc.system",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "product-catalog"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "3550"
+          }
+         }
+        ],
+        "events": [
+         {
+          "timeUnixNano": "1792782767750369879",
+          "name": "message",
+          "attributes": [
+           {
+            "key": "message.id",
+            "value": {
+             "intValue": "1"
+            }
+           },
+           {
+            "key": "message.type",
+            "value": {
+             "stringValue": "SENT"
+            }
+           }
+          ]
+         },
+         {
+          "timeUnixNano": "1792782768707538376",
+          "name": "message",
+          "attributes": [
+           {
+            "key": "message.id",
+            "value": {
+             "intValue": "1"
+            }
+           },
+           {
+            "key": "message.type",
+            "value": {
+             "stringValue": "RECEIVED"
+            }
+           }
+          ]
+         }
+        ],
+        "status": {}
+       },
+       {
+        "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+        "spanId": "b5b702a7987eabd9",
+        "parentSpanId": "3c6aabed762be3ab",
+        "flags": 769,
+        "name": "oteldemo.RecommendationService/ListRecommendations",
+        "kind": 2,
+        "startTimeUnixNano": "1792782767749855989",
+        "endTimeUnixNano": "1792782768708712754",
+        "attributes": [
+         {
+          "key": "demo.product.recommended.count",
+          "value": {
+           "intValue": "5"
+          }
+         },
+         {
+          "key": "network.peer.port",
+          "value": {
+           "intValue": "50994"
+          }
+         },
+         {
+          "key": "network.type",
+          "value": {
+           "stringValue": "ipv4"
+          }
+         },
+         {
+          "key": "rpc.grpc.status_code",
+          "value": {
+           "intValue": "0"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "ListRecommendations"
+          }
+         },
+         {
+          "key": "rpc.service",
+          "value": {
+           "stringValue": "oteldemo.RecommendationService"
+          }
+         },
+         {
+          "key": "rpc.system",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "recommendation"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "9001"
+          }
+         }
+        ],
+        "events": [
+         {
+          "timeUnixNano": "1792782767750096837",
+          "name": "message",
+          "attributes": [
+           {
+            "key": "message.id",
+            "value": {
+             "intValue": "1"
+            }
+           },
+           {
+            "key": "message.type",
+            "value": {
+             "stringValue": "RECEIVED"
+            }
+           }
+          ]
+         },
+         {
+          "timeUnixNano": "1792782768707906841",
+          "name": "message",
+          "attributes": [
+           {
+            "key": "message.id",
+            "value": {
+             "intValue": "1"
+            }
+           },
+           {
+            "key": "message.type",
+            "value": {
+             "stringValue": "SENT"
+            }
+           }
+          ]
+         }
+        ],
+        "status": {}
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "resource": {
+     "attributes": [
+      {
+       "key": "service.name",
+       "value": {
+        "stringValue": "frontend"
+       }
+      },
+      {
+       "key": "service.version",
+       "value": {
+        "stringValue": "3.1.0"
+       }
+      }
+     ]
+    },
+    "scopeSpans": [
+     {
+      "scope": {
+       "name": "@opentelemetry/instrumentation-grpc",
+       "version": "0.223.0"
+      },
+      "spans": [
+       {
+        "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+        "spanId": "07a879b7f56b5650",
+        "parentSpanId": "551c3f8e9f9303ca",
+        "flags": 257,
+        "name": "oteldemo.ProductCatalogService/GetProduct",
+        "kind": 3,
+        "startTimeUnixNano": "1792782768711000000",
+        "endTimeUnixNano": "1792782769551489836",
+        "attributes": [
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "grpc.oteldemo.ProductCatalogService/GetProduct"
+          }
+         },
+         {
+          "key": "rpc.grpc.status_code",
+          "value": {
+           "intValue": "0"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "GetProduct"
+          }
+         },
+         {
+          "key": "rpc.service",
+          "value": {
+           "stringValue": "oteldemo.ProductCatalogService"
+          }
+         },
+         {
+          "key": "rpc.system",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "product-catalog"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "3550"
+          }
+         }
+        ],
+        "status": {},
+        "events": []
+       },
+       {
+        "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+        "spanId": "01068fb197a67456",
+        "parentSpanId": "551c3f8e9f9303ca",
+        "flags": 257,
+        "name": "oteldemo.ProductCatalogService/GetProduct",
+        "kind": 3,
+        "startTimeUnixNano": "1792782768711000000",
+        "endTimeUnixNano": "1792782769610128309",
+        "attributes": [
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "grpc.oteldemo.ProductCatalogService/GetProduct"
+          }
+         },
+         {
+          "key": "rpc.grpc.status_code",
+          "value": {
+           "intValue": "0"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "GetProduct"
+          }
+         },
+         {
+          "key": "rpc.service",
+          "value": {
+           "stringValue": "oteldemo.ProductCatalogService"
+          }
+         },
+         {
+          "key": "rpc.system",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "product-catalog"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "3550"
+          }
+         }
+        ],
+        "status": {},
+        "events": []
+       },
+       {
+        "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+        "spanId": "4763d16b673ce1aa",
+        "parentSpanId": "551c3f8e9f9303ca",
+        "flags": 257,
+        "name": "oteldemo.ProductCatalogService/GetProduct",
+        "kind": 3,
+        "startTimeUnixNano": "1792782768711000000",
+        "endTimeUnixNano": "1792782769654275563",
+        "attributes": [
+         {
+          "key": "original_span_name",
+          "value": {
+           "stringValue": "grpc.oteldemo.ProductCatalogService/GetProduct"
+          }
+         },
+         {
+          "key": "rpc.grpc.status_code",
+          "value": {
+           "intValue": "0"
+          }
+         },
+         {
+          "key": "rpc.method",
+          "value": {
+           "stringValue": "GetProduct"
+          }
+         },
+         {
+          "key": "rpc.service",
+          "value": {
+           "stringValue": "oteldemo.ProductCatalogService"
+          }
+         },
+         {
+          "key": "rpc.system",
+          "value": {
+           "stringValue": "grpc"
+          }
+         },
+         {
+          "key": "server.address",
+          "value": {
+           "stringValue": "product-catalog"
+          }
+         },
+         {
+          "key": "server.port",
+          "value": {
+           "intValue": "3550"
+          }
+         }
+        ],
+        "status": {},
+        "events": []
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ }
+}

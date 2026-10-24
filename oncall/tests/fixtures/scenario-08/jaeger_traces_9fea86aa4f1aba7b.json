@@ -1,0 +1,153 @@
+{
+ "data": [
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /status",
+     "parentSpanId": null,
+     "service": "image-provider",
+     "serviceVersion": null,
+     "spanId": "1fa484272e431699",
+     "startTimeUnixNano": "1792786797892000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "78db1b4b99bb132f8defd86f266b8ad5"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /status",
+     "parentSpanId": null,
+     "service": "image-provider",
+     "serviceVersion": null,
+     "spanId": "c51cdc5981d30c8b",
+     "startTimeUnixNano": "1792786799273000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "306b3954ea608154bb9b616779836866"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router image-provider egress",
+     "parentSpanId": "c3b5927f1ea738a4",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "b2f6e6933c2080f2",
+     "startTimeUnixNano": "1792786799217511000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "c3b5927f1ea738a4",
+     "startTimeUnixNano": "1792786799217294000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "b2f6e6933c2080f2",
+     "service": "image-provider",
+     "serviceVersion": null,
+     "spanId": "8cd4ebd192dec356",
+     "startTimeUnixNano": "1792786799217000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "aacd2508a9ca6f426e517b9792dd4b8b"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /status",
+     "parentSpanId": null,
+     "service": "image-provider",
+     "serviceVersion": null,
+     "spanId": "cd1752f4b716733d",
+     "startTimeUnixNano": "1792786792797000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "62d4ba5e3ee4306b9a5391a274a1f047"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /status",
+     "parentSpanId": null,
+     "service": "image-provider",
+     "serviceVersion": null,
+     "spanId": "d59208f2d41ca9e1",
+     "startTimeUnixNano": "1792786789273000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "da7360d354e70f2ddac2a955d367df48"
+  }
+ ],
+ "kwargs": {
+  "service": "image-provider",
+  "tags": null
+ },
+ "op": "jaeger_traces"
+}

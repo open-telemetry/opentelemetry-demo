@@ -1,0 +1,65 @@
+{
+ "data": {
+  "data": {
+   "result": [
+    {
+     "metric": {
+      "service_name": "load-generator",
+      "span_name": "POST"
+     },
+     "value": [
+      1792786203.948,
+      "0.10398290377637219"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "frontend-proxy",
+      "span_name": "POST"
+     },
+     "value": [
+      1792786203.948,
+      "0.053784260573985616"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "load-generator",
+      "span_name": "GET"
+     },
+     "value": [
+      1792786203.948,
+      "0.010756852114797124"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "frontend-proxy",
+      "span_name": "GET"
+     },
+     "value": [
+      1792786203.948,
+      "0.010756852114797124"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "cart",
+      "span_name": "POST /oteldemo.CartService/GetCart"
+     },
+     "value": [
+      1792786203.948,
+      "0.003585617371599041"
+     ]
+    }
+   ],
+   "resultType": "vector"
+  },
+  "status": "success"
+ },
+ "kwargs": {
+  "baseline": false,
+  "promql": "topk(5, sum by (service_name, span_name) (rate(traces_span_metrics_calls_total{{exclude},status_code=\"STATUS_CODE_ERROR\"}[{window}])))"
+ },
+ "op": "prom_query"
+}

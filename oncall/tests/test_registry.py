@@ -47,3 +47,36 @@ def test_exception_becomes_error_result(dummy_tools):
     assert result["ok"] is False
     assert result["tool"] == "dummy_boom"
     assert result["error"] == "RuntimeError: kaboom"
+
+
+def test_optional_params_are_nullable_and_null_means_default():
+    from oncall.tools import TOOL_SCHEMAS, TOOLS, register_tool
+
+    seen = {}
+
+    @register_tool(
+        "dummy_null",
+        "x",
+        {
+            "properties": {
+                "service": {"type": "string"},
+                "level": {"type": "string", "enum": ["error", "warn"]},
+                "need": {"type": "string"},
+            },
+            "required": ["need"],
+        },
+    )
+    def dummy_null(need: str, service: str = "all", level: str = "error"):
+        seen.update(need=need, service=service, level=level)
+        return make_result("dummy_null", {}, "ok", [])
+
+    try:
+        props = TOOL_SCHEMAS["dummy_null"]["input_schema"]["properties"]
+        assert props["service"]["type"] == ["string", "null"]
+        assert props["level"]["enum"] == ["error", "warn", None]
+        assert props["need"]["type"] == "string"
+        TOOLS["dummy_null"](need="x", service=None, level=None)
+    finally:
+        TOOLS.pop("dummy_null", None)
+        TOOL_SCHEMAS.pop("dummy_null", None)
+    assert seen == {"need": "x", "service": "all", "level": "error"}

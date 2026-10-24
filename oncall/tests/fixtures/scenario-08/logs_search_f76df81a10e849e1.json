@@ -1,0 +1,8 @@
+{
+ "data": [],
+ "kwargs": {
+  "level": "warn",
+  "service": "recommendation"
+ },
+ "op": "logs_search"
+}

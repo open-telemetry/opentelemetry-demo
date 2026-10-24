@@ -1,0 +1,87 @@
+{
+ "data": {
+  "data": {
+   "result": [
+    {
+     "metric": {
+      "service_name": "payment"
+     },
+     "value": [
+      1792785387,
+      "0"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "frontend-proxy"
+     },
+     "value": [
+      1792785387,
+      "0"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "checkout"
+     },
+     "value": [
+      1792785387,
+      "0"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "cart"
+     },
+     "value": [
+      1792785387,
+      "0"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "frontend-web"
+     },
+     "value": [
+      1792785387,
+      "0"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "frontend"
+     },
+     "value": [
+      1792785387,
+      "0"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "product-catalog"
+     },
+     "value": [
+      1792785387,
+      "0"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "load-generator"
+     },
+     "value": [
+      1792785387,
+      "0.030726256983240222"
+     ]
+    }
+   ],
+   "resultType": "vector"
+  },
+  "status": "success"
+ },
+ "kwargs": {
+  "baseline": true,
+  "promql": "sum by (service_name) (rate(traces_span_metrics_calls_total{{exclude},status_code=\"STATUS_CODE_ERROR\"}[{window}])) / sum by (service_name) (rate(traces_span_metrics_calls_total{{exclude}}[{window}]))"
+ },
+ "op": "prom_query"
+}

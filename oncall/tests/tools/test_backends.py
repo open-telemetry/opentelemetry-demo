@@ -110,7 +110,7 @@ def test_recording_and_offline_roundtrip(tmp_path: Path) -> None:
         prom_resp.json.return_value = fake_prom_res
 
         jaeger_resp = MagicMock(status_code=200)
-        jaeger_resp.json.return_value = {"data": fake_jaeger_services}
+        jaeger_resp.json.return_value = {"services": fake_jaeger_services}
 
         def mock_get(url: str, **kwargs: object) -> MagicMock:
             if "query" in url:
@@ -175,3 +175,23 @@ def test_record_scenario_cli(tmp_path: Path) -> None:
     ):
         count = record_scenario(scenario="mock_incident", backend=rec_backend)
         assert count > 0
+
+
+def test_fixture_key_ignores_window_instant_and_limits() -> None:
+    from oncall.tools.backends import fixture_key
+    from oncall.tools.metrics import _build_promql
+
+    five = fixture_key(
+        "prom_query", {"promql": _build_promql("rps", None, "5m"), "at": None}
+    )
+    ten = fixture_key(
+        "prom_query", {"promql": _build_promql("rps", None, "10m"), "at": None}
+    )
+    base = fixture_key(
+        "prom_query", {"promql": _build_promql("rps", None, "5m"), "at": "1"}
+    )
+    assert five == ten and five != base
+    assert "{exclude}" in five["promql"]
+    assert fixture_key(
+        "logs_search", {"service": "cart", "level": "warn", "since_min": 5, "limit": 9}
+    ) == {"service": "cart", "level": "warn"}

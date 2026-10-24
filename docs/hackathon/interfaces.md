@@ -17,7 +17,7 @@ Defined in `oncall/models.py` (F01). Build it with `make_result()` / `make_error
   "error": None
 }
 ```
-Evidence id formats: `metric:<promql>@<iso_ts>`, `trace:<trace_id>/span:<span_name>`,
+Evidence id formats: `metric:<metric>:<series>@<iso_ts>` (series = `<service>` or `<service>/<span>`; the PromQL is in `query["promql"]`), `trace:<trace_id>/span:<span_name>`,
 `log:<service>@<iso_ts>`, `container:<name>`, `deploy:<id>`.
 
 ## Alert
@@ -35,13 +35,14 @@ consumed by F13 (evidence validator), F15 (confidence) and F16 (report).
 {"component": str | None,            # root-cause service/container; never a client (load-generator)
  "category": Category,               # app_error | dependency_unavailable | container_down |
                                      # resource_cpu | resource_memory | network_degradation |
-                                     # traffic_surge | upstream_propagation | unknown
+                                     # traffic_surge | upstream_propagation | unknown |
+                                     # no_incident (healthy system)
  "cause": str,                       # one-sentence specific cause
  "confidence": float,                # 0..1, LLM estimate (F15 adjusts)
  "evidence_ids": list[str],          # ids from the run log (F13 drops unknown ones)
  "affected_services": list[str],     # symptoms / blast radius
  "alternatives": [{"hypothesis": str, "rejected_because": str}],
- "decision": "act" | "escalate",
+ "decision": "act" | "escalate" | "no_action",   # no_action = healthy, nothing to do
  "reasoning": str}                   # <= 800 chars, cites evidence ids
 ```
 On invalid LLM output (after one retry) or an LLM error, `diagnose()` returns an escalate

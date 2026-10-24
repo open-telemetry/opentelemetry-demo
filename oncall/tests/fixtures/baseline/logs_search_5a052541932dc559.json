@@ -1,0 +1,8 @@
+{
+ "data": [],
+ "kwargs": {
+  "level": "warn",
+  "service": "telemetry-docs"
+ },
+ "op": "logs_search"
+}

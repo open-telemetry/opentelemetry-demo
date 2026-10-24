@@ -1,0 +1,519 @@
+{
+ "data": [
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "documentFetch",
+     "parentSpanId": "5912e3bd0f518e9d",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "354df604eeec0576",
+     "startTimeUnixNano": "1792787192270099902",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "5912e3bd0f518e9d",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "3c099919150cca23",
+     "startTimeUnixNano": "1792787192310200097",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "5912e3bd0f518e9d",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "1384fa72fb435448",
+     "startTimeUnixNano": "1792787192311299951",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "5912e3bd0f518e9d",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "9a94a23c37c3b6b5",
+     "startTimeUnixNano": "1792787192312300097",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "5912e3bd0f518e9d",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "ea366135eddfee49",
+     "startTimeUnixNano": "1792787192312199902",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "5912e3bd0f518e9d",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "e7523698261603d5",
+     "startTimeUnixNano": "1792787192312099951",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "5912e3bd0f518e9d",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "f3c558f8f8e390b0",
+     "startTimeUnixNano": "1792787192312000097",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "5912e3bd0f518e9d",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "69135167c02932a9",
+     "startTimeUnixNano": "1792787192311900000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "5912e3bd0f518e9d",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "f1e248b9e41ef568",
+     "startTimeUnixNano": "1792787192311899902",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "5912e3bd0f518e9d",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "afed3e995e6aa989",
+     "startTimeUnixNano": "1792787192311800049",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "5912e3bd0f518e9d",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "ba97c70e329331c6",
+     "startTimeUnixNano": "1792787192312799951",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "5912e3bd0f518e9d",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "2458c54608f03f00",
+     "startTimeUnixNano": "1792787192312799951",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "5912e3bd0f518e9d",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "a607d47c035f98da",
+     "startTimeUnixNano": "1792787192312800097",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "5912e3bd0f518e9d",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "d9a5a6fee4fc6af8",
+     "startTimeUnixNano": "1792787192312800000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "5912e3bd0f518e9d",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "8f75b4fb40913d3c",
+     "startTimeUnixNano": "1792787192312699902",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "5912e3bd0f518e9d",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "ff4a095962b2a363",
+     "startTimeUnixNano": "1792787192312699902",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "5912e3bd0f518e9d",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "819602ab1e3fd2bf",
+     "startTimeUnixNano": "1792787192312799902",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "5912e3bd0f518e9d",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "b62458cf75946b36",
+     "startTimeUnixNano": "1792787192312899902",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "5912e3bd0f518e9d",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "c78bb74954a0d4de",
+     "startTimeUnixNano": "1792787192580500049",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "resourceFetch",
+     "parentSpanId": "5912e3bd0f518e9d",
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "a2d2aecebb5d0f67",
+     "startTimeUnixNano": "1792787192681999951",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "documentLoad",
+     "parentSpanId": null,
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "5912e3bd0f518e9d",
+     "startTimeUnixNano": "1792787192270300097",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "28bcd646b15ec9b7d328f54ca8088613"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "6acf9f25f1220c87",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "d7b96666cf5993e5",
+     "startTimeUnixNano": "1792787192952419000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "95616b511fb935c2",
+     "startTimeUnixNano": "1792787192939000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "955e54b4a03ba108ec711eca0fc0d334"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "b8c56d439fc223cd",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "f4ae810e3caec9f3",
+     "startTimeUnixNano": "1792787192856455000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "67eb17085dfb3f25",
+     "startTimeUnixNano": "1792787192838000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "d14d0ce1282d97058c092789a51eaef9"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "ad2a8d35995930f2",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "98db1a8b1ec78119",
+     "startTimeUnixNano": "1792787192900380000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "2c4822f2509a212c",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "ad2a8d35995930f2",
+     "startTimeUnixNano": "1792787192899938000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "2c4822f2509a212c",
+     "startTimeUnixNano": "1792787192883000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "e4b700233f5206ce9bad62f8a70c53f6"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "5d1bf5d14017a0d0",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "2c963cd2356119fd",
+     "startTimeUnixNano": "1792787192852878000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "4e9a675487ddd0ed",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "5d1bf5d14017a0d0",
+     "startTimeUnixNano": "1792787192852584000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-web",
+     "serviceVersion": null,
+     "spanId": "4e9a675487ddd0ed",
+     "startTimeUnixNano": "1792787192837000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "965a9763aa3f1a9a8c471853eb0fcb25"
+  }
+ ],
+ "kwargs": {
+  "service": "frontend-web",
+  "tags": null
+ },
+ "op": "jaeger_traces"
+}

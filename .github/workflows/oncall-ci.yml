@@ -26,7 +26,7 @@ jobs:
         run: pip install -r oncall/requirements-dev.txt
       - name: ruff check and format check
         if: hashFiles('oncall/requirements-dev.txt') != ''
-        run: ruff check oncall/ && ruff format --check oncall/
+        run: ruff check oncall/ scripts/faultctl/ eval/ && ruff format --check oncall/ scripts/faultctl/ eval/
 
   test:
     runs-on: ubuntu-latest
@@ -46,7 +46,7 @@ jobs:
         if: hashFiles('oncall/requirements-dev.txt') != ''
         run: |
           set +e
-          pytest -q oncall/
+          pytest -q oncall/ scripts/faultctl/ eval/
           rc=$?
           # pytest exit code 5 means no tests were collected; treated as a pass for now
           if [ "$rc" -eq 5 ]; then
@@ -71,6 +71,35 @@ jobs:
           hits=$(grep -rilE 'flagd|demo\.flagd\.json|flagd-ui|ofrep|/feature/' oncall/ 2>/dev/null | grep -v '^oncall/safety/' || true)
           if [ -n "$hits" ]; then
             echo "::error::Flag references found outside oncall/safety/. Reading flags to diagnose is disqualifying:"
+            echo "$hits"
+            exit 1
+          fi
+      - name: No feature-flag telemetry outside oncall/safety/
+        run: |
+          # Case-insensitive "feature_flag" or "feature.flag"; only the scrub helper and its test may mention it.
+          hits=$(grep -rilE 'feature[_.]flag' oncall/ 2>/dev/null \
+            | grep -v '^oncall/safety/' \
+            | grep -vxE 'oncall/models\.py|oncall/tests/test_models\.py' \
+            | grep -v '/__pycache__/' || true)
+          if [ -n "$hits" ]; then
+            echo "::error::Feature-flag telemetry references found (RULES.md hard rule 7). Use scrub_flags() instead:"
+            echo "$hits"
+            exit 1
+          fi
+      - name: oncall/ never references faultctl
+        run: |
+          hits=$(grep -rilF 'faultctl' oncall/ 2>/dev/null || true)
+          if [ -n "$hits" ]; then
+            echo "::error::oncall/ must not import or reference scripts/faultctl (human test tool):"
+            echo "$hits"
+            exit 1
+          fi
+      - name: oncall/ never reads eval answers
+        run: |
+          # eval/expected.yaml holds the scenario answers; only eval/ may read it.
+          hits=$(grep -rlE 'expected\.yaml|from eval\b|import eval\b' oncall/ 2>/dev/null | grep -v '/__pycache__/' || true)
+          if [ -n "$hits" ]; then
+            echo "::error::oncall/ must not read eval/ or expected.yaml:"
             echo "$hits"
             exit 1
           fi

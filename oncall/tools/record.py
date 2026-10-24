@@ -2,34 +2,89 @@
 
 Usage:
     python -m oncall.tools.record --scenario baseline
+
+Records the exact queries the tools make (get_metrics PROMQL for every metric,
+service-wide and per service, now and baseline; error and all traces; error and
+warn logs) plus a trimmed docker inspect/stats snapshot for container_health
+and deploy_history. Replay matches on backends.fixture_key().
 """
 
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 import sys
+import time
 from collections.abc import Sequence
+from datetime import UTC, datetime
 
+from oncall.config import load_settings
+from oncall.models import FLAG_REDACTED, scrub_flags
+from oncall.platform import containers
+from oncall.safety.exclusions import FIXTURE_SCRUB, is_excluded
 from oncall.tools.backends import BackendError, RecordingBackend
+from oncall.tools.metrics import PROMQL, _build_promql
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
-COMMON_SERVICES = [
-    "frontend",
-    "cart",
-    "checkout",
-    "payment",
-    "product-catalog",
-    "recommendation",
-    "shipping",
-    "email",
-    "ad",
-    "accounting",
-    "fraud-detection",
-    "quote",
-]
+BASELINE_OFFSET_S = 30 * 60
+TRACE_LIMIT = 20
+ALL_TRACES_LIMIT = 5
+LOG_LIMIT = 200
+LOG_LEVELS = ("error", "warn")
+
+
+def _metrics() -> list[str]:
+    return sorted({name.rsplit("_", 1)[0] for name in PROMQL})
+
+
+def _trim_inspect(info: dict) -> dict:
+    labels = (info.get("Config") or {}).get("Labels") or {}
+    host = info.get("HostConfig") or {}
+    return {
+        "Id": info.get("Id"),
+        "Name": info.get("Name"),
+        "Image": info.get("Image"),
+        "Created": info.get("Created"),
+        "RestartCount": info.get("RestartCount"),
+        "State": info.get("State"),
+        "HostConfig": {
+            k: host.get(k) for k in ("NanoCpus", "CpuQuota", "CpuPeriod", "Memory")
+        },
+        "Config": {
+            "Image": (info.get("Config") or {}).get("Image"),
+            "Labels": {
+                k: v for k, v in labels.items() if k == "com.docker.compose.service"
+            },
+        },
+    }
+
+
+def record_docker(backend: RecordingBackend) -> int:
+    """Write container_health.json (inspect + stats) for the offline tools."""
+    settings = load_settings()
+    infos = [
+        i
+        for i in containers.inspect_containers(
+            containers.compose_container_ids(settings.COMPOSE_PROJECT_NAME)
+        )
+        if not is_excluded((i.get("Name") or "").lstrip("/"))
+    ]
+    running = [
+        i["Id"] for i in infos if (i.get("State") or {}).get("Status") == "running"
+    ]
+    fixture = {
+        "captured_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "inspect": [_trim_inspect(i) for i in infos],
+        "stats": containers._stats(running),
+        "deploy_snapshot": None,
+    }
+    text = json.dumps(scrub_flags(fixture), indent=1, sort_keys=True)
+    path = backend.scenario_dir / containers.FIXTURE_FILE
+    path.write_text(FIXTURE_SCRUB.sub(FLAG_REDACTED, text), encoding="utf-8")
+    return len(infos)
 
 
 def record_scenario(
@@ -37,88 +92,49 @@ def record_scenario(
     services: Sequence[str] | None = None,
     backend: RecordingBackend | None = None,
 ) -> int:
-    """Record a comprehensive sweep of telemetry queries for a given scenario."""
+    """Record every query the tools make for a scenario; returns calls recorded."""
     if backend is None:
         backend = RecordingBackend(scenario=scenario)
-
     logger.info("Recording scenario '%s' to %s", scenario, backend.scenario_dir)
 
-    recorded_count = 0
-    errors_count = 0
+    recorded = errors = 0
 
-    # 1. Prometheus checks
-    logger.info("Recording Prometheus queries...")
-    prom_queries = [
-        "up",
-        "sum by (service_name) (rate(traces_span_metrics_calls_total[5m]))",
-        'sum by (service_name) (rate(traces_span_metrics_calls_total{status_code="STATUS_CODE_ERROR"}[5m]))',
-        "histogram_quantile(0.95, sum by (le, service_name) (rate(traces_span_metrics_duration_ms_bucket[5m])))",
-    ]
-    for q in prom_queries:
+    def call(fn, *args, **kwargs) -> None:
+        nonlocal recorded, errors
         try:
-            backend.prom_query(q)
-            recorded_count += 1
-            logger.info("Recorded prom_query: %s", q)
+            fn(*args, **kwargs)
+            recorded += 1
         except BackendError as exc:
-            errors_count += 1
-            logger.warning("Failed prom_query %s: %s", q, exc)
+            errors += 1
+            logger.warning("%s%s failed: %s", fn.__name__, args, exc)
 
-    # 2. Jaeger services
-    logger.info("Recording Jaeger services and traces...")
-    discovered_services: list[str] = []
+    targets = list(services or backend.jaeger_services())
+    baseline_at = str(int(time.time() - BASELINE_OFFSET_S))
+    for metric in _metrics():
+        for svc in [None, *targets]:
+            promql = _build_promql(metric, svc, "5m")
+            call(backend.prom_query, promql)
+            call(backend.prom_query, promql, at=baseline_at)
+    for svc in targets:
+        call(backend.jaeger_traces, svc, "15m", TRACE_LIMIT, {"error": "true"})
+        call(backend.jaeger_traces, svc, "15m", ALL_TRACES_LIMIT, None)
+    for level in LOG_LEVELS:
+        for svc in [None, *targets]:
+            call(backend.logs_search, svc, level, 15, LOG_LIMIT)
     try:
-        discovered_services = backend.jaeger_services()
-        recorded_count += 1
-        logger.info("Discovered %d Jaeger services", len(discovered_services))
-    except BackendError as exc:
-        errors_count += 1
-        logger.warning("Failed jaeger_services: %s", exc)
-
-    target_services = list(services or discovered_services or COMMON_SERVICES)
-
-    for svc in target_services:
-        try:
-            backend.jaeger_traces(service=svc, lookback="15m", limit=20)
-            recorded_count += 1
-            logger.info("Recorded jaeger_traces for %s", svc)
-        except BackendError as exc:
-            errors_count += 1
-            logger.warning("Failed jaeger_traces for %s: %s", svc, exc)
-
-        try:
-            backend.jaeger_traces(
-                service=svc, lookback="15m", limit=20, tags={"error": "true"}
-            )
-            recorded_count += 1
-        except BackendError as exc:
-            errors_count += 1
-            logger.warning("Failed error jaeger_traces for %s: %s", svc, exc)
-
-    # 3. OpenSearch logs
-    logger.info("Recording OpenSearch logs...")
-    try:
-        backend.logs_search(service=None, level="error", since_min=15, limit=50)
-        recorded_count += 1
-        logger.info("Recorded general error logs")
-    except BackendError as exc:
-        errors_count += 1
-        logger.warning("Failed general logs_search: %s", exc)
-
-    for svc in target_services:
-        try:
-            backend.logs_search(service=svc, level="error", since_min=15, limit=50)
-            recorded_count += 1
-        except BackendError as exc:
-            errors_count += 1
-            logger.warning("Failed logs_search for %s: %s", svc, exc)
+        logger.info("Recorded docker state of %d containers", record_docker(backend))
+        recorded += 1
+    except containers.DockerError as exc:
+        errors += 1
+        logger.warning("docker snapshot failed: %s", exc)
 
     logger.info(
-        "Finished recording '%s'. Total recorded calls: %d, errors: %d",
+        "Finished recording '%s': %d calls recorded, %d errors",
         scenario,
-        recorded_count,
-        errors_count,
+        recorded,
+        errors,
     )
-    return recorded_count
+    return recorded
 
 
 def main() -> None:
@@ -129,8 +145,7 @@ def main() -> None:
         help="Name of scenario / folder to store fixtures in.",
     )
     args = parser.parse_args()
-    count = record_scenario(scenario=args.scenario)
-    if count == 0:
+    if record_scenario(scenario=args.scenario) == 0:
         logger.error("No queries were recorded successfully.")
         sys.exit(1)
 

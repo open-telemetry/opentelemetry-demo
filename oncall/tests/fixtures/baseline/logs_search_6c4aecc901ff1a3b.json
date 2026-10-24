@@ -1,0 +1,8 @@
+{
+ "data": [],
+ "kwargs": {
+  "level": "error",
+  "service": "email"
+ },
+ "op": "logs_search"
+}

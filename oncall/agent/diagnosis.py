@@ -7,13 +7,13 @@ from oncall.agent import taxonomy
 from oncall.agent.llm import LLM, LLMError
 from oncall.agent.prompts import DIAGNOSE
 from oncall.agent.runlog import RunLog
-from oncall.models import Alert, Category, Diagnosis
+from oncall.models import Alert, Category, Diagnosis, llm_query
 
 SUBMIT = "submit_diagnosis"
 MAX_REASONING_CHARS = 800
 MAX_ATTEMPTS = 2
 CATEGORY_NAMES = list(get_args(Category))
-DECISIONS = ["act", "escalate"]
+DECISIONS = ["act", "escalate", "no_action"]
 
 SUBMIT_SCHEMA = {
     "name": SUBMIT,
@@ -93,7 +93,7 @@ def check(raw: object) -> list[str]:
     if "category" in raw and raw["category"] not in CATEGORY_NAMES:
         problems.append(f"category must be one of: {', '.join(CATEGORY_NAMES)}")
     if "decision" in raw and raw["decision"] not in DECISIONS:
-        problems.append("decision must be 'act' or 'escalate'")
+        problems.append("decision must be 'act', 'escalate' or 'no_action'")
     if "confidence" in raw:
         c = raw["confidence"]
         if isinstance(c, bool) or not isinstance(c, (int, float)) or not 0 <= c <= 1:
@@ -154,7 +154,7 @@ def _tool_log(run: RunLog) -> str:
         r = e.get("result") or {}
         status = "ok" if r.get("ok") else f"error: {r.get('error')}"
         lines.append(
-            f"{i}. {e.get('name')}({json.dumps(r.get('query', {}))}) -> {status}: "
+            f"{i}. {e.get('name')}({json.dumps(llm_query(r.get('query') or {}))}) -> {status}: "
             f"{r.get('summary', '')}"
         )
     return "\n".join(lines) or "(no tool calls)"
@@ -201,7 +201,13 @@ def diagnose(run: RunLog, alert: Alert, llm: LLM) -> Diagnosis:
             d = escalate_unknown(f"LLM call failed during diagnosis: {exc}", affected)
             run.log("decision", diagnosis=d, valid=False)
             return d
-        run.log("llm_call", step="diagnose", attempt=attempt, usage=reply.usage)
+        run.log(
+            "llm_call",
+            step="diagnose",
+            attempt=attempt,
+            model=reply.model,
+            usage=reply.usage,
+        )
 
         calls = [c for c in reply.tool_calls if c["name"] == SUBMIT]
         if not calls:

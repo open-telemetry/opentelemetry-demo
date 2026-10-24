@@ -1,0 +1,187 @@
+{
+ "data": [
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /status",
+     "parentSpanId": null,
+     "service": "image-provider",
+     "serviceVersion": null,
+     "spanId": "6302abd914fa7c61",
+     "startTimeUnixNano": "1792786517737000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "b2498fd7f74be8c615c8cfe735ec701c"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router image-provider egress",
+     "parentSpanId": "c8be1006cd3bc9ae",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "4f49a58dea5eb794",
+     "startTimeUnixNano": "1792786514170731000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "c8be1006cd3bc9ae",
+     "startTimeUnixNano": "1792786514170506000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "4f49a58dea5eb794",
+     "service": "image-provider",
+     "serviceVersion": null,
+     "spanId": "477e7f251975d41b",
+     "startTimeUnixNano": "1792786514170000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "b250a883715452201e5361ca1c52573e"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /status",
+     "parentSpanId": null,
+     "service": "image-provider",
+     "serviceVersion": null,
+     "spanId": "4aff72ed6f59d58c",
+     "startTimeUnixNano": "1792786512616000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "73ddad3f76d6756e3595f8f294af6bb7"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /status",
+     "parentSpanId": null,
+     "service": "image-provider",
+     "serviceVersion": null,
+     "spanId": "78b86ba155bd39ec",
+     "startTimeUnixNano": "1792786511044000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "0f7719165f06a732a57d93b4e7756d71"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "9ce428e387b51c18",
+     "service": "image-provider",
+     "serviceVersion": null,
+     "spanId": "f7c2ac17cef37365",
+     "startTimeUnixNano": "1792786508776000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router image-provider egress",
+     "parentSpanId": "ef6fe7d3cc58cd05",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "9ce428e387b51c18",
+     "startTimeUnixNano": "1792786508776376000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "ef6fe7d3cc58cd05",
+     "startTimeUnixNano": "1792786508776051000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "55707324aec07b3df401dc55175f95e6"
+  }
+ ],
+ "kwargs": {
+  "service": "image-provider",
+  "tags": null
+ },
+ "op": "jaeger_traces"
+}

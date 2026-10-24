@@ -1,0 +1,113 @@
+{
+ "data": [
+  {
+   "@timestamp": "2026-10-23T20:15:18.951758619Z",
+   "attributes": {},
+   "body": "failed to send order confirmation: failed POST to email service: Post \"http://email:6060/send_order_confirmation\": context deadline exceeded",
+   "resource": {
+    "service.name": "checkout",
+    "service.version": "3.1.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "WARN"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:15:09.680440555Z",
+   "attributes": {},
+   "body": "failed to send order confirmation: failed POST to email service: Post \"http://email:6060/send_order_confirmation\": context deadline exceeded",
+   "resource": {
+    "service.name": "checkout",
+    "service.version": "3.1.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "WARN"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:14:45.272237637Z",
+   "attributes": {},
+   "body": "failed to send order confirmation: failed POST to email service: Post \"http://email:6060/send_order_confirmation\": context deadline exceeded",
+   "resource": {
+    "service.name": "checkout",
+    "service.version": "3.1.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "WARN"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:13:58.204525298Z",
+   "attributes": {},
+   "body": "failed to send order confirmation: failed POST to email service: Post \"http://email:6060/send_order_confirmation\": context deadline exceeded",
+   "resource": {
+    "service.name": "checkout",
+    "service.version": "3.1.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "WARN"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:13:05.75625675Z",
+   "attributes": {},
+   "body": "failed to send order confirmation: failed POST to email service: Post \"http://email:6060/send_order_confirmation\": context deadline exceeded",
+   "resource": {
+    "service.name": "checkout",
+    "service.version": "3.1.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "WARN"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:12:34.394427384Z",
+   "attributes": {},
+   "body": "failed to send order confirmation: failed POST to email service: Post \"http://email:6060/send_order_confirmation\": dial tcp: lookup email on 127.0.0.11:53: server misbehaving",
+   "resource": {
+    "service.name": "checkout",
+    "service.version": "3.1.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "WARN"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:12:27.355647991Z",
+   "attributes": {},
+   "body": "failed to send order confirmation: failed POST to email service: Post \"http://email:6060/send_order_confirmation\": context deadline exceeded",
+   "resource": {
+    "service.name": "checkout",
+    "service.version": "3.1.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "WARN"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:12:05.723736758Z",
+   "attributes": {},
+   "body": "failed to send order confirmation: failed POST to email service: Post \"http://email:6060/send_order_confirmation\": context deadline exceeded",
+   "resource": {
+    "service.name": "checkout",
+    "service.version": "3.1.0"
+   },
+   "severity": {
+    "number": 13,
+    "text": "WARN"
+   }
+  }
+ ],
+ "kwargs": {
+  "level": "warn",
+  "service": "checkout"
+ },
+ "op": "logs_search"
+}

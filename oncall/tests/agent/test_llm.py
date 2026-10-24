@@ -157,3 +157,101 @@ def test_rate_limit_waits_as_long_as_groq_asks(monkeypatch):
 def test_wait_is_capped():
     assert llm_mod._wait_s("Please try again in 500s", 0) == llm_mod.MAX_WAIT_S
     assert llm_mod._wait_s("no hint", 2) == 4
+
+
+def test_network_error_is_retried(monkeypatch):
+    monkeypatch.setattr(llm_mod.time, "sleep", lambda s: None)
+    calls = []
+
+    def flaky(url, headers, body):
+        calls.append(1)
+        if len(calls) < 3:
+            raise LLMError("request failed: getaddrinfo failed")
+        return 200, groq_response(content="hi")
+
+    reply = LLM(settings(), transport=flaky).chat([], [])
+    assert reply.text == "hi" and len(calls) == 3
+
+
+TPD_429 = (
+    '{"error":{"message":"Rate limit reached for model `openai/gpt-oss-20b` on '
+    "tokens per day (TPD): Limit 200000, Used 198294, Requested 3976. Please try "
+    'again in 16m20.64s.","code":"rate_limit_exceeded"}}'
+)
+TPM_429 = (
+    '{"error":{"message":"Rate limit reached on tokens per minute (TPM): '
+    'Limit 8000, Used 7000. Please try again in 2.5s."}}'
+)
+CHAIN = "groq:openai/gpt-oss-120b:KEY_A,groq:openai/gpt-oss-20b:KEY_B"
+
+
+@pytest.fixture
+def chain(monkeypatch):
+    monkeypatch.setenv("KEY_A", "key-a")
+    monkeypatch.setenv("KEY_B", "key-b")
+    monkeypatch.setattr(llm_mod.time, "sleep", lambda s: None)
+    llm_mod.EXHAUSTED.clear()
+    yield Settings(LLM_FALLBACKS=CHAIN)
+    llm_mod.EXHAUSTED.clear()
+
+
+def test_parse_fallbacks_keeps_model_slashes_and_colons():
+    chain = llm_mod.parse_fallbacks("groq:openai/gpt-oss-120b:K1, groq:a:b:c:K2")
+    assert [(e.model, e.key_env) for e in chain] == [
+        ("openai/gpt-oss-120b", "K1"),
+        ("a:b:c", "K2"),
+    ]
+    with pytest.raises(LLMError):
+        llm_mod.parse_fallbacks("groq:only-model")
+
+
+def test_daily_quota_moves_to_next_endpoint_and_stays_skipped(chain):
+    transport = FakeTransport(
+        (429, TPD_429),
+        (200, groq_response(content="from 20b")),
+        (200, groq_response(content="again 20b")),
+    )
+    llm = LLM(chain, transport)
+    first = llm.chat([], [])
+    assert (first.text, first.model) == ("from 20b", "groq:openai/gpt-oss-20b")
+    assert [r[2]["model"] for r in transport.requests] == [
+        "openai/gpt-oss-120b",
+        "openai/gpt-oss-20b",
+    ]
+    assert [r[1]["Authorization"] for r in transport.requests] == [
+        "Bearer key-a",
+        "Bearer key-b",
+    ]
+    # A new client in the same process still skips the exhausted endpoint.
+    second = LLM(chain, transport).chat([], [])
+    assert second.model == "groq:openai/gpt-oss-20b"
+    assert len(transport.requests) == 3
+
+
+def test_per_minute_429_is_retried_on_the_same_endpoint(chain):
+    transport = FakeTransport((429, TPM_429), (200, groq_response(content="ok")))
+    reply = LLM(chain, transport).chat([], [])
+    assert reply.model == "groq:openai/gpt-oss-120b"
+    assert [r[2]["model"] for r in transport.requests] == ["openai/gpt-oss-120b"] * 2
+    assert not llm_mod.EXHAUSTED
+
+
+def test_all_endpoints_exhausted_raises(chain):
+    transport = FakeTransport((429, TPD_429), (429, TPD_429))
+    with pytest.raises(LLMError, match="out of daily quota") as err:
+        LLM(chain, transport).chat([], [])
+    assert err.value.status == 429
+
+
+def test_missing_key_env_is_reported(monkeypatch, tmp_path):
+    monkeypatch.setattr("oncall.config.DEFAULT_ENV_FILE", tmp_path / "none.env")
+    monkeypatch.delenv("KEY_Z", raising=False)
+    with pytest.raises(LLMError, match="KEY_Z is not set"):
+        LLM(Settings(LLM_FALLBACKS="groq:m:KEY_Z"))
+
+
+def test_single_endpoint_reply_names_its_model():
+    reply = LLM(settings(), FakeTransport((200, groq_response(content="x")))).chat(
+        [], []
+    )
+    assert reply.model == "groq:openai/gpt-oss-120b"
