@@ -1,0 +1,809 @@
+{
+ "data": [
+  {
+   "@timestamp": "2026-10-23T20:04:12.571176836Z",
+   "attributes": {
+    "exception.message": "franz-go: ListGroupsByType failed: request ListGroups has 1 separate shard errors, first: unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*kadm.ShardErrors"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:12.358873795Z",
+   "attributes": {
+    "exception.message": "error reading process name for pid 27611: open /hostfs/proc/27611/status: no such file or directory",
+    "exception.type": "go.opentelemetry.io/collector/scraper/scrapererror.PartialScrapeError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:04:11.400088223Z",
+   "attributes": {
+    "exception.message": "not retryable error: Permanent error: rpc error: code = InvalidArgument desc = error exporting items, request to http://prometheus:9090/api/v1/otlp/v1/metrics responded with HTTP Status Code 400",
+    "exception.type": "go.opentelemetry.io/collector/consumer/consumererror.permanent"
+   },
+   "body": "Exporting failed. Dropping data.",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:03:28.798367351Z",
+   "attributes": {
+    "exception.message": "unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "franz-go: Metadata failed",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:03:28.798551883Z",
+   "attributes": {
+    "exception.message": "franz-go: Metadata failed: unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:03:15.726315315Z",
+   "attributes": {
+    "exception.message": "not retryable error: Permanent error: rpc error: code = InvalidArgument desc = error exporting items, request to http://prometheus:9090/api/v1/otlp/v1/metrics responded with HTTP Status Code 400",
+    "exception.type": "go.opentelemetry.io/collector/consumer/consumererror.permanent"
+   },
+   "body": "Exporting failed. Dropping data.",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:02:45.129241205Z",
+   "attributes": {
+    "exception.message": "unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:02:20.954458864Z",
+   "attributes": {
+    "exception.message": "error reading process name for pid 16156: open /hostfs/proc/16156/status: no such file or directory; error reading cpu times for process \"grpc_health_probe\" (pid 16142): open /hostfs/proc/16142/stat: no such file or directory; error reading memory info for process \"grpc_health_probe\" (pid 16142): open /hostfs/proc/16142/statm: no such file or directory",
+    "exception.type": "go.opentelemetry.io/collector/scraper/scrapererror.PartialScrapeError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:02:19.867326136Z",
+   "attributes": {
+    "exception.message": "not retryable error: Permanent error: rpc error: code = InvalidArgument desc = error exporting items, request to http://prometheus:9090/api/v1/otlp/v1/metrics responded with HTTP Status Code 400",
+    "exception.type": "go.opentelemetry.io/collector/consumer/consumererror.permanent"
+   },
+   "body": "Exporting failed. Dropping data.",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:01:59.206003832Z",
+   "attributes": {
+    "exception.message": "franz-go: ListGroupsByType failed: request ListGroups has 1 separate shard errors, first: unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*kadm.ShardErrors"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:01:24.188881763Z",
+   "attributes": {
+    "exception.message": "not retryable error: Permanent error: rpc error: code = InvalidArgument desc = error exporting items, request to http://prometheus:9090/api/v1/otlp/v1/metrics responded with HTTP Status Code 400",
+    "exception.type": "go.opentelemetry.io/collector/consumer/consumererror.permanent"
+   },
+   "body": "Exporting failed. Dropping data.",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:01:15.388478151Z",
+   "attributes": {
+    "exception.message": "unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "franz-go: Metadata failed",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:01:15.388682685Z",
+   "attributes": {
+    "exception.message": "franz-go: Metadata failed: unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:00:29.608805082Z",
+   "attributes": {
+    "exception.message": "unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T20:00:28.613160694Z",
+   "attributes": {
+    "exception.message": "not retryable error: Permanent error: rpc error: code = InvalidArgument desc = error exporting items, request to http://prometheus:9090/api/v1/otlp/v1/metrics responded with HTTP Status Code 400",
+    "exception.type": "go.opentelemetry.io/collector/consumer/consumererror.permanent"
+   },
+   "body": "Exporting failed. Dropping data.",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:59:46.007156887Z",
+   "attributes": {
+    "exception.message": "franz-go: ListGroupsByType failed: request ListGroups has 1 separate shard errors, first: unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*kadm.ShardErrors"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:59:34.070335855Z",
+   "attributes": {
+    "exception.message": "error reading process name for pid 99642: open /hostfs/proc/99642/status: no such file or directory",
+    "exception.type": "go.opentelemetry.io/collector/scraper/scrapererror.PartialScrapeError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:59:33.132898004Z",
+   "attributes": {
+    "exception.message": "not retryable error: Permanent error: rpc error: code = InvalidArgument desc = error exporting items, request to http://prometheus:9090/api/v1/otlp/v1/metrics responded with HTTP Status Code 400",
+    "exception.type": "go.opentelemetry.io/collector/consumer/consumererror.permanent"
+   },
+   "body": "Exporting failed. Dropping data.",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:59:02.540280319Z",
+   "attributes": {
+    "exception.message": "unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "franz-go: Metadata failed",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:59:02.540451948Z",
+   "attributes": {
+    "exception.message": "franz-go: Metadata failed: unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:58:37.560492736Z",
+   "attributes": {
+    "exception.message": "not retryable error: Permanent error: rpc error: code = InvalidArgument desc = error exporting items, request to http://prometheus:9090/api/v1/otlp/v1/metrics responded with HTTP Status Code 400",
+    "exception.type": "go.opentelemetry.io/collector/consumer/consumererror.permanent"
+   },
+   "body": "Exporting failed. Dropping data.",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:58:16.75007189Z",
+   "attributes": {
+    "exception.message": "unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:57:42.252614902Z",
+   "attributes": {
+    "exception.message": "not retryable error: Permanent error: rpc error: code = InvalidArgument desc = error exporting items, request to http://prometheus:9090/api/v1/otlp/v1/metrics responded with HTTP Status Code 400",
+    "exception.type": "go.opentelemetry.io/collector/consumer/consumererror.permanent"
+   },
+   "body": "Exporting failed. Dropping data.",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:57:33.306633838Z",
+   "attributes": {
+    "exception.message": "franz-go: ListGroupsByType failed: request ListGroups has 1 separate shard errors, first: unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*kadm.ShardErrors"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:56:47.742617094Z",
+   "attributes": {
+    "exception.message": "error reading process name for pid 83261: open /hostfs/proc/83261/status: no such file or directory",
+    "exception.type": "go.opentelemetry.io/collector/scraper/scrapererror.PartialScrapeError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:56:47.548460098Z",
+   "attributes": {
+    "exception.message": "unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "franz-go: Metadata failed",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:56:47.548601673Z",
+   "attributes": {
+    "exception.message": "franz-go: Metadata failed: unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:56:46.792679493Z",
+   "attributes": {
+    "exception.message": "not retryable error: Permanent error: rpc error: code = InvalidArgument desc = error exporting items, request to http://prometheus:9090/api/v1/otlp/v1/metrics responded with HTTP Status Code 400",
+    "exception.type": "go.opentelemetry.io/collector/consumer/consumererror.permanent"
+   },
+   "body": "Exporting failed. Dropping data.",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:56:04.03002335Z",
+   "attributes": {
+    "exception.message": "unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:55:52.236833784Z",
+   "attributes": {
+    "exception.message": "error reading cpu times for process \"runc\" (pid 77796): open /hostfs/proc/77796/stat: no such file or directory; error reading memory info for process \"runc\" (pid 77796): open /hostfs/proc/77796/statm: no such file or directory",
+    "exception.type": "go.opentelemetry.io/collector/scraper/scrapererror.PartialScrapeError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:55:51.287735721Z",
+   "attributes": {
+    "exception.message": "not retryable error: Permanent error: rpc error: code = InvalidArgument desc = error exporting items, request to http://prometheus:9090/api/v1/otlp/v1/metrics responded with HTTP Status Code 400",
+    "exception.type": "go.opentelemetry.io/collector/consumer/consumererror.permanent"
+   },
+   "body": "Exporting failed. Dropping data.",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:55:20.601901171Z",
+   "attributes": {
+    "exception.message": "franz-go: ListGroupsByType failed: request ListGroups has 1 separate shard errors, first: unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*kadm.ShardErrors"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:54:55.965995971Z",
+   "attributes": {
+    "exception.message": "not retryable error: Permanent error: rpc error: code = InvalidArgument desc = error exporting items, request to http://prometheus:9090/api/v1/otlp/v1/metrics responded with HTTP Status Code 400",
+    "exception.type": "go.opentelemetry.io/collector/consumer/consumererror.permanent"
+   },
+   "body": "Exporting failed. Dropping data.",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:54:34.915206599Z",
+   "attributes": {
+    "exception.message": "unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "franz-go: Metadata failed",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:54:34.915311452Z",
+   "attributes": {
+    "exception.message": "franz-go: Metadata failed: unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:54:00.56767138Z",
+   "attributes": {
+    "exception.message": "not retryable error: Permanent error: rpc error: code = InvalidArgument desc = error exporting items, request to http://prometheus:9090/api/v1/otlp/v1/metrics responded with HTTP Status Code 400",
+    "exception.type": "go.opentelemetry.io/collector/consumer/consumererror.permanent"
+   },
+   "body": "Exporting failed. Dropping data.",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:53:51.493223224Z",
+   "attributes": {
+    "exception.message": "unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:53:06.089203137Z",
+   "attributes": {
+    "exception.message": "error reading process name for pid 61303: open /hostfs/proc/61303/status: no such file or directory",
+    "exception.type": "go.opentelemetry.io/collector/scraper/scrapererror.PartialScrapeError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:53:05.719776679Z",
+   "attributes": {
+    "exception.message": "franz-go: ListGroupsByType failed: request ListGroups has 1 separate shard errors, first: unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*kadm.ShardErrors"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:53:05.138705053Z",
+   "attributes": {
+    "exception.message": "not retryable error: Permanent error: rpc error: code = InvalidArgument desc = error exporting items, request to http://prometheus:9090/api/v1/otlp/v1/metrics responded with HTTP Status Code 400",
+    "exception.type": "go.opentelemetry.io/collector/consumer/consumererror.permanent"
+   },
+   "body": "Exporting failed. Dropping data.",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:52:22.394540886Z",
+   "attributes": {
+    "exception.message": "unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "franz-go: Metadata failed",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:52:22.394636605Z",
+   "attributes": {
+    "exception.message": "franz-go: Metadata failed: unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:52:09.695384385Z",
+   "attributes": {
+    "exception.message": "not retryable error: Permanent error: rpc error: code = InvalidArgument desc = error exporting items, request to http://prometheus:9090/api/v1/otlp/v1/metrics responded with HTTP Status Code 400",
+    "exception.type": "go.opentelemetry.io/collector/consumer/consumererror.permanent"
+   },
+   "body": "Exporting failed. Dropping data.",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:51:38.839773786Z",
+   "attributes": {
+    "exception.message": "unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:51:15.160032643Z",
+   "attributes": {
+    "exception.message": "error reading process name for pid 50577: open /hostfs/proc/50577/status: no such file or directory",
+    "exception.type": "go.opentelemetry.io/collector/scraper/scrapererror.PartialScrapeError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:51:14.218463218Z",
+   "attributes": {
+    "exception.message": "not retryable error: Permanent error: rpc error: code = InvalidArgument desc = error exporting items, request to http://prometheus:9090/api/v1/otlp/v1/metrics responded with HTTP Status Code 400",
+    "exception.type": "go.opentelemetry.io/collector/consumer/consumererror.permanent"
+   },
+   "body": "Exporting failed. Dropping data.",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:50:53.023142586Z",
+   "attributes": {
+    "exception.message": "franz-go: ListGroupsByType failed: request ListGroups has 1 separate shard errors, first: unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*kadm.ShardErrors"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:50:18.69482163Z",
+   "attributes": {
+    "exception.message": "not retryable error: Permanent error: rpc error: code = InvalidArgument desc = error exporting items, request to http://prometheus:9090/api/v1/otlp/v1/metrics responded with HTTP Status Code 400",
+    "exception.type": "go.opentelemetry.io/collector/consumer/consumererror.permanent"
+   },
+   "body": "Exporting failed. Dropping data.",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:50:09.471040383Z",
+   "attributes": {
+    "exception.message": "unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "franz-go: Metadata failed",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  },
+  {
+   "@timestamp": "2026-10-23T19:50:09.471226118Z",
+   "attributes": {
+    "exception.message": "franz-go: Metadata failed: unable to dial: dial tcp: lookup kafka on 127.0.0.11:53: server misbehaving",
+    "exception.type": "*net.OpError"
+   },
+   "body": "Error scraping metrics",
+   "resource": {
+    "service.name": "otelcol-contrib",
+    "service.version": "0.160.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "error"
+   }
+  }
+ ],
+ "kwargs": {
+  "level": "error",
+  "service": null
+ },
+ "op": "logs_search"
+}

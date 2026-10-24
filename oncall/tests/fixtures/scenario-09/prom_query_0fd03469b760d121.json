@@ -1,0 +1,22 @@
+{
+ "data": {
+  "data": {
+   "result": [
+    {
+     "metric": {},
+     "value": [
+      1792785387,
+      "0.21662018358560564"
+     ]
+    }
+   ],
+   "resultType": "vector"
+  },
+  "status": "success"
+ },
+ "kwargs": {
+  "baseline": true,
+  "promql": "sum (rate(traces_span_metrics_calls_total{service_name=\"telemetry-docs\",{exclude}}[{window}]))"
+ },
+ "op": "prom_query"
+}

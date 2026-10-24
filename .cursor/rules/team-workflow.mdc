@@ -1,0 +1,14 @@
+---
+description: Team workflow and safety rules for the Incident Zero hackathon repo
+alwaysApply: true
+---
+
+Read and follow `AGENTS.md` in the repo root before making any change. It is binding. For Incident Zero work, AGENTS.md names `docs/hackathon/RULES.md`, `TEAM_CONTEXT.md`, `FEATURES.md` and `ISSUES.md` as the rules, context, backlog and issue board.
+
+Non-negotiables:
+- One ISSUES.md entry → one branch (`feat|fix|docs|test|chore/<NN>-<slug>`) → one PR. Never commit or push to `main`.
+- Plan first (files, interfaces, tests), then code only within the issue's scope.
+- Read every file before editing it. Never invent APIs, endpoints, packages, config keys, or test output.
+- Write tests, run the full suite and lint, and do one real run (live demo or offline bundle). Never skip or weaken tests.
+- Hackathon rules: agent changes the system only via the Action API after explicit human approval; never read feature-flag (flagd) settings to diagnose; never modify the demo, faultctl, or scoring harness; never invent evidence.
+- Never merge or approve PRs yourself.

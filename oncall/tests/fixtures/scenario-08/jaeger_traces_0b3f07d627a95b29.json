@@ -1,0 +1,119 @@
+{
+ "data": [
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "telemetry-docs",
+     "serviceVersion": null,
+     "spanId": "72799241cfc0e2a7",
+     "startTimeUnixNano": "1792786797234000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "b696d65b4f7dd96a771f001142608ebd"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "telemetry-docs",
+     "serviceVersion": null,
+     "spanId": "6ff7069e27213c31",
+     "startTimeUnixNano": "1792786792135000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "fdd52d4980ced011a6529ef2782ff182"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "telemetry-docs",
+     "serviceVersion": null,
+     "spanId": "6ec68556e9a056fb",
+     "startTimeUnixNano": "1792786787043000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "83b03342ac26a26db79f952f8599dd2a"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "telemetry-docs",
+     "serviceVersion": null,
+     "spanId": "fd31cc14e644ce97",
+     "startTimeUnixNano": "1792786781934000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "c8bb5adbf0efa1b2cafc6d134fc0a252"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "telemetry-docs",
+     "serviceVersion": null,
+     "spanId": "7cb28c445fd9980f",
+     "startTimeUnixNano": "1792786776845000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "ca977383293a4145cd0cfc41e7c1a348"
+  }
+ ],
+ "kwargs": {
+  "service": "telemetry-docs",
+  "tags": null
+ },
+ "op": "jaeger_traces"
+}

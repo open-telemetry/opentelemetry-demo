@@ -1,0 +1,159 @@
+{
+ "data": {
+  "data": {
+   "result": [
+    {
+     "metric": {
+      "service_name": "frontend-web"
+     },
+     "value": [
+      1792784713,
+      "1.8999999999999997"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "telemetry-docs"
+     },
+     "value": [
+      1792784713,
+      "1.9"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "recommendation"
+     },
+     "value": [
+      1792784713,
+      "1342.2222222222222"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "email"
+     },
+     "value": [
+      1792784713,
+      "9.799999999999999"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "image-provider"
+     },
+     "value": [
+      1792784713,
+      "1.9"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "ad"
+     },
+     "value": [
+      1792784713,
+      "3.6833333333333336"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "load-generator"
+     },
+     "value": [
+      1792784713,
+      "7423.611111111113"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "payment"
+     },
+     "value": [
+      1792784713,
+      "6.199999999999995"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "frontend-proxy"
+     },
+     "value": [
+      1792784713,
+      "1808.515624999997"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "cart"
+     },
+     "value": [
+      1792784713,
+      "5.806666666666667"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "shipping"
+     },
+     "value": [
+      1792784713,
+      "9.666666666666659"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "product-catalog"
+     },
+     "value": [
+      1792784713,
+      "1848.29268292683"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "checkout"
+     },
+     "value": [
+      1792784713,
+      "3724.999999999999"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "quote"
+     },
+     "value": [
+      1792784713,
+      "1.9314049586776856"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "frontend"
+     },
+     "value": [
+      1792784713,
+      "2730.4846938775527"
+     ]
+    },
+    {
+     "metric": {
+      "service_name": "currency"
+     },
+     "value": [
+      1792784713,
+      "1.9"
+     ]
+    }
+   ],
+   "resultType": "vector"
+  },
+  "status": "success"
+ },
+ "kwargs": {
+  "baseline": true,
+  "promql": "histogram_quantile(0.95, sum by (le, service_name) (rate(traces_span_metrics_duration_milliseconds_bucket{{exclude}}[{window}])))"
+ },
+ "op": "prom_query"
+}

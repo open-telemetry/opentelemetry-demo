@@ -1,0 +1,129 @@
+{
+ "data": [
+  {
+   "@timestamp": "2026-10-23T20:20:40.07774336Z",
+   "attributes": {},
+   "body": "Error in add to cart task: Timeout 15000ms exceeded while waiting for event \"response\"\n=========================== logs ===========================\nwaiting for event \"response\"\n============================================================",
+   "resource": {
+    "service.name": "load-generator",
+    "service.version": "3.1.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "ERROR"
+   },
+   "spanId": "fbbee6b3e008bd02",
+   "traceId": "b231124c2c52a3a049f0326395119422"
+  },
+  {
+   "@timestamp": "2026-10-23T20:20:40.07774336Z",
+   "attributes": {},
+   "body": "Error in add to cart task: Timeout 15000ms exceeded while waiting for event \"response\"\n=========================== logs ===========================\nwaiting for event \"response\"\n============================================================",
+   "resource": {
+    "service.name": "load-generator",
+    "service.version": "3.1.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "ERROR"
+   },
+   "spanId": "fbbee6b3e008bd02",
+   "traceId": "b231124c2c52a3a049f0326395119422"
+  },
+  {
+   "@timestamp": "2026-10-23T20:19:57.7456128Z",
+   "attributes": {},
+   "body": "Error in add to cart task: Timeout 15000ms exceeded while waiting for event \"response\"\n=========================== logs ===========================\nwaiting for event \"response\"\n============================================================",
+   "resource": {
+    "service.name": "load-generator",
+    "service.version": "3.1.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "ERROR"
+   },
+   "spanId": "ed963619abcd4f07",
+   "traceId": "0d4a066707fea76087371e16f819bc04"
+  },
+  {
+   "@timestamp": "2026-10-23T20:19:57.7456128Z",
+   "attributes": {},
+   "body": "Error in add to cart task: Timeout 15000ms exceeded while waiting for event \"response\"\n=========================== logs ===========================\nwaiting for event \"response\"\n============================================================",
+   "resource": {
+    "service.name": "load-generator",
+    "service.version": "3.1.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "ERROR"
+   },
+   "spanId": "ed963619abcd4f07",
+   "traceId": "0d4a066707fea76087371e16f819bc04"
+  },
+  {
+   "@timestamp": "2026-10-23T20:19:32.966425088Z",
+   "attributes": {},
+   "body": "Error in add to cart task: Timeout 15000ms exceeded while waiting for event \"response\"\n=========================== logs ===========================\nwaiting for event \"response\"\n============================================================",
+   "resource": {
+    "service.name": "load-generator",
+    "service.version": "3.1.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "ERROR"
+   },
+   "spanId": "83b3b6c4f81cb99f",
+   "traceId": "b39369eea58270fb1fd6f4dd7abf873c"
+  },
+  {
+   "@timestamp": "2026-10-23T20:19:32.966425088Z",
+   "attributes": {},
+   "body": "Error in add to cart task: Timeout 15000ms exceeded while waiting for event \"response\"\n=========================== logs ===========================\nwaiting for event \"response\"\n============================================================",
+   "resource": {
+    "service.name": "load-generator",
+    "service.version": "3.1.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "ERROR"
+   },
+   "spanId": "83b3b6c4f81cb99f",
+   "traceId": "b39369eea58270fb1fd6f4dd7abf873c"
+  },
+  {
+   "@timestamp": "2026-10-23T20:18:32.652041728Z",
+   "attributes": {},
+   "body": "Error in add to cart task: Timeout 15000ms exceeded while waiting for event \"response\"\n=========================== logs ===========================\nwaiting for event \"response\"\n============================================================",
+   "resource": {
+    "service.name": "load-generator",
+    "service.version": "3.1.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "ERROR"
+   },
+   "spanId": "f629bd6c1044da0a",
+   "traceId": "e2ca169614ebea1bf9243f854ca431d0"
+  },
+  {
+   "@timestamp": "2026-10-23T20:18:32.652041728Z",
+   "attributes": {},
+   "body": "Error in add to cart task: Timeout 15000ms exceeded while waiting for event \"response\"\n=========================== logs ===========================\nwaiting for event \"response\"\n============================================================",
+   "resource": {
+    "service.name": "load-generator",
+    "service.version": "3.1.0"
+   },
+   "severity": {
+    "number": 17,
+    "text": "ERROR"
+   },
+   "spanId": "f629bd6c1044da0a",
+   "traceId": "e2ca169614ebea1bf9243f854ca431d0"
+  }
+ ],
+ "kwargs": {
+  "level": "warn",
+  "service": "load-generator"
+ },
+ "op": "logs_search"
+}

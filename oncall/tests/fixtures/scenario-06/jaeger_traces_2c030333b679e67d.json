@@ -1,0 +1,10 @@
+{
+ "data": [],
+ "kwargs": {
+  "service": "telemetry-docs",
+  "tags": {
+   "error": "true"
+  }
+ },
+ "op": "jaeger_traces"
+}

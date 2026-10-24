@@ -1,0 +1,51 @@
+{
+ "data": {
+  "data": {
+   "result": [
+    {
+     "metric": {
+      "span_name": "POST"
+     },
+     "value": [
+      1792786799.887,
+      "0.00359416164382577"
+     ]
+    },
+    {
+     "metric": {
+      "span_name": "oteldemo.PaymentService/Charge"
+     },
+     "value": [
+      1792786799.887,
+      "0"
+     ]
+    },
+    {
+     "metric": {
+      "span_name": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "value": [
+      1792786799.887,
+      "0"
+     ]
+    },
+    {
+     "metric": {
+      "span_name": "oteldemo.CheckoutService/PlaceOrder"
+     },
+     "value": [
+      1792786799.887,
+      "0"
+     ]
+    }
+   ],
+   "resultType": "vector"
+  },
+  "status": "success"
+ },
+ "kwargs": {
+  "baseline": false,
+  "promql": "topk(5, sum by (span_name) (rate(traces_span_metrics_calls_total{service_name=\"checkout\",{exclude},status_code=\"STATUS_CODE_ERROR\"}[{window}])))"
+ },
+ "op": "prom_query"
+}

@@ -1,0 +1,300 @@
+{
+ "data": [
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "c0a603c400f58a9b",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "b3315a16d49833d3",
+     "startTimeUnixNano": "1792786198245000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "391320bd66ec3316",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "ee87056269c5e3c3",
+     "startTimeUnixNano": "1792786198246000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "0"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "6be84f52375cbaf4",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "63b6098ff7db4532",
+     "startTimeUnixNano": "1792786198243466000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "0"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "63b6098ff7db4532",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "c0a603c400f58a9b",
+     "startTimeUnixNano": "1792786198243621000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "944262f743f502cb9566e626e776108e"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": "0"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "234afe30ca8d0c2d",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "153c387ef6db0ab6",
+     "startTimeUnixNano": "1792786198221375000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "ad643c2d82e4499d",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "94c41895c5fbb6d7",
+     "startTimeUnixNano": "1792786198224000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "5ccc561bd1c1ec91",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "5bfb1fad3dcbfb6f",
+     "startTimeUnixNano": "1792786198225000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "0"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "153c387ef6db0ab6",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "ad643c2d82e4499d",
+     "startTimeUnixNano": "1792786198221527000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "65164d3a30c03de4022b3f7a7ef556f3"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "aecb1150628c9e24",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "3923983cbcb28960",
+     "startTimeUnixNano": "1792786198020409000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "aecb1150628c9e24",
+     "startTimeUnixNano": "1792786198020215000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "3923983cbcb28960",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "1a3025b895410ee1",
+     "startTimeUnixNano": "1792786198021000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "8ac62612f548dd9fd29afa464c258209"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "6a5febd1018752dc",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "5b4598fbfd62d6d6",
+     "startTimeUnixNano": "1792786197831137000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "6a5febd1018752dc",
+     "startTimeUnixNano": "1792786197830990000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "5b4598fbfd62d6d6",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "46b8a82178ac19a0",
+     "startTimeUnixNano": "1792786197832000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "532edc6a49667ea086838572cb064448"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "POST",
+     "parentSpanId": "0a01f82827362174",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "afba112f4771a64f",
+     "startTimeUnixNano": "1792786199459000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "aa866084929c48fe",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "5a7eb2c44a6ca105",
+     "startTimeUnixNano": "1792786199460000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "313f307263fdec94df7a56cbded8f5d2"
+  }
+ ],
+ "kwargs": {
+  "service": "frontend",
+  "tags": null
+ },
+ "op": "jaeger_traces"
+}

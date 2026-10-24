@@ -1,0 +1,47 @@
+# faultctl scenarios. Ids are neutral; nothing under oncall/ may read this file.
+# Types: stop, cpu_limit (params.cpus), mem_limit (params.memory, e.g. 230m),
+# flag (params.key + params.variant: sets that flag's defaultVariant in
+# src/flagd/demo.flagd.json; `faultctl reset` restores the file from git).
+scenarios:
+  scenario-01:
+    type: flag
+    params: {key: paymentFailure, variant: "50%"}
+    description: payment charge fails for half the requests
+  scenario-02:
+    type: flag
+    params: {key: cartFailure, variant: "25%"}
+    description: cart fails intermittently
+  scenario-03:
+    type: flag
+    params: {key: adHighCpu, variant: "on"}
+    description: ad service burns CPU
+  scenario-04:
+    type: flag
+    params: {key: recommendationCacheFailure, variant: "on"}
+    description: recommendation cache leaks
+  scenario-05:
+    type: flag
+    params: {key: loadGeneratorFloodHomepage, variant: "on"}
+    description: load generator floods the homepage
+  scenario-10:
+    type: flag
+    params: {key: productCatalogFailure, variant: "on"}
+    description: product-catalog fails for one product
+  scenario-06:
+    type: stop
+    target: valkey-cart
+    description: cart cache stopped
+  scenario-07:
+    type: stop
+    target: email
+    description: email service container stopped
+  scenario-08:
+    type: cpu_limit
+    target: product-catalog
+    params: {cpus: 0.1}
+    description: product-catalog limited to 0.1 CPU
+  scenario-09:
+    type: mem_limit
+    target: recommendation
+    params: {memory: 230m}
+    description: recommendation memory limit squeezed close to its usage

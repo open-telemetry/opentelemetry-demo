@@ -1,0 +1,397 @@
+{
+ "data": [
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "72fe67c4bdbbd286",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "72978fb97f524407",
+     "startTimeUnixNano": "1792786202767387198",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "e0f1381cab8f4e0e",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "72fe67c4bdbbd286",
+     "startTimeUnixNano": "1792786202621807830",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": "f30fe15f96c5317c",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "0b97057a38704c0d",
+     "startTimeUnixNano": "1792786202575785688",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_browse_product",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "f30fe15f96c5317c",
+     "startTimeUnixNano": "1792786202574919370",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "5ad608bb795dac60764a97ab477bf567"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "browser_change_currency",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "efc063b4bf622602",
+     "startTimeUnixNano": "1792786202737754725",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "d50f3a339e3ea41836fece81024430d2"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "browser_add_to_cart",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "2907a16c2140b7fb",
+     "startTimeUnixNano": "1792786197763757847",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "da1e84dfe4d99fd9e38375b985a8532d"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "c1e7d4f1806e0093",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "7d356b12d4b771ea",
+     "startTimeUnixNano": "1792786195781908626",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "c1e7d4f1806e0093",
+     "startTimeUnixNano": "1792786195780808273",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "17e12d77f21f93197a6c7b019ac4dd7d"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": "308"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "0b9d9db450b406b4",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "b0b1c4fae9b39cfb",
+     "startTimeUnixNano": "1792786200810713000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "308"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "56f23ac2353f11c9",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "0b9d9db450b406b4",
+     "startTimeUnixNano": "1792786200810429000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "35bd94e8da550f1d",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "2151cd69bb3bfdfd",
+     "startTimeUnixNano": "1792786200815701000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "56f23ac2353f11c9",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "35bd94e8da550f1d",
+     "startTimeUnixNano": "1792786200815535000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 308
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "b0b1c4fae9b39cfb",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "a39f10946ea38bf2",
+     "startTimeUnixNano": "1792786200811000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/data",
+     "parentSpanId": "2151cd69bb3bfdfd",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "a2abc2dffcf1ae61",
+     "startTimeUnixNano": "1792786200816000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "d81c230cd42f71e1",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "71d404fb190b6779",
+     "startTimeUnixNano": "1792786200816000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 1,
+     "name": "executing api route (pages) /api/data",
+     "parentSpanId": "d81c230cd42f71e1",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "ce56d14d3419abc6",
+     "startTimeUnixNano": "1792786200816000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/data",
+     "parentSpanId": "a2abc2dffcf1ae61",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "d81c230cd42f71e1",
+     "startTimeUnixNano": "1792786200816000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetAds"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.AdService/GetAds",
+     "parentSpanId": "ce56d14d3419abc6",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "d189ea5723032ab1",
+     "startTimeUnixNano": "1792786200816000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "getAdsByCategory",
+     "parentSpanId": "b19470288d4e1c9f",
+     "service": "ad",
+     "serviceVersion": "3.1.0",
+     "spanId": "1a657cba2b63695f",
+     "startTimeUnixNano": "1792786200818735202",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetAds"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.AdService/GetAds",
+     "parentSpanId": "d189ea5723032ab1",
+     "service": "ad",
+     "serviceVersion": "3.1.0",
+     "spanId": "b19470288d4e1c9f",
+     "startTimeUnixNano": "1792786200817701791",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": "2dddbaa93711acfa",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "56f23ac2353f11c9",
+     "startTimeUnixNano": "1792786200808786702",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_get_ads",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "2dddbaa93711acfa",
+     "startTimeUnixNano": "1792786200806735553",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "e634c78174523760e5ef7db51b643019"
+  }
+ ],
+ "kwargs": {
+  "service": "load-generator",
+  "tags": null
+ },
+ "op": "jaeger_traces"
+}

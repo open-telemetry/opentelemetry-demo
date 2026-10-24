@@ -1,0 +1,22 @@
+{
+ "data": {
+  "data": {
+   "result": [
+    {
+     "metric": {},
+     "value": [
+      1792786800.167,
+      "1.4232880109550046"
+     ]
+    }
+   ],
+   "resultType": "vector"
+  },
+  "status": "success"
+ },
+ "kwargs": {
+  "baseline": false,
+  "promql": "sum (rate(traces_span_metrics_calls_total{service_name=\"recommendation\",{exclude}}[{window}]))"
+ },
+ "op": "prom_query"
+}

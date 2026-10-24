@@ -1,0 +1,22 @@
+{
+ "data": {
+  "data": {
+   "result": [
+    {
+     "metric": {},
+     "value": [
+      1792785387,
+      "2.8747303530006416"
+     ]
+    }
+   ],
+   "resultType": "vector"
+  },
+  "status": "success"
+ },
+ "kwargs": {
+  "baseline": true,
+  "promql": "sum (rate(traces_span_metrics_calls_total{service_name=\"image-provider\",{exclude}}[{window}]))"
+ },
+ "op": "prom_query"
+}

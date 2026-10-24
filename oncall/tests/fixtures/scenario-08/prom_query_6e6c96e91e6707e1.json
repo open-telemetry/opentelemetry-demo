@@ -1,0 +1,22 @@
+{
+ "data": {
+  "data": {
+   "result": [
+    {
+     "metric": {},
+     "value": [
+      1792786800.284,
+      "0.19767889041041736"
+     ]
+    }
+   ],
+   "resultType": "vector"
+  },
+  "status": "success"
+ },
+ "kwargs": {
+  "baseline": false,
+  "promql": "sum (rate(traces_span_metrics_calls_total{service_name=\"shipping\",{exclude}}[{window}]))"
+ },
+ "op": "prom_query"
+}

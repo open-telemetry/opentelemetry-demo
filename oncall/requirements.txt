@@ -1,0 +1,4 @@
+python-dotenv==1.2.4
+httpx==0.28.1
+streamlit==1.66.1
+jsonschema==4.26.0

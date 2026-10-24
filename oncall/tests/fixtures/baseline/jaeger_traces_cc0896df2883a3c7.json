@@ -1,0 +1,851 @@
+{
+ "data": [
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "6f9047ecb57834db",
+     "startTimeUnixNano": "1792785859160974750",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "6f9047ecb57834db",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "7969fa93f353c358",
+     "startTimeUnixNano": "1792785859162101706",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    }
+   ],
+   "traceId": "7face78bc15a35e50b2af100f62a9bdc"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "1d377ccd55a4da2e",
+     "startTimeUnixNano": "1792785860101385720",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "1d377ccd55a4da2e",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "f693c8b15c1b8db0",
+     "startTimeUnixNano": "1792785860102210228",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    }
+   ],
+   "traceId": "8a7571887ce9f89413da858aff9c1837"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "a22480640af256da",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "c552c413ccf729ad",
+     "startTimeUnixNano": "1792785837503382469",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "a22480640af256da",
+     "startTimeUnixNano": "1792785837502605059",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "699d5d12c0774d1c4554174f76a602a4"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "9a126444c716fc19",
+     "startTimeUnixNano": "1792785792529843443",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "9a126444c716fc19",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "b9e9d059416689fc",
+     "startTimeUnixNano": "1792785792530514199",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    }
+   ],
+   "traceId": "07045312ff9895d47931b7f38b7ad0d6"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "c1bbc9066908550f",
+     "startTimeUnixNano": "1792785792156159994",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "c1bbc9066908550f",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "3d35b6c24b823775",
+     "startTimeUnixNano": "1792785792157084749",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    }
+   ],
+   "traceId": "6a7d24fc93511c53e3989533f802f860"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "f0a779633bb11161",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "70605f661a2234dd",
+     "startTimeUnixNano": "1792785775653834257",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "f0a779633bb11161",
+     "startTimeUnixNano": "1792785775653144386",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "7090ca60b56aa9adda16bbee7f2d4bc3"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "47d1565f6bf29070",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "2457135dc240ddc6",
+     "startTimeUnixNano": "1792785772463857013",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "47d1565f6bf29070",
+     "startTimeUnixNano": "1792785772463033515",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "9465a69e322a59493323f0a029274c8f"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "cc48ba0854b675b8",
+     "startTimeUnixNano": "1792785743364664494",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "cc48ba0854b675b8",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "07823fbc0301512f",
+     "startTimeUnixNano": "1792785743367476730",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    }
+   ],
+   "traceId": "4faf8fdef6c137fd8fc6d0cad8c00763"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "cedf9ae5c7adb53d",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "567bc326d41b67f2",
+     "startTimeUnixNano": "1792785738299406681",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "cedf9ae5c7adb53d",
+     "startTimeUnixNano": "1792785738298381921",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "37c8303795d0ecb5c651f0856e5fd20f"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "854b2a94001e6db9",
+     "startTimeUnixNano": "1792785698339537890",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "854b2a94001e6db9",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "747713870e4b164e",
+     "startTimeUnixNano": "1792785698340842904",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    }
+   ],
+   "traceId": "9bbaa8364fb91b27b8abd786e6165f99"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "17b592bcebc60ef0",
+     "startTimeUnixNano": "1792785695543488663",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "17b592bcebc60ef0",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "6016878a61943d94",
+     "startTimeUnixNano": "1792785695544893389",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    }
+   ],
+   "traceId": "c7bbecd976b626203534a3721cb0c573"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "37a46aa5708ef306",
+     "startTimeUnixNano": "1792785652046725387",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "37a46aa5708ef306",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "85a40cb092cd180f",
+     "startTimeUnixNano": "1792785652047513404",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    }
+   ],
+   "traceId": "4e83bdb90bb102cbefbb7f4469de2aca"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "ab1cd9f0facc7a14",
+     "startTimeUnixNano": "1792785649725462943",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "ab1cd9f0facc7a14",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "eb51958ca0134c50",
+     "startTimeUnixNano": "1792785649726777627",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    }
+   ],
+   "traceId": "e5ea229d2635c282b5d6139855a29fa8"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "a07f3712aea59b98",
+     "startTimeUnixNano": "1792785630087521146",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "a07f3712aea59b98",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "6a53ec27365d2371",
+     "startTimeUnixNano": "1792785630088338812",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    }
+   ],
+   "traceId": "4c631538f3fc00a345e84e8b360b1b30"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "e3d09eb83678f7e8",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "e922f8d4b26fa7f0",
+     "startTimeUnixNano": "1792785589478729088",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "e3d09eb83678f7e8",
+     "startTimeUnixNano": "1792785589477608476",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "572b71bf07891c8f83ff94b1ff74313c"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "cad494e531598dbe",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "0db9ec6507d3aebd",
+     "startTimeUnixNano": "1792785584756423767",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "cad494e531598dbe",
+     "startTimeUnixNano": "1792785584754397400",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "094fda3ca61893cec3e1b569e4ffc5bc"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "df4537cd235f5535",
+     "startTimeUnixNano": "1792785564480376710",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "df4537cd235f5535",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "827825de29c2d1bf",
+     "startTimeUnixNano": "1792785564481919798",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    }
+   ],
+   "traceId": "cb96d4408bd516d182476de404ae05f9"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "4ea1dcc6f44f2e2d",
+     "startTimeUnixNano": "1792785497606409655",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "4ea1dcc6f44f2e2d",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "76cd4384632d053a",
+     "startTimeUnixNano": "1792785497607713227",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    }
+   ],
+   "traceId": "c51b963b3634619c57c0f126f562f1b1"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "c75cd3c3525e28ca",
+     "startTimeUnixNano": "1792785462497178105",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "c75cd3c3525e28ca",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "03a66b06d3e79a21",
+     "startTimeUnixNano": "1792785462497971925",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    }
+   ],
+   "traceId": "fe558b5e1773bbcb8ac6d0e9a6b60b9c"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "4de9af0326724a5b",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "7edcaa4be7321640",
+     "startTimeUnixNano": "1792785406604266623",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "4de9af0326724a5b",
+     "startTimeUnixNano": "1792785406602705475",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "b86c6fc138fa8e13745294440823327c"
+  }
+ ],
+ "kwargs": {
+  "service": "load-generator",
+  "tags": {
+   "error": "true"
+  }
+ },
+ "op": "jaeger_traces"
+}

@@ -1,0 +1,183 @@
+{
+ "data": [
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "35e77d45a10a491d",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "937ddc0f02db3c61",
+     "startTimeUnixNano": "1792786020120000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "0d2b98f6806aaacc",
+     "service": "cart",
+     "serviceVersion": "3.1.0",
+     "spanId": "f49a1b0470abf50e",
+     "startTimeUnixNano": "1792786020123771300",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "0"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "96c4c23470a5b7a9",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "c0632bb0e2a702db",
+     "startTimeUnixNano": "1792786020118559000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "0"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "c0632bb0e2a702db",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "e4e9e694bc42944f",
+     "startTimeUnixNano": "1792786020118797000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "e4e9e694bc42944f",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "8d647ff51a77893a",
+     "startTimeUnixNano": "1792786020119000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 500
+     },
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "9 FAILED_PRECONDITION: Can't access cart storage. System.ApplicationException: Wasn't able to connect to redis\n   at cart.cartstore.ValkeyCartStore.EnsureRedisConnected() in /usr/src/app/src/cartstore/ValkeyCartStore.cs:line 103\n   at cart.cartstore.ValkeyCartStore.GetCartAsync(String userId) in /usr/src/app/src/cartstore/ValkeyCartStore.cs:line 210"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 1,
+     "name": "executing api route (pages) /api/cart",
+     "parentSpanId": "35e77d45a10a491d",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "8882f232c8dca885",
+     "startTimeUnixNano": "1792786020121000000",
+     "status": {
+      "code": "ERROR",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "error.type": "500",
+      "http.status_code": 500
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/cart",
+     "parentSpanId": "8d647ff51a77893a",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "35e77d45a10a491d",
+     "startTimeUnixNano": "1792786020119000000",
+     "status": {
+      "code": "ERROR",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "grpc.error_message": "9 FAILED_PRECONDITION: Can't access cart storage. System.ApplicationException: Wasn't able to connect to redis\n   at cart.cartstore.ValkeyCartStore.EnsureRedisConnected() in /usr/src/app/src/cartstore/ValkeyCartStore.cs:line 103\n   at cart.cartstore.ValkeyCartStore.GetCartAsync(String userId) in /usr/src/app/src/cartstore/ValkeyCartStore.cs:line 210",
+      "rpc.method": "GetCart"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.CartService/GetCart",
+     "parentSpanId": "8882f232c8dca885",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "7fad7c7fe0d0d2af",
+     "startTimeUnixNano": "1792786020121000000",
+     "status": {
+      "code": "ERROR",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "Status(StatusCode=\"FailedPrecondition\", Detail=\"Can't access cart storage. System.ApplicationException: Wasn't able to connect to redis\n   at cart.cartstore.ValkeyCartStore.EnsureRedisConnected() in /usr/src/app/src/cartstore/ValkeyCartStore.cs:line 103\n   at cart.cartstore.ValkeyCartStore.GetCartAsync(String userId) in /usr/src/app/src/cartstore/ValkeyCartStore.cs:line 210\")"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 2,
+     "name": "POST /oteldemo.CartService/GetCart",
+     "parentSpanId": "7fad7c7fe0d0d2af",
+     "service": "cart",
+     "serviceVersion": "3.1.0",
+     "spanId": "64dc4437c7dbc511",
+     "startTimeUnixNano": "1792786020123153700",
+     "status": {
+      "code": "ERROR",
+      "message": "Status(StatusCode=\"FailedPrecondition\", Detail=\"Can't access cart storage. System.ApplicationException: Wasn't able to connect to redis\n   at cart.cartstore.ValkeyCartStore.EnsureRedisConnected() in /usr/src/app/src/cartstore/ValkeyCartStore.cs:line 103\n   at cart.cartstore.ValkeyCartStore.GetCartAsync(String userId) in /usr/src/app/src/cartstore/ValkeyCartStore.cs:line 210\")"
+     }
+    }
+   ],
+   "traceId": "882362b4560091a52a8ccb316eae69ba"
+  }
+ ],
+ "kwargs": {
+  "service": "cart",
+  "tags": {
+   "error": "true"
+  }
+ },
+ "op": "jaeger_traces"
+}

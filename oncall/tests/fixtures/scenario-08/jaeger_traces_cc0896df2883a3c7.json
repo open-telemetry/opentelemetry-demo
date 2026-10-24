@@ -1,0 +1,2198 @@
+{
+ "data": [
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "12978101fac9b874",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "6774d7d338304694",
+     "startTimeUnixNano": "1792786787874760222",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "12978101fac9b874",
+     "startTimeUnixNano": "1792786787873130499",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "893048ad67c51d9e193e300ba66d8fca"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "f0afe89b4d17467a",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "82cba9f799b5cfd3",
+     "startTimeUnixNano": "1792786780447954234",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "f0afe89b4d17467a",
+     "startTimeUnixNano": "1792786780446686347",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "88fc0e7620731177184fa852e376308e"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "5852e7d5f81eb56d",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "693c3792af3daa7c",
+     "startTimeUnixNano": "1792786780563000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "0"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "14efdc9ec3ea83fb",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "6cc5c8fc768ee37e",
+     "startTimeUnixNano": "1792786780562209000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "504"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "4a2b922a8ad1d71f",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "14efdc9ec3ea83fb",
+     "startTimeUnixNano": "1792786780561996000",
+     "status": {
+      "code": "ERROR",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 504
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": "a0d3ceb44d71c21e",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "4a2b922a8ad1d71f",
+     "startTimeUnixNano": "1792786780561208836",
+     "status": {
+      "code": "ERROR",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_browse_product",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "a0d3ceb44d71c21e",
+     "startTimeUnixNano": "1792786780560003643",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "6cc5c8fc768ee37e",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "a46f00c616bfbb1b",
+     "startTimeUnixNano": "1792786780562000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "b6d7363fd4961fdb0cba66bbb57d6b9f"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "59d3210ff9d4d3d2",
+     "startTimeUnixNano": "1792786768786544039",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "59d3210ff9d4d3d2",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "0e48383146d99a3d",
+     "startTimeUnixNano": "1792786768788790175",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    }
+   ],
+   "traceId": "e2f3e2ff6f424397013daba6ddb28e30"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "852d028f7940c575",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "2846cca9461c1a65",
+     "startTimeUnixNano": "1792786763505037384",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "852d028f7940c575",
+     "startTimeUnixNano": "1792786763502071544",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "e85e4a03df8a6947e5e0ca9724d02f64"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "93111fefb5a15dc0",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "867a7b418a298d73",
+     "startTimeUnixNano": "1792786769437000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "e8cae5f8a6405bed",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "a235927ec6ea2cf3",
+     "startTimeUnixNano": "1792786769436000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "0"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "693c0d105834dd3e",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "e8cae5f8a6405bed",
+     "startTimeUnixNano": "1792786769435405000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "504"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "d8bf4468fbddf441",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "693c0d105834dd3e",
+     "startTimeUnixNano": "1792786769434878000",
+     "status": {
+      "code": "ERROR",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 504
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": "ad2a647286328c8e",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "d8bf4468fbddf441",
+     "startTimeUnixNano": "1792786769433173511",
+     "status": {
+      "code": "ERROR",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_browse_product",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "ad2a647286328c8e",
+     "startTimeUnixNano": "1792786769431156459",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "c63c002e1983e74a27b89be6a48d75c3"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "2d4482bcab4407bd",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "49e72b9f64d0850c",
+     "startTimeUnixNano": "1792786766360000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "0"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "ce3a2561e238b27f",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "372f16ddd85e1e60",
+     "startTimeUnixNano": "1792786766358148000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "504"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "6725f9b12e81150f",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "ce3a2561e238b27f",
+     "startTimeUnixNano": "1792786766357860000",
+     "status": {
+      "code": "ERROR",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_browse_product",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "96988028a0460c55",
+     "startTimeUnixNano": "1792786766355517087",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 504
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": "96988028a0460c55",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "6725f9b12e81150f",
+     "startTimeUnixNano": "1792786766356750354",
+     "status": {
+      "code": "ERROR",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "372f16ddd85e1e60",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "2bf9634f58937704",
+     "startTimeUnixNano": "1792786766358000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "463e27a970854f296305df811e076758"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "efec1ae1fa38e88b",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "e8f2f17b332e7f9f",
+     "startTimeUnixNano": "1792786755588253952",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "efec1ae1fa38e88b",
+     "startTimeUnixNano": "1792786755586919408",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "e4c44e3c09c2c39b6644fcda9536abfb"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "63163a0d55dae2e4",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "93ecf54a290893de",
+     "startTimeUnixNano": "1792786747184000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "0"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "d01701a69f7d7179",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "932e7dfd85b51ae7",
+     "startTimeUnixNano": "1792786747181242000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "504"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "032ec76ea4214e77",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "d01701a69f7d7179",
+     "startTimeUnixNano": "1792786747180931000",
+     "status": {
+      "code": "ERROR",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "AddItem"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.CartService/AddItem",
+     "parentSpanId": "00e0ebc310144637",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "64d86ce8e63d9125",
+     "startTimeUnixNano": "1792786762197000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetCart"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.CartService/GetCart",
+     "parentSpanId": "00e0ebc310144637",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "7d1b67fff17958d4",
+     "startTimeUnixNano": "1792786762201000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "9af023434fe366c1",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "ea21d07e0b27c55d",
+     "startTimeUnixNano": "1792786762196000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 1,
+     "name": "executing api route (pages) /api/cart",
+     "parentSpanId": "9af023434fe366c1",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "00e0ebc310144637",
+     "startTimeUnixNano": "1792786762197000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "POST /api/cart",
+     "parentSpanId": "8ec8b966b594ef62",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "9af023434fe366c1",
+     "startTimeUnixNano": "1792786762195000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "932e7dfd85b51ae7",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "210a8fc244b5604a",
+     "startTimeUnixNano": "1792786747182000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "POST /api/cart",
+     "parentSpanId": "761bd0560c88f125",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "8ec8b966b594ef62",
+     "startTimeUnixNano": "1792786762195000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "5fe26cde7f52839b",
+     "service": "cart",
+     "serviceVersion": "3.1.0",
+     "spanId": "723b46217c7df459",
+     "startTimeUnixNano": "1792786762203257400",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "POST /oteldemo.CartService/AddItem",
+     "parentSpanId": "64d86ce8e63d9125",
+     "service": "cart",
+     "serviceVersion": "3.1.0",
+     "spanId": "bc8f2af4e52e7292",
+     "startTimeUnixNano": "1792786762198719200",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "POST /oteldemo.CartService/GetCart",
+     "parentSpanId": "7d1b67fff17958d4",
+     "service": "cart",
+     "serviceVersion": "3.1.0",
+     "spanId": "1f3012cf3c49f7c9",
+     "startTimeUnixNano": "1792786762202963200",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "0a959d3035c1c1a9",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "761bd0560c88f125",
+     "startTimeUnixNano": "1792786762194218000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "POST",
+     "parentSpanId": "5744c8957fdc8558",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "0a959d3035c1c1a9",
+     "startTimeUnixNano": "1792786762193917000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 504
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": "f569a92cb2de5be1",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "032ec76ea4214e77",
+     "startTimeUnixNano": "1792786747179625641",
+     "status": {
+      "code": "ERROR",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "f569a92cb2de5be1",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "5744c8957fdc8558",
+     "startTimeUnixNano": "1792786762192715466",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_add_to_cart",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "f569a92cb2de5be1",
+     "startTimeUnixNano": "1792786747177844355",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "8b49bb55684ec21d612e3193e9b0b7dc"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "0c046c403eb1c96b",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "e79eebaa537fd514",
+     "startTimeUnixNano": "1792786742543000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "c800575d53f48c06",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "ab206bb687296aaf",
+     "startTimeUnixNano": "1792786742542000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "0"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "cf67da2e3c7488b9",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "c800575d53f48c06",
+     "startTimeUnixNano": "1792786742541376000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "504"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "1eff9d6028addb38",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "cf67da2e3c7488b9",
+     "startTimeUnixNano": "1792786742541152000",
+     "status": {
+      "code": "ERROR",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_browse_product",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "ea8f015acec7c5ac",
+     "startTimeUnixNano": "1792786742539113087",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 504
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": "ea8f015acec7c5ac",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "1eff9d6028addb38",
+     "startTimeUnixNano": "1792786742540275573",
+     "status": {
+      "code": "ERROR",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "8c62e47116312b92",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "5e4da188338740f7",
+     "startTimeUnixNano": "1792786742544000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 1,
+     "name": "executing api route (pages) /api/products/[productId]/index",
+     "parentSpanId": "0c046c403eb1c96b",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "8c62e47116312b92",
+     "startTimeUnixNano": "1792786742544000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/products/[productId]/index",
+     "parentSpanId": "ab206bb687296aaf",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "0c046c403eb1c96b",
+     "startTimeUnixNano": "1792786742542000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "6b221dd642ed465aa872d2586b098ee7"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "fcdca4299eb0e3f0",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "4cd2558a9a32a7eb",
+     "startTimeUnixNano": "1792786732430173089",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "fcdca4299eb0e3f0",
+     "startTimeUnixNano": "1792786732427887676",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "db583c1728a72333146740045e8f18c3"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "016b42fde36f3e46",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "37d7e7ab96276685",
+     "startTimeUnixNano": "1792786735958000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "0"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "71a7adc4be8b4d64",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "449342373fae09bf",
+     "startTimeUnixNano": "1792786735956492000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "504"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "37ae21ad0811722c",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "71a7adc4be8b4d64",
+     "startTimeUnixNano": "1792786735956214000",
+     "status": {
+      "code": "ERROR",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_browse_product",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "b0c3cf78cf1553c9",
+     "startTimeUnixNano": "1792786735953240547",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 504
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": "b0c3cf78cf1553c9",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "37ae21ad0811722c",
+     "startTimeUnixNano": "1792786735954749535",
+     "status": {
+      "code": "ERROR",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "449342373fae09bf",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "be818c21c1387068",
+     "startTimeUnixNano": "1792786735957000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "d6c1beee18c27eb0",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "709e977d5bc1c667",
+     "startTimeUnixNano": "1792786735958000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 1,
+     "name": "executing api route (pages) /api/products/[productId]/index",
+     "parentSpanId": "016b42fde36f3e46",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "d6c1beee18c27eb0",
+     "startTimeUnixNano": "1792786735958000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/products/[productId]/index",
+     "parentSpanId": "be818c21c1387068",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "016b42fde36f3e46",
+     "startTimeUnixNano": "1792786735957000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "b8ecb5a1b8b1f962b6a11aebf70dd9c2"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "abe815e8e45a40fc",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "9ba9d9a8ce901f62",
+     "startTimeUnixNano": "1792786727148000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "4005da4544908167",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "6e06bc4b31a35350",
+     "startTimeUnixNano": "1792786727147000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "0"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "3c1f49647b042c15",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "4005da4544908167",
+     "startTimeUnixNano": "1792786727146780000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "504"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "5081b66266f87e3b",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "3c1f49647b042c15",
+     "startTimeUnixNano": "1792786727146315000",
+     "status": {
+      "code": "ERROR",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 504
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": "2697c5bdbd46c679",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "5081b66266f87e3b",
+     "startTimeUnixNano": "1792786727144638651",
+     "status": {
+      "code": "ERROR",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_browse_product",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "2697c5bdbd46c679",
+     "startTimeUnixNano": "1792786727142021229",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 1,
+     "name": "executing api route (pages) /api/products/[productId]/index",
+     "parentSpanId": "abe815e8e45a40fc",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "7f23a454f9f51a90",
+     "startTimeUnixNano": "1792786727149000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/products/[productId]/index",
+     "parentSpanId": "6e06bc4b31a35350",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "abe815e8e45a40fc",
+     "startTimeUnixNano": "1792786727148000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "7f23a454f9f51a90",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "78b60bfc28db6b53",
+     "startTimeUnixNano": "1792786727150000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "1d80c79cf329e486",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "72eb243f1e46eb81",
+     "startTimeUnixNano": "1792786741385211226",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "78b60bfc28db6b53",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "1d80c79cf329e486",
+     "startTimeUnixNano": "1792786730282881987",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "0e23fe495b737039b89d4878cc66c923"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "db7abfc823b8552f",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "5a0ebb455e01d44f",
+     "startTimeUnixNano": "1792786723836000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "0"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "8b93bca8cd92b3ad",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "3089c67f32b0e285",
+     "startTimeUnixNano": "1792786723834283000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "504"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "4fc706c83f7093ff",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "8b93bca8cd92b3ad",
+     "startTimeUnixNano": "1792786723834028000",
+     "status": {
+      "code": "ERROR",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 504
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": "706f252d74348f1a",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "4fc706c83f7093ff",
+     "startTimeUnixNano": "1792786723833067643",
+     "status": {
+      "code": "ERROR",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_browse_product",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "706f252d74348f1a",
+     "startTimeUnixNano": "1792786723831516934",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "3089c67f32b0e285",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "507c94646f0e255a",
+     "startTimeUnixNano": "1792786723835000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "0414fa003af65cc1",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "a01bd53d3926b4ad",
+     "startTimeUnixNano": "1792786723836000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 1,
+     "name": "executing api route (pages) /api/products/[productId]/index",
+     "parentSpanId": "db7abfc823b8552f",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "0414fa003af65cc1",
+     "startTimeUnixNano": "1792786723836000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/products/[productId]/index",
+     "parentSpanId": "507c94646f0e255a",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "db7abfc823b8552f",
+     "startTimeUnixNano": "1792786723835000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "c13f7cbd0a45d0ed",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "c93adb4564bb3ff3",
+     "startTimeUnixNano": "1792786731181027183",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "a01bd53d3926b4ad",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "c13f7cbd0a45d0ed",
+     "startTimeUnixNano": "1792786725781437373",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "1b55b907a318a0dc971e6161bdcdc799"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "f567b765733741c8",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "c2a225a1011cc677",
+     "startTimeUnixNano": "1792786701732948932",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "f567b765733741c8",
+     "startTimeUnixNano": "1792786701731509376",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "e84f8c9914b52a93ccbaead6144e78b9"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "682d62a1ebf44fa8",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "d16c130ab69a8fe2",
+     "startTimeUnixNano": "1792786696505631630",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "682d62a1ebf44fa8",
+     "startTimeUnixNano": "1792786696504018432",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "4b2189fb0a25fe5c7b3689322bd29cf2"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "c9b970893f048076",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "dc2aa0a370103de3",
+     "startTimeUnixNano": "1792786690756785571",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "c9b970893f048076",
+     "startTimeUnixNano": "1792786690754378024",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "028bc920d90e43a58d5a40f8a11e7c10"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "prepare route module",
+     "parentSpanId": "f749cb78a07127fb",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "b44a51c648b0dab9",
+     "startTimeUnixNano": "1792786697843000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "0"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "5733c81b909f7661",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "79d231c6a5cbcba8",
+     "startTimeUnixNano": "1792786697840842000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "504"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "7011c3454b0b055c",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "5733c81b909f7661",
+     "startTimeUnixNano": "1792786697840467000",
+     "status": {
+      "code": "ERROR",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 504
+     },
+     "events": [],
+     "kind": 3,
+     "name": "GET",
+     "parentSpanId": "5a045d5e5e0ded42",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "7011c3454b0b055c",
+     "startTimeUnixNano": "1792786697838933108",
+     "status": {
+      "code": "ERROR",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_get_recommendations",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "5a045d5e5e0ded42",
+     "startTimeUnixNano": "1792786697837450062",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "get_product_list",
+     "parentSpanId": "44e11d7caff69231",
+     "service": "recommendation",
+     "serviceVersion": "3.1.0",
+     "spanId": "91a1df99af9e70f2",
+     "startTimeUnixNano": "1792786697845675488",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "ListProducts"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/ListProducts",
+     "parentSpanId": "91a1df99af9e70f2",
+     "service": "recommendation",
+     "serviceVersion": "3.1.0",
+     "spanId": "aa8bcd68ec3baea2",
+     "startTimeUnixNano": "1792786697845724808",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "ListRecommendations"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.RecommendationService/ListRecommendations",
+     "parentSpanId": "d5269743adf0a5ca",
+     "service": "recommendation",
+     "serviceVersion": "3.1.0",
+     "spanId": "44e11d7caff69231",
+     "startTimeUnixNano": "1792786697845433008",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "ListRecommendations"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.RecommendationService/ListRecommendations",
+     "parentSpanId": "e907da2b9dd27e78",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "d5269743adf0a5ca",
+     "startTimeUnixNano": "1792786697844000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.response.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": "79d231c6a5cbcba8",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "e1f59361aafbbb69",
+     "startTimeUnixNano": "1792786697842000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "2f34a84a852f02eb",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "4accb8d334bbdd7b",
+     "startTimeUnixNano": "1792786703742755692",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "e907da2b9dd27e78",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "a662b5267a182c8b",
+     "startTimeUnixNano": "1792786713239000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "e907da2b9dd27e78",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "2115c1fa56a66b6e",
+     "startTimeUnixNano": "1792786713238000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "e907da2b9dd27e78",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "ac86eef0998a2478",
+     "startTimeUnixNano": "1792786713239000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "GetProduct"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "e907da2b9dd27e78",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "dda07754090e6904",
+     "startTimeUnixNano": "1792786713238000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 1,
+     "name": "executing api route (pages) /api/recommendations",
+     "parentSpanId": "f749cb78a07127fb",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "e907da2b9dd27e78",
+     "startTimeUnixNano": "1792786697844000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": 200
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET /api/recommendations",
+     "parentSpanId": "e1f59361aafbbb69",
+     "service": "frontend",
+     "serviceVersion": "3.1.0",
+     "spanId": "f749cb78a07127fb",
+     "startTimeUnixNano": "1792786697842000000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/ListProducts"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/ListProducts",
+     "parentSpanId": "aa8bcd68ec3baea2",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "2f34a84a852f02eb",
+     "startTimeUnixNano": "1792786703543261929",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "a662b5267a182c8b",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "c18567df1228bb5f",
+     "startTimeUnixNano": "1792786714929861133",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "2115c1fa56a66b6e",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "b444fd870f265b5d",
+     "startTimeUnixNano": "1792786715130189313",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "ac86eef0998a2478",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "97590e5239a58435",
+     "startTimeUnixNano": "1792786714641775237",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "rpc.method": "oteldemo.ProductCatalogService/GetProduct"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "oteldemo.ProductCatalogService/GetProduct",
+     "parentSpanId": "dda07754090e6904",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "da0c3aeee17d1810",
+     "startTimeUnixNano": "1792786714631719134",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "b444fd870f265b5d",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "4a9af9a986794f80",
+     "startTimeUnixNano": "1792786716333851181",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "c18567df1228bb5f",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "fc5474c83f9db3da",
+     "startTimeUnixNano": "1792786716442679621",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "97590e5239a58435",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "1245189a2a5c1ae5",
+     "startTimeUnixNano": "1792786722299979269",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 3,
+     "name": "astronomy-db",
+     "parentSpanId": "da0c3aeee17d1810",
+     "service": "product-catalog",
+     "serviceVersion": "3.1.0",
+     "spanId": "29f6441c5166d3ed",
+     "startTimeUnixNano": "1792786723092476240",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "e936cef030bb09121f08a7fab3a6a59a"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "7e0ee606737f6afe",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "903e3e27db2cd9ff",
+     "startTimeUnixNano": "1792786655197387559",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "7e0ee606737f6afe",
+     "startTimeUnixNano": "1792786655196497486",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "d462fcc994c81ac1c6c91e4f181f7f26"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {},
+     "events": [
+      {
+       "attributes": {
+        "exception.message": "HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+       },
+       "name": "exception"
+      }
+     ],
+     "kind": 3,
+     "name": "POST",
+     "parentSpanId": "08e31d23be211832",
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "15a6408ef34ceb25",
+     "startTimeUnixNano": "1792786601705440385",
+     "status": {
+      "code": "ERROR",
+      "message": "ConnectionError: HTTPConnectionPool(host='agent', port=8010): Max retries exceeded with url: /prompt (Caused by NameResolutionError(\"HTTPConnection(host='agent', port=8010): Failed to resolve 'agent' ([Errno -3] Temporary failure in name resolution)\"))"
+     }
+    },
+    {
+     "attributes": {},
+     "events": [],
+     "kind": 1,
+     "name": "user_ask_agent",
+     "parentSpanId": null,
+     "service": "load-generator",
+     "serviceVersion": "3.1.0",
+     "spanId": "08e31d23be211832",
+     "startTimeUnixNano": "1792786601703782104",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "bd2de696dbb88b889d46396c1a303894"
+  }
+ ],
+ "kwargs": {
+  "service": "load-generator",
+  "tags": {
+   "error": "true"
+  }
+ },
+ "op": "jaeger_traces"
+}

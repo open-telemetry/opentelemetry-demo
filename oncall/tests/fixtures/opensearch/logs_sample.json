@@ -1,0 +1,252 @@
+[
+ {
+  "@timestamp": "2026-10-23T19:13:01.277Z",
+  "observedTimestamp": "2026-10-23T19:13:01.750878891Z",
+  "body": "API request failed",
+  "severity": {
+   "text": "error",
+   "number": 17
+  },
+  "traceId": "7aaee599ce03627ab0a978d1631fed0f",
+  "spanId": "3e0ff38a2c7330e5",
+  "resource": {
+   "service.name": "frontend",
+   "service.namespace": "opentelemetry-demo",
+   "service.version": "3.1.0"
+  },
+  "attributes": {
+   "exception.message": "13 INTERNAL: Error: Product Catalog Fail Feature Flag Enabled",
+   "exception.type": "13",
+   "http.request.method": "GET",
+   "http.response.status_code": 500
+  }
+ },
+ {
+  "@timestamp": "2026-10-23T19:12:49.236Z",
+  "observedTimestamp": "2026-10-23T19:12:49.980109427Z",
+  "body": "API request failed",
+  "severity": {
+   "text": "error",
+   "number": 17
+  },
+  "traceId": "049e9b56dc01fa97298f99230a3c672a",
+  "spanId": "8917f8e13fa6cea1",
+  "resource": {
+   "service.name": "frontend",
+   "service.namespace": "opentelemetry-demo",
+   "service.version": "3.1.0"
+  },
+  "attributes": {
+   "exception.message": "13 INTERNAL: Error: Product Catalog Fail Feature Flag Enabled",
+   "exception.type": "13",
+   "http.request.method": "GET",
+   "http.response.status_code": 500
+  }
+ },
+ {
+  "@timestamp": "2026-10-23T19:12:49.234Z",
+  "observedTimestamp": "2026-10-23T19:12:49.97979855Z",
+  "body": "API request failed",
+  "severity": {
+   "text": "error",
+   "number": 17
+  },
+  "traceId": "22c95934ecd543a35436f730d878c3f4",
+  "spanId": "8f9a82b877fd2e25",
+  "resource": {
+   "service.name": "frontend",
+   "service.namespace": "opentelemetry-demo",
+   "service.version": "3.1.0"
+  },
+  "attributes": {
+   "exception.message": "13 INTERNAL: Error: Product Catalog Fail Feature Flag Enabled",
+   "exception.type": "13",
+   "http.request.method": "GET",
+   "http.response.status_code": 500
+  }
+ },
+ {
+  "@timestamp": "2026-10-23T19:12:49.075Z",
+  "observedTimestamp": "2026-10-23T19:12:49.979600862Z",
+  "body": "API request failed",
+  "severity": {
+   "text": "error",
+   "number": 17
+  },
+  "traceId": "f3c9b1c941887eed49058c3197fa1bb7",
+  "spanId": "551c3f8e9f9303ca",
+  "resource": {
+   "service.name": "frontend",
+   "service.namespace": "opentelemetry-demo",
+   "service.version": "3.1.0"
+  },
+  "attributes": {
+   "exception.message": "13 INTERNAL: Error: Product Catalog Fail Feature Flag Enabled",
+   "exception.type": "13",
+   "http.request.method": "GET",
+   "http.response.status_code": 500
+  }
+ },
+ {
+  "@timestamp": "2026-10-23T19:32:43.093515724Z",
+  "observedTimestamp": "2026-10-23T19:32:43.620702123Z",
+  "body": "Error scraping metrics",
+  "severity": {
+   "text": "error",
+   "number": 17
+  },
+  "resource": {
+   "service.name": "otelcol-contrib",
+   "service.version": "0.160.0"
+  },
+  "attributes": {
+   "exception.message": "error reading cpu times for process \"node\" (pid 41066): open /hostfs/proc/41066/stat: no such file or directory; error reading memory info for process \"node\" (pid 41066): open /hostfs/proc/41066/statm: no such file or directory",
+   "exception.type": "go.opentelemetry.io/collector/scraper/scrapererror.PartialScrapeError"
+  }
+ },
+ {
+  "@timestamp": "2026-10-23T19:32:42.162889302Z",
+  "observedTimestamp": "2026-10-23T19:32:42.622000416Z",
+  "body": "Exporting failed. Dropping data.",
+  "severity": {
+   "text": "error",
+   "number": 17
+  },
+  "resource": {
+   "service.name": "otelcol-contrib",
+   "service.version": "0.160.0"
+  },
+  "attributes": {
+   "exception.message": "not retryable error: Permanent error: rpc error: code = InvalidArgument desc = error exporting items, request to http://prometheus:9090/api/v1/otlp/v1/metrics responded with HTTP Status Code 400",
+   "exception.type": "go.opentelemetry.io/collector/consumer/consumererror.permanent"
+  }
+ },
+ {
+  "@timestamp": "2026-10-23T19:32:54.095235841Z",
+  "observedTimestamp": "2026-10-23T19:32:54.270234681Z",
+  "body": "unable to open connection to broker",
+  "severity": {
+   "text": "warn",
+   "number": 13
+  },
+  "resource": {
+   "service.name": "otelcol-contrib",
+   "service.version": "0.160.0"
+  },
+  "attributes": {}
+ },
+ {
+  "@timestamp": "2026-10-23T19:32:54.095273502Z",
+  "observedTimestamp": "2026-10-23T19:32:54.270249862Z",
+  "body": "unable to open connection to broker",
+  "severity": {
+   "text": "warn",
+   "number": 13
+  },
+  "resource": {
+   "service.name": "otelcol-contrib",
+   "service.version": "0.160.0"
+  },
+  "attributes": {}
+ },
+ {
+  "@timestamp": "2026-10-23T19:32:53.4451744Z",
+  "observedTimestamp": "2026-10-23T19:32:56.159246152Z",
+  "body": "GetCartAsync called with userId={userId}",
+  "severity": {
+   "text": "Information",
+   "number": 9
+  },
+  "traceId": "2af5fb582834603f200b240047a39559",
+  "spanId": "6b9cc4abe5f22f71",
+  "resource": {
+   "service.name": "cart",
+   "service.namespace": "opentelemetry-demo",
+   "service.version": "3.1.0"
+  },
+  "attributes": {}
+ },
+ {
+  "@timestamp": "2026-10-23T19:32:53.4036241Z",
+  "observedTimestamp": "2026-10-23T19:32:56.159167834Z",
+  "body": "GetCartAsync called with userId={userId}",
+  "severity": {
+   "text": "Information",
+   "number": 9
+  },
+  "traceId": "e84d5826954c6a6d5534b1f92a645bc1",
+  "spanId": "a23dd65be08e8dce",
+  "resource": {
+   "service.name": "cart",
+   "service.namespace": "opentelemetry-demo",
+   "service.version": "3.1.0"
+  },
+  "attributes": {}
+ },
+ {
+  "@timestamp": "2026-10-23T19:32:59.564164262Z",
+  "observedTimestamp": "2026-10-23T19:32:59.897125219Z",
+  "body": "Product Found",
+  "severity": {
+   "text": "INFO",
+   "number": 9
+  },
+  "traceId": "95cd062e875901fe3e4d37611ec1d89f",
+  "spanId": "ba30c428ef388f97",
+  "resource": {
+   "service.name": "product-catalog",
+   "service.namespace": "opentelemetry-demo",
+   "service.version": "3.1.0"
+  },
+  "attributes": {}
+ },
+ {
+  "@timestamp": "2026-10-23T19:32:58.426149709Z",
+  "observedTimestamp": "2026-10-23T19:32:58.929424979Z",
+  "body": "Product Found",
+  "severity": {
+   "text": "INFO",
+   "number": 9
+  },
+  "traceId": "2b61679abbfe0fc605877b1e45e66d1a",
+  "spanId": "b04dbded85093d74",
+  "resource": {
+   "service.name": "product-catalog",
+   "service.namespace": "opentelemetry-demo",
+   "service.version": "3.1.0"
+  },
+  "attributes": {}
+ },
+ {
+  "@timestamp": "2026-10-23T19:32:15.683576376Z",
+  "observedTimestamp": "2026-10-23T19:32:14.284908641Z",
+  "body": "[PlaceOrder]",
+  "severity": {
+   "text": "INFO",
+   "number": 9
+  },
+  "traceId": "fc577d0a32f2a2517e5cdf56e3584955",
+  "spanId": "c277a14023ddd5b8",
+  "resource": {
+   "service.name": "checkout",
+   "service.namespace": "opentelemetry-demo",
+   "service.version": "3.1.0"
+  },
+  "attributes": {}
+ },
+ {
+  "@timestamp": "2026-10-23T19:32:14.208226038Z",
+  "observedTimestamp": "2026-10-23T19:32:15.189300295Z",
+  "body": "order confirmation email sent",
+  "severity": {
+   "text": "INFO",
+   "number": 9
+  },
+  "resource": {
+   "service.name": "checkout",
+   "service.namespace": "opentelemetry-demo",
+   "service.version": "3.1.0"
+  },
+  "attributes": {}
+ }
+]

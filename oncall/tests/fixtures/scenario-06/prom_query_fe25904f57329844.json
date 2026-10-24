@@ -1,0 +1,22 @@
+{
+ "data": {
+  "data": {
+   "result": [
+    {
+     "metric": {},
+     "value": [
+      1792784400,
+      "1.1004954475423014"
+     ]
+    }
+   ],
+   "resultType": "vector"
+  },
+  "status": "success"
+ },
+ "kwargs": {
+  "baseline": true,
+  "promql": "sum (rate(traces_span_metrics_calls_total{service_name=\"currency\",{exclude}}[{window}]))"
+ },
+ "op": "prom_query"
+}

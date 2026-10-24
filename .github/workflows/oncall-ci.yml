@@ -1,0 +1,133 @@
+name: oncall-ci
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        if: hashFiles('oncall/requirements-dev.txt') != ''
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: oncall/requirements-dev.txt
+      - name: Install dev dependencies
+        if: hashFiles('oncall/requirements-dev.txt') != ''
+        run: pip install -r oncall/requirements-dev.txt
+      - name: ruff check and format check
+        if: hashFiles('oncall/requirements-dev.txt') != ''
+        run: ruff check oncall/ scripts/faultctl/ eval/ && ruff format --check oncall/ scripts/faultctl/ eval/
+
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        if: hashFiles('oncall/requirements-dev.txt') != ''
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: oncall/requirements-dev.txt
+      - name: Install dev dependencies
+        if: hashFiles('oncall/requirements-dev.txt') != ''
+        run: pip install -r oncall/requirements-dev.txt
+      - name: pytest
+        if: hashFiles('oncall/requirements-dev.txt') != ''
+        run: |
+          set +e
+          pytest -q oncall/ scripts/faultctl/ eval/
+          rc=$?
+          # pytest exit code 5 means no tests were collected; treated as a pass for now
+          if [ "$rc" -eq 5 ]; then
+            echo "No tests collected; passing for now."
+            exit 0
+          fi
+          exit $rc
+
+  rules:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: No flag references outside oncall/safety/
+        run: |
+          # Case-insensitive match for flag-store and flag-UI references, excluding the safety module.
+          hits=$(grep -rilE 'flagd|demo\.flagd\.json|flagd-ui|ofrep|/feature/' oncall/ 2>/dev/null | grep -v '^oncall/safety/' || true)
+          if [ -n "$hits" ]; then
+            echo "::error::Flag references found outside oncall/safety/. Reading flags to diagnose is disqualifying:"
+            echo "$hits"
+            exit 1
+          fi
+      - name: No feature-flag telemetry outside oncall/safety/
+        run: |
+          # Case-insensitive "feature_flag" or "feature.flag"; only the scrub helper and its test may mention it.
+          hits=$(grep -rilE 'feature[_.]flag' oncall/ 2>/dev/null \
+            | grep -v '^oncall/safety/' \
+            | grep -vxE 'oncall/models\.py|oncall/tests/test_models\.py' \
+            | grep -v '/__pycache__/' || true)
+          if [ -n "$hits" ]; then
+            echo "::error::Feature-flag telemetry references found (RULES.md hard rule 7). Use scrub_flags() instead:"
+            echo "$hits"
+            exit 1
+          fi
+      - name: oncall/ never references faultctl
+        run: |
+          hits=$(grep -rilF 'faultctl' oncall/ 2>/dev/null || true)
+          if [ -n "$hits" ]; then
+            echo "::error::oncall/ must not import or reference scripts/faultctl (human test tool):"
+            echo "$hits"
+            exit 1
+          fi
+      - name: oncall/ never reads eval answers
+        run: |
+          # eval/expected.yaml holds the scenario answers; only eval/ may read it.
+          hits=$(grep -rlE 'expected\.yaml|from eval\b|import eval\b' oncall/ 2>/dev/null | grep -v '/__pycache__/' || true)
+          if [ -n "$hits" ]; then
+            echo "::error::oncall/ must not read eval/ or expected.yaml:"
+            echo "$hits"
+            exit 1
+          fi
+      - name: No committed secrets
+        run: |
+          # Key shapes: OpenAI-style and Anthropic-style keys, AWS access key IDs, GitHub personal tokens.
+          pattern='sk-[A-Za-z0-9_-]{20,}|AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{30,}'
+          hits=$(git grep -lE "$pattern" -- . || true)
+          if [ -n "$hits" ]; then
+            echo "::error::Files contain key-shaped secrets:"
+            echo "$hits"
+            exit 1
+          fi
+      - name: No committed .env files except upstream demo config
+        run: |
+          # Allowed: the root .env and src/react-native-app/.env, both upstream demo config.
+          hits=$(git ls-files | grep -E '(^|/)\.env$' | grep -Ev '^(\.env|src/react-native-app/\.env)$' || true)
+          if [ -n "$hits" ]; then
+            echo "::error::Tracked .env files found. Keep secrets in oncall/.env (gitignored):"
+            echo "$hits"
+            exit 1
+          fi
+      - name: No changes to demo code under src/
+        if: github.event_name == 'pull_request'
+        run: |
+          hits=$(git diff --name-only "$BASE_SHA...$HEAD_SHA" -- src/ || true)
+          if [ -n "$hits" ]; then
+            echo "::error::This PR changes demo code under src/, which is off-limits:"
+            echo "$hits"
+            exit 1
+          fi

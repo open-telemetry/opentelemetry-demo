@@ -1,0 +1,204 @@
+{
+ "data": [
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "1759508315db30b5",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "adfa2949a046db90",
+     "startTimeUnixNano": "1792787196450680000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "1759508315db30b5",
+     "startTimeUnixNano": "1792787196450402000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "6cdc0bf3c367ccefa04e7be044b5b22f"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "c15af7d29226e34c",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "4bf2cb889afcf8cb",
+     "startTimeUnixNano": "1792787196331571000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "c15af7d29226e34c",
+     "startTimeUnixNano": "1792787196331334000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "b3a0dbc9a67b98017256b6a062bd0643"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "4cae84cdad0825b3",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "15f69266291fd3ef",
+     "startTimeUnixNano": "1792787196491736000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "4cae84cdad0825b3",
+     "startTimeUnixNano": "1792787196491484000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "6c9467c23ee50712d1e0eac54c3bc820"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router image-provider egress",
+     "parentSpanId": "6dab7c4343e062a4",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "5ade8d0b04a1fd04",
+     "startTimeUnixNano": "1792787196342247000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "6dab7c4343e062a4",
+     "startTimeUnixNano": "1792787196342141000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "4d8c0380c55c546db202ad1e3097e1fe"
+  },
+  {
+   "spans": [
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 3,
+     "name": "router frontend egress",
+     "parentSpanId": "f74c2bb237bf2404",
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "626e52c2c42bffc7",
+     "startTimeUnixNano": "1792787196419610000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    },
+    {
+     "attributes": {
+      "http.status_code": "200"
+     },
+     "events": [],
+     "kind": 2,
+     "name": "GET",
+     "parentSpanId": null,
+     "service": "frontend-proxy",
+     "serviceVersion": "3.1.0",
+     "spanId": "f74c2bb237bf2404",
+     "startTimeUnixNano": "1792787196419260000",
+     "status": {
+      "code": "UNSET",
+      "message": ""
+     }
+    }
+   ],
+   "traceId": "2189573a31f62c90bec6fced7a0edb9b"
+  }
+ ],
+ "kwargs": {
+  "service": "frontend-proxy",
+  "tags": null
+ },
+ "op": "jaeger_traces"
+}

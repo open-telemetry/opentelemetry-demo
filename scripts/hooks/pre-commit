@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# Blocks commits to main, committed secrets, and diagnostic reads of feature flags.
+set -euo pipefail
+
+branch="$(git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --abbrev-ref HEAD)"
+if [[ "$branch" == "main" || "$branch" == "master" ]]; then
+  echo "✋ Commits to '$branch' are not allowed. Create a branch: git checkout -b feat/<NN>-<slug>"
+  exit 1
+fi
+
+# Branch must be <type>/<NN>-<slug>, where NN is the two-digit number from docs/hackathon/ISSUES.md.
+if [[ ! "$branch" =~ ^(feat|fix|docs|test|chore|refactor)/[0-9]+-[a-z0-9-]+$ ]]; then
+  echo "⚠️  Branch '$branch' doesn't match <type>/<NN>-<slug> (e.g. feat/04-get-metrics). Rename with: git branch -m <new-name>"
+  exit 1
+fi
+
+staged="$(git diff --cached --name-only --diff-filter=ACM)"
+
+# Secrets / junk files. Upstream demo .env files are tracked and allowed (same rule as CI).
+secret_files="$(echo "$staged" | grep -E '(^|/)\.env$|\.pem$|id_rsa|credentials\.json$' | grep -Ev '^(\.env|src/react-native-app/\.env)$' || true)"
+if [[ -n "$secret_files" ]]; then
+  echo "✋ Refusing to commit secret-looking files:"; echo "$secret_files"
+  exit 1
+fi
+# Key shapes: OpenAI-style and Anthropic-style keys, AWS access key IDs, GitHub personal tokens.
+if [[ -n "$staged" ]] && git diff --cached -U0 -- $staged | grep -Eq '^\+.*(sk-[A-Za-z0-9_-]{20,}|sk-ant-[A-Za-z0-9_-]{20,}|AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{30,})'; then
+  echo "✋ A staged change looks like it contains an API key. Move it to .env (not committed)."
+  exit 1
+fi
+
+# Hackathon rule: no reading feature flags for diagnosis (only the safety/action module may mention flags, to toggle via the Action API)
+flag_hits="$(echo "$staged" | grep -E '\.(py|ts|js)$' | grep -Ev '^(oncall/safety/|tests/)' || true)"
+if [[ -n "$flag_hits" ]] && git diff --cached -U0 -- $flag_hits | grep -Eiq '^\+.*(flagd|demo\.flagd\.json|flagd-ui|/feature/|ofrep)'; then
+  echo "✋ Staged code outside oncall/safety/ references flagd / feature-flag config."
+  echo "   Reading flag settings to diagnose = DISQUALIFICATION. If this is a legitimate Action API toggle, move it into oncall/safety/."
+  exit 1
+fi
+
+# Quick lint if available
+if command -v ruff >/dev/null 2>&1; then
+  py_files="$(echo "$staged" | grep -E '\.py$' || true)"
+  if [[ -n "$py_files" ]]; then ruff check $py_files; fi
+fi
+
+exit 0

@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://incident-zero.local/oncall/report.schema.json",
+  "title": "Incident Zero incident report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "incident_id",
+    "detected_at",
+    "alert",
+    "root_cause",
+    "confidence",
+    "decision",
+    "evidence",
+    "affected_services",
+    "alternatives",
+    "timeline",
+    "actions",
+    "verification",
+    "prevention",
+    "limitations",
+    "agent_version"
+  ],
+  "properties": {
+    "incident_id": {"type": "string", "minLength": 1},
+    "detected_at": {"type": "string", "minLength": 1},
+    "alert": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "ts", "service", "signal", "description", "source"],
+      "properties": {
+        "id": {"type": "string"},
+        "ts": {"type": "string"},
+        "service": {"type": ["string", "null"]},
+        "signal": {"type": "string"},
+        "value": {"type": ["number", "null"]},
+        "threshold": {"type": ["number", "null"]},
+        "description": {"type": "string"},
+        "source": {"type": "string"}
+      }
+    },
+    "root_cause": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["component", "category", "description"],
+      "properties": {
+        "component": {"type": ["string", "null"]},
+        "category": {
+          "enum": [
+            "app_error",
+            "dependency_unavailable",
+            "container_down",
+            "resource_cpu",
+            "resource_memory",
+            "network_degradation",
+            "traffic_surge",
+            "upstream_propagation",
+            "unknown",
+            "no_incident"
+          ]
+        },
+        "description": {"type": "string"}
+      }
+    },
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "decision": {"enum": ["act", "escalate", "no_action"]},
+    "reasoning": {"type": "string"},
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "source", "text", "ts"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "source": {"type": "string"},
+          "text": {"type": "string"},
+          "ts": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "affected_services": {"type": "array", "items": {"type": "string"}},
+    "alternatives": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["hypothesis", "rejected_because"],
+        "properties": {
+          "hypothesis": {"type": "string"},
+          "rejected_because": {"type": "string"}
+        }
+      }
+    },
+    "timeline": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ts", "event"],
+        "properties": {
+          "ts": {"type": ["string", "null"]},
+          "event": {"type": "string"}
+        }
+      }
+    },
+    "actions": {"type": "array", "items": {"type": "object"}},
+    "verification": {"type": "object"},
+    "prevention": {"type": "string"},
+    "limitations": {"type": "array", "items": {"type": "string"}},
+    "agent_version": {"type": "string"},
+    "llm_models": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "provider:model of every LLM endpoint that served this run, in first-use order"
+    }
+  }
+}

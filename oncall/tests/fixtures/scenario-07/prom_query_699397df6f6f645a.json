@@ -1,0 +1,22 @@
+{
+ "data": {
+  "data": {
+   "result": [
+    {
+     "metric": {},
+     "value": [
+      1792786514.037,
+      "0"
+     ]
+    }
+   ],
+   "resultType": "vector"
+  },
+  "status": "success"
+ },
+ "kwargs": {
+  "baseline": false,
+  "promql": "sum (rate(traces_span_metrics_calls_total{service_name=\"product-catalog\",{exclude},status_code=\"STATUS_CODE_ERROR\"}[{window}])) / sum (rate(traces_span_metrics_calls_total{service_name=\"product-catalog\",{exclude}}[{window}]))"
+ },
+ "op": "prom_query"
+}
