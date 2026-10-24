@@ -1,114 +1,126 @@
-"""Integration and unit tests for the end-to-end demonstration flow."""
+"""End-to-end demonstration flow: scripted investigation, diagnosis, approval and the CLI."""
 from __future__ import annotations
 
 import json
 from pathlib import Path
-from types import SimpleNamespace
+
 import pytest
 
-from src.agent.llm import AutonomousInvestigationSession
+import src.agent.__main__ as cli
+import src.approval.pipeline as pipeline
+from src.agent.agent import IncidentAgent
+from src.agent.llm import LLMConfigError, LLMResponse
 from src.agent.presenter import format_incident_brief
 from src.agent.transcript import Transcript
-from src.approval.pipeline import execute_safety_pipeline, log_audit_event
+from src.approval.gate import HumanDecision
+from src.approval.pipeline import execute_safety_pipeline
 from src.config import Settings
 from src.models.action import ActionType, ApprovalStatus, RemediationAction
-from src.remediation.kill_switch import KillSwitch
+from src.remediation.verifier import VerificationResult
+from tests.test_agent_loop import factory_for, good_diag, investigation_script, toolbox
+
+SPIKE = good_diag(root_cause={"service": "payment", "category": "traffic_spike", "summary": "payment flooded"})
 
 
-def test_autonomous_session_investigation_and_diagnosis_flow():
-    # 1. Investigation phase
-    tools = [{"name": "system_overview", "description": "overview", "parameters": {}}]
-    session = AutonomousInvestigationSession(system="investigate", tools=tools)
-
-    resp1 = session.send(user_text="ALERT: High latency on recommendation service")
-    assert len(resp1.tool_calls) == 6
-    called_names = [tc.name for tc in resp1.tool_calls]
-    assert "system_overview" in called_names
-    assert "get_service_metrics" in called_names
-    assert "search_traces" in called_names
-
-    # 2. Diagnosis phase
-    diag_session = AutonomousInvestigationSession(system="diagnose", tools=[])
-    diag_prompt = (
-        "ALERT: High latency on recommendation\n\n"
-        "INVESTIGATOR FINDINGS: p95 high\n\n"
-        "TOOL TRANSCRIPT (JSON):\n"
-        '[{"n": 1, "tool": "search_traces", "arguments": {}, "result": {"evidence": [{"kind": "trace", "ref": "1234567890abcdef1234567890abcdef"}]}}, '
-        '{"n": 2, "tool": "container_health", "arguments": {}, "result": {"evidence": [{"kind": "container", "ref": "container:recommendation:state", "value": "running"}]}}]'
-        "\n\nReturn the diagnosis JSON now."
-    )
-    resp_diag = diag_session.send(user_text=diag_prompt)
-    assert resp_diag.text.strip().startswith("{")
-    diag_data = json.loads(resp_diag.text)
-    assert diag_data["verdict"] == "diagnosed"
-    assert diag_data["confidence"] == "high"
-    assert len(diag_data["evidence"]) >= 1
+@pytest.fixture
+def env(tmp_path, monkeypatch):
+    monkeypatch.delenv("KILL_SWITCH_ENABLED", raising=False)
+    monkeypatch.setenv("AUDIT_LOG_PATH", str(tmp_path / "audit.jsonl"))
+    monkeypatch.setenv("REPORT_OUTPUT_DIR", str(tmp_path / "out"))
+    monkeypatch.setenv("KILL_SWITCH_FILE", str(tmp_path / ".kill_switch"))
+    monkeypatch.setenv("DRY_RUN_MODE", "true")
+    monkeypatch.setattr(pipeline, "capture_baseline", lambda ctx, s, window_minutes=5: {"service": s})
+    monkeypatch.setattr(pipeline, "verify_recovery", lambda ctx, a, b, settle_seconds, dry_run, sleep=None, events=None:
+                        VerificationResult(status="NOT_VERIFIED_DRY_RUN", recovered=False, before=b))
+    return tmp_path
 
 
-def test_safety_pipeline_executes_and_audits(tmp_path: Path):
-    audit_file = tmp_path / "test_audit.jsonl"
-    report_dir = tmp_path / "incident_output"
-    settings = Settings()
-    settings.audit_log_path = str(audit_file)
-    settings.report_output_dir = str(report_dir)
-    settings.require_human_approval = True
-
-    t = Transcript(incident_id="INC-TEST-001", alert="Checkout degradation")
-    t.finished_at = "2026-10-24T00:00:00Z"
-    t.report = {
-        "incident_id": "INC-TEST-001",
-        "target_service": "checkout",
-        "remediation": {"recommended_action": "Restart checkout"},
-    }
-    t.save(report_dir)
-
-    # Mock tool context for recovery verification
-    mock_ctx = SimpleNamespace()
-    action = execute_safety_pipeline(
-        t,
-        settings=settings,
-        auto_approve=True,
-        ctx=mock_ctx,
-    )
-
-    assert action.approval_status == ApprovalStatus.APPROVED
-    assert action.dry_run is True
-    assert action.executed_at is not None
-    assert audit_file.exists()
-    audit_lines = audit_file.read_text().splitlines()
-    assert len(audit_lines) == 1
-    event = json.loads(audit_lines[0])
-    assert event["event"] == "ACTION_EXECUTED_DRY_RUN"
-    assert event["incident_id"] == "INC-TEST-001"
+def approve(action):
+    return HumanDecision(True, "alice", "test", "2026-10-24T00:00:00Z")
 
 
-def test_safety_pipeline_kill_switch_blocks(tmp_path: Path):
-    audit_file = tmp_path / "test_audit.jsonl"
-    sentinel = tmp_path / ".kill_switch"
-    settings = Settings()
-    settings.audit_log_path = str(audit_file)
-    settings.kill_switch_file = str(sentinel)
-    settings.require_human_approval = True
+def test_scripted_investigation_to_dry_run_action(env):
+    factory = factory_for(investigation_script(), [LLMResponse(text=json.dumps(SPIKE))])
+    t = IncidentAgent(toolbox(), factory, output_dir=env / "out").run("payment flood", incident_id="INC-DEMO")
+    assert t.gate["final_confidence"] == "high" and not t.gate["escalate"]
 
-    ks = KillSwitch(sentinel_path=sentinel)
-    ks.engage_sentinel()
+    outcome = execute_safety_pipeline(t, settings=Settings(), approval_callback=approve, ctx=object())
+    assert outcome.status == "EXECUTED_DRY_RUN"
+    assert outcome.action.action_type == ActionType.THROTTLE_LOAD_GENERATOR
+    assert outcome.action.rollback.action_type == ActionType.RESTORE_LOAD_GENERATOR
+    report = json.loads((env / "out" / "INC-DEMO" / "report.json").read_text())
+    assert report["status"] == "MITIGATION_UNVERIFIED"
+    assert report["action_taken"]["approver"] == "alice"
 
-    t = Transcript(incident_id="INC-TEST-002", alert="Payment timeout")
-    t.report = {
-        "incident_id": "INC-TEST-002",
-        "target_service": "payment",
-        "remediation": {"recommended_action": "Restart payment"},
-    }
 
-    action = execute_safety_pipeline(t, settings=settings, auto_approve=True)
+def _patch_cli(monkeypatch, diag):
+    monkeypatch.setattr(cli, "ToolBox", lambda ctx: toolbox())
+    monkeypatch.setattr(cli, "session_factory",
+                        lambda: factory_for(investigation_script(), [LLMResponse(text=json.dumps(diag))]))
 
-    assert action.approval_status == ApprovalStatus.REJECTED
-    assert t.report["remediation"]["approval_status"] == "BLOCKED_BY_KILL_SWITCH"
-    assert audit_file.exists()
-    event = json.loads(audit_file.read_text().splitlines()[0])
-    assert event["event"] == "ACTION_HALTED_BY_KILL_SWITCH"
 
-    ks.disengage_sentinel()
+def test_cli_quiet_runs_end_to_end_and_still_writes_logs(env, monkeypatch, capsys):
+    _patch_cli(monkeypatch, SPIKE)
+    assert cli.main(["--alert", "payment flood", "--incident-id", "INC-CLI", "--quiet"],
+                    approval_callback=approve) == 0
+    out = capsys.readouterr().out
+    assert "Pipeline outcome: EXECUTED_DRY_RUN" in out
+    live = out.split("AUTONOMOUS INCIDENT DIAGNOSIS BRIEF")[0]
+    assert "KILL_SWITCH " not in live and "TOOL_CALL" not in live
+    assert "Audit log" in out and "Run log" in out
+    assert (env / "out" / "INC-CLI" / "run.log").read_text()
+    assert "APPROVAL_DECISION" in (env / "audit.jsonl").read_text()
+
+
+def test_cli_rejects_without_a_terminal(env, monkeypatch, capsys):
+    _patch_cli(monkeypatch, SPIKE)
+    monkeypatch.setattr("sys.stdin", open("/dev/null"))
+    assert cli.main(["--alert", "payment flood", "--incident-id", "INC-REJ"]) == 0
+    assert "Pipeline outcome: REJECTED" in capsys.readouterr().out
+
+
+def test_cli_escalates_when_llm_not_configured(env, monkeypatch, capsys):
+    def unconfigured():
+        raise LLMConfigError("LLM_API_KEY is not set")
+
+    monkeypatch.setattr(cli, "session_factory", unconfigured)
+    assert cli.main(["--alert", "x"]) == 2
+    assert "ESCALATED TO HUMAN" in capsys.readouterr().err
+
+
+def _load_run_demo():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("run_demo", Path(__file__).resolve().parents[1] / "scripts" / "run_demo.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_replay_makes_no_llm_call_and_uses_a_fresh_incident_id(env, monkeypatch, capsys):
+    factory = factory_for(investigation_script(), [LLMResponse(text=json.dumps(SPIKE))])
+    recorded = IncidentAgent(toolbox(), factory, output_dir=env / "out").run("payment flood", incident_id="INC-REC")
+    original = (env / "out" / "INC-REC" / "report.json").read_text()
+    demo = _load_run_demo()
+
+    def no_llm():
+        raise AssertionError("replay must not call the LLM")
+
+    monkeypatch.setattr(demo, "session_factory", no_llm)
+    monkeypatch.setattr(demo, "ToolContext", lambda settings: object())
+    assert demo.run_demo(replay=str(env / "out" / "INC-REC" / "transcript.json"), quiet=True,
+                         approval_callback=approve) == 0
+    out = capsys.readouterr().out
+    assert "REPLAY" in out and "Pipeline outcome: EXECUTED_DRY_RUN" in out
+    replays = [d.name for d in (env / "out").iterdir() if d.name.startswith("REPLAY-INC-REC-")]
+    assert len(replays) == 1
+    assert (env / "out" / "INC-REC" / "report.json").read_text() == original
+    audit = (env / "audit.jsonl").read_text()
+    assert "REPLAY of recorded run INC-REC" in audit and "no LLM call in this run" in audit
+
+
+def test_cli_has_no_auto_approve_flag():
+    with pytest.raises(SystemExit):
+        cli.main(["--alert", "x", "--auto-approve"])
 
 
 def test_presenter_formats_clean_brief():

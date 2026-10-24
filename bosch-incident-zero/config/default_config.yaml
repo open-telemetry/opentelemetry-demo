@@ -31,4 +31,4 @@ safety:
   execution:
     default_dry_run: true
     max_retries: 2
-    stabilization_window_seconds: 30
+    stabilization_window_seconds: 120   # default only; real settle time BLOCKED on the Action API contract

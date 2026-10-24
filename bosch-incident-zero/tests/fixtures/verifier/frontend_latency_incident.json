@@ -1,0 +1,332 @@
+{
+ "recorded_at": "2026-10-24T04:53:26.278357Z",
+ "service": "frontend",
+ "note": "Tool results recorded from the live stack during a frontend latency incident (window 2m), filtered to frontend. Not edited.",
+ "system_overview": {
+  "tool": "system_overview",
+  "status": "ok",
+  "summary": "4 service(s) flagged: product-catalog, frontend, frontend-proxy, recommendation",
+  "data": {
+   "services": [
+    {
+     "service": "frontend",
+     "rps": 4.017,
+     "error_rate": 0.0,
+     "p95_ms": 14982.1,
+     "baseline_error_rate": 0.0,
+     "baseline_p95_ms": 1315.6,
+     "cpu_pct": 6.8,
+     "memory_mb": 125.2,
+     "container_state": "running",
+     "flags": [
+      "latency_up"
+     ]
+    }
+   ]
+  },
+  "evidence": [
+   {
+    "ref": "metric:frontend:error_rate",
+    "kind": "metric",
+    "value": 0.0
+   },
+   {
+    "ref": "metric:frontend:p95_ms",
+    "kind": "metric",
+    "value": 14982.1
+   },
+   {
+    "ref": "metric:frontend:rps",
+    "kind": "metric",
+    "value": 4.017
+   },
+   {
+    "ref": "metric:frontend:cpu_pct",
+    "kind": "metric",
+    "value": 6.8
+   },
+   {
+    "ref": "metric:frontend:memory_mb",
+    "kind": "metric",
+    "value": 125.2
+   }
+  ]
+ },
+ "get_service_metrics": {
+  "tool": "get_service_metrics",
+  "status": "ok",
+  "summary": "frontend: worst operation GET /api/recommendations (server) error_rate=0.0 p95_ms=15000.0",
+  "data": {
+   "service": "frontend",
+   "window": "2m",
+   "operations": [
+    {
+     "operation": "GET /api/recommendations",
+     "kind": "server",
+     "rps": 0.233,
+     "error_rate": 0.0,
+     "p95_ms": 15000.0
+    },
+    {
+     "operation": "executing api route (pages) /api/recommendations",
+     "kind": "internal",
+     "rps": 0.233,
+     "error_rate": 0.0,
+     "p95_ms": 15000.0
+    },
+    {
+     "operation": "POST",
+     "kind": "server",
+     "rps": 0.017,
+     "error_rate": 0.0,
+     "p95_ms": 15000.0
+    },
+    {
+     "operation": "oteldemo.ProductCatalogService/GetProduct",
+     "kind": "client",
+     "rps": 1.15,
+     "error_rate": 0.0,
+     "p95_ms": 14684.8
+    },
+    {
+     "operation": "oteldemo.ProductCatalogService/ListProducts",
+     "kind": "client",
+     "rps": 0.1,
+     "error_rate": 0.0,
+     "p95_ms": 14250.0
+    },
+    {
+     "operation": "executing api route (pages) /api/products/index",
+     "kind": "internal",
+     "rps": 0.1,
+     "error_rate": 0.0,
+     "p95_ms": 14250.0
+    },
+    {
+     "operation": "GET /api/products/index",
+     "kind": "server",
+     "rps": 0.2,
+     "error_rate": 0.0,
+     "p95_ms": 14250.0
+    },
+    {
+     "operation": "GET /api/products/[productId]/index",
+     "kind": "server",
+     "rps": 0.417,
+     "error_rate": 0.0,
+     "p95_ms": 13958.3
+    },
+    {
+     "operation": "executing api route (pages) /api/products/[productId]/index",
+     "kind": "internal",
+     "rps": 0.217,
+     "error_rate": 0.0,
+     "p95_ms": 13916.7
+    },
+    {
+     "operation": "oteldemo.RecommendationService/ListRecommendations",
+     "kind": "client",
+     "rps": 0.217,
+     "error_rate": 0.0,
+     "p95_ms": 11750.0
+    }
+   ],
+   "cpu_trend": {
+    "first": 6.777,
+    "last": 6.985,
+    "min": 6.777,
+    "max": 6.985,
+    "unit": "percent",
+    "direction": "flat"
+   },
+   "memory_trend": {
+    "first": 122.29,
+    "last": 122.409,
+    "min": 122.29,
+    "max": 122.855,
+    "unit": "MB",
+    "direction": "flat"
+   }
+  },
+  "evidence": [
+   {
+    "ref": "metric:frontend:server:GET /api/recommendations:error_rate",
+    "kind": "metric",
+    "value": 0.0
+   },
+   {
+    "ref": "metric:frontend:server:GET /api/recommendations:p95_ms",
+    "kind": "metric",
+    "value": 15000.0
+   },
+   {
+    "ref": "metric:frontend:internal:executing api route (pages) /api/recommendations:error_rate",
+    "kind": "metric",
+    "value": 0.0
+   },
+   {
+    "ref": "metric:frontend:internal:executing api route (pages) /api/recommendations:p95_ms",
+    "kind": "metric",
+    "value": 15000.0
+   },
+   {
+    "ref": "metric:frontend:server:POST:error_rate",
+    "kind": "metric",
+    "value": 0.0
+   },
+   {
+    "ref": "metric:frontend:server:POST:p95_ms",
+    "kind": "metric",
+    "value": 15000.0
+   },
+   {
+    "ref": "metric:frontend:client:oteldemo.ProductCatalogService/GetProduct:error_rate",
+    "kind": "metric",
+    "value": 0.0
+   },
+   {
+    "ref": "metric:frontend:client:oteldemo.ProductCatalogService/GetProduct:p95_ms",
+    "kind": "metric",
+    "value": 14684.8
+   },
+   {
+    "ref": "metric:frontend:client:oteldemo.ProductCatalogService/ListProducts:error_rate",
+    "kind": "metric",
+    "value": 0.0
+   },
+   {
+    "ref": "metric:frontend:client:oteldemo.ProductCatalogService/ListProducts:p95_ms",
+    "kind": "metric",
+    "value": 14250.0
+   },
+   {
+    "ref": "metric:frontend:internal:executing api route (pages) /api/products/index:error_rate",
+    "kind": "metric",
+    "value": 0.0
+   },
+   {
+    "ref": "metric:frontend:internal:executing api route (pages) /api/products/index:p95_ms",
+    "kind": "metric",
+    "value": 14250.0
+   },
+   {
+    "ref": "metric:frontend:server:GET /api/products/index:error_rate",
+    "kind": "metric",
+    "value": 0.0
+   },
+   {
+    "ref": "metric:frontend:server:GET /api/products/index:p95_ms",
+    "kind": "metric",
+    "value": 14250.0
+   },
+   {
+    "ref": "metric:frontend:server:GET /api/products/[productId]/index:error_rate",
+    "kind": "metric",
+    "value": 0.0
+   },
+   {
+    "ref": "metric:frontend:server:GET /api/products/[productId]/index:p95_ms",
+    "kind": "metric",
+    "value": 13958.3
+   },
+   {
+    "ref": "metric:frontend:internal:executing api route (pages) /api/products/[productId]/index:error_rate",
+    "kind": "metric",
+    "value": 0.0
+   },
+   {
+    "ref": "metric:frontend:internal:executing api route (pages) /api/products/[productId]/index:p95_ms",
+    "kind": "metric",
+    "value": 13916.7
+   },
+   {
+    "ref": "metric:frontend:client:oteldemo.RecommendationService/ListRecommendations:error_rate",
+    "kind": "metric",
+    "value": 0.0
+   },
+   {
+    "ref": "metric:frontend:client:oteldemo.RecommendationService/ListRecommendations:p95_ms",
+    "kind": "metric",
+    "value": 11750.0
+   },
+   {
+    "ref": "metric:frontend:cpu_last",
+    "kind": "metric",
+    "value": 6.985
+   },
+   {
+    "ref": "metric:frontend:cpu_max",
+    "kind": "metric",
+    "value": 6.985
+   },
+   {
+    "ref": "metric:frontend:memory_last",
+    "kind": "metric",
+    "value": 122.409
+   },
+   {
+    "ref": "metric:frontend:memory_max",
+    "kind": "metric",
+    "value": 122.855
+   }
+  ]
+ },
+ "container_health": {
+  "tool": "container_health",
+  "status": "ok",
+  "summary": "All 1 inspected container(s) running with 0 restarts.",
+  "data": {
+   "containers": [
+    {
+     "name": "frontend",
+     "state": "running",
+     "restart_count": 0,
+     "exit_code": 0,
+     "oom_killed": false,
+     "health": "healthy",
+     "started_at": "2026-10-24T04:13:25.179332425Z",
+     "cpu_pct_5m": 6.9,
+     "memory_mb": 122.4,
+     "memory_pct_of_limit": 46.7
+    }
+   ]
+  },
+  "evidence": [
+   {
+    "ref": "container:frontend:state",
+    "kind": "container",
+    "value": "running"
+   },
+   {
+    "ref": "container:frontend:restart_count",
+    "kind": "container",
+    "value": 0
+   },
+   {
+    "ref": "container:frontend:exit_code",
+    "kind": "container",
+    "value": 0
+   },
+   {
+    "ref": "container:frontend:oom_killed",
+    "kind": "container",
+    "value": false
+   },
+   {
+    "ref": "container:frontend:health",
+    "kind": "container",
+    "value": "healthy"
+   },
+   {
+    "ref": "container:frontend:cpu_pct_5m",
+    "kind": "container",
+    "value": 6.9
+   },
+   {
+    "ref": "container:frontend:memory_mb",
+    "kind": "container",
+    "value": 122.4
+   }
+  ]
+ }
+}

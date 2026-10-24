@@ -1,17 +1,20 @@
 """Run one investigation from the command line.
 
     python -m src.agent --alert "Error rate above 5% on frontend"
+    python -m src.agent --alert "..." --approve-via chat   # approve in the local chat UI
     python -m src.agent --demo                  # end-to-end judge demonstration
     python -m src.agent --tools-only            # live smoke test of every tool, no LLM needed
+
+Every action needs a human decision at the prompt (or in the chat UI). Dry run is the default.
 """
 from __future__ import annotations
 
 import argparse
 import json
 import sys
-from pathlib import Path
 
 from ..config import Settings
+from ..events import EventLog
 from .agent import MAX_TOOL_CALLS, IncidentAgent
 from .llm import LLMConfigError, session_factory
 from .presenter import format_incident_brief
@@ -44,15 +47,32 @@ def _tools_smoke(box: ToolBox) -> int:
     return 0
 
 
-def main(argv=None) -> int:
+LLM_ESCALATION = ("ESCALATED TO HUMAN: the LLM is not configured ({error}). No diagnosis was made and "
+                  "no action was taken. Set LLM_PROVIDER/LLM_API_KEY or investigate manually.")
+
+
+def print_paths(settings: Settings, events: EventLog, incident_id: str) -> None:
+    out = settings.resolve_path(settings.report_output_dir) / incident_id
+    print(f"Report      : {out / 'report.json'}", flush=True)
+    print(f"Report (md) : {out / 'report.md'}", flush=True)
+    print(f"Run log     : {events.run_log_path}", flush=True)
+    print(f"Audit log   : {events.audit_log_path}", flush=True)
+
+
+def main(argv=None, approval_callback=None) -> int:
     p = argparse.ArgumentParser(prog="python -m src.agent", description="Bosch Incident Zero Investigation Agent")
     p.add_argument("--alert", help="Alert text that starts the investigation.")
     p.add_argument("--demo", action="store_true", help="Run the turnkey end-to-end demonstration scenario.")
     p.add_argument("--incident-id", help="Explicit incident ID to assign.")
     p.add_argument("--max-tool-calls", type=int, default=MAX_TOOL_CALLS)
     p.add_argument("--tools-only", action="store_true", help="Run every tool once against the live stack.")
-    p.add_argument("--auto-approve", action="store_true", help="Automatically approve the proposed dry-run remediation action.")
-    p.add_argument("--interactive", action="store_true", help="Interactively prompt operator for human approval.")
+    p.add_argument("--approve-via", choices=("cli", "chat"), default="cli",
+                   help="Where the human approves or rejects the proposed action (default: cli prompt).")
+    p.add_argument("--dry-run", action=argparse.BooleanOptionalAction, default=True,
+                   help="Record the action without calling the Action API (default). A live run also "
+                        "needs DRY_RUN_MODE=false and a configured Action API.")
+    p.add_argument("--quiet", action="store_true",
+                   help="Do not echo run events to the terminal (they are still written to the logs).")
     p.add_argument("--raw", action="store_true", help="Print raw JSON outputs instead of the human-readable incident brief.")
     args = p.parse_args(argv)
 
@@ -74,34 +94,34 @@ def main(argv=None) -> int:
     if not alert_text:
         p.error("--alert or --demo is required (or use --tools-only)")
 
+    out = settings.resolve_path(settings.report_output_dir)
+    events = EventLog.from_settings(settings, echo=not args.quiet)
+    print(f"Audit log: {events.audit_log_path}", flush=True)
     try:
-        factory = session_factory()
+        agent = IncidentAgent(box, session_factory(), max_tool_calls=args.max_tool_calls, output_dir=out,
+                              events=events)
+        print("Initiating multi-signal observability investigation...", flush=True)
+        t = agent.run(alert_text, incident_id=args.incident_id)
     except LLMConfigError as e:
-        print(f"LLM not configured: {e}", file=sys.stderr)
+        print(LLM_ESCALATION.format(error=e), file=sys.stderr, flush=True)
         return 2
 
-    out = Path(settings.report_output_dir)
-    if not out.is_absolute():
-        out = settings.root_dir / out
+    print(f"Completed {len(t.tool_calls)} tool calls across Prometheus, Jaeger, OpenSearch, and Docker.",
+          flush=True)
 
-    agent = IncidentAgent(box, factory, max_tool_calls=args.max_tool_calls, output_dir=out)
-    print("Initiating multi-signal observability investigation...")
-    t = agent.run(alert_text, incident_id=args.incident_id)
-
-    print(f"Completed {len(t.tool_calls)} tool calls across Prometheus, Jaeger, OpenSearch, and Docker:")
-    for c in t.tool_calls:
-        print(f"  {c['n']:2d}. {c['tool']}({json.dumps(c['arguments'])}) -> {c['result']['status']}: "
-              f"{c['result']['summary'][:80]}")
-
-    # Safety & Remediation Governance Pipeline
-    auto_approve = args.auto_approve or (args.demo and not args.interactive)
-    action = execute_safety_pipeline(
+    channel = "chat_ui" if args.approve_via == "chat" else "cli"
+    print(f"\nSafety pipeline (dry run: {args.dry_run}, approval via: {channel}):", flush=True)
+    outcome = execute_safety_pipeline(
         t,
         settings=settings,
-        interactive=args.interactive,
-        auto_approve=auto_approve,
+        approval_callback=approval_callback,
+        approval_channel=channel,
+        dry_run=args.dry_run,
         ctx=ctx,
+        events=events,
+        open_browser=channel == "chat_ui" and sys.stdin.isatty(),
     )
+    print(f"Pipeline outcome: {outcome.status} ({outcome.reason})", flush=True)
 
     if args.raw:
         print("\n--- GATE ---")
@@ -115,12 +135,15 @@ def main(argv=None) -> int:
     else:
         brief = format_incident_brief(
             t,
-            action=action,
+            action=outcome.action,
             output_dir=out,
-            audit_log_path=settings.audit_log_path,
+            audit_log_path=settings.resolve_path(settings.audit_log_path),
+            verification=outcome.verification,
+            timeline=outcome.timeline,
+            events=events,
         )
-        print(brief)
-
+        print(brief, flush=True)
+    print_paths(settings, events, t.incident_id)
     return 0
 
 

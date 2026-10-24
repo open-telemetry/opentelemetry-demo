@@ -49,8 +49,15 @@ class Settings:
         # Safety Controls
         self.kill_switch_enabled: bool = get_bool("KILL_SWITCH_ENABLED", False)
         self.kill_switch_file: str = get_val("KILL_SWITCH_FILE", ".kill_switch")
-        self.require_human_approval: bool = get_bool("REQUIRE_HUMAN_APPROVAL", True)
+        # Human approval is compulsory; REQUIRE_HUMAN_APPROVAL is deliberately not read.
+        self.require_human_approval: bool = True
         self.dry_run_mode: bool = get_bool("DRY_RUN_MODE", True)
+        self.approval_timeout_seconds: int = int(get_val("APPROVAL_TIMEOUT_SECONDS", "120"))
+        self.approval_ttl_seconds: int = int(get_val("APPROVAL_TTL_SECONDS", "120"))
+        # Default only: the real settle time is BLOCKED on the Action API contract.
+        self.action_settle_seconds: int = int(get_val("ACTION_SETTLE_SECONDS", "120"))
+        self.chat_ui_port: int = int(get_val("CHAT_UI_PORT", "8799"))
+        self.deploy_platform: str = get_val("DEPLOY_PLATFORM", "docker").strip().lower()
 
         # Observability Endpoints
         self.jaeger_url: str = get_val("JAEGER_URL", "http://localhost:8080")
@@ -63,17 +70,21 @@ class Settings:
         self.frontend_proxy_url: str = get_val("FRONTEND_PROXY_URL", "http://localhost:8080")
 
         # Fault Injection
-        self.flagd_url: str = get_val("FLAGD_URL", "http://localhost:8013")
-        self.flagd_config_path: str = get_val("FLAGD_CONFIG_PATH", "../src/flagd/demo.flagd.json")
         self.faultctl_binary_path: str = get_val("FAULTCTL_BINARY_PATH", "")
 
-        # Action API
-        self.action_api_endpoint: str = get_val("ACTION_API_ENDPOINT", "http://localhost:8080/action-api")
+        # Action API (BLOCKED until the organisers publish the contract; no default URL is assumed)
+        self.action_api_endpoint: str = get_val("ACTION_API_ENDPOINT", "")
+        self.action_api_catalog_path: str = get_val("ACTION_API_CATALOG", "")
         self.action_api_timeout: int = int(get_val("ACTION_API_TIMEOUT_SECONDS", "10"))
 
         # Storage paths
         self.audit_log_path: str = get_val("AUDIT_LOG_PATH", "./audit_logs/audit.jsonl")
         self.report_output_dir: str = get_val("REPORT_OUTPUT_DIR", "./incident_output")
+
+    def resolve_path(self, value: str | Path) -> Path:
+        """Resolve a configured path against the project root when it is relative."""
+        path = Path(value)
+        return path if path.is_absolute() else self.root_dir / path
 
     def to_dict(self) -> Dict[str, Any]:
         """Return safe representation of settings (excluding secrets)."""
@@ -84,10 +95,14 @@ class Settings:
             "kill_switch_file": self.kill_switch_file,
             "require_human_approval": self.require_human_approval,
             "dry_run_mode": self.dry_run_mode,
+            "approval_timeout_seconds": self.approval_timeout_seconds,
+            "approval_ttl_seconds": self.approval_ttl_seconds,
+            "action_settle_seconds": self.action_settle_seconds,
+            "deploy_platform": self.deploy_platform,
+            "action_api_configured": bool(self.action_api_endpoint and self.action_api_catalog_path),
             "jaeger_url": self.jaeger_url,
             "prometheus_url": self.prometheus_url,
             "opensearch_url": self.opensearch_url,
             "frontend_proxy_url": self.frontend_proxy_url,
-            "flagd_url": self.flagd_url,
             "audit_log_path": self.audit_log_path,
         }

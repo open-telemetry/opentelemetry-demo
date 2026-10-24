@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Approve {{action_id}}</title>
+<style nonce="{{nonce}}">
+  :root { --bg: #f6f7f9; --card: #fff; --fg: #1d2330; --muted: #5d6676; --line: #dde1e7;
+          --ok: #157a3c; --bad: #b42318; --warn: #9a6700; --accent: #2457c5; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #12151b; --card: #1b2029; --fg: #e6e9ef; --muted: #9aa3b2; --line: #2d3442;
+            --ok: #4cc27a; --bad: #f2756a; --warn: #e3b341; --accent: #7aa2f7; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.45 system-ui, sans-serif; }
+  main { max-width: 1000px; margin: 0 auto; padding: 16px; display: grid; gap: 14px; }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; }
+  h1 { font-size: 20px; margin: 4px 0 0; } h2 { font-size: 15px; margin: 0 0 8px; color: var(--muted); }
+  dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin: 0; }
+  dt { color: var(--muted); } dd { margin: 0; overflow-wrap: anywhere; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; vertical-align: top; padding: 5px 6px; border-top: 1px solid var(--line); }
+  code { font-size: 12px; overflow-wrap: anywhere; } .table-wrap { overflow-x: auto; }
+  .quote { color: var(--muted); font-style: italic; margin-top: 2px; }
+  .ok { color: var(--ok); } .bad { color: var(--bad); } .warn { color: var(--warn); }
+  .badge { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; }
+  .badge.dry { background: var(--warn); color: #000; } .badge.live { background: var(--bad); color: #fff; }
+  .bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .countdown { font-size: 22px; font-variant-numeric: tabular-nums; font-weight: 600; }
+  button { font: inherit; padding: 9px 16px; border-radius: 6px; border: 1px solid var(--line); cursor: pointer; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  #approve { background: var(--ok); color: #fff; border-color: var(--ok); }
+  #reject { background: var(--card); color: var(--fg); }
+  #kill { background: var(--bad); color: #fff; border-color: var(--bad); margin-left: auto; }
+  input[type=text] { font: inherit; padding: 8px; border-radius: 6px; border: 1px solid var(--line);
+                     background: var(--bg); color: var(--fg); }
+  #status { font-weight: 600; min-height: 1.4em; }
+  #log { max-height: 320px; overflow-y: auto; display: grid; gap: 8px; margin-bottom: 8px; }
+  .msg { padding: 8px 10px; border-radius: 6px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .msg.you { background: var(--bg); } .msg.bot { border: 1px solid var(--line); }
+  #chat-form { display: flex; gap: 8px; } #question { flex: 1; min-width: 0; }
+  .hint { color: var(--muted); font-size: 13px; margin: 6px 0 0; }
+  #live-log { max-height: 260px; overflow-y: auto; background: var(--bg); border-radius: 6px; padding: 8px;
+              font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; }
+  #live-log .line { white-space: pre-wrap; overflow-wrap: anywhere; }
+  .no-rollback { margin: 10px 0; padding: 8px 12px; border: 2px solid var(--bad); border-radius: 6px;
+                 color: var(--bad); font-weight: 700; }
+  .review { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; }
+</style>
+</head>
+<body data-token="{{token}}" data-action-id="{{action_id}}" data-remaining="{{remaining}}"
+      data-log-next="{{log_next}}">
+<main>
+  <section>
+    <h2>Incident {{incident_id}} &middot; approval required</h2>
+    <h1>{{alert}}</h1>
+  </section>
+
+  <section>
+    <h2>Proposed action {{mode_badge}}</h2>
+    <dl>
+      <dt>Action</dt><dd><strong>{{action_type}}</strong></dd>
+      <dt>Target</dt><dd>{{target_service}}</dd>
+      <dt>Reason</dt><dd>{{reason}}</dd>
+      <dt>Description</dt><dd>{{description}}</dd>
+      <dt>Parameters</dt><dd><code>{{parameters}}</code></dd>
+      <dt>Action id</dt><dd><code>{{action_id}}</code></dd>
+    </dl>
+  </section>
+
+  <section>
+    <div class="bar">
+      <span>Auto-reject in</span><span class="countdown" id="countdown">--:--</span>
+      <label>Approver <input type="text" id="approver" value="{{approver}}" maxlength="64"></label>
+    </div>
+    {{no_rollback}}
+    <div class="bar">
+      <button id="approve" type="button">Approve</button>
+      <button id="reject" type="button">Reject</button>
+      <button id="kill" type="button">Emergency kill switch</button>
+    </div>
+    <p id="status" role="status"></p>
+  </section>
+
+  <section>
+    <h2>Diagnosis</h2>
+    <dl>
+      <dt>Verdict</dt><dd>{{verdict}}</dd>
+      <dt>Root cause</dt><dd><strong>{{rc_service}}</strong> &middot; {{rc_category}}</dd>
+      <dt>Operation</dt><dd><code>{{rc_operation}}</code></dd>
+      <dt>Summary</dt><dd>{{rc_summary}}</dd>
+      <dt>Severity</dt><dd>{{severity}}</dd>
+      <dt>Confidence</dt><dd>claimed {{claimed_confidence}}, after gate <strong>{{final_confidence}}</strong></dd>
+      <dt>Escalate</dt><dd>{{escalate}}</dd>
+      <dt>Gate notes</dt><dd><ul>{{gate_reasons}}</ul></dd>
+    </dl>
+  </section>
+
+  {{second_opinion}}
+
+  <section>
+    <h2>Cited evidence</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Kind</th><th>Ref</th><th>Check</th><th>Supports</th></tr></thead>
+      <tbody>{{evidence_rows}}</tbody>
+    </table></div>
+    <details>
+      <summary>Tool calls</summary>
+      <div class="table-wrap"><table>
+        <thead><tr><th>#</th><th>Tool</th><th>Arguments</th><th>Status</th><th>Summary</th></tr></thead>
+        <tbody>{{tool_rows}}</tbody>
+      </table></div>
+    </details>
+  </section>
+
+  <section>
+    <h2>Ask why</h2>
+    <div id="log" aria-live="polite"></div>
+    <form id="chat-form">
+      <input type="text" id="question" maxlength="1000" placeholder="Why do you think payment is the root cause?">
+      <button type="submit" id="ask">Ask</button>
+    </form>
+    <p class="hint">Answers come only from the stored transcript. Chat cannot approve, reject or change anything.</p>
+  </section>
+
+  <section>
+    <h2>Live log</h2>
+    <div id="live-log" aria-live="polite">{{log_lines}}</div>
+  </section>
+</main>
+<script nonce="{{nonce}}">
+(function () {
+  const ds = document.body.dataset;
+  const buttons = ["approve", "reject", "kill"].map((id) => document.getElementById(id));
+  const statusEl = document.getElementById("status");
+  const countdownEl = document.getElementById("countdown");
+  let remaining = Number(ds.remaining);
+  let done = false;
+
+  function setStatus(text, cls) { statusEl.textContent = text; statusEl.className = cls || ""; }
+  function setButtons(enabled) { buttons.forEach((b) => { b.disabled = !enabled; }); }
+  function finish(text, cls) { done = true; setButtons(false); setStatus(text, cls); }
+
+  function tick() {
+    const s = Math.max(0, remaining);
+    countdownEl.textContent = String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+    if (s <= 0 && !done) finish("Timed out: treated as REJECT. Nothing was changed.", "bad");
+    remaining -= 1;
+  }
+  tick();
+  const timer = setInterval(() => { tick(); if (done) clearInterval(timer); }, 1000);
+
+  async function post(path, payload) {
+    const body = Object.assign({ token: ds.token, action_id: ds.actionId }, payload);
+    const r = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify(body) });
+    let data = {};
+    try { data = await r.json(); } catch (e) { /* non-JSON body */ }
+    return { ok: r.ok, status: r.status, data: data };
+  }
+
+  async function decide(decision) {
+    if (done) return;
+    if (decision === "kill_switch" &&
+        !window.confirm("Engage the emergency kill switch? All autonomous actions halt and this action is rejected.")) {
+      return;
+    }
+    setButtons(false);
+    try {
+      const res = await post("/decision", { decision: decision,
+                                            approver: document.getElementById("approver").value });
+      if (res.ok) {
+        const text = decision === "approve" ? "APPROVED. The agent may now run this action."
+          : decision === "reject" ? "REJECTED. Nothing will be changed."
+          : "KILL SWITCH ENGAGED. Action rejected; all autonomous actions are halted.";
+        finish(text, decision === "approve" ? "ok" : "bad");
+      } else if (res.status === 409 || res.status === 410) {
+        finish("Refused: " + (res.data.error || res.status), "warn");
+      } else {
+        setStatus("Refused: " + (res.data.error || ("HTTP " + res.status)), "warn");
+        setButtons(true);
+      }
+    } catch (e) {
+      finish("The approval server is no longer running.", "warn");
+    }
+  }
+
+  document.getElementById("approve").addEventListener("click", () => decide("approve"));
+  document.getElementById("reject").addEventListener("click", () => decide("reject"));
+  document.getElementById("kill").addEventListener("click", () => decide("kill_switch"));
+
+  const log = document.getElementById("log");
+  function addMsg(text, who) {
+    const div = document.createElement("div");
+    div.className = "msg " + who;
+    div.textContent = text;
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  document.getElementById("chat-form").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const input = document.getElementById("question");
+    const ask = document.getElementById("ask");
+    const q = input.value.trim();
+    if (!q) return;
+    addMsg(q, "you");
+    input.value = "";
+    ask.disabled = true;
+    try {
+      const res = await post("/chat", { question: q });
+      addMsg(res.ok ? res.data.answer : "Refused: " + (res.data.error || res.status), "bot");
+    } catch (e) {
+      addMsg("The approval server is no longer running.", "bot");
+    } finally {
+      ask.disabled = false;
+    }
+  });
+
+  const liveLog = document.getElementById("live-log");
+  liveLog.scrollTop = liveLog.scrollHeight;
+  let logNext = Number(ds.logNext) || 0;
+  const logTimer = setInterval(async () => {
+    try {
+      const r = await fetch("/events?after=" + logNext, { cache: "no-store" });
+      if (!r.ok) return;
+      const data = await r.json();
+      const atBottom = liveLog.scrollHeight - liveLog.scrollTop - liveLog.clientHeight < 30;
+      (data.events || []).forEach((ev) => {
+        const div = document.createElement("div");
+        div.className = "line";
+        div.textContent = ev.line;
+        liveLog.appendChild(div);
+      });
+      logNext = data.next;
+      if (atBottom) liveLog.scrollTop = liveLog.scrollHeight;
+    } catch (e) {
+      clearInterval(logTimer);
+    }
+  }, 1500);
+})();
+</script>
+</body>
+</html>

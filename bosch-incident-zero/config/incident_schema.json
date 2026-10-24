@@ -26,7 +26,13 @@
     },
     "status": {
       "type": "string",
-      "enum": ["DETECTED", "DIAGNOSED", "REMEDIATION_PENDING", "REMEDIATED", "RESOLVED", "ABORTED"]
+      "enum": ["DETECTED", "DIAGNOSED", "REMEDIATION_PENDING", "REMEDIATED", "RESOLVED", "ABORTED",
+               "ESCALATED", "MITIGATION_UNVERIFIED", "MITIGATION_FAILED", "UNVERIFIED_ESCALATED"],
+      "description": "RESOLVED only when post-action verification showed recovery"
+    },
+    "root_cause_category": {
+      "type": "string",
+      "description": "Diagnosis category, e.g. errors_on_operation or dependency_unreachable"
     },
     "target_service": {
       "type": "string",
@@ -58,8 +64,7 @@
         "trace_ids": {
           "type": "array",
           "items": { "type": "string" },
-          "minItems": 1,
-          "description": "List of Jaeger trace IDs exhibiting error or abnormal latency"
+          "description": "Jaeger trace IDs exhibiting error or abnormal latency; required non-empty unless the incident is escalated"
         },
         "metrics_summary": {
           "type": "object",
@@ -82,12 +87,103 @@
         "requires_approval": { "type": "boolean" },
         "approval_status": {
           "type": "string",
-          "enum": ["PENDING", "APPROVED", "REJECTED", "BYPASSED"]
+          "enum": ["PENDING", "APPROVED", "REJECTED", "BYPASSED", "BLOCKED_BY_KILL_SWITCH"]
         },
         "dry_run": { "type": "boolean" },
         "executed_at": { "type": ["string", "null"] },
         "recovery_verified": { "type": "boolean" }
       }
+    },
+    "timeline": {
+      "type": "array",
+      "description": "Ordered action log: alert, diagnosis, plan, approval, kill-switch checks, execution, verification, rollback",
+      "items": {
+        "type": "object",
+        "properties": {
+          "at": { "type": ["string", "null"] },
+          "event": { "type": "string" },
+          "status": { "type": ["string", "null"] },
+          "detail": {}
+        }
+      }
+    },
+    "action_taken": {
+      "type": ["object", "null"],
+      "description": "The remediation action and its approval and execution; null when no action was planned",
+      "required": ["type", "target", "dry_run", "approval_status"],
+      "properties": {
+        "action_id": { "type": ["string", "null"] },
+        "type": { "type": "string" },
+        "target": { "type": "string" },
+        "reason": { "type": ["string", "null"] },
+        "parameters": { "type": "object" },
+        "dry_run": { "type": "boolean" },
+        "backend": { "type": ["string", "null"] },
+        "approval_status": { "type": ["string", "null"] },
+        "approver": { "type": ["string", "null"] },
+        "approved_at": { "type": ["string", "null"] },
+        "approval_channel": { "type": ["string", "null"] },
+        "executed_at": { "type": ["string", "null"] },
+        "result": {},
+        "rollback": { "type": ["object", "null"] },
+        "recovery_verified": { "type": "boolean" }
+      }
+    },
+    "verification": {
+      "type": ["object", "null"],
+      "description": "Before/after telemetry comparison after the action settled",
+      "required": ["status", "recovered", "before", "after", "reasons", "checked_at"],
+      "properties": {
+        "status": { "type": "string", "enum": ["RECOVERED", "NOT_RECOVERED", "NOT_VERIFIED_DRY_RUN", "NO_DATA"] },
+        "recovered": { "type": "boolean" },
+        "before": { "type": "object" },
+        "after": { "type": "object" },
+        "reasons": { "type": "array", "items": { "type": "string" } },
+        "evidence": {
+          "type": "array",
+          "items": { "type": "object", "required": ["ref", "kind"] }
+        },
+        "checked_at": { "type": "string" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "RECOVERED" } } },
+          "then": { "properties": { "recovered": { "const": true } } },
+          "else": { "properties": { "recovered": { "const": false } } }
+        }
+      ]
+    },
+    "prevention": {
+      "type": "object",
+      "required": ["category", "recommendations"],
+      "properties": {
+        "category": { "type": "string" },
+        "recommendations": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "audit_log": {
+      "type": ["string", "null"],
+      "description": "Path of the append-only audit log for this run"
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": ["status"],
+        "properties": { "status": { "enum": ["DIAGNOSED", "RESOLVED", "MITIGATION_UNVERIFIED", "MITIGATION_FAILED"] } }
+      },
+      "then": {
+        "properties": { "evidence": { "properties": { "trace_ids": { "minItems": 1 } } } }
+      }
+    },
+    {
+      "if": {
+        "required": ["verification"],
+        "properties": { "status": { "const": "RESOLVED" } }
+      },
+      "then": {
+        "properties": { "verification": { "type": "object", "properties": { "status": { "const": "RECOVERED" } } } }
+      }
+    }
+  ]
 }
