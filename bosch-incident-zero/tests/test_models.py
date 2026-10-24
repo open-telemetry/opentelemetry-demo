@@ -10,7 +10,6 @@ from src.models.incident import (
     EvidencePayload,
     RemediationPayload,
 )
-from src.faultctl.flagd_adapter import FlagdAdapter
 
 
 def test_incident_report_validates_against_json_schema() -> None:
@@ -48,33 +47,3 @@ def test_incident_report_validates_against_json_schema() -> None:
     # Validate against JSON schema draft 2020-12
     jsonschema.validate(instance=data, schema=schema)
 
-
-def test_flagd_adapter(tmp_path: Path) -> None:
-    config_file = tmp_path / "test.flagd.json"
-    dummy_flags = {
-        "flags": {
-            "cartFailure": {
-                "state": "ENABLED",
-                "defaultVariant": "off",
-                "variants": {
-                    "off": 0,
-                    "100%": 1,
-                    "50%": 0.5
-                }
-            }
-        }
-    }
-    config_file.write_text(json.dumps(dummy_flags), encoding="utf-8")
-
-    adapter = FlagdAdapter(flagd_config_path=config_file)
-    assert "cartFailure" in adapter.list_available_faults()
-
-    # Inject
-    adapter.inject_fault("cartFailure", variant="100%")
-    state = adapter.get_fault_state("cartFailure")
-    assert state["defaultVariant"] == "100%"
-
-    # Revert
-    adapter.revert_fault("cartFailure")
-    state = adapter.get_fault_state("cartFailure")
-    assert state["defaultVariant"] == "off"

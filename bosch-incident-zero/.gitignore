@@ -51,3 +51,6 @@ reports/
 audit_logs/
 *.log
 incident_output/
+
+# Runtime kill-switch sentinel (engaged at runtime, never committed)
+.kill_switch
