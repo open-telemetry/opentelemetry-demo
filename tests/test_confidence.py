@@ -86,9 +86,86 @@ def test_zero_validated_items_escalates():
     assert any("no evidence item could be validated" in r for r in a.escalation_reasons)
 
 
-def test_budget_exhausted_escalates():
-    a = C.assess(cand(0.9), TWO_KINDS, {S.RUN_BUDGET_EXHAUSTED: True, S.RUN_STOP_REASON: "token_budget"})
-    assert a.escalate and any("ran out of budget" in r and "token_budget" in r for r in a.escalation_reasons)
+BUDGET = {S.RUN_BUDGET_EXHAUSTED: True, S.RUN_STOP_REASON: "step_budget"}
+
+
+def test_budget_exhausted_with_two_kinds_of_validated_evidence_does_not_escalate():
+    a = C.assess(cand(0.9), TWO_KINDS, BUDGET)
+    assert not a.escalate and a.confidence == 0.9
+    assert "step budget was reached" in a.reasons
+
+
+def test_budget_exhausted_without_validated_evidence_escalates():
+    a = C.assess(cand(0.9), [ev(ok=False)], BUDGET)
+    assert any("ran out of budget" in r and "step_budget" in r for r in a.escalation_reasons)
+    assert "step budget was reached" not in a.reasons
+
+
+def test_budget_exhausted_with_one_kind_escalates():
+    a = C.assess(cand(0.9), [ev("container"), ev("container", ledger_id="C2")], BUDGET)
+    assert any("ran out of budget" in r for r in a.escalation_reasons)
+
+
+def test_budget_exhausted_with_an_llm_error_still_escalates():
+    a = C.assess(cand(0.9), TWO_KINDS, dict(BUDGET, **{S.RUN_LLM_ERROR: "timeout"}))
+    assert any("ran out of budget" in r for r in a.escalation_reasons)
+
+
+def test_budget_exhausted_still_applies_the_normal_confidence_rules():
+    a = C.assess(cand(0.5), TWO_KINDS, BUDGET)
+    assert a.escalate and not any("ran out of budget" in r for r in a.escalation_reasons)
+
+
+# --- kinds come from the ledger entry, not from the model's label ------------------------------
+
+def test_two_items_citing_the_same_entry_with_different_labels_are_one_kind():
+    a = C.assess(cand(0.95), [ev("a", ledger_id="C1"), ev("b", ledger_id="C1")])
+    assert a.confidence == C.CAP_SINGLE_KIND and a.escalate
+
+
+def test_label_is_ignored_and_the_kind_is_derived_from_the_ledger_id():
+    a = C.assess(cand(0.95), [ev("trace", ledger_id="M1"), ev("log", ledger_id="L1")])
+    assert a.confidence == 0.95 and not a.escalate  # metric + log, whatever the labels say
+    mismatch = [r for r in a.reasons if "labelled kind trace but cites a metric entry" in r]
+    assert mismatch == ["evidence M1 labelled kind trace but cites a metric entry"]
+
+
+def test_kind_derived_from_prefix_for_every_tool():
+    assert {C.derived_kind(i) for i in ("M1", "C1", "T1", "L1", "D1")} == {"metric", "container", "trace", "log"}
+
+
+def test_container_and_deploy_entries_count_as_one_kind():
+    a = C.assess(cand(0.95), [ev("container", ledger_id="C1"), ev("container", ledger_id="D1")])
+    assert a.confidence == C.CAP_SINGLE_KIND and a.escalate
+
+
+def test_matching_labels_add_no_mismatch_line():
+    assert C.assess(cand(0.9), TWO_KINDS).reasons == []
+    assert C.assess(cand(0.9), [ev("container", ledger_id="D1"), ev("log", ledger_id="L1")]).reasons == []
+
+
+def test_rejected_items_do_not_count_towards_kinds():
+    a = C.assess(cand(0.95), [ev("container"), ev("log", ok=False, ledger_id="L1")])
+    assert a.confidence == C.CAP_SINGLE_KIND
+
+
+# --- escalation reason names the cap that contributed ------------------------------------------
+
+def test_single_kind_escalation_reason_names_the_cap():
+    a = C.assess(cand(0.95), [ev("container")])
+    assert "only one kind of evidence (capped at 0.60), below the 0.70 threshold" in a.escalation_reasons
+
+
+def test_no_alternatives_cap_is_named_when_it_pushes_below_the_threshold(monkeypatch):
+    monkeypatch.setattr(C, "CAP_NO_ALTERNATIVES", 0.65)
+    a = C.assess(cand(0.95, alternatives=[]), TWO_KINDS)
+    assert any("no alternative explanation considered (capped at 0.65)" in r and "below the 0.70 threshold" in r
+               for r in a.escalation_reasons)
+
+
+def test_plain_low_confidence_reason_is_unchanged_when_no_cap_applied():
+    a = C.assess(cand(0.65), TWO_KINDS)
+    assert a.escalation_reasons == ["confidence 0.65 is below the threshold 0.70"]
 
 
 def test_llm_error_escalates():

@@ -128,7 +128,8 @@ def test_metric_number_outside_relative_tolerance():
 
 def test_metric_small_number_uses_absolute_tolerance():
     led = {"M1": {"id": "M1", "result": {"items": [{"error_rate_per_s": 0.0361}]}}}
-    assert validate_evidence(candidate(item("M1", "metric", "0.07")), led).items[0][S.EV_VALIDATED]
+    assert validate_evidence(candidate(item("M1", "metric", "0.07")), led).items[0][S.EV_VALIDATED] is False
+    assert validate_evidence(candidate(item("M1", "metric", "0.039")), led).items[0][S.EV_VALIDATED]
     assert not validate_evidence(candidate(item("M1", "metric", "0.2")), led).items[0][S.EV_VALIDATED]
 
 
@@ -150,9 +151,67 @@ def test_metric_quote_that_is_neither_a_number_nor_in_the_text_is_rejected():
     assert "not a number" in out.items[0][S.EV_NOTE]
 
 
+def test_zero_and_one_digit_quotes_do_not_match_near_zero_values():
+    led = {"M1": {"id": "M1", "result": {"items": [{"error_rate_per_s": 0.0338}]}}}
+    for quote in ("0", "-0.03", "0.0", "0.03", "-0"):
+        out = validate_evidence(candidate(item("M1", "metric", quote)), led)
+        assert out.items[0][S.EV_VALIDATED] is False, quote
+    assert "too imprecise" in out.items[0][S.EV_NOTE]
+
+
+def test_two_significant_digits_still_use_the_tolerance():
+    led = {"M1": {"id": "M1", "result": {"items": [{"error_rate_per_s": 0.3412}]}}}
+    assert validate_evidence(candidate(item("M1", "metric", "0.34")), led).items[0][S.EV_VALIDATED]
+    assert not validate_evidence(candidate(item("M1", "metric", "0.5")), led).items[0][S.EV_VALIDATED]
+
+
+def test_short_quote_equal_to_a_value_exactly_is_valid():
+    led = {"M1": {"id": "M1", "result": {"items": [{"errors": 0, "n": 5.0}]}}}
+    assert validate_evidence(candidate(item("M1", "metric", "0")), led).items[0][S.EV_VALIDATED]
+    assert validate_evidence(candidate(item("M1", "metric", "5")), led).items[0][S.EV_VALIDATED]
+    assert not validate_evidence(candidate(item("M1", "metric", "6")), led).items[0][S.EV_VALIDATED]
+
+
+def test_metric_tolerance_is_decided_by_the_entry_not_the_label():
+    led = {"L1": {"id": "L1", "result": {"items": [{"count": 3.4, "message": "something failed"}]}}}
+    assert not validate_evidence(candidate(item("L1", "metric", "3.4")), led).items[0][S.EV_VALIDATED]
+
+
 def test_number_quote_for_a_non_metric_kind_is_not_matched_numerically():
     led = {"L1": {"id": "L1", "result": {"items": [{"count": 13, "message": "something failed"}]}}}
     assert not validate_evidence(candidate(item("L1", "log", "13.0")), led).items[0][S.EV_VALIDATED]
+
+
+# --- trivial text quotes ----------------------------------------------------------------------
+
+def test_log_quote_that_is_only_a_timestamp_is_rejected():
+    led = {"L1": {"id": "L1", "tool": "query_logs", "result": {"items": [
+        {"timestamp": "2026-10-24T10:00:00.123Z", "message": "payment failed: upstream timed out"}]}}}
+    for quote in ("2026-10-24T10:00:00.123Z", " 2026-10-24T10:00:00.123Z ", "2026-10-24T10:00:00"):
+        out = validate_evidence(candidate(item("L1", "log", quote)), led)
+        assert out.items[0][S.EV_VALIDATED] is False, quote
+        assert "only a timestamp" in out.items[0][S.EV_NOTE]
+
+
+def test_full_log_message_passes():
+    led = {"L1": {"id": "L1", "tool": "query_logs", "result": {"items": [
+        {"timestamp": "2026-10-24T10:00:00.123Z", "message": "payment failed: upstream timed out"}]}}}
+    assert validate_evidence(candidate(item("L1", "log", "payment failed: upstream timed out")), led).items[0][S.EV_VALIDATED]
+
+
+def test_short_log_and_trace_quotes_are_rejected_but_short_container_names_are_not():
+    led = {"L1": {"id": "L1", "result": {"items": [{"message": "an error happened"}]}},
+           "T1": {"id": "T1", "result": {"items": [{"trace_id": "abc12345def"}]}},
+           "C1": {"id": "C1", "result": {"items": [{"name": "cart", "state": "exited"}]}}}
+    assert not validate_evidence(candidate(item("L1", "log", "error")), led).items[0][S.EV_VALIDATED]
+    assert not validate_evidence(candidate(item("T1", "trace", "abc1234")), led).items[0][S.EV_VALIDATED]
+    assert validate_evidence(candidate(item("T1", "trace", "abc12345")), led).items[0][S.EV_VALIDATED]
+    assert validate_evidence(candidate(item("C1", "container", "cart")), led).items[0][S.EV_VALIDATED]
+
+
+def test_a_container_label_does_not_exempt_a_log_entry_from_the_length_rule():
+    led = {"L1": {"id": "L1", "result": {"items": [{"message": "an error happened"}]}}}
+    assert not validate_evidence(candidate(item("L1", "container", "error")), led).items[0][S.EV_VALIDATED]
 
 
 # --- value --------------------------------------------------------------------------------------

@@ -2,11 +2,14 @@
 
 The model's own number is only an upper bound: it is clamped to 0..1, then lowered by caps, never raised.
 Every cap that lowers it is written down in plain words. Separately, some findings force escalation
-whatever the number is (an invented quote, no usable evidence, a run that ran out of budget).
+whatever the number is (an invented quote, no usable evidence, a run that failed). A run that ran out of
+budget forces escalation only when it has no validated evidence of at least two kinds to show for it.
+The kinds are those of the ledger entries the items cite, never the labels the model chose.
 """
 from dataclasses import dataclass, field
 
 from oncall import schema as S
+from oncall.validator import derived_kind
 
 CONFIDENCE_THRESHOLD = 0.7  # below this the report escalates to a human instead of asserting a cause
 CAP_SINGLE_KIND = 0.6  # validated evidence of fewer than two different kinds
@@ -23,6 +26,16 @@ class Assessment:
     @property
     def escalate(self) -> bool:
         return bool(self.escalation_reasons)
+
+
+def kind_mismatch(item: dict) -> str | None:
+    """A sentence when the model's kind label for a validated item differs from its ledger entry's kind."""
+    derived = derived_kind(item[S.EV_LEDGER_ID])
+    label = str(item[S.EV_KIND]).strip().lower()
+    label = "container" if label == "deploy" else label
+    if derived is None or label == derived:
+        return None
+    return f"evidence {item[S.EV_LEDGER_ID]} labelled kind {item[S.EV_KIND]} but cites a {derived} entry"
 
 
 def _clamp(stated) -> tuple[float, str | None]:
@@ -55,22 +68,34 @@ def assess(candidate: dict, evidence_items: list[dict], run_info: dict | None = 
         escalation.append("the agent could not name a component")
     if not validated:
         escalation.append("no evidence item could be validated against the ledger")
+
+    kinds = {derived_kind(i[S.EV_LEDGER_ID]) or "other" for i in validated}
+    reasons += [note for note in map(kind_mismatch, validated) if note]
+
     if run_info.get(S.RUN_BUDGET_EXHAUSTED):
-        escalation.append(f"the investigation ran out of budget (stop reason: {run_info.get(S.RUN_STOP_REASON)})")
+        if validated and len(kinds) >= MIN_DISTINCT_KINDS and not run_info.get(S.RUN_LLM_ERROR):
+            reasons.append("step budget was reached")
+        else:
+            escalation.append(f"the investigation ran out of budget (stop reason: {run_info.get(S.RUN_STOP_REASON)})")
     if run_info.get(S.RUN_LLM_ERROR):
         escalation.append(f"the run reported an error: {run_info[S.RUN_LLM_ERROR]}")
 
     # --- caps (only written down when they actually lower the number) --------------------------
-    kinds = {i[S.EV_KIND] for i in validated}
+    binding = []  # short phrases for the escalation reason
     if len(kinds) < MIN_DISTINCT_KINDS and CAP_SINGLE_KIND < confidence:
         reasons.append(f"capped at {CAP_SINGLE_KIND:.2f}: validated evidence has {len(kinds)} kind(s), "
                        f"at least {MIN_DISTINCT_KINDS} different kinds are needed for more")
+        binding.append(f"{'only one kind of' if kinds else 'no validated'} evidence (capped at {CAP_SINGLE_KIND:.2f})")
         confidence = CAP_SINGLE_KIND
     if not candidate.get(S.ALTERNATIVES) and CAP_NO_ALTERNATIVES < confidence:
         reasons.append(f"capped at {CAP_NO_ALTERNATIVES:.2f}: no alternative explanation was considered")
+        binding.append(f"no alternative explanation considered (capped at {CAP_NO_ALTERNATIVES:.2f})")
         confidence = CAP_NO_ALTERNATIVES
 
     if confidence < CONFIDENCE_THRESHOLD:
-        escalation.append(f"confidence {confidence:.2f} is below the threshold {CONFIDENCE_THRESHOLD:.2f}")
+        if binding:
+            escalation.append(f"{' and '.join(binding)}, below the {CONFIDENCE_THRESHOLD:.2f} threshold")
+        else:
+            escalation.append(f"confidence {confidence:.2f} is below the threshold {CONFIDENCE_THRESHOLD:.2f}")
 
     return Assessment(confidence=confidence, reasons=reasons, escalation_reasons=escalation)

@@ -4,10 +4,14 @@ An item is valid only when the model's own words can be found in what the tools 
   1. its ledger_id exists;
   2. its quote is an EXACT substring of a string value inside that entry's result
      (trace IDs, log messages and container names compare exactly, with no trimming or case change);
-  3. for kind "metric" the quote may instead be a number within METRIC_REL_TOL (2 %) or
-     METRIC_ABS_TOL (0.05) of a numeric value in that entry. Metric entries also carry text such as
-     "errors 0.00% -> 3.38%"; a quote that is an exact substring of that text is valid by rule 2;
-  4. if a value is given it must also occur in the same entry (exact text, or an equal number).
+  3. for a metric entry the quote may instead be a number within METRIC_REL_TOL (2 %) or
+     METRIC_ABS_TOL (0.05) of a numeric value in that entry, but only when it has at least
+     MIN_SIGNIFICANT_DIGITS significant digits and is not zero; a shorter number such as "0" must equal a
+     value exactly. Metric entries also carry text such as "errors 0.00% -> 3.38%"; a quote that is an
+     exact substring of that text is valid by rule 2;
+  4. if a value is given it must also occur in the same entry (exact text, or an equal number);
+  5. a log or trace quote that is only a timestamp, or shorter than MIN_LOG_TRACE_QUOTE_CHARS, is rejected.
+The kind used for rules 3 and 5 comes from the ledger entry (see `derived_kind`), not from the model's label.
 A separate soft check only warns when no valid item's entry mentions the claimed component.
 
 Only what the tool observed is searched (the entry's result without its query strings), so a model
@@ -17,14 +21,27 @@ The ledger is the dict stored in ledger.json: a list of entries {id, tool, argum
 timestamp, result}. `Ledger` has no load method, so `load_ledger` reads that file directly.
 """
 import json
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
 from oncall import schema as S
+from tools.ledger import PREFIXES
 
 METRIC_REL_TOL = 0.02
 METRIC_ABS_TOL = 0.05
 MIN_QUOTE_CHARS = 3  # a text quote shorter than this would match almost anything
+MIN_LOG_TRACE_QUOTE_CHARS = 8  # container names are legitimately short, log lines and trace ids are not
+MIN_SIGNIFICANT_DIGITS = 2
+
+KIND_METRIC, KIND_CONTAINER, KIND_TRACE, KIND_LOG = "metric", "container", "trace", "log"
+# Docker supplies both container health and deploy history, so they count as one kind of evidence.
+KIND_BY_TOOL = {"query_metrics": KIND_METRIC, "container_health": KIND_CONTAINER, "deploy_history": KIND_CONTAINER,
+                "query_traces": KIND_TRACE, "query_logs": KIND_LOG}
+KIND_BY_PREFIX = {PREFIXES[tool]: kind for tool, kind in KIND_BY_TOOL.items()}
+
+# A bare ISO 8601 timestamp such as 2026-10-24T10:00:00.123Z or "2026-10-24 10:00:00+00:00".
+TIMESTAMP_ONLY = re.compile(r"\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:?\d{2})?")
 
 
 @dataclass
@@ -39,6 +56,15 @@ class ValidationResult:
     @property
     def rejected(self) -> list[dict]:
         return [i for i in self.items if not i[S.EV_VALIDATED]]
+
+
+def derived_kind(ledger_id, entry: dict | None = None) -> str | None:
+    """The kind of evidence a ledger entry really is, from its id prefix (M1, C2, ...) or its tool field.
+    Never taken from the label the model put on its evidence item."""
+    if isinstance(ledger_id, str) and ledger_id[:1] in KIND_BY_PREFIX:
+        return KIND_BY_PREFIX[ledger_id[:1]]
+    tool = entry.get("tool") if isinstance(entry, dict) else None
+    return KIND_BY_TOOL.get(tool) if isinstance(tool, str) else None
 
 
 # --- ledger access -----------------------------------------------------------------------------
@@ -110,13 +136,38 @@ def _within_tolerance(quoted: float, actual: float) -> bool:
     return abs(quoted - actual) <= max(METRIC_REL_TOL * abs(actual), METRIC_ABS_TOL)
 
 
+def _significant_digits(text: str) -> int:
+    digits = text.strip().lstrip("+-").rstrip("%").strip().replace(".", "")
+    return len(digits.lstrip("0"))
+
+
+def _number_matches(quote: str, quoted: float, numbers: list[float]) -> tuple[float | None, str]:
+    """(a number of the entry the quote matches, how) or (None, why not). Tolerance needs a precise quote."""
+    if quoted != 0 and _significant_digits(quote) >= MIN_SIGNIFICANT_DIGITS:
+        close = [n for n in numbers if _within_tolerance(quoted, n)]
+        return (close[0], "within tolerance") if close else (None, f"no number within 2% or 0.05 of {quote}")
+    exact = [n for n in numbers if n == quoted]
+    return (exact[0], "exactly") if exact else (
+        None, f"metric quote {quote!r} is too imprecise for a tolerance match and equals no value exactly")
+
+
+def _trivial_text_quote(quote: str, kind: str | None) -> str | None:
+    """Why a log or trace quote is too thin to prove anything, or None when it is fine."""
+    if kind not in (KIND_LOG, KIND_TRACE):
+        return None
+    if TIMESTAMP_ONLY.fullmatch(quote.strip()):
+        return "is only a timestamp"
+    if len(quote) < MIN_LOG_TRACE_QUOTE_CHARS:
+        return f"is shorter than {MIN_LOG_TRACE_QUOTE_CHARS} characters"
+    return None
+
+
 # --- one item ----------------------------------------------------------------------------------
 
 def _check_item(item: dict, ledger: dict[str, dict]) -> tuple[bool, str]:
     ledger_id = item.get(S.EV_LEDGER_ID)
     quote = item.get(S.EV_QUOTE)
     value = item.get(S.EV_VALUE)
-    kind = item.get(S.EV_KIND)
 
     entry = ledger.get(ledger_id) if isinstance(ledger_id, str) else None
     if entry is None:
@@ -124,21 +175,25 @@ def _check_item(item: dict, ledger: dict[str, dict]) -> tuple[bool, str]:
     if not isinstance(quote, str) or not quote.strip():
         return False, f"{ledger_id}: the quote is empty"
 
+    kind = derived_kind(ledger_id, entry) or item.get(S.EV_KIND)
+    trivial = _trivial_text_quote(quote, kind)
+    if trivial:
+        return False, f"{ledger_id}: quote {quote!r} {trivial}"
+
     texts, numbers = _split(_observed(entry))
 
     found = False
     note = ""
     if len(quote) >= MIN_QUOTE_CHARS and any(quote in text for text in texts):
         found, note = True, f"quote found verbatim in {ledger_id}"
-    elif kind == "metric":
+    elif kind == KIND_METRIC:
         quoted = _as_number(quote)
         if quoted is None:
             return False, f"{ledger_id}: metric quote {quote!r} is not a number and not found in the entry text"
-        close = [n for n in numbers if _within_tolerance(quoted, n)]
-        if close:
-            found, note = True, f"metric quote {quote} matches {close[0]} in {ledger_id} (within tolerance)"
-        else:
-            return False, f"{ledger_id}: no number within 2% or 0.05 of {quote}"
+        match, how = _number_matches(quote, quoted, numbers)
+        if match is None:
+            return False, f"{ledger_id}: {how}"
+        found, note = True, f"metric quote {quote} matches {match} in {ledger_id} ({how})"
     if not found:
         reason = "too short to check" if len(quote) < MIN_QUOTE_CHARS else "not found in the entry"
         return False, f"{ledger_id}: quote {quote!r} {reason}"
