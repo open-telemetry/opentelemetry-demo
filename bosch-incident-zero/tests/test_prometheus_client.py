@@ -174,5 +174,54 @@ def test_prometheus_get_service_metrics(client, mock_session):
     metrics = client.get_service_metrics("cart")
     assert len(metrics) > 0
     assert metrics[0].service == "cart"
-    assert metrics[0].metric_name == "http_error_rate_ratio"
+    assert metrics[0].metric_name == "error_rate_ratio"
     assert metrics[0].observed_value == 0.125
+
+
+def test_prometheus_get_service_metrics_uses_span_metrics(client, mock_session):
+    mock_resp = MagicMock()
+    mock_resp.ok = True
+    mock_resp.json.return_value = {"status": "success", "data": {"resultType": "vector", "result": []}}
+    mock_session.request.return_value = mock_resp
+
+    assert client.get_service_metrics("payment") == []
+    queries = [c.kwargs["params"]["query"] for c in mock_session.request.call_args_list]
+    assert any("traces_span_metrics_calls_total" in q and 'service_name="payment"' in q for q in queries)
+    assert not any("http_server_duration_milliseconds" in q for q in queries)
+
+
+def test_prometheus_get_services_overview(client, mock_session):
+    rows = [
+        {"metric": {"service_name": "payment"}, "value": [1729688400.0, "0.5"]},
+        {"metric": {"service_name": "cart"}, "value": [1729688400.0, "NaN"]},
+    ]
+    mock_resp = MagicMock()
+    mock_resp.ok = True
+    mock_resp.json.return_value = {"status": "success", "data": {"resultType": "vector", "result": rows}}
+    mock_session.request.return_value = mock_resp
+
+    overview = client.get_services_overview()
+    assert overview["payment"] == {"error_rate_ratio": 0.5, "p95_latency_ms": 0.5, "requests_per_second": 0.5}
+    assert "cart" not in overview
+
+
+def test_prometheus_missing_baseline_is_none_not_zero(client, mock_session):
+    current = MagicMock(ok=True)
+    current.json.return_value = {"status": "success", "data": {"resultType": "vector",
+                                 "result": [{"metric": {}, "value": [1.0, "9000"]}]}}
+    empty = MagicMock(ok=True)
+    empty.json.return_value = {"status": "success", "data": {"resultType": "vector", "result": []}}
+    mock_session.request.side_effect = lambda *a, **kw: empty if "offset" in kw["params"]["query"] else current
+
+    metrics = client.get_service_metrics("checkout")
+    assert metrics and all(m.baseline_value is None for m in metrics)
+
+
+def test_prometheus_overview_excludes_infra_services(client, mock_session):
+    rows = [{"metric": {"service_name": s}, "value": [1.0, "0.2"]} for s in ("payment", "flagd", "load-generator")]
+    mock_resp = MagicMock(ok=True)
+    mock_resp.json.return_value = {"status": "success", "data": {"resultType": "vector", "result": rows}}
+    mock_session.request.return_value = mock_resp
+
+    assert set(client.get_services_overview()) == {"payment"}
+    assert set(client.get_services_overview(include_infra=True)) == {"payment", "flagd", "load-generator"}

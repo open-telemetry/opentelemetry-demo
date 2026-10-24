@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 from ..config import Settings
+from ..analysis.dependency_calls import find_failed_dependency_calls
 from ..models.evidence import EvidenceBundle, MetricDataPoint
 from ..telemetry.jaeger_client import JaegerClient
 from ..telemetry.opensearch_client import OpenSearchClient
@@ -64,6 +65,7 @@ class EvidenceCollector:
         now_iso = datetime.now(timezone.utc).isoformat()
 
         trace_ids: List[str] = []
+        failed_calls: List[Dict[str, Any]] = []
         metrics: List[MetricDataPoint] = []
         log_excerpts: List[str] = []
 
@@ -79,6 +81,15 @@ class EvidenceCollector:
                     service_name=service_name,
                     lookback_seconds=lookback_seconds,
                 )
+                if trace_ids:
+                    failed_calls = find_failed_dependency_calls(
+                        self.jaeger_client.get_traces(
+                            service_name=service_name,
+                            lookback_seconds=lookback_seconds,
+                            num_traces=30,
+                            errors_only=True,
+                        )
+                    )
                 source_status["jaeger"] = "available"
                 source_errors["jaeger"] = None
             except Exception as e:
@@ -156,6 +167,7 @@ class EvidenceCollector:
             service_name=service_name,
             detection_timestamp=now_iso,
             trace_ids=trace_ids,
+            failed_dependency_calls=failed_calls,
             metrics=metrics,
             log_excerpts=log_excerpts,
             dependency_graph=dep_graph,

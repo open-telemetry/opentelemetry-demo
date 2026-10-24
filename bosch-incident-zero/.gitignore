@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-__pycache__/
-*.pyc
-.env
-=======
 # Python
 __pycache__/
 *.py[cod]
@@ -56,4 +51,3 @@ reports/
 audit_logs/
 *.log
 incident_output/
->>>>>>> 7fc15e0c (Add agent feature and documentation)

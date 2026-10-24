@@ -67,39 +67,23 @@ class OpenSearchClient(TelemetryClient):
     ) -> List[str]:
         """Retrieve formatted error logs for a service within a lookback window."""
         lookback_expr = f"now-{lookback_seconds}s"
+        # Demo logs carry severity in severity.text (mixed case: "error", "ERROR", "Error")
+        # and severity.number (OTel: 17-20 = ERROR, 21-24 = FATAL).
+        error_texts = ["ERROR", "Error", "error", "FATAL", "Fatal", "fatal", "CRITICAL", "critical"]
         query_dsl = {
             "size": max_results,
-            "sort": [{"observedTimestamp": {"order": "desc", "unmapped_type": "keyword"}}],
+            "sort": [{"@timestamp": {"order": "desc", "unmapped_type": "date"}}],
             "query": {
                 "bool": {
-                    "must": [
-                        {
-                            "multi_match": {
-                                "query": service_name,
-                                "fields": [
-                                    "resource.attributes.service.name",
-                                    "resource.service.name",
-                                    "service_name",
-                                ],
-                            }
-                        }
-                    ],
                     "filter": [
-                        {
-                            "range": {
-                                "observedTimestamp": {
-                                    "gte": lookback_expr,
-                                }
-                            }
-                        }
+                        {"term": {"resource.service.name.keyword": service_name}},
+                        {"range": {"@timestamp": {"gte": lookback_expr}}},
                     ],
                     "should": [
-                        {"term": {"severityText": "ERROR"}},
-                        {"term": {"severityText": "FATAL"}},
-                        {"term": {"severityText": "CRITICAL"}},
-                        {"wildcard": {"body": "*error*"}},
-                        {"wildcard": {"body": "*fail*"}},
-                        {"wildcard": {"body": "*exception*"}},
+                        {"terms": {"severity.text.keyword": error_texts}},
+                        {"range": {"severity.number": {"gte": 17}}},
+                        {"match_phrase": {"body": "exception"}},
+                        {"match_phrase": {"body": "failed"}},
                     ],
                     "minimum_should_match": 1,
                 }
@@ -150,8 +134,10 @@ class OpenSearchClient(TelemetryClient):
     @staticmethod
     def _format_log_entry(source: Dict[str, Any], fallback_service: str) -> Optional[str]:
         """Format an OpenSearch log document into a human-readable string with trace context."""
-        timestamp = source.get("observedTimestamp") or source.get("@timestamp") or "UNKNOWN_TIME"
-        severity = source.get("severityText") or source.get("level") or "INFO"
+        timestamp = source.get("@timestamp") or source.get("observedTimestamp") or "UNKNOWN_TIME"
+        sev = source.get("severity")
+        sev_text = sev.get("text") if isinstance(sev, dict) else None
+        severity = sev_text or source.get("severityText") or source.get("level") or "INFO"
         body = source.get("body") or source.get("message") or ""
 
         if isinstance(body, dict):

@@ -9,7 +9,7 @@ class MetricDataPoint(BaseModel):
     """Represents a metric anomaly measurement."""
     metric_name: str
     service: str
-    baseline_value: float
+    baseline_value: Optional[float] = None  # None = no baseline data available
     observed_value: float
     unit: str = ""
     timestamp: str
@@ -25,5 +25,9 @@ class EvidenceBundle(BaseModel):
     dependency_graph: Dict[str, List[str]] = Field(
         default_factory=dict,
         description="Upstream and downstream dependencies of the affected service"
+    )
+    failed_dependency_calls: List[Dict[str, Any]] = Field(
+        default_factory=list,
+        description="Failing outbound calls from traces: caller, callee, error, whether the callee was reached",
     )
     metadata: Dict[str, Any] = Field(default_factory=dict)
