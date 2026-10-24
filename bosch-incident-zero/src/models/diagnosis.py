@@ -65,6 +65,9 @@ class DiagnosisResult(BaseModel):
         impacted: List[str] = []
         if target_svc != self.investigated_service:
             impacted.append(self.investigated_service)
+        for caller in self.supporting_evidence.get("impacted_callers") or []:
+            if caller != target_svc and caller not in impacted:
+                impacted.append(caller)
 
         sev = self.primary_root_cause.severity if self.primary_root_cause else IncidentSeverity.MEDIUM
 

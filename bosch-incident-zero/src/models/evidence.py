@@ -26,4 +26,8 @@ class EvidenceBundle(BaseModel):
         default_factory=dict,
         description="Upstream and downstream dependencies of the affected service"
     )
+    failed_dependency_calls: List[Dict[str, Any]] = Field(
+        default_factory=list,
+        description="Failing outbound calls from traces: caller, callee, error, whether the callee was reached",
+    )
     metadata: Dict[str, Any] = Field(default_factory=dict)
