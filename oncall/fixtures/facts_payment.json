@@ -1,0 +1,612 @@
+{
+  "description": "REAL output of the Person 4 tools during a live payment incident (captured, not hand-written)",
+  "captured_at": "2026-10-24T04:55:34+00:00",
+  "tool_outputs": [
+    {
+      "tool": "get_error_rates",
+      "args": {
+        "window_minutes": 5
+      },
+      "text": "checkout: req=9 err=1 rate=14.3% p95=382ms baseline_p95=350ms\npayment: req=9 err=1 rate=14.3% p95=4ms baseline_p95=7ms\nrecommendation: req=166 err=0 rate=0.0% p95=465ms baseline_p95=189ms\nproduct-catalog: req=1059 err=0 rate=0.0% p95=187ms baseline_p95=199ms\nfrontend: req=2715 err=0 rate=0.0% p95=170ms baseline_p95=212ms\nfrontend-proxy: req=2767 err=0 rate=0.0% p95=145ms baseline_p95=216ms\naccounting: req=7 err=0 rate=0.0% p95=92ms baseline_p95=98ms\nfraud-detection: req=15 err=0 rate=0.0% p95=90ms baseline_p95=95ms\nemail: req=7 err=0 rate=0.0% p95=46ms baseline_p95=10ms\nad: req=102 err=0 rate=0.0% p95=9ms baseline_p95=6ms\nshipping: req=45 err=0 rate=0.0% p95=8ms baseline_p95=7ms\ncart: req=287 err=0 rate=0.0% p95=6ms baseline_p95=8ms\ncurrency: req=188 err=0 rate=0.0% p95=2ms baseline_p95=2ms\nimage-provider: req=821 err=0 rate=0.0% p95=2ms baseline_p95=2ms\nquote: req=36 err=0 rate=0.0% p95=2ms baseline_p95=2ms\ntelemetry-docs: req=58 err=0 rate=0.0% p95=2ms baseline_p95=2ms [E-001]"
+    },
+    {
+      "tool": "get_failed_traces",
+      "args": {
+        "service": "checkout",
+        "window_minutes": 5
+      },
+      "text": "2/10 traces for checkout failed; deepest erroring service counts: {'payment': 2}\ntrace f695f778 chain load-generator -> frontend-proxy -> frontend -> checkout -> payment; origin payment span 'charge': Payment request failed. Invalid token. demo.user_context.loyalty_level=gold\ntrace 36d9801b chain load-generator -> frontend-proxy -> frontend -> checkout -> payment; origin payment span 'charge': Payment request failed. Invalid token. demo.user_context.loyalty_level=gold [E-002] [E-003] [E-004]"
+    },
+    {
+      "tool": "get_logs",
+      "args": {
+        "service": "payment",
+        "window_minutes": 10
+      },
+      "text": "payment ERROR logs last 10m: 4 total, 1 distinct in newest 30\n4x [warn] Payment request failed. Invalid token. demo.user_context.loyalty_level=gold [E-005]"
+    },
+    {
+      "tool": "get_container_stats",
+      "args": {
+        "service": "payment"
+      },
+      "text": "payment: running exit=0 restarts=0 cpu_limit=none cpu_used=0.185 [E-006]"
+    },
+    {
+      "tool": "list_services",
+      "args": {},
+      "text": "28 services; not ok: ['astronomy-db', 'grafana', 'jaeger', 'opamp-server', 'opensearch', 'otel-collector', 'prometheus', 'valkey-cart']\nastronomy-db: container=running status=NO_TELEMETRY seen_in=[] cpu_limit=none\ngrafana: container=running status=NO_TELEMETRY seen_in=[] cpu_limit=none\njaeger: container=running status=NO_TELEMETRY seen_in=[] cpu_limit=none\nopamp-server: container=running status=NO_TELEMETRY seen_in=[] cpu_limit=none\nopensearch: container=running status=NO_TELEMETRY seen_in=[] cpu_limit=none\notel-collector: container=running status=NO_TELEMETRY seen_in=[] cpu_limit=none\nprometheus: container=running status=NO_TELEMETRY seen_in=[] cpu_limit=none\nvalkey-cart: container=running status=NO_TELEMETRY seen_in=[] cpu_limit=none\nok: accounting, ad, cart, checkout, currency, email, fraud-detection, frontend, frontend-proxy, frontend-web, image-provider, kafka, load-generator, otelcol-contrib, payment, product-catalog, quote, recommendation, shipping, telemetry-docs [E-007]"
+    },
+    {
+      "tool": "get_deploy_history",
+      "args": {
+        "window_minutes": 30
+      },
+      "text": "0 container lifecycle events in last 30m; containers with restarts: ['checkout', 'product-catalog'] [E-008]"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "E-001",
+      "signal": "metric",
+      "tool": "get_error_rates",
+      "query": "{\"window_minutes\": 5}",
+      "ts": "2026-10-24T04:55:05.744379+00:00",
+      "summary": "last 5m: checkout err=14.3% p95=382ms (was 350ms); payment err=14.3% p95=4ms (was 7ms); recommendation err=0.0% p95=465ms (was 189ms); product-catalog err=0.0% p95=187ms (was 199ms); frontend err=0.0% p95=170ms (was 212ms); frontend-proxy err=0.0% p95=145ms (was 216ms); accounting err=0.0% p95=92ms (was 98ms); fraud-detection err=0.0% p95=90ms (was 95ms)",
+      "data": {
+        "window_minutes": 5,
+        "services": [
+          {
+            "service": "checkout",
+            "requests": 9,
+            "errors": 1,
+            "error_rate": 0.143,
+            "p95_ms": 382,
+            "baseline_p95_ms": 350
+          },
+          {
+            "service": "payment",
+            "requests": 9,
+            "errors": 1,
+            "error_rate": 0.143,
+            "p95_ms": 4,
+            "baseline_p95_ms": 7
+          },
+          {
+            "service": "recommendation",
+            "requests": 166,
+            "errors": 0,
+            "error_rate": 0.0,
+            "p95_ms": 465,
+            "baseline_p95_ms": 189
+          },
+          {
+            "service": "product-catalog",
+            "requests": 1059,
+            "errors": 0,
+            "error_rate": 0.0,
+            "p95_ms": 187,
+            "baseline_p95_ms": 199
+          },
+          {
+            "service": "frontend",
+            "requests": 2715,
+            "errors": 0,
+            "error_rate": 0.0,
+            "p95_ms": 170,
+            "baseline_p95_ms": 212
+          },
+          {
+            "service": "frontend-proxy",
+            "requests": 2767,
+            "errors": 0,
+            "error_rate": 0.0,
+            "p95_ms": 145,
+            "baseline_p95_ms": 216
+          },
+          {
+            "service": "accounting",
+            "requests": 7,
+            "errors": 0,
+            "error_rate": 0.0,
+            "p95_ms": 92,
+            "baseline_p95_ms": 98
+          },
+          {
+            "service": "fraud-detection",
+            "requests": 15,
+            "errors": 0,
+            "error_rate": 0.0,
+            "p95_ms": 90,
+            "baseline_p95_ms": 95
+          },
+          {
+            "service": "email",
+            "requests": 7,
+            "errors": 0,
+            "error_rate": 0.0,
+            "p95_ms": 46,
+            "baseline_p95_ms": 10
+          },
+          {
+            "service": "ad",
+            "requests": 102,
+            "errors": 0,
+            "error_rate": 0.0,
+            "p95_ms": 9,
+            "baseline_p95_ms": 6
+          },
+          {
+            "service": "shipping",
+            "requests": 45,
+            "errors": 0,
+            "error_rate": 0.0,
+            "p95_ms": 8,
+            "baseline_p95_ms": 7
+          },
+          {
+            "service": "cart",
+            "requests": 287,
+            "errors": 0,
+            "error_rate": 0.0,
+            "p95_ms": 6,
+            "baseline_p95_ms": 8
+          },
+          {
+            "service": "currency",
+            "requests": 188,
+            "errors": 0,
+            "error_rate": 0.0,
+            "p95_ms": 2,
+            "baseline_p95_ms": 2
+          },
+          {
+            "service": "image-provider",
+            "requests": 821,
+            "errors": 0,
+            "error_rate": 0.0,
+            "p95_ms": 2,
+            "baseline_p95_ms": 2
+          },
+          {
+            "service": "quote",
+            "requests": 36,
+            "errors": 0,
+            "error_rate": 0.0,
+            "p95_ms": 2,
+            "baseline_p95_ms": 2
+          },
+          {
+            "service": "telemetry-docs",
+            "requests": 58,
+            "errors": 0,
+            "error_rate": 0.0,
+            "p95_ms": 2,
+            "baseline_p95_ms": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "E-002",
+      "signal": "trace",
+      "tool": "get_failed_traces",
+      "query": "{\"service\": \"checkout\", \"window_minutes\": 5}",
+      "ts": "2026-10-24T04:55:09.983698+00:00",
+      "summary": "2/10 traces for checkout failed; deepest erroring service counts: {'payment': 2}",
+      "data": {
+        "origin_counts": {
+          "payment": 2
+        },
+        "scanned": 10
+      }
+    },
+    {
+      "id": "E-003",
+      "signal": "trace",
+      "tool": "get_failed_traces",
+      "query": "{\"service\": \"checkout\", \"window_minutes\": 5}",
+      "ts": "2026-10-24T04:55:09.983698+00:00",
+      "summary": "trace f695f778 chain load-generator -> frontend-proxy -> frontend -> checkout -> payment; origin payment span 'charge': Payment request failed. Invalid token. demo.user_context.loyalty_level=gold",
+      "data": {
+        "trace_id": "f695f778071e05e4e7d3a9b545e7d1ae",
+        "chain": [
+          "load-generator",
+          "frontend-proxy",
+          "frontend",
+          "checkout",
+          "payment"
+        ],
+        "origin": {
+          "service": "payment",
+          "name": "charge",
+          "span_id": "df30e6c638a07903",
+          "status_message": "Payment request failed. Invalid token. demo.user_context.loyalty_level=gold",
+          "exception.message": "Payment request failed. Invalid token. demo.user_context.loyalty_level=gold",
+          "exception.type": "Error"
+        },
+        "erroring_services": [
+          "checkout",
+          "frontend",
+          "frontend-proxy",
+          "load-generator",
+          "payment"
+        ]
+      }
+    },
+    {
+      "id": "E-004",
+      "signal": "trace",
+      "tool": "get_failed_traces",
+      "query": "{\"service\": \"checkout\", \"window_minutes\": 5}",
+      "ts": "2026-10-24T04:55:09.983698+00:00",
+      "summary": "trace 36d9801b chain load-generator -> frontend-proxy -> frontend -> checkout -> payment; origin payment span 'charge': Payment request failed. Invalid token. demo.user_context.loyalty_level=gold",
+      "data": {
+        "trace_id": "36d9801b3fbe34e5b9df44b5096d202b",
+        "chain": [
+          "load-generator",
+          "frontend-proxy",
+          "frontend",
+          "checkout",
+          "payment"
+        ],
+        "origin": {
+          "service": "payment",
+          "name": "charge",
+          "span_id": "e9602ccf7401a1c6",
+          "status_message": "Payment request failed. Invalid token. demo.user_context.loyalty_level=gold",
+          "exception.message": "Payment request failed. Invalid token. demo.user_context.loyalty_level=gold",
+          "exception.type": "Error"
+        },
+        "erroring_services": [
+          "checkout",
+          "frontend",
+          "frontend-proxy",
+          "load-generator",
+          "payment"
+        ]
+      }
+    },
+    {
+      "id": "E-005",
+      "signal": "log",
+      "tool": "get_logs",
+      "query": "{\"service\": \"payment\", \"window_minutes\": 10}",
+      "ts": "2026-10-24T04:55:12.145220+00:00",
+      "summary": "payment ERROR logs last 10m: 4 total, 1 distinct in newest 30; top: 4x [warn] Payment request failed. Invalid token. demo.user_context.loyalty_level=gold",
+      "data": {
+        "service": "payment",
+        "level": "ERROR",
+        "total": 4,
+        "messages": [
+          {
+            "count": 4,
+            "message": "Payment request failed. Invalid token. demo.user_context.loyalty_level=gold",
+            "severity": "warn",
+            "trace_id": "f695f778071e05e4e7d3a9b545e7d1ae"
+          }
+        ]
+      }
+    },
+    {
+      "id": "E-006",
+      "signal": "container",
+      "tool": "get_container_stats",
+      "query": "{\"service\": \"payment\"}",
+      "ts": "2026-10-24T04:55:13.091397+00:00",
+      "summary": "payment: running exit=0 restarts=0 cpu_limit=none cpu_used=0.185",
+      "data": {
+        "service": "payment",
+        "status": "running",
+        "exit_code": 0,
+        "oom_killed": false,
+        "restart_count": 0,
+        "cpu_limit_cores": 0.0,
+        "cpu_cores_used_2m": 0.185,
+        "cpu_saturation": null
+      }
+    },
+    {
+      "id": "E-007",
+      "signal": "container",
+      "tool": "list_services",
+      "query": "{}",
+      "ts": "2026-10-24T04:55:14.926067+00:00",
+      "summary": "28 services; not ok: ['astronomy-db', 'grafana', 'jaeger', 'opamp-server', 'opensearch', 'otel-collector', 'prometheus', 'valkey-cart']",
+      "data": {
+        "services": [
+          {
+            "service": "accounting",
+            "container": "running",
+            "telemetry": [
+              "traces",
+              "metrics",
+              "logs"
+            ],
+            "status": "ok",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "ad",
+            "container": "running",
+            "telemetry": [
+              "traces",
+              "metrics",
+              "logs"
+            ],
+            "status": "ok",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "astronomy-db",
+            "container": "running",
+            "telemetry": [],
+            "status": "NO_TELEMETRY",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "cart",
+            "container": "running",
+            "telemetry": [
+              "traces",
+              "metrics",
+              "logs"
+            ],
+            "status": "ok",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "checkout",
+            "container": "running",
+            "telemetry": [
+              "traces",
+              "metrics",
+              "logs"
+            ],
+            "status": "ok",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "currency",
+            "container": "running",
+            "telemetry": [
+              "traces",
+              "metrics"
+            ],
+            "status": "ok",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "email",
+            "container": "running",
+            "telemetry": [
+              "traces",
+              "metrics",
+              "logs"
+            ],
+            "status": "ok",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "fraud-detection",
+            "container": "running",
+            "telemetry": [
+              "traces",
+              "metrics",
+              "logs"
+            ],
+            "status": "ok",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "frontend",
+            "container": "running",
+            "telemetry": [
+              "traces",
+              "metrics",
+              "logs"
+            ],
+            "status": "ok",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "frontend-proxy",
+            "container": "running",
+            "telemetry": [
+              "traces",
+              "metrics",
+              "logs"
+            ],
+            "status": "ok",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "frontend-web",
+            "container": "n/a",
+            "telemetry": [
+              "traces",
+              "metrics"
+            ],
+            "status": "ok",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "grafana",
+            "container": "running",
+            "telemetry": [],
+            "status": "NO_TELEMETRY",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "image-provider",
+            "container": "running",
+            "telemetry": [
+              "traces",
+              "metrics"
+            ],
+            "status": "ok",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "jaeger",
+            "container": "running",
+            "telemetry": [],
+            "status": "NO_TELEMETRY",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "kafka",
+            "container": "running",
+            "telemetry": [
+              "logs"
+            ],
+            "status": "ok",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "load-generator",
+            "container": "running",
+            "telemetry": [
+              "traces",
+              "metrics",
+              "logs"
+            ],
+            "status": "ok",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "opamp-server",
+            "container": "running",
+            "telemetry": [],
+            "status": "NO_TELEMETRY",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "opensearch",
+            "container": "running",
+            "telemetry": [],
+            "status": "NO_TELEMETRY",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "otel-collector",
+            "container": "running",
+            "telemetry": [],
+            "status": "NO_TELEMETRY",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "otelcol-contrib",
+            "container": "n/a",
+            "telemetry": [
+              "logs"
+            ],
+            "status": "ok",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "payment",
+            "container": "running",
+            "telemetry": [
+              "traces",
+              "metrics",
+              "logs"
+            ],
+            "status": "ok",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "product-catalog",
+            "container": "running",
+            "telemetry": [
+              "traces",
+              "metrics",
+              "logs"
+            ],
+            "status": "ok",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "prometheus",
+            "container": "running",
+            "telemetry": [],
+            "status": "NO_TELEMETRY",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "quote",
+            "container": "running",
+            "telemetry": [
+              "traces",
+              "metrics",
+              "logs"
+            ],
+            "status": "ok",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "recommendation",
+            "container": "running",
+            "telemetry": [
+              "traces",
+              "metrics",
+              "logs"
+            ],
+            "status": "ok",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "shipping",
+            "container": "running",
+            "telemetry": [
+              "traces",
+              "metrics"
+            ],
+            "status": "ok",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "telemetry-docs",
+            "container": "running",
+            "telemetry": [
+              "traces",
+              "metrics"
+            ],
+            "status": "ok",
+            "cpu_limit_cores": 0
+          },
+          {
+            "service": "valkey-cart",
+            "container": "running",
+            "telemetry": [],
+            "status": "NO_TELEMETRY",
+            "cpu_limit_cores": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "E-008",
+      "signal": "deploy",
+      "tool": "get_deploy_history",
+      "query": "{\"window_minutes\": 30}",
+      "ts": "2026-10-24T04:55:34.836830+00:00",
+      "summary": "0 container lifecycle events in last 30m; containers with restarts: ['checkout', 'product-catalog']",
+      "data": {
+        "events": [],
+        "restarted": [
+          {
+            "container": "checkout",
+            "image": "ghcr.io/open-telemetry/demo:latest-checkout",
+            "restarts": 2
+          },
+          {
+            "container": "product-catalog",
+            "image": "ghcr.io/open-telemetry/demo:latest-product-catalog",
+            "restarts": 2
+          }
+        ]
+      }
+    }
+  ]
+}

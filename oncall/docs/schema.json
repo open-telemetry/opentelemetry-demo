@@ -1,0 +1,314 @@
+{
+  "$defs": {
+    "ActionResult": {
+      "properties": {
+        "incident_id": {
+          "default": "",
+          "title": "Incident Id",
+          "type": "string"
+        },
+        "action": {
+          "enum": [
+            "RESET_FEATURE_FLAG",
+            "RESTART_CONTAINER",
+            "THROTTLE_TRAFFIC",
+            "ESCALATE_TO_HUMAN"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "executed": {
+          "title": "Executed",
+          "type": "boolean"
+        },
+        "dry_run": {
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "recovered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recovered"
+        },
+        "rolled_back": {
+          "default": false,
+          "title": "Rolled Back",
+          "type": "boolean"
+        },
+        "detail": {
+          "default": "",
+          "title": "Detail",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "action",
+        "target",
+        "executed",
+        "dry_run"
+      ],
+      "title": "ActionResult",
+      "type": "object"
+    },
+    "Diagnosis": {
+      "description": "component/cause are the cross-team contract; root_cause_service/summary are kept in sync for the agent.",
+      "properties": {
+        "incident_id": {
+          "default": "",
+          "title": "Incident Id",
+          "type": "string"
+        },
+        "component": {
+          "default": "unknown",
+          "title": "Component",
+          "type": "string"
+        },
+        "cause": {
+          "default": "",
+          "title": "Cause",
+          "type": "string"
+        },
+        "confidence": {
+          "default": 0.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "escalate": {
+          "default": true,
+          "title": "Escalate",
+          "type": "boolean"
+        },
+        "root_cause_service": {
+          "default": "unknown",
+          "title": "Root Cause Service",
+          "type": "string"
+        },
+        "fault_class": {
+          "default": "unknown",
+          "title": "Fault Class",
+          "type": "string"
+        },
+        "summary": {
+          "default": "",
+          "title": "Summary",
+          "type": "string"
+        },
+        "next_steps": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Next Steps",
+          "type": "array"
+        }
+      },
+      "title": "Diagnosis",
+      "type": "object"
+    },
+    "Evidence": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "signal": {
+          "$ref": "#/$defs/Signal"
+        },
+        "tool": {
+          "title": "Tool",
+          "type": "string"
+        },
+        "query": {
+          "title": "Query",
+          "type": "string"
+        },
+        "ts": {
+          "title": "Ts",
+          "type": "string"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        },
+        "data": {
+          "additionalProperties": true,
+          "title": "Data",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "signal",
+        "tool",
+        "query",
+        "ts",
+        "summary",
+        "data"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "Incident": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "symptom": {
+          "title": "Symptom",
+          "type": "string"
+        },
+        "started_at": {
+          "title": "Started At",
+          "type": "string"
+        },
+        "window": {
+          "title": "Window",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "symptom",
+        "started_at",
+        "window",
+        "source"
+      ],
+      "title": "Incident",
+      "type": "object"
+    },
+    "Plan": {
+      "description": "Approved by a human before it reaches the action layer.",
+      "properties": {
+        "incident_id": {
+          "default": "",
+          "title": "Incident Id",
+          "type": "string"
+        },
+        "action": {
+          "enum": [
+            "RESET_FEATURE_FLAG",
+            "RESTART_CONTAINER",
+            "THROTTLE_TRAFFIC",
+            "ESCALATE_TO_HUMAN"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "params": {
+          "additionalProperties": true,
+          "title": "Params",
+          "type": "object"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "action",
+        "target",
+        "reason"
+      ],
+      "title": "Plan",
+      "type": "object"
+    },
+    "Signal": {
+      "enum": [
+        "trace",
+        "metric",
+        "log",
+        "container",
+        "deploy",
+        "triage"
+      ],
+      "title": "Signal",
+      "type": "string"
+    }
+  },
+  "description": "End-to-end envelope: Incident -> Evidence -> Diagnosis -> Plan -> ActionResult.",
+  "properties": {
+    "incident": {
+      "$ref": "#/$defs/Incident"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/Evidence"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "diagnosis": {
+      "$ref": "#/$defs/Diagnosis"
+    },
+    "plan": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Plan"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "result": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ActionResult"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "incident",
+    "diagnosis"
+  ],
+  "title": "IncidentRecord",
+  "type": "object"
+}
