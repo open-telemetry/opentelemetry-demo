@@ -1,0 +1,10 @@
+change_type: breaking
+component: load-generator
+note: >-
+  Honor IPV6_ENABLED for the default Docker Compose network and restore Locust's
+  default web interface binding by removing the IPv4-only override. Rename
+  Envoy's load-generator destination variable to LOAD_GENERATOR_WEB_HOST.
+issues: [4053]
+subtext: >-
+  Rename LOCUST_WEB_HOST overrides for the frontend-proxy destination to
+  LOAD_GENERATOR_WEB_HOST. Locust's own LOCUST_WEB_HOST listener option is unchanged.

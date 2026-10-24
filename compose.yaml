@@ -22,6 +22,7 @@ networks:
   default:
     name: opentelemetry-demo
     driver: bridge
+    enable_ipv6: ${IPV6_ENABLED}
 
 services:
   # ******************
@@ -337,7 +338,7 @@ services:
     environment:
       - FRONTEND_PORT
       - FRONTEND_HOST
-      - LOCUST_WEB_HOST
+      - LOAD_GENERATOR_WEB_HOST
       - LOCUST_WEB_PORT
       - GRAFANA_PORT
       - GRAFANA_HOST
@@ -448,7 +449,6 @@ services:
       - OTEL_SERVICE_NAME=load-generator
       - OTEL_PYTHON_SDK_INTERNAL_METRICS_ENABLED=true
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
-      - LOCUST_WEB_HOST=0.0.0.0
       - FLAGD_HOST
       - FLAGD_PORT
       - FLAGD_OFREP_PORT
