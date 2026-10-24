@@ -1,0 +1,10 @@
+{
+  "accepted": false,
+  "reason": "Unsupported MinIO running/health claim cites an empty lifecycle response; unrelated stopped workloads were included in the first inventory. Do not use the first model summary as incident evidence.",
+  "correction": "No running demo containers were observed. Scope subsequent inventory/history to the demo Compose project.",
+  "reviewed_evidence": [
+    "E001",
+    "E002",
+    "E011"
+  ]
+}

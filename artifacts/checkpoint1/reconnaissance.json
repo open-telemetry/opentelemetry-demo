@@ -1,0 +1,43 @@
+{
+  "observed_utc": "2026-10-23T09:40:56.492535+00:00",
+  "credential_presence_only": {
+    "process_environment": {},
+    ".env": {},
+    ".env.override": {}
+  },
+  "safe_existing_configuration": {
+    ".env": {
+      "LLM_MODEL": "claude-opus-4-7",
+      "USE_VCR": "True",
+      "MCP_ENABLED": "False",
+      "GRAPH_RECURSION_LIMIT": "25",
+      "LLM_BASE_URL_configured": true
+    },
+    ".env.override": {
+      "LLM_MODEL": "<unset>",
+      "USE_VCR": "<unset>",
+      "MCP_ENABLED": "<unset>",
+      "GRAPH_RECURSION_LIMIT": "<unset>",
+      "LLM_BASE_URL_configured": false
+    }
+  },
+  "host_python_modules": {
+    "httpx": false,
+    "openai": false,
+    "langchain_openai": false,
+    "dotenv": true,
+    "PIL": true,
+    "reportlab": false,
+    "cairosvg": false
+  },
+  "cloud_api_call_performed": false,
+  "agent_entry_point": "src/agent/run.py -> Agent -> POST /prompt",
+  "agent_llm": "src/agent/src/agents/llm.py: ChatLLM(ChatOpenAI)",
+  "agent_tools": "Shopping operations; no existing telemetry query tools",
+  "native_model_routing": "One configured model; no fallback router exposed",
+  "external_observer": "artifacts/checkpoint1/checkpoint1_observe.py",
+  "injector": "faultctl.py -> src/faultctl/cli.py -> FaultClient.write",
+  "injector_limit": "HTTP and file transports both rewrite existing flag configuration",
+  "deployment_history_limit": "No deployment audit feed found; lifecycle events only",
+  "artifact_mechanism": "No existing checkpoint mechanism found; separate new artifacts directory"
+}

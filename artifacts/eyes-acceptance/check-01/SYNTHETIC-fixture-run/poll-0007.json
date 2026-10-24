@@ -1,0 +1,15 @@
+{
+  "at": "2026-01-01T12:01:30Z",
+  "phase": "dedup",
+  "result": {
+    "created_incidents": [],
+    "checks": [
+      {
+        "service": "checkout",
+        "metric": "latency_p95_ms",
+        "quality": "breach",
+        "evidence_id": "fixture-14"
+      }
+    ]
+  }
+}

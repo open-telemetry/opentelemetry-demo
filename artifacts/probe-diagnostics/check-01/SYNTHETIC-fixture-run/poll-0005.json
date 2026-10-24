@@ -1,0 +1,17 @@
+{
+  "at": "2026-01-01T12:01:00Z",
+  "phase": "detection",
+  "result": {
+    "created_incidents": [
+      "incident-897caa6016a74d8f9da9ed8344105c74"
+    ],
+    "checks": [
+      {
+        "service": "checkout",
+        "metric": "latency_p95_ms",
+        "quality": "breach",
+        "evidence_id": "fixture-10"
+      }
+    ]
+  }
+}

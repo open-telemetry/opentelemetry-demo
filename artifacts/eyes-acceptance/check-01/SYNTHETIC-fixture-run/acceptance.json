@@ -1,0 +1,34 @@
+{
+  "checks": {
+    "one_automatic_incident": true,
+    "measured_alert_with_provenance": true,
+    "repeated_breach_deduplicated": true,
+    "investigation_finished": true,
+    "two_successful_queries_with_explicit_dependency": true,
+    "interpretations_reference_observations": true,
+    "model_identity_recorded": true,
+    "practice_reset_verified": true,
+    "incident_detected_during_practice": true,
+    "real_backend_evidence": false
+  },
+  "automated_checks_passed": false,
+  "live_acceptance_complete": false,
+  "semantic_review": "pending",
+  "note": "An operator must review whether cited observations support the tool choices and interpretations. Static fixtures never establish live acceptance.",
+  "origin": "fixture",
+  "failure": null,
+  "detect_only": false,
+  "incident_ids": [
+    "incident-398ed8ef5c684794bc1456583428d145"
+  ],
+  "injection_attempted": true,
+  "injection_started": true,
+  "reset": {
+    "status": "reset_verified",
+    "paused_at": 1767268830.0,
+    "reset_at": 1767268890.0
+  },
+  "live_incident_executed": false,
+  "real_llm_called": false,
+  "baseline_poll_count": 3
+}

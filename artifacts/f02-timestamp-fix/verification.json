@@ -1,0 +1,18 @@
+{
+  "tests_run": 105,
+  "failures": 0,
+  "errors": 0,
+  "regression_fails_on_original_code": true,
+  "ast_files_checked": 23,
+  "baseline_files_checked": 771,
+  "changed_tracked_files": [
+    "incident_tools/f02/README.md",
+    "incident_tools/f02/tests/test_f02.py",
+    "incident_tools/f02/tools.py"
+  ],
+  "only_expected_files_changed": true,
+  "live_telemetry_queried": false,
+  "real_llm_called": false,
+  "practice_fault_executed": false,
+  "notice": "Synthetic regression verification. Legacy HTTP tests use loopback fixtures only. No live success is claimed."
+}

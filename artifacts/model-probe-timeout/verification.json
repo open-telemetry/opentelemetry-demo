@@ -1,0 +1,21 @@
+{
+  "tests_run": 114,
+  "failures": 0,
+  "errors": 0,
+  "ast_files_checked": 24,
+  "baseline_files_checked": 774,
+  "changed_baseline_files": [
+    "incident_tools/eyes_acceptance/PROBE_DIAGNOSTICS.md",
+    "incident_tools/eyes_acceptance/README.md",
+    "incident_tools/eyes_acceptance/configuration.py",
+    "incident_tools/eyes_acceptance/diagnose.py",
+    "incident_tools/eyes_acceptance/tests/test_diagnose.py"
+  ],
+  "only_expected_baseline_files_changed": true,
+  "new_request_timeout_seconds": 60,
+  "cloud_probe_budget_seconds": 130,
+  "single_attempt_diagnostic_budget_seconds": 65,
+  "live_model_called": false,
+  "practice_fault_executed": false,
+  "existing_operator_files_modified": false
+}

@@ -1,0 +1,45 @@
+route = "local-only"
+window_seconds = 300
+http_timeout_seconds = 5
+docker_command = ["wsl", "-d", "Ubuntu", "--", "docker"]
+compose_project = "opentelemetry-demo"
+services = ["frontend", "checkout", "payment", "cart", "product-catalog"]
+shop_url = "http://127.0.0.1:8080"
+prometheus_url = "http://127.0.0.1:9090"
+jaeger_url = "http://127.0.0.1:8080/jaeger/ui"
+opensearch_url = ""
+
+[local]
+enabled = true
+provider = "ollama"
+backend = "ollama"
+endpoint = "http://127.0.0.1:11434"
+model = "qwen2.5:3b"
+model_path = ""
+api_key_env = ""
+context_window = 8192
+max_output_tokens = 512
+temperature = 0.0
+timeout_seconds = 120
+max_retries = 0
+requests_per_minute = 6
+num_thread = 4
+num_gpu = 0
+keep_alive = "0s"
+
+[cloud]
+enabled = false
+provider = "operator-selected-openai-compatible-provider"
+backend = "openai-compatible"
+endpoint = ""
+model = ""
+api_key_env = "CHECKPOINT1_CLOUD_API_KEY"
+model_path = ""
+context_window = 8192
+max_output_tokens = 768
+generation_field = "max_tokens"
+send_temperature = true
+temperature = 0.0
+timeout_seconds = 60
+max_retries = 1
+requests_per_minute = 6

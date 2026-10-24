@@ -1,0 +1,67 @@
+{
+  "type": "Unit/negative-path validation; simulated model outcomes, not cloud execution",
+  "cloud_network_requests": 0,
+  "checks": [
+    {
+      "check": "local-only selects documented order after simulated primary failure",
+      "passed": true
+    },
+    {
+      "check": "local-only records selected profile",
+      "passed": true
+    },
+    {
+      "check": "cloud-only selects documented order after simulated primary failure",
+      "passed": true
+    },
+    {
+      "check": "cloud-only records selected profile",
+      "passed": true
+    },
+    {
+      "check": "local-first selects documented order after simulated primary failure",
+      "passed": true
+    },
+    {
+      "check": "local-first records selected profile",
+      "passed": true
+    },
+    {
+      "check": "cloud-first selects documented order after simulated primary failure",
+      "passed": true
+    },
+    {
+      "check": "cloud-first records selected profile",
+      "passed": true
+    },
+    {
+      "check": "invented evidence ID rejected",
+      "passed": true
+    },
+    {
+      "check": "disabled cloud rejected without network request",
+      "passed": true
+    },
+    {
+      "check": "missing cloud key fails closed",
+      "passed": true
+    },
+    {
+      "check": "configured secret value is redacted",
+      "passed": true
+    },
+    {
+      "check": "public telemetry endpoint not permitted",
+      "passed": true
+    },
+    {
+      "check": "new external scripts parse without importing application source",
+      "passed": true
+    },
+    {
+      "check": "all 664 original files still match",
+      "passed": true
+    }
+  ],
+  "passed": true
+}

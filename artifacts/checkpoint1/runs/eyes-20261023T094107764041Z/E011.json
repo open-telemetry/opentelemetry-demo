@@ -1,0 +1,57 @@
+{
+  "id": "E011",
+  "kind": "llm_summary",
+  "observed_utc": "2026-10-23T09:41:50.736878+00:00",
+  "source": "inference",
+  "status": "ok",
+  "result": {
+    "provider": "ollama",
+    "model": "qwen2.5:3b",
+    "requested_model": "qwen2.5:3b",
+    "slot": "local",
+    "backend": "ollama",
+    "summary": {
+      "executive_summary": "All observed evidence indicates connection errors and a read-only observer status, with no successful executions or health metrics.",
+      "observations": [
+        {
+          "text": "Container inventory and lifecycle history operations were successful.",
+          "evidence_ids": [
+            "E001",
+            "E002"
+          ]
+        },
+        {
+          "text": "Metrics collection failed due to connection errors.",
+          "evidence_ids": [
+            "E003",
+            "E004",
+            "E005",
+            "E006",
+            "E007"
+          ]
+        },
+        {
+          "text": "Logs collection was unsuccessful due to a missing OpenSearch port.",
+          "evidence_ids": [
+            "E008"
+          ]
+        }
+      ],
+      "interpretations": [
+        "The read-only observer status is indicated by the 'E009' evidence.",
+        "Connection errors in metrics collection suggest network or service issues.",
+        "The missing OpenSearch port in logs collection indicates a configuration or service issue."
+      ],
+      "limitations": [
+        "No practice incidents were observed.",
+        "No telemetry or health measurements were available.",
+        "The observer's status as read-only limits its ability to perform actions or provide detailed insights."
+      ]
+    },
+    "attempts": [],
+    "input_characters": 1635,
+    "review_required": true
+  },
+  "error": null,
+  "command": null
+}

@@ -1,0 +1,28 @@
+{
+  "tool": "search_traces",
+  "service": "checkout",
+  "window": {
+    "start": "2026-01-01T11:56:00Z",
+    "end": "2026-01-01T12:01:00Z"
+  },
+  "origin": "fixture",
+  "status": "ok",
+  "warnings": [],
+  "collected_at": "2026-01-01T12:01:30Z",
+  "evidence_id": "fixture-15",
+  "observations": [
+    {
+      "source_id": "fixture-source",
+      "samples": [
+        {
+          "timestamp": "2026-01-01T12:01:30Z",
+          "value": 500
+        }
+      ],
+      "symptom": "timeout"
+    }
+  ],
+  "provenance": {
+    "query": "fixture metric expression"
+  }
+}
