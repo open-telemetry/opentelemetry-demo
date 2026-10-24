@@ -25,6 +25,7 @@ P95_REGRESSION_FACTOR = 1.2
 LATENCY_IMPROVEMENT_FACTOR = 0.8
 # Span metrics reach Prometheus about once a minute, so a 1m rate() window is usually empty.
 MIN_RATE_WINDOW_MINUTES = 2
+SYMPTOM_P95_FACTOR = 1.5
 ANOMALY_FLAGS = ("error_rate_up", "latency_up", "container_not_running")
 OVERVIEW = "system_overview"
 OPERATIONS = "get_service_metrics"
@@ -39,11 +40,14 @@ class VerificationResult:
     reasons: List[str] = field(default_factory=list)
     evidence: List[Dict[str, Any]] = field(default_factory=list)
     checked_at: str = field(default_factory=utc_now)
+    services: Dict[str, Dict[str, Any]] = field(default_factory=dict)
+    symptom_services: List[str] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, Any]:
         return {"status": self.status, "recovered": self.recovered, "before": self.before,
                 "after": self.after, "reasons": list(self.reasons), "evidence": list(self.evidence),
-                "checked_at": self.checked_at}
+                "checked_at": self.checked_at, "services": dict(self.services),
+                "symptom_services": list(self.symptom_services)}
 
 
 def _call(tool: Callable[..., Dict[str, Any]], *args: Any, **kwargs: Any) -> Dict[str, Any]:
@@ -121,6 +125,37 @@ def capture_baseline(ctx: ToolContext, service: str, window_minutes: int = 5) ->
     return snap
 
 
+def capture_baselines(ctx: ToolContext, services: List[str], window_minutes: int = 5) -> Dict[str, Any]:
+    """Baselines for every service the alert or diagnosis points at; the first is the primary."""
+    names = list(dict.fromkeys(s for s in services if s))
+    return {"services": names, "window_minutes": window_minutes,
+            "snapshots": {s: capture_baseline(ctx, s, window_minutes) for s in names}}
+
+
+def symptoms(snap: Dict[str, Any]) -> List[str]:
+    """What was measurably wrong with one service in a snapshot (empty when it looked healthy)."""
+    found: List[str] = []
+    err = snap.get("error_rate")
+    if err is not None and err >= ERROR_RATE_FLOOR:
+        found.append(f"error rate {err}")
+    state, health = snap.get("container_state"), snap.get("container_health")
+    if state is not None and state != "running":
+        found.append(f"container {state}")
+    elif health == "unhealthy":
+        found.append("container unhealthy")
+    p95, ref = snap.get("p95_ms"), snap.get("reference_p95_ms")
+    if p95 is not None and ref and p95 > SYMPTOM_P95_FACTOR * ref:
+        found.append(f"p95 {p95}ms vs {ref}ms 30m earlier")
+    found += [f"flag {f}" for f in snap.get("flags") or [] if f in ANOMALY_FLAGS and f"flag {f}" not in found]
+    return found
+
+
+def _snapshots(baseline: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
+    if "snapshots" in baseline:
+        return dict(baseline["snapshots"])
+    return {baseline.get("service"): baseline}
+
+
 def _after_window(baseline: Dict[str, Any], settle_seconds: int) -> int:
     settle_minutes = math.ceil(max(0, settle_seconds) / 60)
     return min(int(baseline.get("window_minutes") or MIN_RATE_WINDOW_MINUTES),
@@ -196,32 +231,78 @@ def _evaluate(before: Dict[str, Any], after: Dict[str, Any]) -> Tuple[str, List[
     return RECOVERED, passed
 
 
+def _evaluate_all(before: Dict[str, Dict[str, Any]], after: Dict[str, Dict[str, Any]]
+                  ) -> Tuple[str, List[str], Dict[str, Dict[str, Any]], List[str]]:
+    """RECOVERED only when a symptom was present at baseline and has cleared on every service that had it."""
+    tag = len(before) > 1
+    per: Dict[str, Dict[str, Any]] = {}
+    symptomatic = [s for s, snap in before.items() if symptoms(snap)]
+    failed: List[str] = []
+    missing: List[str] = []
+    passed: List[str] = []
+    for svc, snap in before.items():
+        status, reasons = _evaluate(snap, after[svc])
+        per[svc] = {"before": snap, "after": after[svc], "symptoms": symptoms(snap), "status": status,
+                    "reasons": reasons}
+        prefixed = [f"[{svc}] {r}" if tag else r for r in reasons]
+        if svc in symptomatic:
+            (failed if status == NOT_RECOVERED else missing if status == NO_DATA else passed).extend(prefixed)
+        elif status == NOT_RECOVERED:
+            failed.extend(f"{r} (new problem on a service that looked healthy at baseline)" for r in prefixed)
+    if not symptomatic:
+        names = ", ".join(before)
+        return NO_DATA, [f"symptom not present at baseline on {names}; recovery cannot be proven"] + failed, \
+            per, symptomatic
+    if failed:
+        return NOT_RECOVERED, failed + missing + passed, per, symptomatic
+    if missing:
+        return NO_DATA, missing + passed, per, symptomatic
+    return RECOVERED, passed, per, symptomatic
+
+
 def verify_recovery(ctx: ToolContext, action: Any, baseline: Dict[str, Any], settle_seconds: int,
                     dry_run: bool, sleep: Callable[[float], None] = time.sleep,
                     events: Any = None) -> VerificationResult:
-    """Compare a fresh snapshot with the pre-action baseline after the settle time."""
-    service = baseline.get("service") or getattr(action, "target_service", None)
+    """Compare fresh snapshots with the pre-action baselines after the settle time.
+
+    ``baseline`` is one capture_baseline() snapshot or a capture_baselines() result.
+    """
+    before = _snapshots(baseline)
+    if None in before:
+        before[getattr(action, "target_service", None)] = before.pop(None)
+    window = int(baseline.get("window_minutes") or 5)
     if dry_run:
-        after = capture_baseline(ctx, service, int(baseline.get("window_minutes") or 5))
+        primary = next(iter(before))
+        after = {primary: capture_baseline(ctx, primary, window)}
         result = VerificationResult(
-            status=NOT_VERIFIED_DRY_RUN, recovered=False, before=baseline, after=after,
+            status=NOT_VERIFIED_DRY_RUN, recovered=False, before=before[primary], after=after[primary],
             reasons=["dry run: nothing changed, recovery not claimed",
                      "after snapshot is informational only (taken without a settle wait)"],
-            evidence=_phase_evidence(baseline, after))
+            evidence=_phase_evidence(before[primary], after[primary]),
+            symptom_services=[s for s, snap in before.items() if symptoms(snap)])
     else:
         if settle_seconds > 0:
             sleep(settle_seconds)
-        window = _after_window(baseline, settle_seconds)
-        after = capture_baseline(ctx, service, window)
-        status, reasons = _evaluate(baseline, after)
-        if window * 60 > settle_seconds:
-            reasons.append(f"note: the {window}m after-window starts {window * 60 - settle_seconds}s before "
-                           f"the action settled, so pre-action samples may be included")
-        result = VerificationResult(status=status, recovered=status == RECOVERED, before=baseline, after=after,
-                                    reasons=reasons, evidence=_phase_evidence(baseline, after))
+        after_window = _after_window({"window_minutes": window}, settle_seconds)
+        after = {svc: capture_baseline(ctx, svc, after_window) for svc in before}
+        status, reasons, per, symptomatic = _evaluate_all(before, after)
+        if after_window * 60 > settle_seconds:
+            reasons.append(f"note: the {after_window}m after-window starts {after_window * 60 - settle_seconds}s "
+                           f"before the action settled, so pre-action samples may be included")
+        primary = symptomatic[0] if symptomatic else next(iter(before))
+        evidence = [e for svc in before for e in _phase_evidence(before[svc], after[svc])]
+        result = VerificationResult(status=status, recovered=status == RECOVERED, before=before[primary],
+                                    after=after[primary], reasons=reasons, evidence=evidence,
+                                    services=_plain_services(per), symptom_services=symptomatic)
     if events is not None:
         events.emit("VERIFICATION", verification_summary(result), verification_event_data(result))
     return result
+
+
+def _plain_services(per: Dict[str, Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
+    return {svc: {"symptoms_at_baseline": row["symptoms"], "status": row["status"], "reasons": row["reasons"],
+                  "before": _event_snapshot(row["before"]), "after": _event_snapshot(row["after"])}
+            for svc, row in per.items()}
 
 
 def _event_snapshot(snap: Dict[str, Any]) -> Dict[str, Any]:
@@ -230,8 +311,11 @@ def _event_snapshot(snap: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def verification_event_data(result: VerificationResult) -> Dict[str, Any]:
-    return {"status": result.status, "recovered": result.recovered, "before": _event_snapshot(result.before),
-            "after": _event_snapshot(result.after), "reasons": list(result.reasons)}
+    return {"status": result.status, "recovered": result.recovered, "service": result.before.get("service"),
+            "before": _event_snapshot(result.before), "after": _event_snapshot(result.after),
+            "reasons": list(result.reasons), "symptom_services": list(result.symptom_services),
+            "services": {svc: {k: row[k] for k in ("symptoms_at_baseline", "status", "before", "after")}
+                         for svc, row in result.services.items()}}
 
 
 def _fmt(value: Any, digits: int, unit: str = "") -> str:

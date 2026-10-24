@@ -1,13 +1,18 @@
 """Safety pipeline: plan, kill switch, baseline, human approval, kill switch twice, execute,
-verify, and an approved rollback on measured non-recovery. Every step is a run event."""
+verify, and an approved rollback on measured non-recovery. Every step is a run event.
+
+run_attempt() is one pass and never writes a report; src/approval/loop.py repeats it and writes the
+report once, when the loop has ended."""
 from __future__ import annotations
 
+import json
+import re
 import time
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional
 
-from ..agent.report import attach_action_outcome, write_report_files
-from ..agent.tools import ToolContext
+from ..agent.report import attach_action_outcome, attach_attempts, validate_report, write_report_files
+from ..agent.tools import TOPOLOGY, ToolContext
 from ..agent.transcript import Transcript
 from ..config import Settings
 from ..events import EventLog
@@ -31,9 +36,13 @@ NOT_RECOVERED_ROLLED_BACK = "NOT_RECOVERED_ROLLED_BACK"
 NOT_RECOVERED_ROLLBACK_FAILED = "NOT_RECOVERED_ROLLBACK_FAILED"
 NOT_VERIFIED_NO_DATA_ESCALATED = "NOT_VERIFIED_NO_DATA_ESCALATED"
 NOT_RECOVERED_IRREVERSIBLE_ESCALATED = "NOT_RECOVERED_IRREVERSIBLE_ESCALATED"
+REPEAT_REFUSED_ESCALATED = "REPEAT_REFUSED_ESCALATED"
 APPROVAL_CHANNELS = ("cli", "chat_ui")
 CHECKPOINTS = {1: "plan", 2: "post_approval", 3: "pre_execute", 4: "pre_rollback"}
 BASELINE_WINDOW_MINUTES = 5
+MAX_VERIFY_SERVICES = 4
+# Free-text or bookkeeping parameters that do not change what an action does.
+NON_OPERATIVE_PARAMS = frozenset({"reason", "diagnosed_service", "category", "rollback_of"})
 # Extra validity for the rollback approval so it survives the settle wait and the after-snapshot.
 ROLLBACK_TTL_MARGIN_SECONDS = 300
 
@@ -49,6 +58,12 @@ class PipelineOutcome:
     result: Optional[ActionResult] = None
     rollback_result: Optional[ActionResult] = None
     report_paths: Dict[str, Any] = field(default_factory=dict)
+    attempt: int = 1
+    baseline: Optional[Dict[str, Any]] = None
+    transcript: Optional[Transcript] = None
+    attempts: List["PipelineOutcome"] = field(default_factory=list)
+    final_status: str = ""
+    final_reason: str = ""
 
     @property
     def escalated(self) -> bool:
@@ -60,8 +75,15 @@ class _Trail:
         self.events = events
         self.on_event = on_event
         self.start = len(events.records)
+        self.attempt: Optional[int] = None
+        self.max_attempts = 1
 
     def __call__(self, event: str, summary: str, **data: Any) -> Dict[str, Any]:
+        if self.attempt is not None:
+            data.setdefault("attempt", self.attempt)
+            data.setdefault("max_attempts", self.max_attempts)
+            if self.max_attempts > 1:
+                summary = f"attempt {self.attempt}/{self.max_attempts}: {summary}"
         record = self.events.emit(event, summary, data)
         if self.on_event:
             self.on_event(record)
@@ -88,6 +110,44 @@ def _describe(action: RemediationAction) -> str:
     return f"{action.action_type.value} -> {action.target_service}"
 
 
+def action_signature(action: RemediationAction) -> str:
+    """What an action does (type, target, operative parameters), for refusing a failed repeat."""
+    params = {k: v for k, v in (action.parameters or {}).items() if k not in NON_OPERATIVE_PARAMS}
+    return json.dumps([action.action_type.value, action.target_service, params], sort_keys=True, default=str)
+
+
+def verification_services(transcript: Transcript, action: RemediationAction) -> List[str]:
+    """Diagnosed service, then services named in the alert, then the diagnosis' impacted services."""
+    diag = transcript.diagnosis or {}
+    alert = transcript.alert or ""
+    # A topology service name standing alone, not part of a longer hyphenated or word token.
+    named = sorted((m.start(), svc) for svc in TOPOLOGY
+                   for m in [re.search(rf"(?<![\w-]){re.escape(svc)}(?![\w-])", alert, re.IGNORECASE)] if m)
+    candidates = [action.parameters.get("diagnosed_service") or action.target_service]
+    candidates += [svc for _, svc in named]
+    candidates += [s for s in diag.get("impacted_services") or [] if isinstance(s, str)]
+    out = [s for s in dict.fromkeys(candidates) if s in TOPOLOGY or s == candidates[0]]
+    return out[:MAX_VERIFY_SERVICES]
+
+
+def _capture(context: Any, services: List[str]) -> Dict[str, Any]:
+    snaps: Dict[str, Any] = {}
+    for svc in services:
+        try:
+            snaps[svc] = capture_baseline(context, svc, window_minutes=BASELINE_WINDOW_MINUTES)
+        except Exception as e:
+            snaps[svc] = {"service": svc, "window_minutes": BASELINE_WINDOW_MINUTES,
+                          "error": f"baseline capture failed: {e}"}
+    if len(snaps) == 1:
+        return next(iter(snaps.values()))
+    return {"services": list(snaps), "window_minutes": BASELINE_WINDOW_MINUTES, "snapshots": snaps}
+
+
+def kill_switch_reasons(cfg: Settings) -> List[str]:
+    ks = KillSwitch(sentinel_path=cfg.resolve_path(cfg.kill_switch_file), env_var="KILL_SWITCH_ENABLED")
+    return _kill_switch_reasons(ks, cfg)
+
+
 def _kill_switch_reasons(ks: KillSwitch, cfg: Settings) -> List[str]:
     reasons = ks.reasons()
     if cfg.kill_switch_enabled and not any(ks.env_var in r for r in reasons):
@@ -109,18 +169,33 @@ def _resolve_callback(injected: Optional[Callable], channel: str, transcript: Tr
     raise ValueError(f"unknown approval channel '{channel}' (expected one of {APPROVAL_CHANNELS})")
 
 
-def _run(transcript: Transcript, cfg: Settings, emit: _Trail, approval_callback: Optional[Callable],
-         approval_channel: str, dry_run: bool, ctx: Optional[ToolContext], backend: Optional[ActionBackend],
-         sleep: Callable[[float], None], clock: Callable[[], float], open_browser: bool) -> PipelineOutcome:
+def run_attempt(transcript: Transcript, cfg: Settings, emit: _Trail, approval_callback: Optional[Callable],
+                approval_channel: str, dry_run: bool, ctx: Optional[ToolContext], backend: Optional[ActionBackend],
+                sleep: Callable[[float], None], clock: Callable[[], float], open_browser: bool,
+                attempt: int = 1, failed_signatures: Optional[Dict[str, int]] = None) -> PipelineOutcome:
+    """One plan -> approval -> execute -> verify pass. It never writes report.json or report.md."""
     def outcome(status: str, action: Optional[RemediationAction] = None, reason: str = "", **kw: Any) -> PipelineOutcome:
-        return PipelineOutcome(status=status, action=action, reason=reason, **kw)
+        return PipelineOutcome(status=status, action=action, reason=reason, attempt=attempt,
+                               transcript=transcript, **kw)
 
     plan = plan_with_reason(transcript, cfg.deploy_platform)
     action = plan.action
     if action is None:
         emit("PLAN", f"no action: escalated ({plan.reason})", action=None, rollback=None, reason=plan.reason)
         return outcome(NO_ACTION_ESCALATED, None, plan.reason)
+    if attempt > 1:
+        action.action_id = f"{action.action_id}-A{attempt}"
+        if action.rollback is not None:
+            action.rollback.action_id = f"{action.action_id}-RB"
+            action.rollback.parameters["rollback_of"] = action.action_id
     rb = action.rollback
+    earlier = (failed_signatures or {}).get(action_signature(action))
+    if earlier is not None:
+        reason = (f"refused: {_describe(action)} with the same parameters already failed to recover the symptom "
+                  f"in attempt {earlier}; a human must decide the next step")
+        emit("PLAN", f"no action: {reason}", action=_summary(action), rollback=_summary(rb), reason=reason,
+             repeat_of_attempt=earlier)
+        return outcome(REPEAT_REFUSED_ESCALATED, action, reason)
     emit("PLAN", f"{_describe(action)}; rollback: {_describe(rb) if rb else 'none'}",
          action=_summary(action), rollback=_summary(rb), reason=plan.reason)
     for act in (action, rb):
@@ -156,12 +231,9 @@ def _run(transcript: Transcript, cfg: Settings, emit: _Trail, approval_callback:
         return outcome(BLOCKED_BY_KILL_SWITCH, action, halted)
 
     context = ctx or ToolContext(cfg)
-    verify_service = action.parameters.get("diagnosed_service") or action.target_service
-    try:
-        baseline = capture_baseline(context, verify_service, window_minutes=BASELINE_WINDOW_MINUTES)
-    except Exception as e:
-        baseline = {"service": verify_service, "window_minutes": BASELINE_WINDOW_MINUTES,
-                    "error": f"baseline capture failed: {e}"}
+    services = verification_services(transcript, action)
+    verify_service = services[0]
+    baseline = _capture(context, services)
 
     timeout = cfg.approval_timeout_seconds
     review_result = (transcript.gate or {}).get("review")
@@ -173,7 +245,8 @@ def _run(transcript: Transcript, cfg: Settings, emit: _Trail, approval_callback:
     emit("APPROVAL_REQUESTED", f"{_describe(action)} with rollback {rb_text} via {approval_channel}, "
                                f"timeout {timeout}s",
          action=_summary(action), rollback=_summary(rb), channel=approval_channel, timeout_seconds=timeout,
-         dry_run=be.dry_run, baseline_service=verify_service, review_verdict=review_verdict,
+         dry_run=be.dry_run, baseline_service=verify_service, baseline_services=services,
+         review_verdict=review_verdict,
          irreversible=action.irreversible)
 
     def decision_event(approved: bool, approver: Any, channel: Any, note: str, decided_at: Any = None,
@@ -190,7 +263,7 @@ def _run(transcript: Transcript, cfg: Settings, emit: _Trail, approval_callback:
     except Exception as e:
         reason = f"approval channel '{approval_channel}' unavailable: {e}"
         decision_event(False, None, approval_channel, reason)
-        return outcome(REJECTED, action, reason)
+        return outcome(REJECTED, action, reason, baseline=baseline)
     gate = ApprovalGate(callback, ttl_seconds=cfg.approval_ttl_seconds, clock=clock,
                         rollback_ttl_seconds=(cfg.approval_ttl_seconds + cfg.action_settle_seconds
                                               + ROLLBACK_TTL_MARGIN_SECONDS))
@@ -203,22 +276,22 @@ def _run(transcript: Transcript, cfg: Settings, emit: _Trail, approval_callback:
                        human.approver, human.channel, human.note, human.decided_at,
                        human.irreversible_acknowledged)
     if review.decision != ApprovalDecision.APPROVED:
-        return outcome(REJECTED, action, review.reason or "rejected by human", approval=human)
+        return outcome(REJECTED, action, review.reason or "rejected by human", approval=human, baseline=baseline)
     if review.rollback_token is None and not (action.irreversible and human.irreversible_acknowledged):
-        return outcome(NO_ACTION_ESCALATED, action, "no approved rollback", approval=human)
+        return outcome(NO_ACTION_ESCALATED, action, "no approved rollback", approval=human, baseline=baseline)
 
     if not kill_switch_clear(2, action) or not kill_switch_clear(3, action):
-        return outcome(BLOCKED_BY_KILL_SWITCH, action, halted, approval=human)
+        return outcome(BLOCKED_BY_KILL_SWITCH, action, halted, approval=human, baseline=baseline)
 
     try:
         result = be.execute(review.action_token, expected_action_id=action.action_id)
     except ActionRefusedError as e:
-        return outcome(ACTION_REFUSED, action, str(e), approval=human)
+        return outcome(ACTION_REFUSED, action, str(e), approval=human, baseline=baseline)
     except ActionAPINotConfiguredError as e:
-        return outcome(BLOCKED_ACTION_API_UNAVAILABLE, action, str(e), approval=human)
+        return outcome(BLOCKED_ACTION_API_UNAVAILABLE, action, str(e), approval=human, baseline=baseline)
     except Exception as e:
         emit("ERROR", f"action {action.action_id} failed: {e}", action_id=action.action_id, error=str(e))
-        return outcome(EXECUTION_FAILED, action, f"action failed: {e}", approval=human)
+        return outcome(EXECUTION_FAILED, action, f"action failed: {e}", approval=human, baseline=baseline)
     action.executed_at = result.timestamp
     action.execution_result = result.message
     emit("DRY_RUN" if result.dry_run else "ACTION_EXECUTED", result.message, **result.to_dict())
@@ -233,7 +306,7 @@ def _run(transcript: Transcript, cfg: Settings, emit: _Trail, approval_callback:
         emit("VERIFICATION", f"NO_DATA: verification failed: {e}", status="NO_DATA", recovered=False,
              reasons=verification.reasons)
 
-    done = {"approval": human, "result": result, "verification": verification}
+    done = {"approval": human, "result": result, "verification": verification, "baseline": baseline}
     if be.dry_run:
         return outcome(EXECUTED_DRY_RUN, action, "dry run recorded; recovery is not claimed", **done)
     if verification.status == RECOVERED:
@@ -262,23 +335,61 @@ def _run(transcript: Transcript, cfg: Settings, emit: _Trail, approval_callback:
                    rollback_result=rb_result, **done)
 
 
-def _finalize(transcript: Transcript, cfg: Settings, outcome: PipelineOutcome, events: EventLog) -> None:
+def finalize_report(transcript: Transcript, cfg: Settings, final: PipelineOutcome, events: EventLog,
+                    max_attempts: int = 1) -> None:
+    """Write report.json/report.md once, after the loop has ended."""
     if transcript.report is None:
         return
     report = dict(transcript.report)
     remediation = dict(report.get("remediation") or {})
-    remediation["pipeline_status"] = outcome.status
-    remediation["pipeline_reason"] = outcome.reason
-    if outcome.status == BLOCKED_BY_KILL_SWITCH:
+    remediation["pipeline_status"] = final.status
+    remediation["pipeline_reason"] = final.reason
+    if final.status == BLOCKED_BY_KILL_SWITCH:
         remediation["approval_status"] = "BLOCKED_BY_KILL_SWITCH"
     report["remediation"] = remediation
-    shown = outcome.action if outcome.approval is not None else None
+    shown = final.action if final.approval is not None else None
     audit = events.audit_log_path or cfg.resolve_path(cfg.audit_log_path)
-    transcript.report = attach_action_outcome(report, shown, outcome.verification, outcome.timeline, str(audit),
-                                                rollback_result=outcome.rollback_result)
+    report = attach_action_outcome(report, shown, final.verification, final.timeline, str(audit),
+                                   rollback_result=final.rollback_result)
+    transcript.report = attach_attempts(report, [attempt_record(o) for o in final.attempts or [final]],
+                                        final.final_status, final.final_reason, max_attempts)
+    transcript.report_schema_valid, transcript.report_schema_errors = validate_report(transcript.report)
     out_dir = cfg.resolve_path(cfg.report_output_dir)
     transcript.save(out_dir)
-    outcome.report_paths = write_report_files(transcript.report, out_dir, events=events)
+    final.report_paths = write_report_files(transcript.report, out_dir, events=events)
+
+
+def _snapshot_view(snap: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    if not snap:
+        return None
+    return {k: snap.get(k) for k in ("service", "error_rate", "p95_ms", "rps", "container_state", "flags")}
+
+
+def attempt_record(o: PipelineOutcome) -> Dict[str, Any]:
+    """One entry of report.remediation.attempts[]."""
+    t = o.transcript
+    root = ((t.diagnosis if t else None) or {}).get("root_cause") or {}
+    gate = (t.gate if t else None) or {}
+    a = o.action
+    v = o.verification
+    return {
+        "attempt": o.attempt,
+        "diagnosis": {"service": root.get("service"), "category": root.get("category"),
+                      "confidence": gate.get("final_confidence"), "escalate": gate.get("escalate")},
+        "action": None if a is None else {
+            "action_id": a.action_id, "type": a.action_type.value, "target": a.target_service,
+            "parameters": dict(a.parameters), "irreversible": a.irreversible, "dry_run": a.dry_run,
+            "rollback": _summary(a.rollback)},
+        "approval": o.approval.to_dict() if o.approval is not None else None,
+        "execution": o.result.to_dict() if o.result is not None else None,
+        "rollback_execution": o.rollback_result.to_dict() if o.rollback_result is not None else None,
+        "verification": None if v is None else {
+            "status": v.status, "recovered": v.recovered, "before": _snapshot_view(v.before),
+            "after": _snapshot_view(v.after), "reasons": list(v.reasons),
+            "symptom_services": list(getattr(v, "symptom_services", []) or [])},
+        "outcome": o.status,
+        "reason": o.reason,
+    }
 
 
 def execute_safety_pipeline(
@@ -295,20 +406,15 @@ def execute_safety_pipeline(
     events: Optional[EventLog] = None,
     open_browser: bool = False,
 ) -> PipelineOutcome:
-    """Run the remediation safety pipeline for one diagnosed incident.
+    """Run the remediation safety pipeline once for one diagnosed incident (no re-investigation).
 
     approval_callback is for tests only; product code asks a human on approval_channel.
     on_event is called with every record right after it is emitted.
     """
-    cfg = settings or Settings()
-    events = events or EventLog.from_settings(cfg, echo=False)
-    events.bind(transcript.incident_id)
-    emit = _Trail(events, on_event)
-    outcome = _run(transcript, cfg, emit, approval_callback, approval_channel, dry_run, ctx, backend,
-                   sleep, clock, open_browser)
-    if outcome.escalated:
-        emit("ESCALATION", f"{outcome.status}: {outcome.reason}", status=outcome.status, reason=outcome.reason,
-             action_id=outcome.action.action_id if outcome.action else None)
-    outcome.timeline = emit.timeline
-    _finalize(transcript, cfg, outcome, events)
-    return outcome
+    from .loop import run_remediation_loop
+
+    return run_remediation_loop(transcript.alert, settings=settings, first_transcript=transcript,
+                                max_attempts=1, approval_callback=approval_callback,
+                                approval_channel=approval_channel, dry_run=dry_run, ctx=ctx, backend=backend,
+                                sleep=sleep, clock=clock, on_event=on_event, events=events,
+                                open_browser=open_browser)

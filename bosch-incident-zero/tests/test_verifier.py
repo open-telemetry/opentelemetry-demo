@@ -1,7 +1,7 @@
 from src.models.action import ActionType, RemediationAction
 from src.remediation import verifier
 from src.remediation.verifier import (NO_DATA, NOT_RECOVERED, NOT_VERIFIED_DRY_RUN, RECOVERED,
-                                      capture_baseline, verify_recovery)
+                                      capture_baseline, capture_baselines, verify_recovery)
 
 SVC = "payment"
 
@@ -170,4 +170,58 @@ def test_short_settle_is_flagged_in_reasons(monkeypatch):
 def test_to_dict_shape(monkeypatch):
     base = incident_baseline(monkeypatch)
     res = verify_recovery(None, action(dry_run=True), base, settle_seconds=0, dry_run=True)
-    assert set(res.to_dict()) == {"status", "recovered", "before", "after", "reasons", "evidence", "checked_at"}
+    assert set(res.to_dict()) == {"status", "recovered", "before", "after", "reasons", "evidence", "checked_at",
+                                  "services", "symptom_services"}
+
+
+def install_per_service(monkeypatch, rows):
+    """rows: service -> (error_rate, p95, flags); every container running."""
+    def system_overview(ctx, window_minutes=5):
+        services = [{"service": n, "rps": 5.0, "error_rate": e, "p95_ms": p, "flags": list(f),
+                     "baseline_p95_ms": None} for n, (e, p, f) in rows.items()]
+        return {"tool": "system_overview", "status": "ok", "summary": "", "data": {"services": services},
+                "evidence": [{"ref": f"metric:{n}:error_rate", "kind": "metric", "value": e}
+                             for n, (e, _, _) in rows.items()]}
+
+    def get_service_metrics(ctx, service, window_minutes=10):
+        return {"tool": "get_service_metrics", "status": "no_data", "summary": "", "data": {}, "evidence": []}
+
+    def container_health(ctx, service=None):
+        return {"tool": "container_health", "status": "ok", "summary": "",
+                "data": {"containers": [{"name": service, "state": "running", "health": "healthy",
+                                         "restart_count": 0}]}, "evidence": []}
+
+    monkeypatch.setattr(verifier, "system_overview", system_overview)
+    monkeypatch.setattr(verifier, "get_service_metrics", get_service_metrics)
+    monkeypatch.setattr(verifier, "container_health", container_health)
+
+
+def test_healthy_diagnosed_service_alone_cannot_prove_recovery(monkeypatch):
+    install_per_service(monkeypatch, {"email": (0.0, 20.0, [])})
+    base = capture_baselines(None, ["email"])
+    res = verify_recovery(None, action(), base, settle_seconds=120, dry_run=False, sleep=lambda s: None)
+    assert res.status == NO_DATA and res.recovered is False
+    assert "symptom not present at baseline" in res.reasons[0]
+
+
+def test_symptom_on_alerted_service_must_clear_there(monkeypatch):
+    install_per_service(monkeypatch, {"email": (0.0, 20.0, []), "checkout": (0.3, 200.0, ["error_rate_up"])})
+    base = capture_baselines(None, ["email", "checkout"])
+    install_per_service(monkeypatch, {"email": (0.0, 20.0, []), "checkout": (0.3, 200.0, ["error_rate_up"])})
+    res = verify_recovery(None, action(), base, settle_seconds=120, dry_run=False, sleep=lambda s: None)
+    assert res.status == NOT_RECOVERED and res.symptom_services == ["checkout"]
+    assert res.before["service"] == "checkout"
+
+    install_per_service(monkeypatch, {"email": (0.0, 20.0, []), "checkout": (0.0, 190.0, [])})
+    res = verify_recovery(None, action(), base, settle_seconds=120, dry_run=False, sleep=lambda s: None)
+    assert res.status == RECOVERED, res.reasons
+    assert res.services["checkout"]["symptoms_at_baseline"] and res.services["email"]["symptoms_at_baseline"] == []
+
+
+def test_new_problem_on_a_healthy_service_is_not_recovery(monkeypatch):
+    install_per_service(monkeypatch, {"email": (0.0, 20.0, []), "checkout": (0.3, 200.0, ["error_rate_up"])})
+    base = capture_baselines(None, ["email", "checkout"])
+    install_per_service(monkeypatch, {"email": (0.5, 20.0, ["error_rate_up"]), "checkout": (0.0, 190.0, [])})
+    res = verify_recovery(None, action(), base, settle_seconds=120, dry_run=False, sleep=lambda s: None)
+    assert res.status == NOT_RECOVERED
+    assert any("[email]" in r and "looked healthy at baseline" in r for r in res.reasons)

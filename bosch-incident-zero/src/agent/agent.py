@@ -18,6 +18,26 @@ from .transcript import Transcript, utc_now
 
 MAX_TOOL_CALLS = 12
 MAX_MODEL_TURNS = 20
+RETRY_INSTRUCTION = ("This did not recover the symptom; do not repeat it; re-investigate; if nothing else is "
+                     "safe, escalate.")
+
+
+def format_prior_attempts(prior: Sequence[Dict[str, Any]]) -> str:
+    """Earlier remediation attempts for this incident, as a hint for the model (never citable evidence)."""
+    if not prior:
+        return ""
+    lines = ["PRIOR REMEDIATION ATTEMPTS FOR THIS INCIDENT (hint only; not evidence; do not cite; "
+             "does not affect confidence):"]
+    for a in prior:
+        ver = a.get("verification") or {}
+        lines.append(f"- attempt {a.get('attempt')}: {a.get('action_type')} on {a.get('target_service')} "
+                     f"params={json.dumps(a.get('parameters') or {}, sort_keys=True, default=str)}; "
+                     f"diagnosis was {a.get('diagnosed_service')}/{a.get('category')}; "
+                     f"verification {ver.get('status')}: before={json.dumps(ver.get('before'), default=str)} "
+                     f"after={json.dumps(ver.get('after'), default=str)}; "
+                     f"reasons: {'; '.join(ver.get('reasons') or [])[:600]}; outcome {a.get('outcome')}")
+    lines.append(RETRY_INSTRUCTION)
+    return "\n".join(lines)
 
 
 class IncidentAgent:
@@ -29,12 +49,19 @@ class IncidentAgent:
         self.max_tool_calls = max_tool_calls
         self.output_dir = output_dir
         self.events = events or EventLog(echo=False)
+        self._hint = ""
 
-    def run(self, alert: str, incident_id: Optional[str] = None) -> Transcript:
+    def run(self, alert: str, incident_id: Optional[str] = None,
+            prior_attempts: Optional[Sequence[Dict[str, Any]]] = None) -> Transcript:
         incident_id = incident_id or "INC-" + datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
         t = Transcript(incident_id=incident_id, alert=alert)
+        self._hint = format_prior_attempts(prior_attempts or [])
         self.events.bind(incident_id)
-        self.events.emit("ALERT_RECEIVED", f"alert: {alert}", {"alert": alert})
+        data: Dict[str, Any] = {"alert": alert}
+        if prior_attempts:
+            data["prior_attempts"] = len(prior_attempts)
+        self.events.emit("ALERT_RECEIVED", f"alert: {alert}" + (
+            f" (re-investigation after {len(prior_attempts)} failed attempt(s))" if prior_attempts else ""), data)
         try:
             self._investigate(t)
             self._diagnose(t)
@@ -70,7 +97,9 @@ class IncidentAgent:
     def _investigate(self, t: Transcript) -> None:
         session = self.new_session(prompts.investigation_system(self.max_tool_calls), self.toolbox.specs)
         now = datetime.now(timezone.utc).isoformat(timespec="seconds")
-        resp = self._send(t, session, user_text=f"ALERT: {t.alert}\nCurrent time (UTC): {now}\nInvestigate.")
+        hint = f"\n\n{self._hint}" if self._hint else ""
+        resp = self._send(t, session,
+                          user_text=f"ALERT: {t.alert}\nCurrent time (UTC): {now}{hint}\nInvestigate.")
         turns = 1
         while resp.tool_calls and turns < MAX_MODEL_TURNS:
             if resp.text.strip():
@@ -110,8 +139,10 @@ class IncidentAgent:
 
     def _diagnose(self, t: Transcript) -> None:
         session = self.new_session(prompts.diagnosis_system(), [])
-        resp = self._send(t, session,
-                          user_text=prompts.diagnosis_request(t.alert, t.findings, t.compact_for_prompt()))
+        request = prompts.diagnosis_request(t.alert, t.findings, t.compact_for_prompt())
+        if self._hint:
+            request = f"{self._hint}\n\n{request}"
+        resp = self._send(t, session, user_text=request)
         idx = t.evidence_index()
         diag, problems, citations = self._check(resp.text, idx)
         model = resp.model

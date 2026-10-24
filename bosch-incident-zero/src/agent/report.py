@@ -215,6 +215,31 @@ def attach_action_outcome(report: Dict[str, Any], action: Any, verification: Any
     return out
 
 
+def attach_attempts(report: Dict[str, Any], attempts: List[Dict[str, Any]], final_status: str,
+                    final_reason: str, max_attempts: int = 1) -> Dict[str, Any]:
+    """Add the remediation loop history; RESOLVED_VERIFIED only when the last verification is RECOVERED."""
+    out = dict(report)
+    remediation = dict(out.get("remediation") or {})
+    last_ver = ((attempts[-1] if attempts else {}).get("verification") or {}).get("status")
+    if final_status == "RESOLVED_VERIFIED" and last_ver != RECOVERED:
+        final_status, final_reason = "UNRESOLVED_ESCALATED", f"last verification was {last_ver}, not {RECOVERED}"
+    remediation["attempts"] = _plain(attempts)
+    remediation["max_attempts"] = max_attempts
+    remediation["final_status"] = final_status
+    remediation["final_reason"] = final_reason
+    out["remediation"] = remediation
+    return out
+
+
+_FINAL_NOTES = {
+    "RESOLVED_VERIFIED": "The symptom cleared in fresh telemetry after the last approved action.",
+    "UNRESOLVED_ESCALATED": "Not resolved - escalated to a human.",
+    "NOT_VERIFIED_DRY_RUN": "Dry run - nothing changed, recovery not claimed.",
+    "REJECTED": "The human rejected the proposed action - nothing was executed in that attempt.",
+    "BLOCKED_BY_KILL_SWITCH": "Stopped by the emergency kill switch.",
+}
+
+
 _STATUS_NOTES = {
     "RESOLVED": "Recovery verified by telemetry.",
     "MITIGATION_UNVERIFIED": "Recovery NOT verified - not claimed as resolved.",
@@ -244,8 +269,12 @@ def render_report_markdown(report: Dict[str, Any]) -> str:
     lines = [f"# Incident {report.get('incident_id', 'unknown')}", ""]
     if (taken and taken.get("dry_run")) or (taken is None and rem.get("dry_run") and rem.get("executed_at")):
         lines += ["> **DRY RUN - nothing was changed.**", ""]
-    lines += [f"**Status:** {status}" + (f" - {_STATUS_NOTES[status]}" if status in _STATUS_NOTES else ""), "",
-              "| Field | Value |", "|---|---|"]
+    lines += [f"**Status:** {status}" + (f" - {_STATUS_NOTES[status]}" if status in _STATUS_NOTES else ""), ""]
+    final = rem.get("final_status")
+    if final:
+        lines += [f"**Final remediation status:** {final}" + (f" - {_FINAL_NOTES[final]}" if final in _FINAL_NOTES
+                                                              else ""), "", f"{rem.get('final_reason') or ''}", ""]
+    lines += ["| Field | Value |", "|---|---|"]
     for label, key in (("Diagnosed at", "timestamp"), ("Target service", "target_service"),
                        ("Severity", "severity"), ("Confidence", "confidence_score"),
                        ("Category", "root_cause_category")):
@@ -275,6 +304,23 @@ def render_report_markdown(report: Dict[str, Any]) -> str:
                   f"- Rollback: {_md(taken.get('rollback'))}"]
     elif "action_taken" in report:
         lines.append("- No action taken.")
+
+    attempts = rem.get("attempts") or []
+    if attempts:
+        lines += ["", f"## Remediation attempts ({len(attempts)} of max {rem.get('max_attempts')})", "",
+                  "| # | Action | Approval | Executed | Verification (before -> after) | Outcome |",
+                  "|---|---|---|---|---|---|"]
+        for a in attempts:
+            act, appr, exe, ver_a = a.get("action") or {}, a.get("approval") or {}, a.get("execution") or {}, \
+                a.get("verification") or {}
+            b, af = ver_a.get("before") or {}, ver_a.get("after") or {}
+            change = (f"{ver_a.get('status')}: err {_md(b.get('error_rate'))} -> {_md(af.get('error_rate'))}, "
+                      f"p95 {_md(b.get('p95_ms'))} -> {_md(af.get('p95_ms'))}") if ver_a else "n/a"
+            what = f"{act.get('type')} on {act.get('target')}" if act else "none"
+            who = (f"{'approved' if appr.get('approved') else 'rejected'} by {appr.get('approver')}"
+                   if appr else "not asked")
+            lines.append(f"| {a.get('attempt')} | {_md(what)} | {_md(who)} | {_md(exe.get('status'))} | "
+                         f"{_md(change)} | {_md(a.get('outcome'))}: {_md(a.get('reason'))} |")
 
     if report.get("timeline"):
         lines += ["", "## Timeline", "", "| At | Event | Status | Detail |", "|---|---|---|---|"]

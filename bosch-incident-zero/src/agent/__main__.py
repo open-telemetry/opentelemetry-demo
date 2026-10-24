@@ -5,7 +5,9 @@
     python -m src.agent --demo                  # end-to-end judge demonstration
     python -m src.agent --tools-only            # live smoke test of every tool, no LLM needed
 
-Every action needs a human decision at the prompt (or in the chat UI). Dry run is the default.
+Every action needs a human decision at the prompt (or in the chat UI), on every attempt. Dry run is the
+default. A live action that measurably fails to recover the symptom is rolled back and the incident is
+re-investigated, up to --max-attempts times; report.json is written only when the loop has ended.
 """
 from __future__ import annotations
 
@@ -19,7 +21,7 @@ from .agent import MAX_TOOL_CALLS, IncidentAgent
 from .llm import LLMConfigError, session_factory
 from .presenter import format_incident_brief
 from .tools import TOPOLOGY, ToolBox, ToolContext
-from ..approval.pipeline import execute_safety_pipeline
+from ..approval.loop import MAX_ATTEMPTS_CAP, configured_max_attempts, run_remediation_loop
 
 
 def _tools_smoke(box: ToolBox) -> int:
@@ -73,6 +75,9 @@ def main(argv=None, approval_callback=None) -> int:
                         "needs DRY_RUN_MODE=false and a configured Action API.")
     p.add_argument("--quiet", action="store_true",
                    help="Do not echo run events to the terminal (they are still written to the logs).")
+    p.add_argument("--max-attempts", type=int, default=None,
+                   help=f"Remediation attempts before escalating (default REMEDIATION_MAX_ATTEMPTS or 3, "
+                        f"capped at {MAX_ATTEMPTS_CAP}). Only a measured non-recovery on a live backend retries.")
     p.add_argument("--raw", action="store_true", help="Print raw JSON outputs instead of the human-readable incident brief.")
     args = p.parse_args(argv)
 
@@ -97,31 +102,44 @@ def main(argv=None, approval_callback=None) -> int:
     out = settings.resolve_path(settings.report_output_dir)
     events = EventLog.from_settings(settings, echo=not args.quiet)
     print(f"Audit log: {events.audit_log_path}", flush=True)
+    max_attempts = configured_max_attempts(settings) if args.max_attempts is None else args.max_attempts
     try:
-        agent = IncidentAgent(box, session_factory(), max_tool_calls=args.max_tool_calls, output_dir=out,
-                              events=events)
-        print("Initiating multi-signal observability investigation...", flush=True)
-        t = agent.run(alert_text, incident_id=args.incident_id)
+        agent = IncidentAgent(box, session_factory(), max_tool_calls=args.max_tool_calls, events=events)
     except LLMConfigError as e:
         print(LLM_ESCALATION.format(error=e), file=sys.stderr, flush=True)
         return 2
 
-    print(f"Completed {len(t.tool_calls)} tool calls across Prometheus, Jaeger, OpenSearch, and Docker.",
-          flush=True)
+    def investigate(incident_id, prior_attempts):
+        label = "Re-investigating" if prior_attempts else "Initiating multi-signal observability investigation"
+        print(f"{label}...", flush=True)
+        t = agent.run(alert_text, incident_id=incident_id or args.incident_id, prior_attempts=prior_attempts)
+        print(f"Completed {len(t.tool_calls)} tool calls across Prometheus, Jaeger, OpenSearch, and Docker.",
+              flush=True)
+        return t
 
     channel = "chat_ui" if args.approve_via == "chat" else "cli"
-    print(f"\nSafety pipeline (dry run: {args.dry_run}, approval via: {channel}):", flush=True)
-    outcome = execute_safety_pipeline(
-        t,
-        settings=settings,
-        approval_callback=approval_callback,
-        approval_channel=channel,
-        dry_run=args.dry_run,
-        ctx=ctx,
-        events=events,
-        open_browser=channel == "chat_ui" and sys.stdin.isatty(),
-    )
+    print(f"\nRemediation loop (dry run: {args.dry_run}, approval via: {channel}, "
+          f"max attempts: {max_attempts}):", flush=True)
+    try:
+        outcome = run_remediation_loop(
+            alert_text,
+            settings=settings,
+            investigate=investigate,
+            max_attempts=max_attempts,
+            approval_callback=approval_callback,
+            approval_channel=channel,
+            dry_run=args.dry_run,
+            ctx=ctx,
+            events=events,
+            open_browser=channel == "chat_ui" and sys.stdin.isatty(),
+        )
+    except LLMConfigError as e:
+        print(LLM_ESCALATION.format(error=e), file=sys.stderr, flush=True)
+        return 2
+    t = outcome.transcript
     print(f"Pipeline outcome: {outcome.status} ({outcome.reason})", flush=True)
+    print(f"Final status: {outcome.final_status} after {len(outcome.attempts)} attempt(s) "
+          f"({outcome.final_reason})", flush=True)
 
     if args.raw:
         print("\n--- GATE ---")
