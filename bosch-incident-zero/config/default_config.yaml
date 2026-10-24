@@ -1,0 +1,34 @@
+# Bosch Incident Zero - Default Configuration
+version: "1.0"
+
+monitoring:
+  poll_interval_seconds: 15
+  lookback_window_seconds: 300
+  thresholds:
+    error_rate_alert_threshold: 0.05       # 5% error rate triggers incident triage
+    p95_latency_alert_threshold_ms: 2000   # 2000ms triggers latency triage
+    cpu_usage_threshold_percent: 85.0
+
+telemetry:
+  jaeger:
+    timeout_seconds: 10
+    max_traces_per_query: 20
+  prometheus:
+    timeout_seconds: 10
+    step_seconds: 15
+  opensearch:
+    timeout_seconds: 10
+    max_log_results: 50
+
+safety:
+  kill_switch:
+    enabled: false
+    sentinel_file: ".kill_switch"
+  approval:
+    require_human_confirmation: true
+    default_timeout_seconds: 120
+    auto_reject_on_timeout: true
+  execution:
+    default_dry_run: true
+    max_retries: 2
+    stabilization_window_seconds: 30
