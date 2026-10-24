@@ -14,7 +14,7 @@ except ImportError:
 
 
 def load_all() -> None:
-    for module in ("services", "traces", "metrics", "logs", "containers", "deploys", "triage_tool"):
+    for module in ("services", "traces", "metrics", "logs", "containers", "deploys"):
         try:
             importlib.import_module(f"oncall.tools.{module}")
         except ModuleNotFoundError as exc:
