@@ -143,6 +143,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--pause", type=float, default=20.0, help="seconds between runs"
     )
+    parser.add_argument(
+        "--fail-on-red",
+        action="store_true",
+        help="exit non-zero if any scenario gets a RED verdict (CI gate)",
+    )
     args = parser.parse_args(argv)
 
     expected = load_expected()
@@ -176,6 +181,9 @@ def main(argv: list[str] | None = None) -> int:
     text = summary(rows, expected, args.live)
     (RESULTS / "summary.md").write_text(text, encoding="utf-8")
     print(text)
+    red = sum(r["verdict"].startswith("RED") for r in rows)
+    if args.fail_on_red and red:
+        return 1
     return 0
 
 

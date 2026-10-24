@@ -6,6 +6,7 @@ Runs the agent on recorded scenarios and scores it against `expected.yaml`.
 python -m eval.run_eval                         # all scenarios, offline replay
 python -m eval.run_eval --scenarios baseline,scenario-06 --pause 30
 python -m eval.run_eval --live --scenarios scenario-06   # inject by hand first
+python -m eval.run_eval --fail-on-red            # exit non-zero if any RED verdict
 ```
 
 - Offline replay reads `oncall/tests/fixtures/<scenario>/`, recorded with
@@ -30,4 +31,6 @@ Scoring per scenario:
 
 Output: `eval/results/summary.md` (table, total, RED count, calibration of
 confidence bucket vs mean score) and one JSON per scenario in
-`eval/results/` (gitignored).
+`eval/results/` (gitignored). `--fail-on-red` makes the command exit non-zero
+when any scenario gets a RED verdict, so the harness can gate a CI step on
+confident misdiagnoses.

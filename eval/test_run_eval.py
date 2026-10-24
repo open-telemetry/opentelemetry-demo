@@ -97,3 +97,66 @@ def test_default_run_only_uses_recorded_scenarios():
     expected = load_expected()
     recorded = [n for n in expected if (FIXTURES / n).is_dir()]
     assert "baseline" in recorded and "scenario-01" not in recorded
+
+
+def _row(name, diagnosis, report_valid=True):
+    return {
+        "scenario": name,
+        "run_id": "r",
+        "diagnosis": diagnosis,
+        "steps": 1,
+        "stopped": "finish",
+        "tokens": 0,
+        "seconds": 0.1,
+        "report_valid": report_valid,
+        "llm_models": [],
+        "report_notes": [],
+    }
+
+
+_EXPECTED_06 = {"component": "valkey-cart", "category": "dependency_unavailable"}
+
+
+def _patch_eval(tmp_path, monkeypatch, diagnosis):
+    from eval import run_eval
+
+    monkeypatch.setattr(run_eval, "RESULTS", tmp_path)
+    monkeypatch.setattr(
+        run_eval, "load_expected", lambda *a, **k: {"scenario-06": _EXPECTED_06}
+    )
+    monkeypatch.setattr(
+        run_eval, "run_scenario", lambda name, live: _row(name, diagnosis)
+    )
+    return run_eval
+
+
+def test_fail_on_red_returns_nonzero(tmp_path, monkeypatch):
+    run_eval = _patch_eval(
+        tmp_path, monkeypatch, _d("cart", "app_error")
+    )  # wrong -> RED
+    rc = run_eval.main(["--scenarios", "scenario-06", "--pause", "0", "--fail-on-red"])
+    assert rc == 1
+
+
+def test_no_red_returns_zero(tmp_path, monkeypatch):
+    run_eval = _patch_eval(
+        tmp_path,
+        monkeypatch,
+        _d("valkey-cart", "dependency_unavailable"),  # correct
+    )
+    rc = run_eval.main(["--scenarios", "scenario-06", "--pause", "0", "--fail-on-red"])
+    assert rc == 0
+
+
+def test_rerun_is_deterministic(tmp_path, monkeypatch, capsys):
+    # F17 acceptance: same scenario twice -> same component/output.
+    run_eval = _patch_eval(
+        tmp_path, monkeypatch, _d("valkey-cart", "dependency_unavailable")
+    )
+    rc1 = run_eval.main(["--scenarios", "scenario-06", "--pause", "0"])
+    out1 = capsys.readouterr().out
+    rc2 = run_eval.main(["--scenarios", "scenario-06", "--pause", "0"])
+    out2 = capsys.readouterr().out
+    assert rc1 == rc2 == 0
+    assert "valkey-cart" in out1
+    assert out1 == out2
