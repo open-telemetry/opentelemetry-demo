@@ -1,0 +1,105 @@
+{
+  "schema_version": "1.0",
+  "incident_id": "INC-011-AD-CPU-ESCALATED",
+  "status": "escalated",
+  "detected_at": "2026-10-24T01:00:00Z",
+  "resolved_at": "2026-10-23T22:09:55.028056+00:00",
+  "timeline": [
+    {
+      "ts": "2026-10-24T01:00:00Z",
+      "event": "DETECTED",
+      "detail": "Latency anomaly detected on ad"
+    },
+    {
+      "ts": "2026-10-24T01:00:40Z",
+      "event": "INVESTIGATING",
+      "detail": "Checking container throttled periods"
+    },
+    {
+      "ts": "2026-10-24T01:01:15Z",
+      "event": "DIAGNOSED",
+      "detail": "Identified resource_exhaustion_cpu"
+    },
+    {
+      "ts": "2026-10-24T01:02:10Z",
+      "event": "ESCALATED",
+      "detail": "Escalated with findings to engineering team"
+    }
+  ],
+  "symptoms": [
+    {
+      "type": "latency_p95",
+      "service": "ad",
+      "metric": "p95_duration_ms",
+      "value": 3450.0,
+      "threshold": 150.0,
+      "description": "Ad service p95 latency is 3450ms (> 150ms baseline)"
+    }
+  ],
+  "root_cause": {
+    "component": "ad",
+    "category": "resource_exhaustion_cpu",
+    "description": "Ad service container is severely CPU throttled (quota 0.1 CPU). Container restarting is not a remedy for host CPU starvation.",
+    "confidence": {
+      "model": 0.88,
+      "evidence_score": 0.82,
+      "final": 0.82
+    }
+  },
+  "evidence": [
+    {
+      "evidence_id": "E1",
+      "type": "metric",
+      "ref": "ad p95 3450ms vs baseline 32ms",
+      "why_it_matters": "100x latency regression"
+    },
+    {
+      "evidence_id": "E2",
+      "type": "container",
+      "ref": "ad CPU 99.8% of 0.1 CPU quota, high throttle periods",
+      "why_it_matters": "Confirmed CPU starvation with no software fault signature"
+    }
+  ],
+  "alternatives_considered": [
+    "service_fault_injected_errors",
+    "traffic_overload"
+  ],
+  "actions": [],
+  "verification": null,
+  "escalation": {
+    "reason": "No approved automated remediation for CPU starvation. Container restart rejected by policy.",
+    "findings": "Container ad is pinned to 0.1 CPU quota. Escalated to platform engineering to adjust compose CPU limits."
+  },
+  "prevention": [
+    {
+      "type": "alerting",
+      "target": "prometheus/rules/ad-alert.yaml",
+      "change": "groups:\n  - name: oncall-preventive-rules\n    rules:\n      - alert: HighErrorRateAd\n        expr: container_memory_usage_bytes{container_label_com_docker_compose_service=\"ad\"} > 300000000\n        for: 1m\n        labels:\n          severity: critical\n          service: ad\n        annotations:\n          summary: \"Elevated error rate observed on ad\"\n          description: \"Error ratio exceeded threshold for over 1 minute.\"\n",
+      "rationale": "Detect resource_exhaustion_cpu on ad before full user impact occurs.",
+      "risk": "none (alerting rule only)",
+      "validated": true,
+      "validation_detail": "Valid PromQL expression verified against Prometheus"
+    },
+    {
+      "type": "config",
+      "target": "compose.yaml::services.ad.deploy.resources.limits.memory",
+      "change": "limits:\n  memory: 500M\nreservations:\n  memory: 256M",
+      "rationale": "Enforce bounded memory limits on ad to avoid host OOM starvation.",
+      "risk": "low",
+      "validated": true,
+      "validation_detail": "Config syntax verified against compose spec"
+    },
+    {
+      "type": "code",
+      "target": "ad request handler",
+      "change": "Add request timeout deadline propagation and input validation:\n- Enforce 2.0s maximum handler deadline.\n- Return HTTP 400 immediately on malformed charge/cart payloads.",
+      "rationale": "Prevent hanging handler threads and unhandled edge case exceptions.",
+      "risk": "medium (requires code change & CI/CD deployment)",
+      "validated": true,
+      "validation_detail": "Architectural resilience pattern"
+    }
+  ],
+  "memory_assist": null,
+  "model": {},
+  "auto_approve_used": false
+}

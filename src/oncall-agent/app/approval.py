@@ -55,6 +55,8 @@ class IncidentRecord(BaseModel):
     execution_results: list[dict[str, Any]] = []
     verification: dict[str, Any] | None = None
     escalation: dict[str, Any] | None = None
+    prevention: list[dict[str, Any]] = []
+    memory_assist: dict[str, Any] | None = None
     report_path: str | None = None
     timeline: list[dict[str, Any]] = []
 

@@ -62,6 +62,18 @@ def _run_incident_pipeline(alert: Alert, auto_approve: bool = False) -> None:
 
     store.transition(rec, IncidentState.INVESTIGATING, "Starting LLM investigation")
 
+    # Check incident memory for assist hint
+    symptom_summary = "; ".join(s.description for s in alert.symptoms)
+    try:
+        from app.memory import find_memory_assist, save_to_memory
+        assist = find_memory_assist(alert.fingerprint, symptom_summary, current_steps=0)
+        if assist:
+            rec.memory_assist = assist
+            rec.add_timeline("MEMORY_ASSIST", f"Matched past incident {assist['matched_incident']} (sim={assist['similarity']:.2f})")
+            store.update(rec)
+    except Exception as e:
+        logger.warning("Memory assist check error: %s", e)
+
     # Investigate
     ledger = EvidenceLedger(inc_id)
     try:
@@ -72,6 +84,11 @@ def _run_incident_pipeline(alert: Alert, auto_approve: bool = False) -> None:
         rec.escalation = {"reason": f"Investigation error: {e}", "findings": ""}
         store.transition(rec, IncidentState.ESCALATED, f"Investigation exception: {e}")
         write_report(rec)
+        try:
+            from app.memory import save_to_memory
+            save_to_memory(rec, steps_used=len(rec.timeline))
+        except Exception:
+            pass
         return
 
     diag = inv_result.diagnosis
@@ -90,6 +107,11 @@ def _run_incident_pipeline(alert: Alert, auto_approve: bool = False) -> None:
         }
         store.transition(rec, IncidentState.ESCALATED, "Confidence too low — escalating")
         write_report(rec, diag, val.model_dump() if val else {})
+        try:
+            from app.memory import save_to_memory
+            save_to_memory(rec, steps_used=len(rec.timeline))
+        except Exception:
+            pass
         return
 
     # Propose
@@ -196,6 +218,13 @@ def _execute_approved(incident_id: str, auto_approve: bool = False) -> None:
     rec = store.get(incident_id) or rec
     rec.report_path = str(json_path)
     store.update(rec)
+
+    # Persist closed incident to memory
+    try:
+        from app.memory import save_to_memory
+        save_to_memory(rec, steps_used=len(rec.timeline))
+    except Exception as e:
+        logger.warning("Failed to save resolved incident to memory: %s", e)
 
 
 def _detector_loop() -> None:
@@ -335,7 +364,54 @@ def reject_incident(incident_id: str, body: RejectBody):
     rec.rejection_reason = body.reason or "No reason provided"
     approval_store.transition(rec, IncidentState.REJECTED, f"Rejected: {rec.rejection_reason}")
     write_report(rec, rec.diagnosis, rec.validation)
+    try:
+        from app.memory import save_to_memory
+        save_to_memory(rec, steps_used=len(rec.timeline))
+    except Exception as e:
+        logger.warning("Failed to save rejected incident to memory: %s", e)
     return {"status": "rejected", "detail": f"Incident {incident_id} rejected."}
+
+
+# ── Incident Memory (Stretch A) ───────────────────────────────────────────────
+
+@app.post("/memory/reindex")
+def memory_reindex():
+    from app.memory import reindex_from_reports
+    count = reindex_from_reports()
+    return {"status": "reindexed", "count": count}
+
+
+@app.get("/memory")
+def get_memory(limit: int = 20):
+    import sqlite3
+    from app.config import MEMORY_SQLITE_PATH
+    from app.memory import init_memory_db
+    init_memory_db(MEMORY_SQLITE_PATH)
+    try:
+        with sqlite3.connect(MEMORY_SQLITE_PATH) as conn:
+            conn.row_factory = sqlite3.Row
+            rows = conn.execute(
+                "SELECT incident_id, fingerprint, component, category, diagnosis_summary, runbook_id, outcome, steps_used, created_at FROM incidents ORDER BY created_at DESC LIMIT ?",
+                (limit,),
+            ).fetchall()
+            return [dict(r) for r in rows]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Database error: {e}")
+
+
+# ── Prevention Recommendations (Stretch B) ────────────────────────────────────
+
+@app.get("/incidents/{incident_id}/prevention")
+def get_prevention(incident_id: str):
+    rec = approval_store.get(incident_id)
+    if not rec:
+        raise HTTPException(status_code=404, detail="Incident not found")
+    if not rec.prevention and rec.state in (IncidentState.RESOLVED, IncidentState.ESCALATED):
+        from app.prevention import generate_prevention, write_prevention_markdown
+        rec.prevention = generate_prevention(rec)
+        write_prevention_markdown(incident_id, rec.prevention)
+        approval_store.update(rec)
+    return {"incident_id": incident_id, "prevention": rec.prevention}
 
 
 # ── Manual investigation trigger (eval harness) ───────────────────────────────

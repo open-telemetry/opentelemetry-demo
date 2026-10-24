@@ -1,0 +1,146 @@
+{
+  "schema_version": "1.0",
+  "incident_id": "INC-001-PAYMENT-RESOLVED",
+  "status": "resolved",
+  "detected_at": "2026-10-24T00:15:00Z",
+  "resolved_at": "2026-10-23T22:09:54.909232+00:00",
+  "timeline": [
+    {
+      "ts": "2026-10-24T00:15:00Z",
+      "event": "DETECTED",
+      "detail": "Alert fired: payment error ratio 100%"
+    },
+    {
+      "ts": "2026-10-24T00:15:20Z",
+      "event": "INVESTIGATING",
+      "detail": "Examining traces and logs"
+    },
+    {
+      "ts": "2026-10-24T00:15:45Z",
+      "event": "DIAGNOSED",
+      "detail": "Diagnosed service_fault_injected_errors on payment"
+    },
+    {
+      "ts": "2026-10-24T00:16:15Z",
+      "event": "APPROVED",
+      "detail": "Approved by operator via dashboard"
+    },
+    {
+      "ts": "2026-10-24T00:16:20Z",
+      "event": "EXECUTING",
+      "detail": "Calling Action API set_feature_flag paymentFailure=off"
+    },
+    {
+      "ts": "2026-10-24T00:17:30Z",
+      "event": "RESOLVED",
+      "detail": "Telemetry verified recovered"
+    }
+  ],
+  "symptoms": [
+    {
+      "type": "error_ratio",
+      "service": "payment",
+      "metric": "error_percentage",
+      "value": 100.0,
+      "threshold": 5.0,
+      "description": "Service payment error ratio is 100.0% (> 5.0% threshold)"
+    }
+  ],
+  "root_cause": {
+    "component": "payment",
+    "category": "service_fault_injected_errors",
+    "description": "Payment service is rejecting all charge transactions with Invalid Token errors",
+    "confidence": {
+      "model": 0.95,
+      "evidence_score": 0.88,
+      "final": 0.88
+    }
+  },
+  "evidence": [
+    {
+      "evidence_id": "E1",
+      "type": "metric",
+      "ref": "payment error % 100.0%",
+      "why_it_matters": "Traces show 100% failure on charge requests"
+    },
+    {
+      "evidence_id": "E2",
+      "type": "trace",
+      "ref": "Trace b3bd416acc27: [ERROR: payment:Payment request failed. Invalid token]",
+      "why_it_matters": "Root span failure with loyalty token error"
+    },
+    {
+      "evidence_id": "E3",
+      "type": "log",
+      "ref": "Payment request failed. Invalid token. demo.user_context.loyalty_level=gold (x17)",
+      "why_it_matters": "Application log confirm recurring invalid token rejection"
+    },
+    {
+      "evidence_id": "E4",
+      "type": "container",
+      "ref": "payment running, healthy, 0 restarts",
+      "why_it_matters": "Container is healthy; failure is purely logical"
+    }
+  ],
+  "alternatives_considered": [
+    "dependency_unavailable",
+    "container_down_or_crashloop"
+  ],
+  "actions": [
+    {
+      "action": "set_feature_flag",
+      "params": {
+        "target": "payment",
+        "flag": "paymentFailure",
+        "state": "off"
+      },
+      "result": {
+        "status": "ok",
+        "action_id": "act-payment-001"
+      },
+      "approved_by": "oncall-operator",
+      "approved_at": "2026-10-24T00:16:15Z"
+    }
+  ],
+  "verification": {
+    "passed": true,
+    "checks": {
+      "error_ratio": "0.0% (< 2.0% threshold)",
+      "container_status": "running (0 restarts)",
+      "recent_traces": "0 error traces in last 60s"
+    }
+  },
+  "escalation": null,
+  "prevention": [
+    {
+      "type": "alerting",
+      "target": "prometheus/rules/payment-alert.yaml",
+      "change": "groups:\n  - name: oncall-preventive-rules\n    rules:\n      - alert: HighErrorRatePayment\n        expr: sum(rate(traces_span_metrics_calls_total{service_name=\"payment\",status_code=\"STATUS_CODE_ERROR\"}[2m])) / sum(rate(traces_span_metrics_calls_total{service_name=\"payment\"}[2m])) > 0.05\n        for: 1m\n        labels:\n          severity: critical\n          service: payment\n        annotations:\n          summary: \"Elevated error rate observed on payment\"\n          description: \"Error ratio exceeded threshold for over 1 minute.\"\n",
+      "rationale": "Detect service_fault_injected_errors on payment before full user impact occurs.",
+      "risk": "none (alerting rule only)",
+      "validated": true,
+      "validation_detail": "Valid PromQL expression verified against Prometheus"
+    },
+    {
+      "type": "config",
+      "target": "compose.yaml::services.payment.healthcheck",
+      "change": "healthcheck:\n  test: [\"CMD\", \"curl\", \"-f\", \"http://localhost:8080/health\"]\n  interval: 15s\n  timeout: 3s\n  retries: 3",
+      "rationale": "Add active health check probe on payment to detect degradation early.",
+      "risk": "low",
+      "validated": true,
+      "validation_detail": "Config syntax verified against compose spec"
+    },
+    {
+      "type": "code",
+      "target": "payment client HTTP/RPC calling library",
+      "change": "Implement circuit breaker (e.g. Resilience4j / Tenacity / Polly):\n- Trip open on 5 consecutive failures or > 50% error rate over 10s.\n- Exponential backoff retry with jitter (100ms, 200ms, 400ms, max 3 attempts).\n- Fallback response or degraded cache when circuit is open.",
+      "rationale": "Prevent cascading failure and thread starvation when downstream dependencies fail.",
+      "risk": "medium (requires code change & CI/CD deployment)",
+      "validated": true,
+      "validation_detail": "Architectural resilience pattern"
+    }
+  ],
+  "memory_assist": null,
+  "model": {},
+  "auto_approve_used": false
+}

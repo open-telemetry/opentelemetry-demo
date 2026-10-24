@@ -35,59 +35,18 @@ def search_incident_memory(symptom_summary: str) -> str:
     if not symptom_summary or not isinstance(symptom_summary, str):
         return "Error: symptom_summary must be a non-empty string."
 
-    db_path = MEMORY_SQLITE_PATH
-    try:
-        _init_memory_db(db_path)
-    except Exception as e:
-        return f"Error initializing incident memory database: {e}"
-
-    try:
-        with sqlite3.connect(db_path) as conn:
-            conn.row_factory = sqlite3.Row
-            rows = conn.execute(
-                "SELECT incident_id, fingerprint, symptoms, component, category, diagnosis_summary, runbook_id, outcome, created_at FROM incidents"
-            ).fetchall()
-    except Exception as e:
-        return f"Error querying incident memory: {e}"
-
-    if not rows:
-        return "No past incidents found in incident memory. (Memory is empty)"
-
-    query_tokens = _tokenize(symptom_summary)
-    if not query_tokens:
-        return "Warning: symptom_summary contains no indexable terms."
-
-    scored: list[tuple[float, dict[str, Any]]] = []
-    for r in rows:
-        record = dict(r)
-        doc_text = " ".join([
-            str(record.get("fingerprint") or ""),
-            str(record.get("symptoms") or ""),
-            str(record.get("component") or ""),
-            str(record.get("category") or ""),
-            str(record.get("diagnosis_summary") or ""),
-        ])
-        doc_tokens = _tokenize(doc_text)
-        if not doc_tokens:
-            continue
-
-        overlap = len(query_tokens & doc_tokens)
-        sim = overlap / (len(query_tokens) + len(doc_tokens) - overlap)
-        if sim > 0.05:
-            scored.append((sim, record))
-
-    scored.sort(key=lambda x: x[0], reverse=True)
-    top_matches = scored[:3]
-
-    if not top_matches:
+    from app.memory import search_memory
+    matches = search_memory(symptom_summary)
+    if not matches:
         return f"No similar incidents found in memory for query: '{symptom_summary[:100]}'."
 
     lines = [
         "Past Incident Memory Matches (NOTE: Memory is a hint only, not direct evidence):",
         "",
     ]
-    for sim, rec in top_matches:
+    for rec in matches:
         outcome = rec.get("outcome", "unknown")
+        sim = rec.get("similarity", 0.0)
         outcome_tag = f"[{outcome.upper()}]"
         lines.append(
             f"- Incident {rec.get('incident_id')} (similarity: {sim:.2f}) {outcome_tag}:"
