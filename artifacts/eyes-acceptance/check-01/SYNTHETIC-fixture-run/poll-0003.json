@@ -1,0 +1,15 @@
+{
+  "at": "2026-01-01T12:00:30Z",
+  "phase": "baseline",
+  "result": {
+    "created_incidents": [],
+    "checks": [
+      {
+        "service": "checkout",
+        "metric": "latency_p95_ms",
+        "quality": "normal",
+        "evidence_id": "fixture-6"
+      }
+    ]
+  }
+}

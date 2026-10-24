@@ -1,0 +1,16 @@
+{
+  "tests_run": 83,
+  "failures": 0,
+  "errors": 0,
+  "ast_files_checked": 21,
+  "baseline_files_checked": 721,
+  "changed_existing_files": [],
+  "svg_xml_valid": true,
+  "fixture_structural_checks_passed": true,
+  "fixture_rejected_as_live_acceptance": true,
+  "live_incident_executed": false,
+  "real_llm_called": false,
+  "new_suite_network_and_external_processes_blocked": true,
+  "legacy_suite_transport": "Loopback fixture HTTP servers and local Python CLI tests only",
+  "notice": "Offline verification only. Real telemetry, provider connectivity and live semantic review remain pending."
+}

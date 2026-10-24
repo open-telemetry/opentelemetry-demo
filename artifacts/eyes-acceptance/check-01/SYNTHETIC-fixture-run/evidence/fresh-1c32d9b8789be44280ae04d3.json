@@ -1,0 +1,19 @@
+{
+  "origin": "fixture",
+  "collected_at": "2026-01-01T12:00:30Z",
+  "service": "checkout",
+  "status": "ok",
+  "observations": [
+    {
+      "source_timestamp": 1767268830.0,
+      "age_seconds": 0.0
+    }
+  ],
+  "provenance": {
+    "backend": "prometheus",
+    "endpoint": "http://localhost:9090",
+    "query": "min(timestamp(traces_span_metrics_calls_total{service_name=\"checkout\",span_kind=\"SPAN_KIND_SERVER\"}))"
+  },
+  "source_time": "2026-01-01T12:00:30Z",
+  "evidence_id": "fresh-1c32d9b8789be44280ae04d3"
+}
