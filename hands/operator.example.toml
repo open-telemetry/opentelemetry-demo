@@ -1,0 +1,39 @@
+# Operator configuration for Hands (Checkpoint 3: Action & Verification)
+# Copy to a dedicated operator file (e.g. /tmp/hands-operator.toml)
+
+f02_config = "/tmp/f02-operator.toml"
+data_dir = "/tmp/hands-data"
+
+[adapter]
+mode = "local_docker" # "local_docker", "http", or "mock"
+api_url = "http://localhost:8080/action/api"
+timeout_seconds = 15.0
+compose_project = "opentelemetry-demo"
+locust_url = "http://localhost:8080/loadgen"
+
+[safety]
+services = [
+    "accounting",
+    "ad",
+    "cart",
+    "checkout",
+    "email",
+    "fraud-detection",
+    "frontend",
+    "image-provider",
+    "loadgenerator",
+    "payment",
+    "product-catalog",
+    "quote",
+    "recommendation",
+    "shipping"
+]
+require_explicit_approval = true
+approval_ttl_seconds = 900
+allow_scaling = false # Scaling is disabled in Docker Compose
+
+[verification]
+settling_period_seconds = 10.0
+min_samples = 2
+default_threshold_error_rate = 0.05
+default_threshold_latency_p95_ms = 1000.0
