@@ -91,7 +91,7 @@ The audited repository contains zero Bosch-specific starter code, and neither `f
 
 ### Decision
 Define clean, abstract interfaces:
-1. `FaultController` (base interface in `src/faultctl/base.py`) with a `FlagdAdapter` implementation that drives the upstream `src/flagd/demo.flagd.json` failure scenarios.
+1. `FaultController` (base interface in `src/faultctl/base.py`). The `FlagdAdapter` implementation that edited `src/flagd/demo.flagd.json` was removed on Day 2 because the rules allow injection only through the official `faultctl`.
 2. `ActionAPIClient` (base interface in `src/remediation/action_api.py`) with support for flag deactivation, container restart, and dry-run execution.
 
 When the hackathon organizers provide the official `faultctl` binary or Action API endpoint, only concrete adapters need to be swapped or configured via `.env`.

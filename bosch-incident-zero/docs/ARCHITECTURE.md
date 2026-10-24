@@ -12,13 +12,15 @@ flowchart TD
         Jaeger["Jaeger v2 (Traces)"]
         Prometheus["Prometheus (Metrics)"]
         OpenSearch["OpenSearch (Logs)"]
-        Flagd["Flagd / Fault Controller"]
+        Faultctl["Official faultctl (organisers)"]
+        OrgAPI["Organisers' Action API"]
 
         Services -->|OTLP| Collector
         Collector --> Jaeger
         Collector --> Prometheus
         Collector --> OpenSearch
-        Flagd -.->|Injects / Reverts Faults| Services
+        Faultctl -.->|Injects / Resets Faults| Services
+        OrgAPI -.->|Applies approved actions| Services
     end
 
     subgraph BoschSolution ["Bosch Incident Zero Solution"]
@@ -51,7 +53,7 @@ flowchart TD
             KillSwitch -- No --> Gate
             Gate -- Rejected --> Abort
             Gate -- Approved --> ActionAPI
-            ActionAPI -->|Execute Remediation| Flagd
+            ActionAPI -->|Execute Remediation| OrgAPI
             ActionAPI --> AuditLog
         end
 
@@ -119,12 +121,16 @@ The system rejects speculative diagnoses. A diagnosed root cause must cite:
   - `inject_fault(fault_id, params)`
   - `revert_fault(fault_id)`
   - `list_active_faults()`
-- Default implementation: `FlagdAdapter` interacting with `src/flagd/demo.flagd.json` and Flagd service.
-- Ready to wrap `faultctl` CLI once provided by the hackathon organizers.
+- No implementation ships: the former `FlagdAdapter` edited `src/flagd/demo.flagd.json` directly, which the
+  event rules forbid, and was removed. Faults are injected and reset only with the organisers' `faultctl`,
+  which the evaluation harness calls through `FAULTCTL_CMD`.
 
 ### 3.5 Remediation & Action API (`src/remediation/`)
+- Fault injection and reset go only through the official `faultctl`; remediation goes only through the
+  organisers' Action API, after human approval.
 - Defines standard actions:
-  - `revert_fault_flag`: Disables active failure flag in Flagd.
+  - Feature-flag toggle: only through the organisers' Action API; flagd, `demo.flagd.json` and the
+    Feature Flags UI are never touched directly, and flag state is never read.
   - `restart_service`: Triggers service container restart.
   - `rate_limit_service`: Throttles load generator or traffic.
 - Every action implements `execute()`, `dry_run()`, and `rollback()`.
