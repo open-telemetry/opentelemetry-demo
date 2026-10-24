@@ -20,6 +20,7 @@ Query contracts, checked against the running demo on 2026-10-23:
 from __future__ import annotations
 
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -75,6 +76,82 @@ TOPOLOGY: Dict[str, List[str]] = {
     "kafka": [],
 }
 
+# All known demo microservices and infrastructure containers in the Astronomy Shop ecosystem
+DEMO_CONTAINERS: frozenset[str] = frozenset(
+    set(TOPOLOGY.keys())
+    | {callee for callees in TOPOLOGY.values() for callee in callees}
+    | TOOLING_CONTAINERS
+    | {"astronomy-db", "otel-collector", "valkey-cart", "valkey", "postgresql"}
+) - EXCLUDED_SERVICES
+
+
+def _extract_compose_project(labels: Any) -> Optional[str]:
+    """Extract com.docker.compose.project from inspect dict or docker ps label string."""
+    if isinstance(labels, dict):
+        p = labels.get("com.docker.compose.project")
+        return str(p).strip() if p else None
+    if isinstance(labels, str):
+        for part in labels.split(","):
+            if "=" in part:
+                k, v = part.split("=", 1)
+                if k.strip() == "com.docker.compose.project":
+                    return v.strip()
+    return None
+
+
+def _discover_compose_project(ctx: ToolContext) -> Optional[str]:
+    """Discover the Docker Compose project name from env, settings, or anchor containers."""
+    env_proj = os.environ.get("COMPOSE_PROJECT_NAME", "").strip()
+    if env_proj:
+        return env_proj
+    settings_proj = getattr(ctx.settings, "compose_project_name", None)
+    if settings_proj:
+        return str(settings_proj).strip()
+    for anchor in ("frontend", "frontend-proxy", "otel-collector", "jaeger", "prometheus"):
+        try:
+            raw = ctx.docker(["inspect", "--format", "{{json .Config.Labels}}", anchor])
+            labels = json.loads(raw)
+            p = _extract_compose_project(labels)
+            if p:
+                return p
+        except Exception:
+            continue
+    return None
+
+
+def _scoped_container_names(ctx: ToolContext) -> List[str]:
+    """Return container names scoped to the demo Compose project, falling back to known demo identities."""
+    proj = _discover_compose_project(ctx)
+    last_err: Optional[Exception] = None
+    if proj:
+        try:
+            raw = ctx.docker(["ps", "-a", "--filter", f"label=com.docker.compose.project={proj}", "--format", "{{.Names}}"])
+            names = [n.strip() for n in raw.split() if n.strip() and n.strip() not in EXCLUDED_SERVICES]
+            if names:
+                return sorted(set(n for n in names if n in DEMO_CONTAINERS))
+        except Exception as e:
+            last_err = e
+    # Explicit conservative fallback: inspect host containers and keep only verified demo identities
+    try:
+        raw = ctx.docker(["ps", "-a", "--format", "{{json .}}"])
+    except Exception as e:
+        raise last_err or e
+    names = []
+    for line in raw.splitlines():
+        try:
+            row = json.loads(line)
+        except ValueError:
+            continue
+        name = row.get("Names", "").strip()
+        if not name or name in EXCLUDED_SERVICES or name not in DEMO_CONTAINERS:
+            continue
+        c_proj = _extract_compose_project(row.get("Labels"))
+        # Reject if container explicitly belongs to a known unrelated compose project
+        if c_proj and c_proj not in ("opentelemetry-demo", "opentelemetry_demo", "otel-demo"):
+            continue
+        names.append(name)
+    return sorted(set(names))
+
 
 def _result(tool: str, status: str, summary: str, data: Any = None,
             evidence: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
@@ -99,6 +176,8 @@ def strip_flag_data(obj: Any) -> Any:
         if "key" in obj and isinstance(obj["key"], str) and _FLAG_NAME.search(obj["key"]):
             return None
         if "name" in obj and isinstance(obj["name"], str) and _FLAG_NAME.search(obj["name"]):
+            return None
+        if "ref" in obj and isinstance(obj["ref"], str) and _FLAG_NAME.search(obj["ref"]):
             return None
         out = {}
         for k, v in obj.items():
@@ -263,10 +342,19 @@ def _service_rates(ctx: ToolContext, w: str, offset: str = "") -> Dict[str, Dict
 
 
 def _container_states(ctx: ToolContext) -> Tuple[Optional[Dict[str, Dict[str, Any]]], Optional[str]]:
-    try:
-        raw = ctx.docker(["ps", "-a", "--format", "{{json .}}"])
-    except Exception as e:  # docker CLI missing or daemon down
-        return None, str(e)[:200]
+    proj = _discover_compose_project(ctx)
+    raw = None
+    last_err = None
+    if proj:
+        try:
+            raw = ctx.docker(["ps", "-a", "--filter", f"label=com.docker.compose.project={proj}", "--format", "{{json .}}"])
+        except Exception as e:
+            last_err = str(e)[:200]
+    if raw is None or not raw.strip():
+        try:
+            raw = ctx.docker(["ps", "-a", "--format", "{{json .}}"])
+        except Exception as e:
+            return None, last_err or str(e)[:200]
     states: Dict[str, Dict[str, Any]] = {}
     for line in raw.splitlines():
         try:
@@ -274,8 +362,14 @@ def _container_states(ctx: ToolContext) -> Tuple[Optional[Dict[str, Dict[str, An
         except ValueError:
             continue
         name = row.get("Names", "")
-        if name and name not in EXCLUDED_SERVICES:
-            states[name] = {"state": row.get("State", ""), "status": row.get("Status", "")}
+        if not name or name in EXCLUDED_SERVICES or name not in DEMO_CONTAINERS:
+            continue
+        c_proj = _extract_compose_project(row.get("Labels"))
+        if proj and c_proj and c_proj != proj:
+            continue
+        if not proj and c_proj and c_proj not in ("opentelemetry-demo", "opentelemetry_demo", "otel-demo"):
+            continue
+        states[name] = {"state": row.get("State", ""), "status": row.get("Status", "")}
     return states, None
 
 
@@ -821,9 +915,10 @@ def container_health(ctx: ToolContext, service: Optional[str] = None) -> Dict[st
         if service:
             names = [service]
         else:
-            names = [n for n in ctx.docker(["ps", "-a", "--format", "{{.Names}}"]).split()
-                     if n not in EXCLUDED_SERVICES]
-        raw = ctx.docker(["inspect", *names]) if names else "[]"
+            names = _scoped_container_names(ctx)
+        if not names:
+            return _result(tool, NO_DATA, "No monitored demo containers found.", {"containers": []}, [])
+        raw = ctx.docker(["inspect", *names])
         info = json.loads(raw)
     except Exception as e:
         msg = str(e)[:200]
@@ -832,6 +927,39 @@ def container_health(ctx: ToolContext, service: Optional[str] = None) -> Dict[st
                            {"containers": [{"name": service, "state": "missing"}]},
                            [{"ref": f"container:{service}:state", "kind": "container", "value": "missing"}])
         return _result(tool, SOURCE_UNAVAILABLE, f"Docker unavailable: {msg}")
+
+    proj = _discover_compose_project(ctx)
+    if service:
+        c_info = info[0] if info else {}
+        c_labels = (c_info.get("Config", {}) or {}).get("Labels", {}) or {}
+        c_proj = _extract_compose_project(c_labels)
+        is_demo = False
+        if proj:
+            if c_proj == proj:
+                is_demo = True
+        else:
+            if c_proj in ("opentelemetry-demo", "opentelemetry_demo", "otel-demo"):
+                is_demo = True
+            elif not c_proj and service in DEMO_CONTAINERS:
+                is_demo = True
+        if not is_demo:
+            return _result(tool, OK, f"Container '{service}' is not part of the OpenTelemetry Demo.",
+                           {"containers": []}, [])
+    else:
+        verified_info = []
+        for c in info:
+            c_labels = (c.get("Config", {}) or {}).get("Labels", {}) or {}
+            c_proj = _extract_compose_project(c_labels)
+            c_name = c.get("Name", "").lstrip("/")
+            if proj:
+                if c_proj == proj and c_name in DEMO_CONTAINERS:
+                    verified_info.append(c)
+            else:
+                if (c_proj in ("opentelemetry-demo", "opentelemetry_demo", "otel-demo") or not c_proj) and c_name in DEMO_CONTAINERS:
+                    verified_info.append(c)
+        info = verified_info
+        if not info:
+            return _result(tool, NO_DATA, "No monitored demo containers found.", {"containers": []}, [])
 
     try:
         cpu = ctx.prom_by("avg by (container_name)(avg_over_time(container_cpu_utilization_ratio[5m]))",

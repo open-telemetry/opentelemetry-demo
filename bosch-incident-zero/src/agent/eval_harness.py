@@ -45,20 +45,46 @@ def run_faultctl(args: List[str]) -> str:
 def score(expected: Dict[str, Any], transcript) -> Dict[str, Any]:
     diag = transcript.diagnosis or {}
     root = diag.get("root_cause") or {}
-    escalated = bool((transcript.gate or {}).get("escalate", True))
-    service_ok = root.get("service") == expected.get("service")
-    category_ok = expected.get("category") is None or root.get("category") == expected.get("category")
-    if escalated:
+    gate = transcript.gate or {}
+    escalated = bool(gate.get("escalate", True))
+
+    has_diagnosis = bool(root.get("service"))
+    service_match = bool(has_diagnosis and root.get("service") == expected.get("service"))
+    category_match = bool(has_diagnosis and (expected.get("category") is None or root.get("category") == expected.get("category")))
+    diagnosis_correct = service_match and category_match
+
+    schema_valid = bool(getattr(transcript, "report_schema_valid", False))
+    invalid_cits = gate.get("invalid_citations", 0) or 0
+    citations_valid = (invalid_cits == 0)
+
+    if not has_diagnosis:
+        outcome = "NO_DIAGNOSIS"
+    elif escalated:
         outcome = "ESCALATED"
-    elif service_ok and category_ok:
-        outcome = "PASS"
+    elif not diagnosis_correct:
+        outcome = "FAIL_DIAGNOSIS"
+    elif not schema_valid:
+        outcome = "FAIL_SCHEMA_INVALID"
+    elif not citations_valid:
+        outcome = "FAIL_INVALID_CITATIONS"
     else:
-        outcome = "FAIL"
-    return {"outcome": outcome, "predicted_service": root.get("service"),
-            "predicted_category": root.get("category"), "expected": expected,
-            "confidence": (transcript.gate or {}).get("final_confidence"),
-            "schema_valid": transcript.report_schema_valid, "tool_calls": len(transcript.tool_calls),
-            "invalid_citations": (transcript.gate or {}).get("invalid_citations")}
+        outcome = "PASS"
+
+    return {
+        "outcome": outcome,
+        "diagnosis_correct": diagnosis_correct,
+        "schema_valid": schema_valid,
+        "citations_valid": citations_valid,
+        "escalated": escalated,
+        "service_match": service_match,
+        "category_match": category_match,
+        "predicted_service": root.get("service"),
+        "predicted_category": root.get("category"),
+        "expected": expected,
+        "confidence": gate.get("final_confidence"),
+        "tool_calls": len(getattr(transcript, "tool_calls", []) or []),
+        "invalid_citations": invalid_cits,
+    }
 
 
 def main(argv: Optional[List[str]] = None) -> int:
@@ -68,9 +94,48 @@ def main(argv: Optional[List[str]] = None) -> int:
     p.add_argument("--no-inject", action="store_true", help="Do not call faultctl (incident already active).")
     args = p.parse_args(argv)
 
-    incidents = json.loads(args.incidents.read_text())
+    if not args.incidents.exists():
+        print(f"BLOCKED: Incident definition file '{args.incidents}' not found. Obtain authorized incident cases from organizers.", file=sys.stderr)
+        return 2
+
+    try:
+        raw_text = args.incidents.read_text(encoding="utf-8")
+        incidents = json.loads(raw_text)
+    except Exception as e:
+        print(f"BLOCKED: Failed to parse incident file '{args.incidents}': {e}", file=sys.stderr)
+        return 2
+
+    if not isinstance(incidents, list):
+        print(f"BLOCKED: Incident file root must be a JSON array, got {type(incidents).__name__}.", file=sys.stderr)
+        return 2
+
+    if not incidents:
+        print("BLOCKED: Incident file contains no incidents.", file=sys.stderr)
+        return 2
+
+    for idx, inc in enumerate(incidents):
+        if not isinstance(inc, dict):
+            print(f"BLOCKED: Incident at index {idx} is not an object.", file=sys.stderr)
+            return 2
+        missing = [k for k in ("id", "alert") if k not in inc]
+        if not args.no_inject and "inject" not in inc:
+            missing.append("inject")
+        if missing:
+            inc_id = inc.get("id", f"index {idx}")
+            print(f"BLOCKED: Incident '{inc_id}' missing required keys: {', '.join(missing)}.", file=sys.stderr)
+            return 2
+
     if args.only:
-        incidents = [i for i in incidents if i["id"] in args.only]
+        matched = [i for i in incidents if i["id"] in args.only]
+        if not matched:
+            print(f"BLOCKED: --only filter matched zero incidents (requested: {', '.join(args.only)}).", file=sys.stderr)
+            return 2
+        incidents = matched
+
+    if not args.no_inject and not os.environ.get("FAULTCTL_CMD", "").strip():
+        print("BLOCKED: FAULTCTL_CMD is not set. Point it at the official organizer faultctl executable.", file=sys.stderr)
+        return 2
+
     settings = Settings()
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
     out = Path(settings.report_output_dir)
@@ -95,6 +160,7 @@ def main(argv: Optional[List[str]] = None) -> int:
                     run_faultctl(inc.get("reset", ["reset"]))
                 except Exception as e:
                     row["reset_error"] = str(e)[:200]
+                    row["outcome"] = "FAIL_RESET_ERROR"
         rows.append(row)
         print(f"{row['id']:18s} {row['outcome']:10s} predicted={row.get('predicted_service')}/"
               f"{row.get('predicted_category')} conf={row.get('confidence')} calls={row.get('tool_calls')}")
