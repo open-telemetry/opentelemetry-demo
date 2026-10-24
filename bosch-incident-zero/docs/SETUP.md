@@ -178,3 +178,44 @@ touch .kill_switch
 ```
 
 Any pending or subsequent remediation call will immediately abort with a `KillSwitchEngagedException` and record the kill-switch activation in `audit_logs/audit.jsonl`.
+
+---
+
+## 5. End-to-End Demonstration Execution
+
+To demonstrate the full incident diagnosis and safety-governed remediation workflow:
+
+### Option A: Turnkey Automated Demonstration (Recommended for Judges)
+Runs multi-signal investigation against live telemetry (Prometheus, Jaeger, OpenSearch, Docker), performs root-cause analysis, evaluates human approval gate, executes safe dry-run remediation, and verifies recovery:
+
+```powershell
+python scripts/run_demo.py
+```
+
+### Option B: Interactive Human Approval Demonstration
+Prompts the human operator in the terminal to explicitly approve or reject the proposed remediation action:
+
+```powershell
+python scripts/run_demo.py --interactive
+```
+
+### Option C: Emergency Kill-Switch Demonstration
+Demonstrates instantaneous fail-closed halting of all remediation actions when the emergency kill-switch is engaged:
+
+```powershell
+python scripts/run_demo.py --test-kill-switch
+```
+
+### Option D: Direct Investigation by Alert String
+Pass any custom incident alert directly to the agent:
+
+```powershell
+python -m src.agent --alert "Elevated p95 latency on checkout service"
+```
+
+### Option E: Live Telemetry Tools Smoke Test
+Directly exercises all 7 observability tools against the live demo stack without running diagnosis:
+
+```powershell
+python -m src.agent --tools-only
+```
