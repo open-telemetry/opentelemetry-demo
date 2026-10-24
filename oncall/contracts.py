@@ -45,6 +45,14 @@ class Alert(BaseModel):
     description: str
 
 
+class Incident(BaseModel):
+    id: str
+    symptom: str
+    started_at: str
+    window: str
+    source: str
+
+
 class ServiceSymptom(BaseModel):
     service: str
     error_rate: float
