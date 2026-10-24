@@ -16,6 +16,14 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import Any, Dict
+from urllib.parse import urlsplit
+
+root_dir = Path(__file__).resolve().parents[1]
+if str(root_dir) not in sys.path:
+    sys.path.insert(0, str(root_dir))
+
+from src.config import Settings
+from src.telemetry.discovery import docker_host_url
 
 
 def check_python_version() -> Dict[str, Any]:
@@ -87,16 +95,19 @@ def check_port(host: str, port: int, timeout: float = 1.0) -> bool:
 
 
 def check_endpoints() -> Dict[str, Any]:
+    settings = Settings()
     targets = {
-        "Jaeger UI / API": ("127.0.0.1", 16686),
-        "Prometheus API": ("127.0.0.1", 9090),
-        "OpenSearch API": ("127.0.0.1", 9200),
-        "Frontend Proxy (Envoy)": ("127.0.0.1", 8080),
-        "Flagd Service": ("127.0.0.1", 8013),
+        "Jaeger UI / API": settings.jaeger_url,
+        "Prometheus API": settings.prometheus_url,
+        "OpenSearch API": settings.opensearch_url,
+        "Frontend Proxy (Envoy)": settings.frontend_proxy_url,
+        "Flagd Service": docker_host_url("flagd", 8013) or "http://localhost:8013",
     }
 
     results = {}
-    for name, (host, port) in targets.items():
+    for name, url in targets.items():
+        parts = urlsplit(url)
+        host, port = parts.hostname or "localhost", parts.port or 80
         results[name] = {
             "endpoint": f"{host}:{port}",
             "reachable": check_port(host, port, timeout=0.5)
