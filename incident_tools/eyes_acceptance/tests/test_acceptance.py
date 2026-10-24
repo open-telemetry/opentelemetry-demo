@@ -1,5 +1,5 @@
 """No network, Docker, inference or practice mutations: all inputs are synthetic."""
-from contextlib import nullcontext
+from contextlib import nullcontext, redirect_stdout
 from copy import deepcopy
 from datetime import timedelta
 import io
@@ -14,6 +14,7 @@ from incident_tools.eyes.core import Store
 from incident_tools.eyes.runtime import DEFAULTS
 from incident_tools.eyes.tests.test_eyes import FakeTools, AdaptiveModel
 from incident_tools.eyes_acceptance.configuration import initialize, readiness, PLACEHOLDER
+from incident_tools.eyes_acceptance.__main__ import main as acceptance_main
 from incident_tools.eyes_acceptance.practice import Docker, Practice, reset, watchdog, write_json
 from incident_tools.eyes_acceptance.workflow import EvidenceModel, execute, assess, sketch
 
@@ -222,6 +223,48 @@ class ConfigurationTests(unittest.TestCase):
         self.assertEqual(opened.call_count, 1)
         self.assertEqual(result["model_probe"]["model"], "operator-selected-model")
         self.assertNotIn("synthetic-only-secret", json.dumps(result))
+
+    def test_openai_profile_requires_environment_key(self):
+        file = initialize(self.path, provider="openai", opensearch="http://localhost:19200")
+        config = Path(file).read_text()
+        self.assertIn('endpoint = "https://api.openai.com/v1"', config)
+        self.assertIn('model = "gpt-4.1-mini"', config)
+        self.assertIn('api_key_env = "OPENAI_API_KEY"', config)
+        with patch.dict("os.environ", {}, clear=True), patch(
+                "urllib.request.OpenerDirector.open", side_effect=AssertionError("network")):
+            result, _, _, router = readiness(file)
+        self.assertEqual(result["model_issues"], ["MISSING_CLOUD_ENVIRONMENT_KEY"])
+        self.assertIsNone(router)
+
+    def test_openai_cli_init_selects_provider_without_key_file(self):
+        output = io.StringIO()
+        with redirect_stdout(output):
+            status = acceptance_main(["init", "--directory", str(self.path), "--provider", "openai"])
+        self.assertEqual(status, 0)
+        self.assertIn("OPENAI_API_KEY", output.getvalue())
+        self.assertIn('api_key_env = "OPENAI_API_KEY"', (self.path / "eyes.toml").read_text())
+
+    def test_openai_profile_sends_authenticated_probe_and_identifies_provider(self):
+        file = initialize(self.path, provider="openai", opensearch="http://localhost:19200")
+        probe = io.BytesIO(json.dumps({"choices": [{"message": {"content": '{"ready":true}'}}]}).encode())
+        decision = io.BytesIO(json.dumps({"choices": [{"message": {"content": '{"action":"finish"}'}}]}).encode())
+        with patch.dict("os.environ", {"OPENAI_API_KEY": "synthetic-only-secret"}, clear=True), patch(
+                "urllib.request.OpenerDirector.open", side_effect=[probe, decision]) as opened:
+            result, _, _, router = readiness(file, probe_model=True)
+            router.last.clear()
+            choice, identity = EvidenceModel(router).decide([
+                {"role": "system", "content": "Investigate."},
+                {"role": "user", "content": "{}"}], 10)
+        request = opened.call_args_list[0].args[0]
+        self.assertEqual(request.full_url, "https://api.openai.com/v1/chat/completions")
+        self.assertEqual(request.get_header("Authorization"), "Bearer synthetic-only-secret")
+        self.assertEqual(json.loads(request.data)["model"], "gpt-4.1-mini")
+        self.assertTrue(result["model_configuration_usable"])
+        self.assertEqual(result["model_probe"]["model"], "gpt-4.1-mini")
+        self.assertEqual(identity["provider"], "OpenAI")
+        self.assertEqual(choice["action"], "finish")
+        self.assertNotIn("synthetic-only-secret", json.dumps(result))
+        self.assertNotIn("synthetic-only-secret", Path(file).read_text())
 
     def test_live_probe_failures_block_readiness(self):
         file = initialize(self.path, "operator-selected-model")

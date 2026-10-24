@@ -46,6 +46,8 @@ class EvidenceModel:
         endpoint = cfg.get("endpoint", "")
         if endpoint.startswith("https://generativelanguage.googleapis.com/"):
             identity["provider"] = "Google Gemini"
+        elif endpoint.startswith("https://api.openai.com/"):
+            identity["provider"] = "OpenAI"
         elif cfg.get("backend") == "ollama":
             identity["provider"] = "Ollama"
         else:

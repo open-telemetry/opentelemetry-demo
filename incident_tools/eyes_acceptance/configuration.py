@@ -10,12 +10,22 @@ from incident_tools.f02 import ObservabilityTools
 from incident_tools.f02.boundary import iso, utc_now
 
 GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/openai"
+OPENAI_ENDPOINT = "https://api.openai.com/v1"
 PLACEHOLDER = "YOUR_GEMINI_FLASH_MODEL"
+OPENAI_MODEL = "gpt-4.1-mini"
+PROVIDERS = {
+    "gemini": {"endpoint": GEMINI_ENDPOINT, "model": PLACEHOLDER, "key_env": "GEMINI_API_KEY"},
+    "openai": {"endpoint": OPENAI_ENDPOINT, "model": OPENAI_MODEL, "key_env": "OPENAI_API_KEY"},
+}
 
 
-def initialize(directory, model=PLACEHOLDER, project="opentelemetry-demo",
+def initialize(directory, model=None, project="opentelemetry-demo",
                prometheus="http://localhost:9090", jaeger="http://localhost:8080",
-               opensearch=""):
+               opensearch="", provider="gemini"):
+    if provider not in PROVIDERS:
+        raise ValueError("Unsupported model provider")
+    selected = PROVIDERS[provider]
+    model = model or selected["model"]
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=False)
     source = Path(__file__).parents[1] / "f02" / "operator.example.toml"
@@ -52,7 +62,7 @@ enabled = true
 backend = "openai-compatible"
 endpoint = ENDPOINT
 model = MODEL
-api_key_env = "GEMINI_API_KEY"
+api_key_env = KEY_ENV
 timeout_seconds = 60
 retries = 1
 requests_per_minute = 12
@@ -60,7 +70,9 @@ max_output_tokens = 2048
 context_chars = 48000
 temperature = 0.0
 '''
-    eyes = eyes.replace("ENDPOINT", json.dumps(GEMINI_ENDPOINT)).replace("MODEL", json.dumps(model))
+    eyes = (eyes.replace("ENDPOINT", json.dumps(selected["endpoint"]))
+            .replace("MODEL", json.dumps(model))
+            .replace("KEY_ENV", json.dumps(selected["key_env"])))
     (directory / "eyes.toml").write_text(eyes, encoding="utf-8")
     return str(directory / "eyes.toml")
 

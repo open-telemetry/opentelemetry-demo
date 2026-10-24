@@ -8,7 +8,7 @@ import signal
 import uuid
 
 from incident_tools.eyes.core import Store
-from .configuration import initialize, readiness, PLACEHOLDER
+from .configuration import initialize, readiness, PROVIDERS
 from .practice import Practice, reset, watchdog, write_json
 from .workflow import execute
 
@@ -18,7 +18,8 @@ def main(argv=None):
     commands = parser.add_subparsers(dest="command", required=True)
     init = commands.add_parser("init", help="Create a new operator configuration directory")
     init.add_argument("--directory", required=True)
-    init.add_argument("--model", default=PLACEHOLDER)
+    init.add_argument("--provider", choices=tuple(PROVIDERS), default="gemini")
+    init.add_argument("--model")
     init.add_argument("--project", default="opentelemetry-demo")
     init.add_argument("--prometheus", default="http://localhost:9090")
     init.add_argument("--jaeger", default="http://localhost:8080")
@@ -41,8 +42,10 @@ def main(argv=None):
     lock, store, previous_signal, output = None, None, None, None
     try:
         if args.command == "init":
-            print(initialize(args.directory, args.model, args.project, args.prometheus, args.jaeger, args.opensearch))
-            print("Set the model ID and F02 endpoints. Put GEMINI_API_KEY in the environment only.")
+            print(initialize(args.directory, args.model, args.project, args.prometheus,
+                             args.jaeger, args.opensearch, provider=args.provider))
+            print("Check the model ID and F02 endpoints. Put " + PROVIDERS[args.provider]["key_env"] +
+                  " in the environment only.")
             return 0
         if args.command == "_watchdog":
             return watchdog(args.journal)

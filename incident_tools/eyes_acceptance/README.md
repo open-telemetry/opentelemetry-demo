@@ -4,7 +4,7 @@ This additive package connects the existing F01 detector, F02 read tools and one
 
 ## What this implements
 
-1. Operator-owned configuration with stable filenames, Gemini environment-key provision, provider validation and optional connectivity probe.
+1. Operator-owned configuration with stable filenames, Gemini or OpenAI environment-key provision, provider validation and optional connectivity probe.
 2. Read-only F02 readiness checks for current metrics, logs, traces, health and available deployment history.
 3. A fresh incident store and a baseline gate: two qualified normal metric observations after warmup, sufficient traffic and fresh source samples.
 4. An explicitly authorized, bounded pause of the existing shipping container. Container identity, Compose project and service labels are checked. A separate reset watchdog must be ready before pausing. This is an operator practice control, never an agent tool.
@@ -55,6 +55,29 @@ export GEMINI_API_KEY
 ```
 
 Configuration uses `api_key_env = "GEMINI_API_KEY"` and the existing OpenAI-compatible transport at `https://generativelanguage.googleapis.com/v1beta/openai`. No SDK dependency is added. Use a model ID available to your teammate's project; configuration alone does not confirm model access. See [Google's compatibility documentation](https://ai.google.dev/gemini-api/docs/openai).
+
+### OpenAI key provision
+
+For a new operator directory, pass `--provider openai` to `init`, along with the same Docker project and F02 endpoint arguments shown above. This selects `https://api.openai.com/v1`, `gpt-4.1-mini` and `api_key_env = "OPENAI_API_KEY"`. The model is a starting choice supported by the existing Chat Completions transport; check access in your OpenAI API project. See the [official OpenAI model documentation](https://developers.openai.com/api/docs/models/gpt-4.1-mini) and [API authentication guidance](https://developers.openai.com/api/reference/overview).
+
+To reuse an existing `/tmp/eyes-operator/eyes.toml`, change only these three values under `[models.cloud]`:
+
+```toml
+endpoint = "https://api.openai.com/v1"
+model = "gpt-4.1-mini"
+api_key_env = "OPENAI_API_KEY"
+```
+
+In the same Ubuntu shell where you run Eyes, enter the key without displaying or writing it to a file:
+
+```bash
+printf 'OpenAI API key: '
+read -rs OPENAI_API_KEY
+printf '\n'
+export OPENAI_API_KEY
+```
+
+Check configuration without inference using `python3 -B -m incident_tools.eyes_acceptance preflight --config /tmp/eyes-operator/eyes.toml`. Then explicitly run `python3 -B -m incident_tools.eyes_acceptance.diagnose --config /tmp/eyes-operator/eyes.toml` for one model request, followed by `preflight --live --probe-model` when ready to query telemetry as well. Do not run the practice command until these checks pass. The diagnostic and probe may incur API usage. Existing operator files are never rewritten by `init`.
 
 Cloud settings include timeout, retries, requests per minute, input context character budget, maximum output tokens and temperature. The context character budget is an application bound, not the provider's token context size.
 
