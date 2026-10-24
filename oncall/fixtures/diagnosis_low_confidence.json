@@ -1,0 +1,69 @@
+{
+  "incident": {
+    "id": "INC-FIX-LOWCONF-001",
+    "symptom": "frontend p95 latency above 800ms",
+    "started_at": "2026-01-01T11:00:00Z",
+    "window": "10m",
+    "source": "prometheus_alert"
+  },
+  "evidence": [
+    {
+      "id": "E-1",
+      "signal": "metric",
+      "tool": "prometheus_inspect_service",
+      "query": "frontend p95",
+      "ts": "2026-01-01T11:01:00Z",
+      "summary": "frontend p95 1800ms vs baseline 300ms; no service shows a clear error spike",
+      "data": {
+        "service": "frontend",
+        "p95_ms": 1800,
+        "baseline_p95_ms": 300
+      }
+    },
+    {
+      "id": "E-2",
+      "signal": "trace",
+      "tool": "jaeger_inspect_traces",
+      "query": "service=frontend minDuration=1s",
+      "ts": "2026-01-01T11:01:20Z",
+      "summary": "Slow traces spread across product-catalog, recommendation and ad; no dominant span",
+      "data": {
+        "slow_spans": {
+          "product-catalog": 2,
+          "recommendation": 2,
+          "ad": 1
+        }
+      }
+    },
+    {
+      "id": "E-3",
+      "signal": "container",
+      "tool": "docker_inspect_container",
+      "query": "frontend",
+      "ts": "2026-01-01T11:01:40Z",
+      "summary": "All containers running; no restarts",
+      "data": {
+        "restart_count": 0
+      }
+    }
+  ],
+  "diagnosis": {
+    "incident_id": "INC-FIX-LOWCONF-001",
+    "component": "unknown",
+    "cause": "Latency is elevated at the frontend but evidence does not isolate an origin service.",
+    "confidence": 0.25,
+    "evidence_ids": [
+      "E-1",
+      "E-2",
+      "E-3"
+    ],
+    "escalate": true,
+    "root_cause_service": "unknown",
+    "fault_class": "unknown",
+    "summary": "Latency is elevated at the frontend but evidence does not isolate an origin service.",
+    "next_steps": [
+      "Page the on-call human",
+      "Collect CPU throttling metrics for product-catalog and recommendation"
+    ]
+  }
+}
