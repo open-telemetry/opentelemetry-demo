@@ -9,6 +9,12 @@ from oncall.contracts import Evidence, Incident
 FAULT_CLASSES = ("app_error", "container_down", "cpu_throttle", "traffic_flood", "network_fault", "unknown")
 ActionName = Literal["RESET_FEATURE_FLAG", "RESTART_CONTAINER", "THROTTLE_TRAFFIC", "ESCALATE_TO_HUMAN"]
 
+ACTION_API_TYPE = {
+    "RESET_FEATURE_FLAG": "toggle_flag",
+    "RESTART_CONTAINER": "restart_service",
+    "THROTTLE_TRAFFIC": "throttle_load",
+}
+
 
 class Diagnosis(BaseModel):
     """component/cause are the cross-team contract; root_cause_service/summary are kept in sync for the agent."""
@@ -45,6 +51,7 @@ class Plan(BaseModel):
     action: ActionName
     target: str
     reason: str
+    params: dict[str, Any] = Field(default_factory=dict)
     evidence_ids: list[str] = Field(default_factory=list)
 
 

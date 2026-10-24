@@ -233,6 +233,11 @@
           "title": "Reason",
           "type": "string"
         },
+        "params": {
+          "additionalProperties": true,
+          "title": "Params",
+          "type": "object"
+        },
         "evidence_ids": {
           "items": {
             "type": "string"
