@@ -1,0 +1,52 @@
+# Allowlisted runbook: which ONE remedy the agent may propose for a diagnosed fault.
+# The diagnosis itself never looks at this file (it comes from telemetry only).
+# An action not in `allowlist` can never be proposed or executed.
+
+allowlist: [restart_service, toggle_flag, throttle_load, scale_service]
+platform: docker            # docker | kubernetes   (scale_service only on kubernetes)
+
+# fault_type -> preferred remedy. "flag_or_restart" = turn off the service's failure flag if one is
+# configured below (application-level faults survive a restart), otherwise restart.
+by_fault_type:
+  service_down: restart_service
+  crash_loop: restart_service
+  dependency_unavailable: restart_service
+  readiness_failure: flag_or_restart
+  memory_leak: flag_or_restart
+  high_cpu: flag_or_restart
+  gc_pressure: flag_or_restart
+  application_error: flag_or_restart
+  cache_failure: flag_or_restart
+  db_contention: flag_or_restart
+  queue_backlog: flag_or_restart
+  latency: flag_or_restart
+  network_fault: restart_service
+  traffic_flood: throttle_load
+  resource_starvation: scale_service      # falls back to escalation on docker
+  unknown: escalate
+
+# REMEDIATION ONLY (after diagnosis): flags of the demo that can inject faults into a service.
+# The agent proposes setting one to "off" ONLY when telemetry already blamed that service.
+# >>> Confirm with mentors that proposing a flag toggle via the Action API is OK (it is listed as an
+#     allowed action on the slides). Set enable_flag_remediation: false to use restarts only.
+enable_flag_remediation: true
+off_variant: "off"
+service_flags:
+  payment: {service_down: paymentUnreachable, default: paymentFailure}
+  cart: {readiness_failure: failedReadinessProbe, default: cartFailure}
+  ad: {high_cpu: adHighCpu, gc_pressure: adManualGc, default: adFailure}
+  email: {memory_leak: emailMemoryLeak}
+  product-catalog: {db_contention: productCatalogLockContention, default: productCatalogFailure}
+  recommendation: {default: recommendationCacheFailure}
+  shipping: {latency: intlShippingSlowdown}
+  fraud-detection: {default: kafkaQueueProblems}
+  accounting: {default: kafkaQueueProblems}
+  kafka: {default: kafkaQueueProblems}
+  image-provider: {default: imageSlowLoad}
+  frontend: {traffic_flood: loadGeneratorFloodHomepage}
+
+throttle:
+  users_during_incident: 2      # load-generator users while throttled
+  users_normal: 5               # demo default (LOCUST_USERS=5); restored on rollback
+
+never_restart: [otel-collector, prometheus, jaeger, opensearch, grafana, flagd]

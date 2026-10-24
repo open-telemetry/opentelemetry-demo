@@ -1,0 +1,32 @@
+# How to call the organisers' Action API - the ONLY way this agent changes the system.
+# >>> EDIT paths / bodies to match their Action API docs (5 min). Placeholders in {braces} are filled
+#     from the action's parameters. Every call (and every dry run) is logged to runs/<id>/actions.jsonl.
+#
+# Quick test after editing:
+#   python -m agent.main action restart_service service=ad --dry-run
+#   python -m agent.main action restart_service service=ad          # asks for approval
+base_url: ${ACTION_API_URL}          # from .env, e.g. http://localhost:8000
+headers:
+  Content-Type: application/json
+  # Authorization: Bearer ${ACTION_API_TOKEN}
+
+actions:
+  restart_service:
+    method: POST
+    path: /actions/restart
+    body: {service: "{service}"}
+  toggle_flag:
+    method: POST
+    path: /actions/flag
+    body: {flag: "{flag}", variant: "{variant}"}
+  throttle_load:
+    method: POST
+    path: /actions/load
+    body: {users: "{users}"}
+  scale_service:            # Kubernetes only
+    method: POST
+    path: /actions/scale
+    body: {service: "{service}", replicas: "{replicas}"}
+
+# Optional: endpoint that lists the action log kept by the Action API itself
+log_path: /actions/log

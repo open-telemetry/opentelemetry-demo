@@ -1,0 +1,23 @@
+# Who calls whom in the Astronomy Shop (caller -> callees).
+# Used to walk "upstream symptom -> downstream root cause".
+# Service names == container names == OTEL service.name in this demo.
+dependencies:
+  load-generator: [frontend-proxy]
+  frontend-proxy: [frontend, image-provider, flagd]
+  frontend: [ad, cart, checkout, currency, product-catalog, recommendation, shipping]
+  checkout: [cart, currency, email, payment, product-catalog, shipping, kafka]
+  recommendation: [product-catalog]
+  shipping: [quote]
+  cart: [valkey-cart]
+  product-catalog: [astronomy-db]
+  kafka: [accounting, fraud-detection]   # async consumers
+  ad: []
+  payment: []
+  email: []
+  currency: []
+  quote: []
+  accounting: []
+  fraud-detection: []
+
+# Infra containers that have no OTel service name of their own
+infra: [valkey-cart, astronomy-db, kafka, otel-collector, flagd, opensearch, jaeger, prometheus, grafana]
