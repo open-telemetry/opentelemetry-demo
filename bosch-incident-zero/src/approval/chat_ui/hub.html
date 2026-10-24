@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Incident hub</title>
+<style nonce="{{nonce}}">
+  :root { --bg: #f6f7f9; --card: #fff; --fg: #1d2330; --muted: #5d6676; --line: #dde1e7;
+          --ok: #157a3c; --bad: #b42318; --warn: #9a6700; --accent: #2457c5; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #12151b; --card: #1b2029; --fg: #e6e9ef; --muted: #9aa3b2; --line: #2d3442;
+            --ok: #4cc27a; --bad: #f2756a; --warn: #e3b341; --accent: #7aa2f7; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.45 system-ui, sans-serif; }
+  main { max-width: 1000px; margin: 0 auto; padding: 16px; display: grid; gap: 14px; }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; }
+  h1 { font-size: 20px; margin: 4px 0 0; } h2 { font-size: 15px; margin: 0 0 8px; color: var(--muted); }
+  dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin: 0; }
+  dt { color: var(--muted); } dd { margin: 0; overflow-wrap: anywhere; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; vertical-align: top; padding: 5px 6px; border-top: 1px solid var(--line); }
+  code { font-size: 12px; overflow-wrap: anywhere; } .table-wrap { overflow-x: auto; }
+  .quote { color: var(--muted); font-style: italic; margin-top: 2px; }
+  .ok { color: var(--ok); } .bad { color: var(--bad); } .warn { color: var(--warn); }
+  .bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .waiting { color: var(--muted); }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--ok); display: inline-block; }
+  select, input[type=text] { font: inherit; padding: 8px; border-radius: 6px; border: 1px solid var(--line);
+                             background: var(--bg); color: var(--fg); max-width: 100%; }
+  button { font: inherit; padding: 9px 16px; border-radius: 6px; border: 1px solid var(--line); cursor: pointer; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  #log { max-height: 320px; overflow-y: auto; display: grid; gap: 8px; margin-bottom: 8px; }
+  .msg { padding: 8px 10px; border-radius: 6px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .msg.you { background: var(--bg); } .msg.bot { border: 1px solid var(--line); }
+  #chat-form { display: flex; gap: 8px; } #question { flex: 1; min-width: 0; }
+  .hint { color: var(--muted); font-size: 13px; margin: 6px 0 0; }
+  .none { display: none; } body.empty .incident { display: none; } body.empty .none { display: block; }
+</style>
+</head>
+<body class="{{body_class}}" data-token="{{token}}" data-incident-id="{{incident_id}}">
+<main>
+  <section>
+    <div class="bar">
+      <span class="dot" aria-hidden="true"></span>
+      <span class="waiting">No approval waiting. This page opens the approval page as soon as an agent run asks
+        for one.</span>
+    </div>
+    <div class="bar">
+      <label for="incident">Incident</label>
+      <select id="incident">{{options}}</select>
+    </div>
+  </section>
+
+  <section class="none"><h1>No stored incidents yet</h1><p class="hint">Run the agent; its transcript shows up here.</p></section>
+
+  <section class="incident">
+    <h2>Incident {{incident_id}} &middot; {{status}}</h2>
+    <h1>{{alert}}</h1>
+  </section>
+
+  <section class="incident">
+    <h2>Diagnosis</h2>
+    <dl>
+      <dt>Verdict</dt><dd>{{verdict}}</dd>
+      <dt>Root cause</dt><dd><strong>{{rc_service}}</strong> &middot; {{rc_category}}</dd>
+      <dt>Summary</dt><dd>{{rc_summary}}</dd>
+      <dt>Confidence</dt><dd>after gate <strong>{{final_confidence}}</strong></dd>
+      <dt>Gate notes</dt><dd><ul>{{gate_reasons}}</ul></dd>
+      <dt>Action</dt><dd>{{action}}</dd>
+      <dt>Approval</dt><dd>{{approval_status}}</dd>
+    </dl>
+  </section>
+
+  <section class="incident">
+    <h2>Cited evidence</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Kind</th><th>Ref</th><th>Check</th><th>Supports</th></tr></thead>
+      <tbody>{{evidence_rows}}</tbody>
+    </table></div>
+    <details>
+      <summary>Tool calls</summary>
+      <div class="table-wrap"><table>
+        <thead><tr><th>#</th><th>Tool</th><th>Arguments</th><th>Status</th><th>Summary</th></tr></thead>
+        <tbody>{{tool_rows}}</tbody>
+      </table></div>
+    </details>
+  </section>
+
+  <section class="incident">
+    <h2>Ask why</h2>
+    <div id="log" aria-live="polite"></div>
+    <form id="chat-form">
+      <input type="text" id="question" maxlength="1000" placeholder="Why do you think this is the root cause?">
+      <button type="submit" id="ask">Ask</button>
+    </form>
+    <p class="hint">Answers come only from the stored transcript. This page cannot approve or change anything.</p>
+  </section>
+</main>
+<script nonce="{{nonce}}">
+(function () {
+  const ds = document.body.dataset;
+
+  document.getElementById("incident").addEventListener("change", (ev) => {
+    window.location.href = "/?incident=" + encodeURIComponent(ev.target.value);
+  });
+
+  const statusTimer = setInterval(async () => {
+    try {
+      const r = await fetch("/status", { cache: "no-store" });
+      const data = await r.json();
+      if (data.approval_url) { clearInterval(statusTimer); window.location.href = data.approval_url; }
+    } catch (e) { /* hub restarting; keep polling */ }
+  }, 2000);
+
+  const log = document.getElementById("log");
+  function addMsg(text, who) {
+    const div = document.createElement("div");
+    div.className = "msg " + who;
+    div.textContent = text;
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  document.getElementById("chat-form").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const input = document.getElementById("question");
+    const ask = document.getElementById("ask");
+    const q = input.value.trim();
+    if (!q) return;
+    addMsg(q, "you");
+    input.value = "";
+    ask.disabled = true;
+    try {
+      const r = await fetch("/chat", { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: ds.token, incident_id: ds.incidentId, question: q }) });
+      let data = {};
+      try { data = await r.json(); } catch (e) { /* non-JSON body */ }
+      addMsg(r.ok ? data.answer : "Refused: " + (data.error || r.status), "bot");
+    } catch (e) {
+      addMsg("The hub is not running.", "bot");
+    } finally {
+      ask.disabled = false;
+    }
+  });
+})();
+</script>
+</body>
+</html>

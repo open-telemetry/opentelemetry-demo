@@ -5,6 +5,7 @@ Chat input is answered from the stored transcript and can never change the decis
 """
 from __future__ import annotations
 
+import errno
 import getpass
 import html
 import json
@@ -31,6 +32,7 @@ MAX_QUESTION_CHARS = 1000
 MAX_RECORD_CHARS = 40000
 MAX_LOG_LINES = 200
 LINGER_SECONDS = 1.0
+ACTIVE_FILE = ".approval_active.json"
 BUTTONS = {"approve": ("approve_click", "approved via chat UI"),
            "reject": ("reject_click", "rejected via chat UI"),
            "kill_switch": ("kill_click", "kill switch engaged")}
@@ -59,6 +61,16 @@ INCIDENT RECORD (JSON):
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+def output_dir(settings: Any) -> Path:
+    path = Path(settings.report_output_dir)
+    return path if path.is_absolute() else Path(settings.root_dir) / path
+
+
+def active_file(settings: Any) -> Path:
+    """Where a waiting approval page records its URL for the hub."""
+    return output_dir(settings) / ACTIVE_FILE
 
 
 def _human_decision(**fields: Any) -> Any:
@@ -120,7 +132,12 @@ class ApprovalPage:
         self._lock = threading.Lock()
         self._chat_lock = threading.Lock()
         self._decided = threading.Event()
-        self.httpd = ThreadingHTTPServer((ALLOWED_HOST, port), _Handler)
+        try:
+            self.httpd = ThreadingHTTPServer((ALLOWED_HOST, port), _Handler)
+        except OSError as exc:
+            if port == 0 or exc.errno != errno.EADDRINUSE:
+                raise
+            self.httpd = ThreadingHTTPServer((ALLOWED_HOST, 0), _Handler)
         self.httpd.daemon_threads = True
         self.httpd.block_on_close = False
         self.httpd.page = self  # type: ignore[attr-defined]
@@ -157,6 +174,7 @@ class ApprovalPage:
     def run(self, on_ready: Optional[Callable[[str], None]] = None, open_browser: bool = False) -> Any:
         thread = threading.Thread(target=self.httpd.serve_forever, kwargs={"poll_interval": 0.2}, daemon=True)
         thread.start()
+        self._publish_active()
         try:
             print(f"[APPROVAL] Review action {self.action.action_id} at {self.url} "
                   f"(auto-reject in {int(self.timeout_seconds)}s)", flush=True)
@@ -173,10 +191,30 @@ class ApprovalPage:
                 if self.decide(False, approver="", note="interrupted"):
                     self.ui_event("interrupted", "approval interrupted at the terminal; treated as reject")
         finally:
+            self._withdraw_active()
             self.httpd.shutdown()
             self.httpd.server_close()
             thread.join(timeout=5)
         return self.decision
+
+    def _publish_active(self) -> None:
+        """Tell the hub where this page is; best effort, and never the token."""
+        record = {"url": self.url, "action_id": self.action.action_id, "incident_id": self.incident_id,
+                  "deadline": time.time() + self.remaining()}
+        try:
+            path = active_file(self.settings)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps(record), encoding="utf-8")
+        except (OSError, TypeError, AttributeError):
+            pass
+
+    def _withdraw_active(self) -> None:
+        try:
+            path = active_file(self.settings)
+            if json.loads(path.read_text(encoding="utf-8")).get("url") == self.url:
+                path.unlink()
+        except (OSError, ValueError, TypeError, AttributeError):
+            pass
 
     def answer(self, question: str) -> Tuple[str, bool]:
         """Answer from the stored transcript only; any LLM problem yields the fixed unavailable message."""
@@ -230,8 +268,8 @@ class ApprovalPage:
             "gate_reasons": "".join(f"<li>{e(r)}</li>" for r in gate.get("reasons") or []) or "<li>none</li>",
             "second_opinion": (f'<section><h2>Second opinion</h2><pre class="review">{e(review)}</pre></section>'
                                if review else ""),
-            "evidence_rows": self._evidence_rows(diag, e),
-            "tool_rows": self._tool_rows(e),
+            "evidence_rows": evidence_rows(t, diag, e),
+            "tool_rows": tool_rows(t, e),
             "action_type": e(a.action_type.value), "target_service": e(a.target_service),
             "description": e(a.description), "reason": e((a.parameters or {}).get("reason") or "-"),
             "parameters": e(json.dumps(params, default=str)) if params else "-",
@@ -247,30 +285,32 @@ class ApprovalPage:
         }
         return _PLACEHOLDER.sub(lambda m: values.get(m.group(1), ""), _PAGE.read_text(encoding="utf-8"))
 
-    def _evidence_rows(self, diag: Dict[str, Any], e: Callable[[Any], str]) -> str:
-        checks = {c.get("ref"): c for c in getattr(self.transcript, "citations", None) or []}
-        rows = []
-        for ev in diag.get("evidence") or []:
-            check = checks.get(ev.get("ref")) or {}
-            if check.get("valid") is True:
-                status, cls = "verified", "ok"
-            elif check.get("valid") is False:
-                status, cls = f"rejected: {check.get('reason') or ''}", "bad"
-            else:
-                status, cls = "unchecked", "warn"
-            quote = f'<div class="quote">&ldquo;{e(ev.get("quote"))}&rdquo;</div>' if ev.get("quote") else ""
-            rows.append(f'<tr><td>{e(ev.get("kind"))}</td><td><code>{e(ev.get("ref"))}</code></td>'
-                        f'<td class="{cls}">{e(status)}</td><td>{e(ev.get("supports"))}{quote}</td></tr>')
-        return "".join(rows) or '<tr><td colspan="4">No evidence cited.</td></tr>'
 
-    def _tool_rows(self, e: Callable[[Any], str]) -> str:
-        rows = []
-        for c in getattr(self.transcript, "tool_calls", None) or []:
-            result = c.get("result") or {}
-            rows.append(f'<tr><td>{e(c.get("n"))}</td><td>{e(c.get("tool"))}</td>'
-                        f'<td><code>{e(json.dumps(c.get("arguments"), default=str))}</code></td>'
-                        f'<td>{e(result.get("status"))}</td><td>{e(result.get("summary"))}</td></tr>')
-        return "".join(rows) or '<tr><td colspan="5">No tool calls recorded.</td></tr>'
+def evidence_rows(transcript: Any, diag: Dict[str, Any], e: Callable[[Any], str]) -> str:
+    checks = {c.get("ref"): c for c in getattr(transcript, "citations", None) or []}
+    rows = []
+    for ev in diag.get("evidence") or []:
+        check = checks.get(ev.get("ref")) or {}
+        if check.get("valid") is True:
+            status, cls = "verified", "ok"
+        elif check.get("valid") is False:
+            status, cls = f"rejected: {check.get('reason') or ''}", "bad"
+        else:
+            status, cls = "unchecked", "warn"
+        quote = f'<div class="quote">&ldquo;{e(ev.get("quote"))}&rdquo;</div>' if ev.get("quote") else ""
+        rows.append(f'<tr><td>{e(ev.get("kind"))}</td><td><code>{e(ev.get("ref"))}</code></td>'
+                    f'<td class="{cls}">{e(status)}</td><td>{e(ev.get("supports"))}{quote}</td></tr>')
+    return "".join(rows) or '<tr><td colspan="4">No evidence cited.</td></tr>'
+
+
+def tool_rows(transcript: Any, e: Callable[[Any], str]) -> str:
+    rows = []
+    for c in getattr(transcript, "tool_calls", None) or []:
+        result = c.get("result") or {}
+        rows.append(f'<tr><td>{e(c.get("n"))}</td><td>{e(c.get("tool"))}</td>'
+                    f'<td><code>{e(json.dumps(c.get("arguments"), default=str))}</code></td>'
+                    f'<td>{e(result.get("status"))}</td><td>{e(result.get("summary"))}</td></tr>')
+    return "".join(rows) or '<tr><td colspan="5">No tool calls recorded.</td></tr>'
 
 
 class _Handler(BaseHTTPRequestHandler):

@@ -21,6 +21,8 @@ def main() -> None:
     parser.add_argument("--timeout", type=float, default=120)
     parser.add_argument("--port", type=int, default=8799, help="0 picks a free port; the URL is printed")
     parser.add_argument("--open", action="store_true", help="open the page in the default browser")
+    parser.add_argument("--keep-alive", action="store_true",
+                        help="serve a fresh page after every decision or timeout until Ctrl+C")
     args = parser.parse_args()
 
     raw = json.loads(args.transcript.read_text(encoding="utf-8"))
@@ -35,8 +37,11 @@ def main() -> None:
         parameters={"reason": root.get("summary") or "preview only"}, dry_run=True)
     hook = ui_approval_callback(transcript, Settings(), timeout_seconds=args.timeout, port=args.port,
                                 open_browser=args.open)
-    decision = hook(action)
-    print("[APPROVAL] decision:", json.dumps(vars(decision), default=str), flush=True)
+    while True:
+        decision = hook(action)
+        print("[APPROVAL] decision:", json.dumps(vars(decision), default=str), flush=True)
+        if not args.keep_alive or decision.note == "interrupted" or decision.note.startswith("approval UI failed"):
+            break
 
 
 if __name__ == "__main__":
