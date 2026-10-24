@@ -13,7 +13,7 @@ import xml.etree.ElementTree as ET
 from incident_tools.eyes.core import Store
 from incident_tools.eyes.runtime import DEFAULTS
 from incident_tools.eyes.tests.test_eyes import FakeTools, AdaptiveModel
-from incident_tools.eyes_acceptance.configuration import initialize, readiness, PLACEHOLDER
+from incident_tools.eyes_acceptance.configuration import initialize, readiness
 from incident_tools.eyes_acceptance.__main__ import main as acceptance_main
 from incident_tools.eyes_acceptance.practice import Docker, Practice, reset, watchdog, write_json
 from incident_tools.eyes_acceptance.workflow import EvidenceModel, execute, assess, sketch
@@ -186,10 +186,11 @@ class ConfigurationTests(unittest.TestCase):
 
     def test_init_is_predictable_valid_and_never_overwrites(self):
         file = initialize(self.path, opensearch="http://localhost:19200")
-        result, tools, settings, router = readiness(file)
+        with patch.dict("os.environ", {}, clear=True):
+            result, tools, settings, router = readiness(file)
         self.assertEqual(settings["services"], ["checkout"])
         self.assertEqual(tools.config.endpoint("opensearch"), "http://localhost:19200")
-        self.assertIn("SET_CLOUD_MODEL_ID", result["model_issues"])
+        self.assertIn("MISSING_CLOUD_ENVIRONMENT_KEY", result["model_issues"])
         self.assertIsNone(router)
         before = Path(file).read_bytes()
         with self.assertRaises(FileExistsError):
@@ -206,7 +207,7 @@ class ConfigurationTests(unittest.TestCase):
 
     def test_configured_key_is_never_serialized(self):
         file = initialize(self.path, "operator-selected-model")
-        with patch.dict("os.environ", {"GEMINI_API_KEY": "synthetic-only-secret"}):
+        with patch.dict("os.environ", {"OPENAI_API_KEY": "synthetic-only-secret"}):
             result, tools, _, router = readiness(file)
         self.assertTrue(result["model_configuration_usable"])
         self.assertNotIn("synthetic-only-secret", json.dumps(result))
@@ -217,7 +218,7 @@ class ConfigurationTests(unittest.TestCase):
     def test_explicit_model_probe_records_provider_identity(self):
         file = initialize(self.path, "operator-selected-model")
         body = io.BytesIO(json.dumps({"choices": [{"message": {"content": '{"ready":true}'}}]}).encode())
-        with patch.dict("os.environ", {"GEMINI_API_KEY": "synthetic-only-secret"}), patch(
+        with patch.dict("os.environ", {"OPENAI_API_KEY": "synthetic-only-secret"}), patch(
                 "urllib.request.OpenerDirector.open", return_value=body) as opened:
             result, _, _, _ = readiness(file, probe_model=True)
         self.assertEqual(opened.call_count, 1)
@@ -225,7 +226,7 @@ class ConfigurationTests(unittest.TestCase):
         self.assertNotIn("synthetic-only-secret", json.dumps(result))
 
     def test_openai_profile_requires_environment_key(self):
-        file = initialize(self.path, provider="openai", opensearch="http://localhost:19200")
+        file = initialize(self.path, opensearch="http://localhost:19200")
         config = Path(file).read_text()
         self.assertIn('endpoint = "https://api.openai.com/v1"', config)
         self.assertIn('model = "gpt-4.1-mini"', config)
@@ -239,13 +240,13 @@ class ConfigurationTests(unittest.TestCase):
     def test_openai_cli_init_selects_provider_without_key_file(self):
         output = io.StringIO()
         with redirect_stdout(output):
-            status = acceptance_main(["init", "--directory", str(self.path), "--provider", "openai"])
+            status = acceptance_main(["init", "--directory", str(self.path)])
         self.assertEqual(status, 0)
         self.assertIn("OPENAI_API_KEY", output.getvalue())
         self.assertIn('api_key_env = "OPENAI_API_KEY"', (self.path / "eyes.toml").read_text())
 
     def test_openai_profile_sends_authenticated_probe_and_identifies_provider(self):
-        file = initialize(self.path, provider="openai", opensearch="http://localhost:19200")
+        file = initialize(self.path, opensearch="http://localhost:19200")
         probe = io.BytesIO(json.dumps({"choices": [{"message": {"content": '{"ready":true}'}}]}).encode())
         decision = io.BytesIO(json.dumps({"choices": [{"message": {"content": '{"action":"finish"}'}}]}).encode())
         with patch.dict("os.environ", {"OPENAI_API_KEY": "synthetic-only-secret"}, clear=True), patch(

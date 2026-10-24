@@ -10,7 +10,7 @@ import time
 from urllib import error, parse
 
 from incident_tools.eyes.runtime import load, Router
-from .configuration import GEMINI_ENDPOINT, model_probe_budget
+from .configuration import OPENAI_ENDPOINT, OPENAI_KEY_ENV, model_probe_budget
 
 PROBE_MESSAGES = [
     {"role": "system", "content": 'Return exactly the JSON object {"ready":true}. No markdown.'},
@@ -142,8 +142,8 @@ def diagnose(config):
         providers = [models[slot] for slot in router.order]
         result["model_configuration"] = router.public_configuration
         cloud = models.get("cloud", {})
-        if str(cloud.get("model", "")).startswith("gemini"):
-            result["gemini_endpoint_matches"] = cloud.get("endpoint", "").rstrip("/") == GEMINI_ENDPOINT
+        if cloud.get("api_key_env") == OPENAI_KEY_ENV:
+            result["openai_endpoint_matches"] = cloud.get("endpoint", "").rstrip("/") == OPENAI_ENDPOINT
         result["environment_key_has_outer_whitespace"] = any(secret != secret.strip() for secret in secrets)
         result["request_budget_seconds"] = model_probe_budget(router)
         original = router.opener.open

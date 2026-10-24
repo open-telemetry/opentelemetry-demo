@@ -27,8 +27,8 @@ def completion(content='{"ready":true}', finish="stop"):
 class DiagnoseTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
-        self.config = initialize(Path(self.tmp.name) / "operator", "gemini-3.8-flash")
-        self.environment = patch.dict(os.environ, {"GEMINI_API_KEY": SECRET})
+        self.config = initialize(Path(self.tmp.name) / "operator", "gpt-4.1-mini")
+        self.environment = patch.dict(os.environ, {"OPENAI_API_KEY": SECRET})
         self.environment.start()
 
     def tearDown(self):
@@ -49,14 +49,14 @@ class DiagnoseTests(unittest.TestCase):
         self.assertTrue(result["probe_succeeded"])
         self.assertEqual(result["attempts"][0]["http_status"], 200)
         self.assertTrue(result["attempts"][0]["content_json_valid"])
-        self.assertTrue(result["gemini_endpoint_matches"])
+        self.assertTrue(result["openai_endpoint_matches"])
         self.assertEqual(result["request_budget_seconds"], 65)
         self.assertEqual(opened.call_count, 1)
         payload = json.loads(opened.call_args.args[0].data)
-        self.assertEqual(payload["model"], "gemini-3.8-flash")
+        self.assertEqual(payload["model"], "gpt-4.1-mini")
         self.assertEqual(payload["messages"][0]["content"], 'Return exactly the JSON object {"ready":true}. No markdown.')
         self.assertEqual(result["model_configuration"]["providers"]["cloud"]["retries"], 0)
-        self.assertEqual(result["model_probe"]["model"], "gemini-3.8-flash")
+        self.assertEqual(result["model_probe"]["model"], "gpt-4.1-mini")
 
     def test_http_failures_report_status_without_body_or_exception(self):
         for status in (400, 401, 403, 404, 429, 500):
@@ -121,15 +121,15 @@ class DiagnoseTests(unittest.TestCase):
         self.assertEqual(opened.call_count, 0)
 
     def test_whitespace_key_flag_never_prints_key(self):
-        with patch.dict(os.environ, {"GEMINI_API_KEY": " " + SECRET + " "}):
+        with patch.dict(os.environ, {"OPENAI_API_KEY": " " + SECRET + " "}):
             result, _ = self.run_probe(failure=error.URLError("authentication " + SECRET))
         self.assertTrue(result["environment_key_has_outer_whitespace"])
 
     def test_wrong_endpoint_is_visible_without_printing_url_credentials(self):
         file = Path(self.config)
-        file.write_text(file.read_text().replace('/v1beta/openai"', '/v1beta"'), encoding="utf-8")
+        file.write_text(file.read_text().replace('https://api.openai.com/v1"', 'https://api.openai.com/v2"'), encoding="utf-8")
         result, _ = self.run_probe(failure=error.URLError(SECRET))
-        self.assertFalse(result["gemini_endpoint_matches"])
+        self.assertFalse(result["openai_endpoint_matches"])
 
     def test_oversized_response_is_classified(self):
         result, _ = self.run_probe(Response(b"x" * 262145))

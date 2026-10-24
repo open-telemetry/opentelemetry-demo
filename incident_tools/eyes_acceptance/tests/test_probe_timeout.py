@@ -17,7 +17,7 @@ class ProbeTimeoutTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.file = Path(initialize(Path(self.tmp.name) / "operator", "fixture-cloud-model"))
-        self.environment = patch.dict(os.environ, {"GEMINI_API_KEY": "synthetic-timeout-test-token"})
+        self.environment = patch.dict(os.environ, {"OPENAI_API_KEY": "synthetic-timeout-test-token"})
         self.environment.start()
         self.now, self.timeouts, self.sleeps = 0.0, [], []
 

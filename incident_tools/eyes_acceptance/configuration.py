@@ -9,23 +9,14 @@ from incident_tools.eyes.runtime import load, Router
 from incident_tools.f02 import ObservabilityTools
 from incident_tools.f02.boundary import iso, utc_now
 
-GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/openai"
 OPENAI_ENDPOINT = "https://api.openai.com/v1"
-PLACEHOLDER = "YOUR_GEMINI_FLASH_MODEL"
 OPENAI_MODEL = "gpt-4.1-mini"
-PROVIDERS = {
-    "gemini": {"endpoint": GEMINI_ENDPOINT, "model": PLACEHOLDER, "key_env": "GEMINI_API_KEY"},
-    "openai": {"endpoint": OPENAI_ENDPOINT, "model": OPENAI_MODEL, "key_env": "OPENAI_API_KEY"},
-}
+OPENAI_KEY_ENV = "OPENAI_API_KEY"
 
 
-def initialize(directory, model=None, project="opentelemetry-demo",
+def initialize(directory, model=OPENAI_MODEL, project="opentelemetry-demo",
                prometheus="http://localhost:9090", jaeger="http://localhost:8080",
-               opensearch="", provider="gemini"):
-    if provider not in PROVIDERS:
-        raise ValueError("Unsupported model provider")
-    selected = PROVIDERS[provider]
-    model = model or selected["model"]
+               opensearch=""):
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=False)
     source = Path(__file__).parents[1] / "f02" / "operator.example.toml"
@@ -70,9 +61,9 @@ max_output_tokens = 2048
 context_chars = 48000
 temperature = 0.0
 '''
-    eyes = (eyes.replace("ENDPOINT", json.dumps(selected["endpoint"]))
+    eyes = (eyes.replace("ENDPOINT", json.dumps(OPENAI_ENDPOINT))
             .replace("MODEL", json.dumps(model))
-            .replace("KEY_ENV", json.dumps(selected["key_env"])))
+            .replace("KEY_ENV", json.dumps(OPENAI_KEY_ENV)))
     (directory / "eyes.toml").write_text(eyes, encoding="utf-8")
     return str(directory / "eyes.toml")
 
@@ -110,7 +101,7 @@ def readiness(config, live=False, probe_model=False, clock=utc_now):
         model_issues.append("INVALID_MODEL_ROUTE")
     for slot in order:
         provider = cfg["models"].get(slot, {})
-        if not provider.get("model") or provider["model"] == PLACEHOLDER:
+        if not provider.get("model") or str(provider["model"]).startswith("YOUR_"):
             model_issues.append("SET_" + slot.upper() + "_MODEL_ID")
         name = provider.get("api_key_env", "")
         if slot == "cloud" and (not name or not os.environ.get(name, "").strip()):

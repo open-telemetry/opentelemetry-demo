@@ -4,7 +4,7 @@ This additive package connects the existing F01 detector, F02 read tools and one
 
 ## What this implements
 
-1. Operator-owned configuration with stable filenames, Gemini or OpenAI environment-key provision, provider validation and optional connectivity probe.
+1. Operator-owned configuration with stable filenames, OpenAI environment-key provision, provider validation and optional connectivity probe.
 2. Read-only F02 readiness checks for current metrics, logs, traces, health and available deployment history.
 3. A fresh incident store and a baseline gate: two qualified normal metric observations after warmup, sufficient traffic and fresh source samples.
 4. An explicitly authorized, bounded pause of the existing shipping container. Container identity, Compose project and service labels are checked. A separate reset watchdog must be ready before pausing. This is an operator practice control, never an agent tool.
@@ -16,7 +16,7 @@ Pausing shipping is a dependency-unavailability practice case. It may produce ch
 
 This implements Eyes orchestration, not remediation features F07/F09, diagnosis/ranking, or proof of root cause. Reset checks running/unpaused container state; it does not prove application recovery. The live demonstration remains pending until run against real telemetry and a real model.
 
-## Set up later in Ubuntu WSL
+## Set up in Ubuntu WSL
 
 Run from the repository root with Python 3.11+ and the existing native Ubuntu Docker engine. Keep the demo and load generator running. Do not run another practice injector or Eyes watcher concurrently.
 
@@ -40,25 +40,13 @@ python3 -B -m incident_tools.eyes_acceptance init \
   --opensearch http://localhost:YOUR_OPENSEARCH_HOST_PORT
 ```
 
-Edit `/tmp/eyes-operator/f02.toml` for your working endpoints/project. Edit `/tmp/eyes-operator/eyes.toml` for the authorized Gemini Flash model ID when available. The placeholder `YOUR_GEMINI_FLASH_MODEL` deliberately fails model readiness. Initialization refuses to overwrite an existing directory; reuse and edit the same files.
+Edit `/tmp/eyes-operator/f02.toml` for your working endpoints/project. The generated Eyes configuration selects OpenAI's `gpt-4.1-mini`; check that your API project can access it. Initialization refuses to overwrite an existing directory; reuse and edit the same files.
 
 The generated defaults monitor checkout latency p95 above 1000 ms, require two fresh breaches and at least approximately 10 requests over the metric's two-minute rate window. Warmup is 120 seconds. Validate that these thresholds suit your healthy baseline. Investigations use up to eight read calls, one returned item per call and a 120-second investigation budget.
 
-### Gemini key provision
-
-The key is never written into TOML. Later, in the same Ubuntu shell:
-
-```bash
-read -rsp "Gemini API key: " GEMINI_API_KEY
-printf '\n'
-export GEMINI_API_KEY
-```
-
-Configuration uses `api_key_env = "GEMINI_API_KEY"` and the existing OpenAI-compatible transport at `https://generativelanguage.googleapis.com/v1beta/openai`. No SDK dependency is added. Use a model ID available to your teammate's project; configuration alone does not confirm model access. See [Google's compatibility documentation](https://ai.google.dev/gemini-api/docs/openai).
-
 ### OpenAI key provision
 
-For a new operator directory, pass `--provider openai` to `init`, along with the same Docker project and F02 endpoint arguments shown above. This selects `https://api.openai.com/v1`, `gpt-4.1-mini` and `api_key_env = "OPENAI_API_KEY"`. The model is a starting choice supported by the existing Chat Completions transport; check access in your OpenAI API project. See the [official OpenAI model documentation](https://developers.openai.com/api/docs/models/gpt-4.1-mini) and [API authentication guidance](https://developers.openai.com/api/reference/overview).
+The `init` command selects `https://api.openai.com/v1`, `gpt-4.1-mini` and `api_key_env = "OPENAI_API_KEY"` by default. The model is supported by the existing Chat Completions transport; no SDK dependency is added. See the [official OpenAI model documentation](https://developers.openai.com/api/docs/models/gpt-4.1-mini) and [API authentication guidance](https://developers.openai.com/api/reference/overview).
 
 To reuse an existing `/tmp/eyes-operator/eyes.toml`, change only these three values under `[models.cloud]`:
 
@@ -81,7 +69,7 @@ Check configuration without inference using `python3 -B -m incident_tools.eyes_a
 
 Cloud settings include timeout, retries, requests per minute, input context character budget, maximum output tokens and temperature. The context character budget is an application bound, not the provider's token context size.
 
-New Gemini operator configurations use a 60-second per-request timeout. Existing operator files are never rewritten; update timeout_seconds under [models.cloud] to 60 if they still contain 30. A measured 34.8-second first-byte latency exceeds the old timeout.
+New operator configurations use a 60-second per-request timeout. Existing operator files are never rewritten; update timeout_seconds under [models.cloud] to 60 if they still contain 30.
 
 The model probe derives its request budget from every selected provider's timeout, retry count and retry rate-limit waits, plus five seconds of scheduling headroom. For cloud-only with timeout_seconds = 60, retries = 1 and requests_per_minute = 12, model_probe_budget_seconds is 130. Diagnostics disable retries and therefore use 65 seconds for one 60-second attempt. Socket timeouts are I/O inactivity limits; these budgets are not an operating-system wall-clock watchdog. The investigation's workflow.max_seconds remains a separate setting.
 

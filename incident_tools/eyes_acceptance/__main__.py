@@ -8,7 +8,7 @@ import signal
 import uuid
 
 from incident_tools.eyes.core import Store
-from .configuration import initialize, readiness, PROVIDERS
+from .configuration import initialize, readiness, OPENAI_MODEL, OPENAI_KEY_ENV
 from .practice import Practice, reset, watchdog, write_json
 from .workflow import execute
 
@@ -18,8 +18,7 @@ def main(argv=None):
     commands = parser.add_subparsers(dest="command", required=True)
     init = commands.add_parser("init", help="Create a new operator configuration directory")
     init.add_argument("--directory", required=True)
-    init.add_argument("--provider", choices=tuple(PROVIDERS), default="gemini")
-    init.add_argument("--model")
+    init.add_argument("--model", default=OPENAI_MODEL)
     init.add_argument("--project", default="opentelemetry-demo")
     init.add_argument("--prometheus", default="http://localhost:9090")
     init.add_argument("--jaeger", default="http://localhost:8080")
@@ -43,8 +42,8 @@ def main(argv=None):
     try:
         if args.command == "init":
             print(initialize(args.directory, args.model, args.project, args.prometheus,
-                             args.jaeger, args.opensearch, provider=args.provider))
-            print("Check the model ID and F02 endpoints. Put " + PROVIDERS[args.provider]["key_env"] +
+                             args.jaeger, args.opensearch))
+            print("Check the model ID and F02 endpoints. Put " + OPENAI_KEY_ENV +
                   " in the environment only.")
             return 0
         if args.command == "_watchdog":

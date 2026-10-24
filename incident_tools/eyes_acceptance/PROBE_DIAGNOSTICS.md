@@ -28,8 +28,8 @@ The output contains category, HTTP status if received, phase, response byte coun
 | unexpected_probe_content | JSON parsed but did not equal the readiness response. |
 | configuration_error | No request was made; inspect the existing preflight configuration diagnostics. |
 
-gemini_endpoint_matches compares the configured base URL to the existing Google-compatible endpoint. environment_key_has_outer_whitespace exposes only a boolean. Neither a nonempty key nor an enabled model proves authentication or account access.
+openai_endpoint_matches compares the configured base URL to `https://api.openai.com/v1` when `api_key_env` is `OPENAI_API_KEY`. environment_key_has_outer_whitespace exposes only a boolean. Neither a nonempty key nor an enabled model proves authentication or account access.
 
 This tool improves diagnosis only. It does not claim to fix a live provider failure and does not change F02 metrics timestamp validation. A real failure category is needed before choosing a transport/configuration fix.
 
-All additions are separate files. Existing application, Eyes, F02 and acceptance source files remain unchanged; there is no new provider, dependency, service, commit or deployment.
+The diagnostic makes no changes to the running application, Docker state, telemetry backends or operator files.
