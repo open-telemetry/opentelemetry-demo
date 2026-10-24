@@ -1,13 +1,23 @@
 """Provider-neutral LLM wrapper: the one file to change when the model provider changes.
 
 Configuration (environment variables, or bosch-incident-zero/.env which is git-ignored):
-  LLM_PROVIDER     anthropic | openai | gemini (Gemini's OpenAI-compatible endpoint)
+  LLM_PROVIDER     anthropic | openai | gemini | openrouter | openai_compatible (needs LLM_BASE_URL).
+                   Required: with no provider or no key the factory raises LLMConfigError, there is
+                   no offline fallback that produces a diagnosis.
   LLM_MODEL        model id issued by the organisers (anthropic default: claude-opus-5-5)
   LLM_API_KEY      API key (never commit it)
-  LLM_BASE_URL     optional custom endpoint (e.g. an organiser proxy or OpenAI-compatible server)
+  LLM_BASE_URL     optional custom endpoint (e.g. an organiser proxy, https://openrouter.ai/api/v1)
+  LLM_HTTP_REFERER optional HTTP-Referer header (OpenRouter app attribution)
+  LLM_APP_TITLE    optional X-Title header (OpenRouter app attribution)
+  LLM_MAX_TOKENS   output cap per request (default 16000); lower it when OpenRouter answers 402
   LLM_EFFORT       optional Anthropic effort: low | medium | high | xhigh | max
   LLM_MAX_RETRIES  retries on rate limits / 5xx / network errors (default 5)
   LLM_FALLBACKS    anthropic only: 1 (default) enables server-side refusal fallbacks on api.anthropic.com
+  LLM_FALLBACK_MODELS  OpenAI-style providers: comma-separated models tried in order when the current one
+                   fails at transport level (402, 404, 408, 429, 5xx, timeout, connection). Bad output
+                   never triggers a fallback.
+
+Every LLMResponse carries the token usage the provider reported (None when it reported none).
 """
 from __future__ import annotations
 
@@ -26,6 +36,13 @@ from ..config import load_env_file
 ANTHROPIC_API_URL = "https://api.anthropic.com"
 ANTHROPIC_DEFAULT_MODEL = "claude-opus-5-5"
 _FALLBACK_MODELS = {"claude-opus-5-5", "claude-fable-5-1", "claude-sonnet-5-5"}
+OPENROUTER_API_URL = "https://openrouter.ai/api/v1"
+OPENAI_PROVIDERS = ("openai", "gemini", "openrouter", "openai_compatible")
+_OPENAI_DEFAULT_URLS = {
+    "openai": "https://api.openai.com/v1",
+    "gemini": "https://generativelanguage.googleapis.com/v1beta/openai/",
+    "openrouter": OPENROUTER_API_URL,
+}
 
 
 class LLMError(Exception):
@@ -60,6 +77,15 @@ class LLMResponse:
     text: str = ""
     tool_calls: List[ToolCall] = field(default_factory=list)
     stop_reason: str = "end_turn"
+    usage: Optional[Dict[str, int]] = None
+    model: str = ""
+
+
+def token_usage(prompt: Optional[int], completion: Optional[int],
+                total: Optional[int] = None) -> Dict[str, int]:
+    prompt, completion = int(prompt or 0), int(completion or 0)
+    return {"prompt_tokens": prompt, "completion_tokens": completion,
+            "total_tokens": int(total or prompt + completion)}
 
 
 @dataclass
@@ -68,11 +94,14 @@ class LLMConfig:
     model: str = ""
     api_key: str = ""
     base_url: str = ""
+    http_referer: str = ""
+    app_title: str = ""
     effort: str = ""
     max_tokens: int = 16000
     max_retries: int = 5
     timeout_seconds: float = 180.0
     fallbacks: bool = True
+    fallback_models: Tuple[str, ...] = ()
 
     @classmethod
     def from_env(cls, root_dir: Optional[Path] = None) -> "LLMConfig":
@@ -86,9 +115,12 @@ class LLMConfig:
         model = get("LLM_MODEL") or (ANTHROPIC_DEFAULT_MODEL if provider == "anthropic" else "")
         return cls(
             provider=provider, model=model, api_key=get("LLM_API_KEY"), base_url=get("LLM_BASE_URL"),
-            effort=get("LLM_EFFORT"), max_retries=int(get("LLM_MAX_RETRIES", "5") or 5),
+            http_referer=get("LLM_HTTP_REFERER"), app_title=get("LLM_APP_TITLE"), effort=get("LLM_EFFORT"),
+            max_tokens=int(get("LLM_MAX_TOKENS", "16000") or 16000),
+            max_retries=int(get("LLM_MAX_RETRIES", "5") or 5),
             timeout_seconds=float(get("LLM_TIMEOUT_SECONDS", "180") or 180),
             fallbacks=get("LLM_FALLBACKS", "1") not in ("0", "false", "no"),
+            fallback_models=tuple(m.strip() for m in get("LLM_FALLBACK_MODELS").split(",") if m.strip()),
         )
 
 
@@ -119,7 +151,8 @@ def call_with_retries(
 
 
 # A per-day quota will not reset within any useful backoff, so retrying only wastes time.
-_DAILY_QUOTA = re.compile(r"PerDay|per day|daily", re.IGNORECASE)
+# Matches "PerDay", "per day", "per-day" (OpenRouter free-models-per-day) and "daily".
+_DAILY_QUOTA = re.compile(r"PerDay|per[ -]day|daily", re.IGNORECASE)
 
 
 def _is_daily_quota(exc: Exception) -> bool:
@@ -200,22 +233,59 @@ class AnthropicSession(LLMSession):
         text = "".join(b.text for b in resp.content if getattr(b, "type", "") == "text")
         calls = [ToolCall(b.id, b.name, dict(b.input or {})) for b in resp.content
                  if getattr(b, "type", "") == "tool_use"]
-        return LLMResponse(text=text, tool_calls=calls, stop_reason=resp.stop_reason or "end_turn")
+        u = getattr(resp, "usage", None)
+        usage = None
+        if u is not None:
+            prompt = sum(getattr(u, k, 0) or 0 for k in
+                         ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens"))
+            usage = token_usage(prompt, u.output_tokens)
+        return LLMResponse(text=text, tool_calls=calls, stop_reason=resp.stop_reason or "end_turn", usage=usage,
+                           model=getattr(resp, "model", None) or self.cfg.model)
 
 
 class OpenAISession(LLMSession):
-    """OpenAI Chat Completions, or any server exposing that API via LLM_BASE_URL."""
+    """OpenAI Chat Completions, or any server exposing that API (OpenRouter, Gemini) via LLM_BASE_URL."""
 
     def __init__(self, cfg: LLMConfig, system: str, tools: Sequence[Dict[str, Any]]) -> None:
         import openai
 
         self._sdk = openai
         self.cfg = cfg
-        self.client = openai.OpenAI(api_key=cfg.api_key or None, base_url=cfg.base_url or None,
-                                    max_retries=0, timeout=cfg.timeout_seconds)
+        headers = {k: v for k, v in (("HTTP-Referer", cfg.http_referer), ("X-Title", cfg.app_title)) if v}
+        # Explicit base_url so an ambient OPENAI_BASE_URL from other tools is never used.
+        self.client = openai.OpenAI(api_key=cfg.api_key or None,
+                                    base_url=cfg.base_url or _OPENAI_DEFAULT_URLS.get(cfg.provider),
+                                    default_headers=headers or None, max_retries=0,
+                                    timeout=cfg.timeout_seconds)
         self.tools = [{"type": "function", "function": {"name": t["name"], "description": t["description"],
                                                         "parameters": t["parameters"]}} for t in tools]
         self.messages: List[Dict[str, Any]] = [{"role": "system", "content": system}]
+        self.models = [m for m in dict.fromkeys((cfg.model, *cfg.fallback_models)) if m]
+        self.model_index = 0
+
+    def _transport_failure(self, e: LLMError) -> bool:
+        sdk, cause = self._sdk, e.__cause__
+        if isinstance(cause, (sdk.APIConnectionError, sdk.APITimeoutError)):
+            return True
+        return isinstance(cause, sdk.APIStatusError) and (
+            cause.status_code in (402, 404, 408, 429) or cause.status_code >= 500)
+
+    def _create(self, kwargs: Dict[str, Any]) -> Tuple[Any, str]:
+        failures: List[str] = []
+        while True:
+            model = self.models[self.model_index]
+            last = self.model_index == len(self.models) - 1
+            try:
+                # Earlier models fail over at once; only the last one spends backoff retries.
+                return call_with_retries(lambda: self.client.chat.completions.create(**kwargs, model=model),
+                                         self._classify, max_retries=self.cfg.max_retries if last else 0), model
+            except LLMError as e:
+                failures.append(f"{model}: {e}")
+                if last or not self._transport_failure(e):
+                    if len(failures) == 1:
+                        raise
+                    raise type(e)("all models failed: " + " | ".join(failures)) from e
+                self.model_index += 1
 
     def _classify(self, e: Exception) -> Tuple[bool, bool, Optional[float]]:
         sdk = self._sdk
@@ -233,11 +303,12 @@ class OpenAISession(LLMSession):
             self.messages.append({"role": "tool", "tool_call_id": r.call_id, "content": r.content})
         if user_text:
             self.messages.append({"role": "user", "content": user_text})
-        kwargs: Dict[str, Any] = {"model": self.cfg.model, "messages": self.messages}
+        kwargs: Dict[str, Any] = {"messages": self.messages}
+        # Without a cap OpenRouter reserves credit for the model's full output length and answers 402.
+        kwargs["max_completion_tokens" if self.cfg.provider == "openai" else "max_tokens"] = self.cfg.max_tokens
         if self.tools:
             kwargs["tools"] = self.tools
-        resp = call_with_retries(lambda: self.client.chat.completions.create(**kwargs), self._classify,
-                                 max_retries=self.cfg.max_retries)
+        resp, model = self._create(kwargs)
         choice = resp.choices[0]
         msg = choice.message
         self.messages.append(msg.model_dump(exclude_none=True))
@@ -249,7 +320,10 @@ class OpenAISession(LLMSession):
                 calls.append(ToolCall(tc.id, tc.function.name, args if isinstance(args, dict) else {}))
             except ValueError:
                 calls.append(ToolCall(tc.id, tc.function.name, {}, invalid_arguments=raw[:200]))
-        return LLMResponse(text=msg.content or "", tool_calls=calls, stop_reason=choice.finish_reason or "stop")
+        u = getattr(resp, "usage", None)
+        usage = token_usage(u.prompt_tokens, u.completion_tokens, u.total_tokens) if u is not None else None
+        return LLMResponse(text=msg.content or "", tool_calls=calls, stop_reason=choice.finish_reason or "stop",
+                           usage=usage, model=model)
 
 
 ScriptStep = Union[LLMResponse, Callable[[Optional[str], Sequence[ToolResultMessage]], LLMResponse]]
@@ -274,179 +348,22 @@ class ScriptedSession(LLMSession):
 SessionFactory = Callable[[str, Sequence[Dict[str, Any]]], LLMSession]
 
 
-class AutonomousInvestigationSession(LLMSession):
-    """Autonomous, deterministic investigation session using live telemetry tools.
-
-    Acts as an intelligent on-call agent when no external LLM API key is configured
-    (or when LLM_PROVIDER is 'mock', 'autonomous', 'scripted', or offline).
-    Coordinates real tool execution, collects live evidence, and formats an explainable,
-    schema-valid diagnosis grounded in the collected telemetry.
-    """
-
-    KNOWN_SERVICES = (
-        "recommendation", "checkout", "payment", "cart", "frontend",
-        "product-catalog", "shipping", "ad", "accounting", "currency",
-        "email", "quote", "fraud-detection", "image-provider"
-    )
-
-    def __init__(self, system: str, tools: Sequence[Dict[str, Any]]) -> None:
-        self.system = system
-        self.tools = list(tools)
-        self.turn = 0
-        self.target_service = "checkout"
-        self.detected_trace_id: Optional[str] = None
-        self.called_tools: List[str] = []
-
-    def send(self, user_text: Optional[str] = None,
-             tool_results: Optional[Sequence[ToolResultMessage]] = None) -> LLMResponse:
-        self.turn += 1
-        if self.tools:
-            return self._investigate(user_text, tool_results)
-        return self._diagnose(user_text)
-
-    def _investigate(self, user_text: Optional[str],
-                     tool_results: Optional[Sequence[ToolResultMessage]]) -> LLMResponse:
-        if self.turn == 1:
-            text = (user_text or "").lower()
-            for svc in self.KNOWN_SERVICES:
-                if svc in text:
-                    self.target_service = svc
-                    break
-            calls = [
-                ToolCall("call_overview", "system_overview", {"window_minutes": 5}),
-                ToolCall("call_metrics", "get_service_metrics", {"service": self.target_service}),
-                ToolCall("call_dep", "dependency_map", {"service": self.target_service}),
-                ToolCall("call_container", "container_health", {"service": self.target_service}),
-                ToolCall("call_traces", "search_traces", {"service": self.target_service, "errors_only": False, "limit": 3}),
-                ToolCall("call_logs", "search_logs", {"service": self.target_service, "level": "warn", "limit": 5}),
-            ]
-            self.called_tools.extend(["system_overview", "get_service_metrics", "dependency_map", "container_health", "search_traces", "search_logs"])
-            return LLMResponse(text=f"Initiating multi-signal investigation for {self.target_service}.", tool_calls=calls)
-
-        if self.turn == 2 and tool_results:
-            for res in tool_results:
-                try:
-                    data = json.loads(res.content)
-                    for ev in data.get("evidence", []) or []:
-                        if ev.get("kind") == "trace" and ev.get("ref"):
-                            self.detected_trace_id = ev["ref"]
-                            break
-                    if not self.detected_trace_id:
-                        for row in data.get("data", {}).get("traces", []) or []:
-                            if row.get("trace_id"):
-                                self.detected_trace_id = row["trace_id"]
-                                break
-                except Exception:
-                    continue
-                if self.detected_trace_id:
-                    break
-
-            if self.detected_trace_id and "get_trace" not in self.called_tools:
-                self.called_tools.append("get_trace")
-                return LLMResponse(
-                    text=f"Retrieved trace {self.detected_trace_id}. Inspecting span waterfall.",
-                    tool_calls=[ToolCall("call_get_trace", "get_trace", {"trace_id": self.detected_trace_id})]
-                )
-
-        return LLMResponse(
-            text=(
-                f"Multi-signal telemetry investigation concluded for '{self.target_service}'. "
-                f"Retrieved metrics, dependency topology, container status, and distributed traces."
-            ),
-            tool_calls=[]
-        )
-
-    def _diagnose(self, user_text: Optional[str]) -> LLMResponse:
-        text = user_text or ""
-        raw_traces: List[str] = []
-        metric_items: List[Dict[str, Any]] = []
-        container_items: List[Dict[str, Any]] = []
-        log_items: List[Dict[str, Any]] = []
-
-        match = re.search(r"TOOL TRANSCRIPT \(JSON\):\s*(\[.*\])\s*Return the diagnosis", text, re.DOTALL)
-        if not match:
-            match = re.search(r"TOOL TRANSCRIPT \(JSON\):\s*(\{.*\})\s*Return the diagnosis", text, re.DOTALL)
-        target = self.target_service
-        if match:
-            try:
-                t_data = json.loads(match.group(1))
-                calls = t_data if isinstance(t_data, list) else t_data.get("tool_calls", [])
-                for call in calls:
-                    c_res = call.get("result", {})
-                    for ev in c_res.get("evidence", []):
-                        k = ev.get("kind")
-                        ref = ev.get("ref", "")
-                        if k == "trace" and ref:
-                            tid = ref.split(":")[1] if ref.lower().startswith("span:") else ref
-                            if tid not in raw_traces:
-                                raw_traces.append(tid)
-                        elif k == "metric":
-                            metric_items.append(ev)
-                        elif k == "container":
-                            container_items.append(ev)
-                        elif k == "log":
-                            log_items.append(ev)
-            except Exception:
-                pass
-
-        for tid in re.findall(r"\b[0-9a-f]{32}\b", text, re.IGNORECASE):
-            if tid.lower() not in (t.lower() for t in raw_traces):
-                raw_traces.append(tid.lower())
-
-        evidence: List[Dict[str, Any]] = []
-        for tid in raw_traces[:2]:
-            evidence.append({"kind": "trace", "ref": tid})
-        for m in metric_items[:2]:
-            evidence.append({"kind": "metric", "ref": m["ref"], "value": m.get("value")})
-        for c in container_items[:2]:
-            evidence.append({"kind": "container", "ref": c["ref"], "value": c.get("value")})
-        for l in log_items[:1]:
-            evidence.append({"kind": "log", "ref": l["ref"], "quote": l.get("text")})
-
-        ruled_out_refs = [c["ref"] for c in container_items if "restart_count" in c.get("ref", "") or "state" in c.get("ref", "")]
-        if not ruled_out_refs:
-            ruled_out_refs = [m["ref"] for m in metric_items[:1]]
-
-        category = "latency_without_errors"
-        summary = f"Telemetry investigation confirms latency degradation in {target}."
-        if any("error_rate" in str(m.get("ref", "")) and float(m.get("value") or 0) > 0.05 for m in metric_items):
-            category = "errors_on_operation"
-            summary = f"High error rate observed on operations in {target}."
-
-        diag_obj = {
-            "verdict": "diagnosed",
-            "root_cause": {
-                "service": target,
-                "category": category,
-                "operation": None,
-                "summary": summary
-            },
-            "impacted_services": [s for s in ["frontend", "frontend-proxy"] if s != target],
-            "severity": "HIGH",
-            "confidence": "high",
-            "evidence": evidence,
-            "alternatives": [
-                {
-                    "hypothesis": "Container crash or frequent restarts",
-                    "status": "ruled_out",
-                    "reason": f"Container {target} state is verified with 0 restart events.",
-                    "refs": ruled_out_refs
-                }
-            ],
-            "open_questions": [],
-            "recommended_next_step": f"Apply remediation to {target} (restart service or adjust load)."
-        }
-        return LLMResponse(text=json.dumps(diag_obj, indent=2), tool_calls=[])
-
-
 def session_factory(cfg: Optional[LLMConfig] = None) -> SessionFactory:
     """Return a factory that opens a new session for a system prompt and tool list."""
     cfg = cfg or LLMConfig.from_env()
-    if cfg.provider == "anthropic" and cfg.api_key:
+    supported = ("anthropic", *OPENAI_PROVIDERS)
+    if cfg.provider == "unset":
+        raise LLMConfigError(f"LLM_PROVIDER is not set; use one of {', '.join(supported)}. "
+                             "There is no offline fallback: the agent does not diagnose without a model.")
+    if cfg.provider not in supported:
+        raise LLMConfigError(f"LLM_PROVIDER '{cfg.provider}' is not supported; use one of {', '.join(supported)}.")
+    if not cfg.api_key:
+        raise LLMConfigError(f"LLM_API_KEY is not set for the {cfg.provider} provider.")
+    if cfg.provider == "anthropic":
         return lambda system, tools: AnthropicSession(cfg, system, tools)
-    if cfg.provider in ("openai", "gemini", "openai_compatible") and cfg.api_key:
-        if not cfg.model:
-            raise LLMConfigError(f"LLM_MODEL must be set for the {cfg.provider} provider.")
-        return lambda system, tools: OpenAISession(cfg, system, tools)
-    # Default to Autonomous Investigation Session when API key is not configured or in mock/offline mode
-    return lambda system, tools: AutonomousInvestigationSession(system, tools)
+    if not cfg.model:
+        raise LLMConfigError(f"LLM_MODEL must be set for the {cfg.provider} provider.")
+    if cfg.provider == "openai_compatible" and not cfg.base_url:
+        raise LLMConfigError("LLM_BASE_URL must be set for the openai_compatible provider "
+                             f"(for OpenRouter: {OPENROUTER_API_URL}).")
+    return lambda system, tools: OpenAISession(cfg, system, tools)

@@ -856,6 +856,7 @@ def search_logs(ctx: ToolContext, service: Optional[str] = None, level: str = "e
         filters.append({"match_phrase": {"body": str(text)[:200]}})
     dsl = {
         "size": limit,
+        "track_total_hits": True,
         "sort": [{"observedTimestamp": {"order": "desc"}}],
         "_source": ["observedTimestamp", "severity.text", "body", "traceId", "resource.service.name"],
         "query": {"bool": {"filter": filters,
@@ -882,7 +883,7 @@ def search_logs(ctx: ToolContext, service: Optional[str] = None, level: str = "e
             (src.get("resource", {}).get("service") or {}).get("name") if isinstance(
                 src.get("resource", {}).get("service"), dict) else None)
         ref = f"log:{h.get('_id')}"
-        line = {"ref": ref, "ts": src.get("observedTimestamp"), "service": svc,
+        line = {"ref": ref, "index": h.get("_index"), "ts": src.get("observedTimestamp"), "service": svc,
                 "severity": sev.get("text") if isinstance(sev, dict) else sev,
                 "body": body[:300], "trace_id": src.get("traceId") or None}
         lines.append(line)
@@ -895,7 +896,9 @@ def search_logs(ctx: ToolContext, service: Optional[str] = None, level: str = "e
     scope = f"{level} logs" + (f" for {service}" if service else "") + (f" matching '{text}'" if text else "")
     if not lines:
         return _result(tool, NO_DATA, f"No {scope} in the last {m}m.", {"total_matches": total or 0})
-    return _result(tool, OK, f"{total} {scope} in the last {m}m; showing {len(lines)} newest.",
+    newest = lines[0]
+    return _result(tool, OK, f"{total} {scope} in the last {m}m; showing {len(lines)} newest. Newest: "
+                             f"{newest['ts']} {newest['service']}: {newest['body'][:80]}",
                    {"window": f"{m}m", "total_matches": total, "matches_by_service": by_service,
                     "lines": lines}, evidence)
 

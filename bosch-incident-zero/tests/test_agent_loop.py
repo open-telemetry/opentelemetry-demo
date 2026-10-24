@@ -2,14 +2,17 @@
 from __future__ import annotations
 
 import json
+from types import SimpleNamespace
 from typing import Any, Dict
 
 import pytest
 
+from src.agent import llm as llm_mod
 from src.agent.agent import IncidentAgent
 from src.agent.guards import confidence_gate, parse_json_object, validate_citations
-from src.agent.llm import (LLMError, LLMRateLimitError, LLMResponse, ScriptedSession, ToolCall,
-                           call_with_retries)
+from src.agent.llm import (OPENROUTER_API_URL, AnthropicSession, LLMConfig, LLMConfigError, LLMError,
+                           LLMRateLimitError, LLMResponse, OpenAISession, ScriptedSession, ToolCall,
+                           call_with_retries, session_factory)
 from src.agent.report import validate_report
 from src.agent.tools import ToolBox, strip_flag_data
 from src.agent.transcript import Transcript
@@ -237,7 +240,8 @@ def test_llm_failure_mid_run_escalates_instead_of_crashing():
     t = IncidentAgent(toolbox(), factory).run("x", incident_id="T")
     assert t.gate["escalate"] and any("LLM failure" in e for e in t.errors)
     ok, _ = validate_report(t.report)
-    assert t.report["status"] == "DETECTED" and not ok  # no trace evidence -> schema minItems unmet, no placeholder
+    assert t.report["status"] == "DETECTED" and ok
+    assert t.report["evidence"]["trace_ids"] == []
 
 
 def test_daily_quota_429_fails_fast_without_retrying():
@@ -470,3 +474,322 @@ def test_caller_still_named_after_reask_escalates():
 def test_dependency_named_first_time_needs_no_reask():
     t = _run_unreached([LLMResponse(text=json.dumps(_unreached_diag("payment", ["checkout"])))])
     assert len(t.diagnosis_attempts) == 1 and t.report["target_service"] == "payment"
+
+
+# ---------------------------------------------------------------- provider config and token usage
+
+def _usage(prompt, completion):
+    return {"prompt_tokens": prompt, "completion_tokens": completion, "total_tokens": prompt + completion}
+
+
+@pytest.mark.parametrize("cfg, problem", [
+    (LLMConfig(provider="unset"), "LLM_PROVIDER is not set"),
+    (LLMConfig(provider="mock", api_key="k", model="m"), "not supported"),
+    (LLMConfig(provider="anthropic"), "LLM_API_KEY is not set"),
+    (LLMConfig(provider="openrouter", model="m"), "LLM_API_KEY is not set"),
+    (LLMConfig(provider="openrouter", api_key="k"), "LLM_MODEL must be set"),
+    (LLMConfig(provider="openai_compatible", api_key="k", model="m"), "LLM_BASE_URL must be set"),
+])
+def test_session_factory_refuses_to_run_without_a_configured_model(cfg, problem):
+    with pytest.raises(LLMConfigError, match=problem):
+        session_factory(cfg)
+
+
+def test_no_offline_session_can_produce_a_diagnosis(tmp_path, monkeypatch):
+    for key in ("LLM_PROVIDER", "LLM_API_KEY", "LLM_MODEL", "LLM_BASE_URL"):
+        monkeypatch.delenv(key, raising=False)
+    with pytest.raises(LLMConfigError):
+        session_factory(LLMConfig.from_env(root_dir=tmp_path))
+    assert not hasattr(llm_mod, "AutonomousInvestigationSession")
+
+
+@pytest.mark.parametrize("provider, base_url", [("openrouter", ""), ("openai_compatible", OPENROUTER_API_URL)])
+def test_openrouter_is_served_by_the_openai_session(provider, base_url):
+    cfg = LLMConfig(provider=provider, base_url=base_url, model="google/gemini-3.8-flash", api_key="test-key",
+                    http_referer="https://example.test", app_title="Incident Zero")
+    session = session_factory(cfg)("system", SPECS)
+    assert isinstance(session, OpenAISession)
+    assert str(session.client.base_url).rstrip("/") == OPENROUTER_API_URL
+    assert session.client.default_headers["HTTP-Referer"] == "https://example.test"
+    assert session.client.default_headers["X-Title"] == "Incident Zero"
+
+
+def test_openai_session_caps_output_and_records_reported_token_usage():
+    from openai.types.chat import ChatCompletion
+
+    session = OpenAISession(LLMConfig(provider="openrouter", model="m", api_key="test-key", max_tokens=4096),
+                            "system", SPECS)
+    completion = ChatCompletion.model_validate({
+        "id": "gen-1", "object": "chat.completion", "created": 0, "model": "m",
+        "choices": [{"index": 0, "finish_reason": "tool_calls", "message": {
+            "role": "assistant", "content": None, "tool_calls": [
+                {"id": "c1", "type": "function", "function": {"name": "system_overview", "arguments": "{}"}}]}}],
+        "usage": {"prompt_tokens": 120, "completion_tokens": 30, "total_tokens": 150}})
+    replies, sent = [completion, completion.model_copy(update={"usage": None})], []
+    session.client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(
+        create=lambda **kw: sent.append(kw) or replies.pop(0))))
+    resp = session.send(user_text="ALERT")
+    assert sent[0]["max_tokens"] == 4096  # uncapped requests are refused with 402 by OpenRouter
+    assert resp.tool_calls[0].name == "system_overview"
+    assert resp.usage == _usage(120, 30)
+    assert session.send(user_text="again").usage is None
+
+
+def test_anthropic_session_counts_cached_input_as_prompt_tokens():
+    from anthropic.types import Message
+
+    session = AnthropicSession(LLMConfig(provider="anthropic", model="claude-haiku-5-5", api_key="test-key"),
+                               "system", SPECS)
+    message = Message.model_validate({
+        "id": "msg_1", "type": "message", "role": "assistant", "model": "claude-haiku-5-5",
+        "content": [{"type": "text", "text": "done"}], "stop_reason": "end_turn", "stop_sequence": None,
+        "usage": {"input_tokens": 100, "output_tokens": 20, "cache_read_input_tokens": 50,
+                  "cache_creation_input_tokens": 0}})
+    session.client = SimpleNamespace(messages=SimpleNamespace(create=lambda **kw: message))
+    assert session.send(user_text="ALERT").usage == _usage(150, 20)
+
+
+def test_token_usage_is_accumulated_on_the_transcript_and_saved(tmp_path):
+    inv = investigation_script()
+    inv[0].usage, inv[2].usage = _usage(100, 10), _usage(300, 20)
+    diag = [LLMResponse(text=json.dumps(good_diag()), usage=_usage(500, 50))]
+    t, _ = run_agent(diag, inv_steps=inv, tmp_path=tmp_path)
+    assert t.token_usage == {"requests": 4, "requests_without_usage": 1,
+                             "prompt_tokens": 900, "completion_tokens": 80, "total_tokens": 980}
+    saved = json.loads((tmp_path / "TEST-1" / "transcript.json").read_text())
+    assert saved["token_usage"] == t.token_usage
+
+
+# ---------------------------------------------------------------- run events
+
+FAKE_KEY = "sk-or-v1-" + "0123456789abcdef" * 4
+
+
+def test_events_are_emitted_in_order_as_the_run_happens(tmp_path):
+    from src.events import EventLog
+
+    events = EventLog(echo=False)
+    inv = investigation_script()
+    inv[1] = LLMResponse(text="checking traces and logs", tool_calls=inv[1].tool_calls)
+    diag = [LLMResponse(text=json.dumps(good_diag()), usage=_usage(500, 50))]
+    agent = IncidentAgent(toolbox(), factory_for(inv, diag), output_dir=tmp_path, events=events)
+    t = agent.run("payment errors", incident_id="EV-1")
+    names = [r["event"] for r in events.records]
+    assert names == ["ALERT_RECEIVED", "TOOL_CALL", "MODEL_NOTE", "TOOL_CALL", "TOOL_CALL", "MODEL_NOTE",
+                     "DIAGNOSIS", "GATE"]
+    assert all(r["incident_id"] == "EV-1" for r in events.records)
+    calls = [r for r in events.records if r["event"] == "TOOL_CALL"]
+    assert calls[1]["summary"].startswith("#2 search_traces(service=payment) -> ok:")
+    assert set(calls[0]["data"]) == {"n", "tool", "arguments", "status", "summary"}
+    diag_ev = next(r for r in events.records if r["event"] == "DIAGNOSIS")["data"]
+    assert (diag_ev["verdict"], diag_ev["service"], diag_ev["category"]) == \
+        ("diagnosed", "payment", "errors_on_operation")
+    gate = events.records[-1]["data"]
+    assert gate["escalate"] is False and gate["final_confidence"] == t.gate["final_confidence"]
+    assert gate["token_usage"]["total_tokens"] == 550
+
+
+def test_events_record_llm_failure_as_error_then_gate():
+    from src.events import EventLog
+
+    def boom(*a):
+        raise LLMError("rate limited")
+
+    events = EventLog(echo=False)
+    IncidentAgent(toolbox(), factory_for([boom], []), events=events).run("x", incident_id="EV-2")
+    assert [r["event"] for r in events.records] == ["ALERT_RECEIVED", "ERROR", "GATE"]
+    assert events.records[-1]["data"]["escalate"] is True
+
+
+def test_events_never_contain_the_api_key_or_flag_data():
+    from src.events import EventLog
+
+    inv = [LLMResponse(text=f"using key {FAKE_KEY}", tool_calls=[
+               ToolCall("c1", "search_traces", {"service": "payment", "api_key": FAKE_KEY,
+                                                "feature_flag.key": "paymentFailure"})]),
+           LLMResponse(text=f"done, Bearer {FAKE_KEY}")]
+    events = EventLog(echo=False)
+    IncidentAgent(toolbox(), factory_for(inv, [LLMResponse(text=json.dumps(good_diag()))]),
+                  events=events).run("payment errors", incident_id="EV-3")
+    dumped = json.dumps(events.records)
+    assert FAKE_KEY not in dumped
+    assert "paymentFailure" not in dumped and "feature_flag" not in dumped
+
+
+# ---------------------------------------------------------------- reviewer pass
+
+def _review_reply(verdict, reasons=("evidence points elsewhere",)):
+    return LLMResponse(text=json.dumps({"verdict": verdict, "reasons": list(reasons), "refs": [],
+                                        "better_alternative": None}), usage=_usage(300, 30))
+
+
+def test_refuting_review_caps_confidence_at_low_and_escalates():
+    from src.events import EventLog
+
+    events = EventLog(echo=False)
+    factory = factory_for(investigation_script(), [LLMResponse(text=json.dumps(good_diag()))],
+                          [_review_reply("refuted")])
+    t = IncidentAgent(toolbox(), factory, events=events).run("payment errors", incident_id="RV-1")
+    assert factory.made[2][1] == []
+    assert t.gate["final_confidence"] == "low" and t.gate["escalate"] is True
+    assert t.gate["review"]["verdict"] == "refuted" and t.gate["review"]["confidence_before"] == "high"
+    assert t.token_usage["total_tokens"] == 330
+    gate = events.records[-1]
+    assert gate["event"] == "GATE" and "review=refuted" in gate["summary"]
+    assert gate["data"]["review"]["verdict"] == "refuted" and gate["data"]["escalate"] is True
+
+
+def test_review_llm_failure_leaves_gate_unchanged_and_marks_review_unavailable():
+    def boom(*a):
+        raise LLMError("reviewer down")
+
+    t = IncidentAgent(toolbox(), factory_for(investigation_script(), [LLMResponse(text=json.dumps(good_diag()))],
+                                             [boom])).run("payment errors", incident_id="RV-2")
+    assert t.gate["final_confidence"] == "high" and t.gate["escalate"] is False
+    assert t.gate["review"]["verdict"] == "unavailable"
+
+
+def test_review_never_raises_confidence_or_clears_an_escalation():
+    diag = good_diag(verdict="escalate")
+    t = IncidentAgent(toolbox(), factory_for(investigation_script(), [LLMResponse(text=json.dumps(diag))],
+                                             [_review_reply("upheld", [])])).run("x", incident_id="RV-3")
+    assert t.gate["escalate"] is True and t.gate["review"]["verdict"] == "upheld"
+    assert t.gate["review"]["confidence_after"] == t.gate["review"]["confidence_before"]
+
+
+def test_openrouter_out_of_credit_402_escalates_without_a_diagnosis():
+    import httpx2
+    import openai
+
+    from src.events import EventLog
+
+    body = {"error": {"message": "This request would exceed your available credits given your current "
+                                 "in-flight requests. Retry after in-flight requests settle, or add credits.",
+                      "code": 402, "metadata": {"reason": "in_flight_budget_exhausted"}}}
+    calls = []
+
+    def create(**kw):
+        calls.append(kw)
+        request = httpx2.Request("POST", OPENROUTER_API_URL + "/chat/completions")
+        raise openai.APIStatusError(f"Error code: 402 - {body}", response=httpx2.Response(402, request=request, json=body),
+                                    body=body)
+
+    def factory(system, tools):
+        session = OpenAISession(LLMConfig(provider="openrouter", model="m", api_key="test-key", max_tokens=4096),
+                                system, tools)
+        session.client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
+        return session
+
+    events = EventLog(echo=False)
+    t = IncidentAgent(toolbox(), factory, events=events).run("payment errors", incident_id="EV-402")
+    assert len(calls) == 1  # a 402 is not retried
+    assert t.diagnosis is None and t.tool_calls == []
+    assert [r["event"] for r in events.records] == ["ALERT_RECEIVED", "ERROR", "GATE"]
+    assert events.records[1]["data"]["source"] == "llm"
+    gate = events.records[-1]["data"]
+    assert gate["escalate"] is True and gate["final_confidence"] == "low" and gate["review"] is None
+    assert any("402" in r and "credits" in r for r in gate["reasons"])
+
+
+# ---------------------------------------------------------------- model fallback
+
+def _status_error(code, message="upstream error"):
+    import httpx2
+    import openai
+
+    body = {"error": {"message": message, "code": code}}
+    request = httpx2.Request("POST", OPENROUTER_API_URL + "/chat/completions")
+    return openai.APIStatusError(f"Error code: {code} - {body}", response=httpx2.Response(code, request=request,
+                                                                                          json=body), body=body)
+
+
+def _completion(text="", tool_calls=None):
+    from openai.types.chat import ChatCompletion
+
+    return ChatCompletion.model_validate({
+        "id": "gen-1", "object": "chat.completion", "created": 0, "model": "served",
+        "choices": [{"index": 0, "finish_reason": "stop", "message": {
+            "role": "assistant", "content": text, "tool_calls": tool_calls}}],
+        "usage": {"prompt_tokens": 10, "completion_tokens": 5, "total_tokens": 15}})
+
+
+def _fallback_session(replies, fallbacks=("b", "c")):
+    cfg = LLMConfig(provider="openrouter", model="a", api_key="test-key", max_tokens=4096, max_retries=0,
+                    fallback_models=tuple(fallbacks))
+    session = OpenAISession(cfg, "system", SPECS)
+    sent = []
+
+    def create(**kw):
+        sent.append(kw["model"])
+        reply = replies[kw["model"]].pop(0)
+        if isinstance(reply, Exception):
+            raise reply
+        return reply
+
+    session.client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
+    return session, sent
+
+
+def test_fallback_models_are_tried_in_order_on_transport_failures_and_stick():
+    import openai
+
+    timeout = openai.APITimeoutError(request=__import__("httpx2").Request("POST", OPENROUTER_API_URL))
+    session, sent = _fallback_session({"a": [_status_error(429, "free-models-per-min")],
+                                       "b": [timeout], "c": [_completion("ok"), _completion("again")]})
+    assert session.send(user_text="ALERT").model == "c"
+    assert session.send(user_text="more").model == "c"
+    assert sent == ["a", "b", "c", "c"]
+
+
+@pytest.mark.parametrize("code", [402, 404, 500, 503])
+def test_each_transport_status_falls_back(code):
+    session, sent = _fallback_session({"a": [_status_error(code)], "b": [_completion("ok")]}, ["b"])
+    assert session.send(user_text="x").model == "b" and sent == ["a", "b"]
+
+
+def test_client_errors_do_not_fall_back():
+    session, sent = _fallback_session({"a": [_status_error(400, "bad request")]})
+    with pytest.raises(LLMError):
+        session.send(user_text="x")
+    assert sent == ["a"]
+
+
+def test_malformed_model_output_never_triggers_a_fallback():
+    bad = _completion(None, [{"id": "c1", "type": "function", "function": {"name": "system_overview",
+                                                                          "arguments": "{not json"}}])
+    session, sent = _fallback_session({"a": [bad, _completion("not a diagnosis")], "b": [], "c": []})
+    resp = session.send(user_text="x")
+    assert resp.model == "a" and resp.tool_calls[0].invalid_arguments == "{not json"
+    assert session.send(user_text="y").text == "not a diagnosis" and sent == ["a", "a"]
+
+
+def test_all_models_failing_escalates_with_every_failure_listed_and_no_diagnosis():
+    from src.events import EventLog
+
+    def factory(system, tools):
+        session, _ = _fallback_session({"a": [_status_error(429, "free-models-per-day")],
+                                        "b": [_status_error(503)], "c": [_status_error(402, "add credits")]})
+        return session
+
+    events = EventLog(echo=False)
+    t = IncidentAgent(toolbox(), factory, events=events).run("payment errors", incident_id="FB-1")
+    assert t.diagnosis is None and [r["event"] for r in events.records] == ["ALERT_RECEIVED", "ERROR", "GATE"]
+    reason = events.records[-1]["data"]["reasons"][0]
+    assert events.records[-1]["data"]["escalate"] is True
+    assert "all models failed" in reason and all(f"{m}: " in reason for m in "abc")
+
+
+def test_answering_model_is_recorded_on_transcript_and_diagnosis_event():
+    from src.events import EventLog
+
+    inv = [LLMResponse(text="payment is the root cause", model="nvidia/x:free")]
+    diag = [LLMResponse(text=json.dumps(good_diag()), model="poolside/y:free")]
+    events = EventLog(echo=False)
+    t = IncidentAgent(toolbox(), factory_for(inv, diag), events=events).run("payment errors", incident_id="FB-2")
+    assert t.models_used == ["nvidia/x:free", "poolside/y:free"]
+    assert next(r for r in events.records if r["event"] == "DIAGNOSIS")["data"]["model"] == "poolside/y:free"
+
+
+def test_fallback_models_are_read_from_env(monkeypatch):
+    monkeypatch.setenv("LLM_FALLBACK_MODELS", " b:free, ,c:free ")
+    assert LLMConfig.from_env().fallback_models == ("b:free", "c:free")
