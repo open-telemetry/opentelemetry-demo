@@ -1,0 +1,11 @@
+# Incident Zero dependencies (kept separate from the demo's own files).
+# Install with: pip install -r requirements-incident.txt
+requests
+python-dotenv
+pytest
+
+# LLM provider SDK: install ONLY the one that matches LLM_PROVIDER in .env.incident.
+# Uncomment it here once the provider is known, so the list stays honest.
+# anthropic    # LLM_PROVIDER=anthropic
+# openai       # LLM_PROVIDER=openai (also works for OpenAI-compatible servers via LLM_BASE_URL)
+anthropic==2.2.0

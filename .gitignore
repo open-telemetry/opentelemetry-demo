@@ -58,3 +58,23 @@ src/frontend/cypress/screenshots
 src/shipping/target/
 
 !src/currency/build
+# Incident Zero
+.env.incident
+reports/*
+!reports/.gitkeep
+__pycache__/
+.pytest_cache/
+
+# Incident Zero
+.env.incident
+reports/*
+!reports/.gitkeep
+__pycache__/
+.pytest_cache/
+
+# Incident Zero
+.env.incident
+reports/*
+!reports/.gitkeep
+__pycache__/
+.pytest_cache/
