@@ -1,0 +1,81 @@
+{
+  "incident": {
+    "id": "INC-FIX-PAYMENT-001",
+    "symptom": "checkout PlaceOrder error rate above 5%",
+    "started_at": "2026-01-01T10:00:00Z",
+    "window": "10m",
+    "source": "prometheus_alert"
+  },
+  "evidence": [
+    {
+      "id": "E-1",
+      "signal": "metric",
+      "tool": "prometheus_inspect_service",
+      "query": "error rate payment, checkout",
+      "ts": "2026-01-01T10:01:00Z",
+      "summary": "payment error rate 0.97 vs baseline 0.00; checkout 0.62 vs 0.00",
+      "data": {
+        "service": "payment",
+        "error_rate": 0.97,
+        "baseline_error_rate": 0.0
+      }
+    },
+    {
+      "id": "E-2",
+      "signal": "trace",
+      "tool": "jaeger_inspect_traces",
+      "query": "service=checkout operation=PlaceOrder error=true",
+      "ts": "2026-01-01T10:01:20Z",
+      "summary": "5/5 failing checkout traces end in an error span on payment oteldemo.PaymentService/Charge",
+      "data": {
+        "error_span_service": "payment",
+        "sampled": 5,
+        "failing": 5
+      }
+    },
+    {
+      "id": "E-3",
+      "signal": "log",
+      "tool": "opensearch_search_logs",
+      "query": "service=payment level=error",
+      "ts": "2026-01-01T10:01:40Z",
+      "summary": "payment logs: 'Payment request failed. Invalid token' on every Charge call (214 lines)",
+      "data": {
+        "service": "payment",
+        "count": 214
+      }
+    },
+    {
+      "id": "E-4",
+      "signal": "container",
+      "tool": "docker_inspect_container",
+      "query": "payment",
+      "ts": "2026-01-01T10:01:50Z",
+      "summary": "payment container running, 0 restarts, CPU and memory normal",
+      "data": {
+        "state": "running",
+        "restart_count": 0
+      }
+    }
+  ],
+  "diagnosis": {
+    "incident_id": "INC-FIX-PAYMENT-001",
+    "component": "payment",
+    "cause": "payment fails every Charge call with an application error while its container is healthy; checkout errors are propagated from payment.",
+    "confidence": 0.9,
+    "evidence_ids": [
+      "E-1",
+      "E-2",
+      "E-3",
+      "E-4"
+    ],
+    "escalate": false,
+    "root_cause_service": "payment",
+    "fault_class": "app_error",
+    "summary": "payment fails every Charge call with an application error while its container is healthy; checkout errors are propagated from payment.",
+    "next_steps": [
+      "Disable the payment failure injection",
+      "Verify checkout error rate returns to baseline"
+    ]
+  }
+}
