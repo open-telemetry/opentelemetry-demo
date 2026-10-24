@@ -9,6 +9,7 @@ from oncall.guard import is_banned_service, is_banned_text, scrub
 from oncall.tools.registry import tool
 
 ERROR = 2
+SCAN_TRACES = 200
 KEPT_ATTRS = ("grpc.error_message", "exception.type", "exception.message", "http.status_code", "http.response.status_code")
 
 
@@ -81,7 +82,8 @@ def get_failed_traces(service: str, window_minutes: int, limit: int = 5) -> Tool
     if is_banned_service(service):
         raise ValueError(f"service not available: {service}")
     traces: dict[str, list[dict[str, Any]]] = {}
-    for span in jaeger_spans(service, window_minutes, num_traces=20):
+    # Jaeger v3 cannot filter on errors server-side; scan enough traces that rare failures are not missed.
+    for span in jaeger_spans(service, window_minutes, num_traces=SCAN_TRACES):
         traces.setdefault(span["traceId"], []).append(span)
     failed = [a for a in (_analyse_trace(group) for group in traces.values()) if a]
     if not failed:

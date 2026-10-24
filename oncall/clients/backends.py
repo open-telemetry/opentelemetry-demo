@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 from datetime import datetime, timedelta, timezone
+from functools import lru_cache
 from typing import Any
 
 import httpx
@@ -18,14 +20,42 @@ def prom_query(expr: str) -> list[dict[str, Any]]:
     return response.json()["data"]["result"]
 
 
+@lru_cache(maxsize=1)
+def opensearch_url() -> str:
+    """In host mode Docker publishes OpenSearch's 9200 on a random host port, so ask Docker for it."""
+    if settings.ONCALL_MODE != "host" or os.getenv("OPENSEARCH_URL"):
+        return settings.OPENSEARCH_URL
+    mapping = docker("port", "opensearch", "9200").strip().splitlines()
+    return f"http://localhost:{mapping[0].rsplit(':', 1)[-1]}" if mapping else settings.OPENSEARCH_URL
+
+
 def opensearch_search(body: dict[str, Any]) -> dict[str, Any]:
-    response = httpx.post(f"{settings.OPENSEARCH_URL}/otel-logs-*/_search", json=body, timeout=TIMEOUT)
+    response = httpx.post(f"{opensearch_url()}/otel-logs-*/_search", json=body, timeout=TIMEOUT)
     response.raise_for_status()
     return response.json()
 
 
+@lru_cache(maxsize=1)
+def jaeger_url() -> str:
+    """First Jaeger base URL that answers. In host mode 16686 is only published by compose.oncall.yaml;
+    otherwise Docker picks a random port, and the shop's proxy always serves Jaeger under /jaeger/ui."""
+    candidates = [settings.JAEGER_URL]
+    if settings.ONCALL_MODE == "host" and not os.getenv("JAEGER_URL"):
+        mapping = docker("port", "jaeger", "16686").strip().splitlines()
+        if mapping:
+            candidates.append(f"http://localhost:{mapping[0].rsplit(':', 1)[-1]}/jaeger/ui")
+        candidates.append("http://localhost:8080/jaeger/ui")
+    for url in candidates:
+        try:
+            if httpx.get(f"{url}/api/v3/services", timeout=3).status_code == 200:
+                return url
+        except httpx.HTTPError:
+            continue
+    return settings.JAEGER_URL
+
+
 def _jaeger_api() -> str:
-    return f"{settings.JAEGER_URL}/api/v3"
+    return f"{jaeger_url()}/api/v3"
 
 
 def jaeger_services() -> list[str]:
