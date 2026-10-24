@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-import json
 from typing import Any
 
-from oncall.clients.backends import docker, prom_query
+from oncall.clients.backends import docker_inspect, prom_query
 from oncall.contracts import Fact, Signal, ToolOutput
 from oncall.guard import is_banned_service
 from oncall.tools.registry import tool
@@ -12,7 +11,7 @@ from oncall.tools.registry import tool
 def inspect(name: str) -> dict[str, Any]:
     if is_banned_service(name):
         raise ValueError(f"service not available: {name}")
-    return json.loads(docker("inspect", name))[0]
+    return docker_inspect(name)
 
 
 def cpu_cores_used(name: str) -> float | None:

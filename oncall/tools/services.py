@@ -2,23 +2,26 @@ from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
 
-from oncall.clients.backends import docker, jaeger_services, opensearch_search, prom_query
+from oncall.clients.backends import docker_containers, jaeger_services, opensearch_search, prom_query
 from oncall.contracts import Fact, Signal, ToolOutput
 from oncall.guard import is_banned_service
 from oncall.tools.registry import tool
 
 
-def container_states() -> dict[str, str]:
-    lines = docker("ps", "-a", "--format", '{{.Label "com.docker.compose.service"}} {{.State}}').splitlines()
-    pairs = [line.split() for line in lines if len(line.split()) == 2]
-    return {name: state for name, state in pairs if not is_banned_service(name)}
+def _compose_service(info: dict) -> str | None:
+    return (info.get("Config", {}).get("Labels") or {}).get("com.docker.compose.service")
 
 
-def cpu_limits() -> dict[str, float]:
-    ids = docker("ps", "-aq").split()
-    fmt = '{{index .Config.Labels "com.docker.compose.service"}} {{.HostConfig.NanoCpus}}'
-    pairs = [line.split() for line in docker("inspect", "--format", fmt, *ids).splitlines()] if ids else []
-    return {name: int(nano) / 1e9 for name, nano in (p for p in pairs if len(p) == 2) if int(nano) > 0}
+def container_states(infos: list[dict]) -> dict[str, str]:
+    """Compose service name -> container state (running, exited, paused...)."""
+    states = {_compose_service(i): i.get("State", {}).get("Status", "unknown") for i in infos}
+    return {name: state for name, state in states.items() if name and not is_banned_service(name)}
+
+
+def cpu_limits(infos: list[dict]) -> dict[str, float]:
+    """Compose service name -> CPU limit in cores, only for containers that have one."""
+    limits = {_compose_service(i): (i.get("HostConfig", {}).get("NanoCpus") or 0) / 1e9 for i in infos}
+    return {name: cores for name, cores in limits.items() if name and cores > 0}
 
 
 def _log_services() -> set[str]:
@@ -40,13 +43,14 @@ def _log_services() -> set[str]:
     params={},
 )
 def list_services() -> ToolOutput:
-    with ThreadPoolExecutor(max_workers=5) as pool:
-        limits_job = pool.submit(cpu_limits)
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        docker_job = pool.submit(docker_containers)  # one Docker listing feeds both states and CPU limits
         traces = pool.submit(jaeger_services)
         metrics = pool.submit(prom_query, "count by (service_name)(traces_span_metrics_calls_total)")
         logs = pool.submit(_log_services)
-        states = pool.submit(container_states)
-        in_traces, in_logs, containers, limits = set(traces.result()), logs.result(), states.result(), limits_job.result()
+        infos = docker_job.result()
+        containers, limits = container_states(infos), cpu_limits(infos)
+        in_traces, in_logs = set(traces.result()), logs.result()
         in_metrics = {r["metric"]["service_name"] for r in metrics.result()}
     rows = []
     for name in sorted(in_traces | in_metrics | in_logs | set(containers)):

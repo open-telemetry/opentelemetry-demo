@@ -2,12 +2,13 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime, timedelta, timezone
 from types import SimpleNamespace
 
 import httpx
 
 from oncall.clients import backends
-from oncall.tools import deploys, logs, traces
+from oncall.tools import deploys, logs, services, traces
 
 TRACE = "f695f778aa11bb22cc33dd44ee55ff66"
 
@@ -66,19 +67,33 @@ def test_logs_never_show_flag_text(monkeypatch):
     assert "feature_flag" not in logs.get_logs("payment", 10).text
 
 
-def test_deploy_history_survives_a_vanished_container(monkeypatch):
-    def fake_docker(*args):
-        if args[0] == "events":
-            return ""
-        if args[0] == "ps":
-            return "gone1\nalive2\n"
-        if args[1] == "gone1":
-            raise RuntimeError("docker inspect gone1 failed: No such object")
-        return json.dumps([{"Name": "/checkout", "Config": {"Image": "demo:checkout"}, "RestartCount": 2}])
-
-    monkeypatch.setattr(deploys, "docker", fake_docker)
+def test_deploy_history_reports_stops_and_restarts(monkeypatch):
+    now = datetime.now(timezone.utc)
+    stopped = (now - timedelta(minutes=3)).isoformat()
+    monkeypatch.setattr(deploys, "docker_events", lambda since, until, actions: [])  # buffer flooded: no events
+    monkeypatch.setattr(deploys, "docker_containers", lambda: [
+        {"Name": "/checkout", "Config": {"Image": "demo:checkout"}, "RestartCount": 2, "State": {}},
+        {"Name": "/currency", "Config": {"Image": "demo:currency"}, "RestartCount": 0,
+         "State": {"Status": "exited", "FinishedAt": stopped, "StartedAt": "0001-01-01T00:00:00Z"}}])
     out = deploys.get_deploy_history(30)
     assert out.facts[0].data["restarted"] == [{"container": "checkout", "image": "demo:checkout", "restarts": 2}]
+    assert "currency stopped" in out.text  # found from the container's own FinishedAt, not the event stream
+
+
+def test_list_services_marks_down_and_cpu_limited(monkeypatch):
+    def container(name, status, nano_cpus=0):
+        return {"Config": {"Labels": {"com.docker.compose.service": name}}, "State": {"Status": status},
+                "HostConfig": {"NanoCpus": nano_cpus}}
+
+    monkeypatch.setattr(services, "docker_containers", lambda: [
+        container("currency", "exited"), container("cart", "running", 50_000_000), container("flagd", "running")])
+    monkeypatch.setattr(services, "jaeger_services", lambda: ["currency", "cart"])
+    monkeypatch.setattr(services, "prom_query", lambda expr: [])
+    monkeypatch.setattr(services, "_log_services", lambda: {"cart"})
+    out = services.list_services()
+    assert "currency: container=exited status=DOWN" in out.text
+    assert "cart: container=running status=CPU_LIMITED" in out.text
+    assert "flagd" not in out.text
 
 
 def _host_settings():
@@ -90,7 +105,7 @@ def test_jaeger_url_falls_back_to_the_published_port(monkeypatch):
     backends.jaeger_url.cache_clear()
     monkeypatch.delenv("JAEGER_URL", raising=False)
     monkeypatch.setattr(backends, "settings", _host_settings())
-    monkeypatch.setattr(backends, "docker", lambda *a: "0.0.0.0:57989\n")
+    monkeypatch.setattr(backends, "docker_host_port", lambda container, port: "57989")
 
     def fake_get(url, timeout):
         if "127.0.0.1:16686" in url:
@@ -106,6 +121,6 @@ def test_opensearch_url_uses_dockers_random_port(monkeypatch):
     backends.opensearch_url.cache_clear()
     monkeypatch.delenv("OPENSEARCH_URL", raising=False)
     monkeypatch.setattr(backends, "settings", _host_settings())
-    monkeypatch.setattr(backends, "docker", lambda *a: "0.0.0.0:59104\n[::]:59104\n")
+    monkeypatch.setattr(backends, "docker_host_port", lambda container, port: "59104")
     assert backends.opensearch_url() == "http://localhost:59104"
     backends.opensearch_url.cache_clear()

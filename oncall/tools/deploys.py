@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-import json
 from datetime import datetime, timedelta, timezone
 
-from oncall.clients.backends import docker
+from oncall.clients.backends import docker_containers, docker_events
 from oncall.contracts import Fact, Signal, ToolOutput
 from oncall.guard import is_banned_service
 from oncall.tools.registry import tool
@@ -16,19 +15,6 @@ def _parse(stamp: str | None) -> datetime | None:
         return None
     return datetime.fromisoformat(stamp)  # 3.11+ accepts 'Z' and truncates nanoseconds
 
-
-def _inspect_all() -> list[dict]:
-    ids = docker("ps", "-aq").split()
-    try:  # one call is fast; ~30 separate inspects exceed the registry's 20 s tool timeout
-        return json.loads(docker("inspect", *ids)) if ids else []
-    except RuntimeError:  # a container vanished between ps and inspect: retry one by one, skip the missing
-        infos = []
-        for container_id in ids:
-            try:
-                infos += json.loads(docker("inspect", container_id))
-            except RuntimeError:
-                continue
-        return infos
 
 
 @tool(
@@ -53,17 +39,13 @@ def get_deploy_history(window_minutes: int) -> ToolOutput:
             events.append({"time": when.strftime("%H:%M:%S"), "container": container, "event": event})
 
     # 1) Docker's event stream. It is a short in-memory buffer that health-check exec events flood within
-    #    minutes, so it is often empty; Unix timestamps because a zone-less date is read as local time.
-    raw = docker("events", "--since", str(int(since.timestamp())), "--until", str(int(now.timestamp())),
-                 "--filter", "type=container", *(a for e in LIFECYCLE for a in ("--filter", f"event={e}")),
-                 "--format", "{{json .}}")
-    for line in raw.splitlines():
-        event = json.loads(line)
+    #    minutes, so it is often empty.
+    for event in docker_events(since, now, LIFECYCLE):
         add(datetime.fromtimestamp(event["time"], timezone.utc), event["Actor"]["Attributes"].get("name", ""),
             event["Action"])
 
     # 2) Each container's own last start/stop time: always available, survives the event buffer.
-    infos = _inspect_all()
+    infos = docker_containers()
     for info in infos:
         name, state = info["Name"].lstrip("/"), info.get("State", {})
         finished, started = _parse(state.get("FinishedAt")), _parse(state.get("StartedAt"))

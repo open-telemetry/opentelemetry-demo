@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import os
-import subprocess
 from datetime import datetime, timedelta, timezone
 from functools import lru_cache
 from typing import Any
@@ -25,8 +24,8 @@ def opensearch_url() -> str:
     """In host mode Docker publishes OpenSearch's 9200 on a random host port, so ask Docker for it."""
     if settings.ONCALL_MODE != "host" or os.getenv("OPENSEARCH_URL"):
         return settings.OPENSEARCH_URL
-    mapping = docker("port", "opensearch", "9200").strip().splitlines()
-    return f"http://localhost:{mapping[0].rsplit(':', 1)[-1]}" if mapping else settings.OPENSEARCH_URL
+    port = docker_host_port("opensearch", 9200)
+    return f"http://localhost:{port}" if port else settings.OPENSEARCH_URL
 
 
 def opensearch_search(body: dict[str, Any]) -> dict[str, Any]:
@@ -41,9 +40,9 @@ def jaeger_url() -> str:
     otherwise Docker picks a random port, and the shop's proxy always serves Jaeger under /jaeger/ui."""
     candidates = [settings.JAEGER_URL]
     if settings.ONCALL_MODE == "host" and not os.getenv("JAEGER_URL"):
-        mapping = docker("port", "jaeger", "16686").strip().splitlines()
-        if mapping:
-            candidates.append(f"http://localhost:{mapping[0].rsplit(':', 1)[-1]}/jaeger/ui")
+        port = docker_host_port("jaeger", 16686)
+        if port:
+            candidates.append(f"http://localhost:{port}/jaeger/ui")
         candidates.append("http://localhost:8080/jaeger/ui")
     for url in candidates:
         try:
@@ -98,8 +97,43 @@ def _json_chunks(text: str) -> list[dict[str, Any]]:
         chunks.append(chunk)
 
 
-def docker(*args: str) -> str:
-    result = subprocess.run(["docker", *args], capture_output=True, text=True, timeout=TIMEOUT)
-    if result.returncode != 0:
-        raise RuntimeError(f"docker {' '.join(args[:2])} failed: {result.stderr.strip()[:200]}")
-    return result.stdout
+# Docker is reached through the Engine API (docker SDK), not the CLI: the oncall image has no docker binary,
+# only the mounted socket.
+
+@lru_cache(maxsize=1)
+def docker_client() -> Any:
+    import docker as docker_sdk
+
+    if os.path.exists(settings.DOCKER_SOCK):  # inside the oncall container
+        return docker_sdk.DockerClient(base_url=f"unix://{settings.DOCKER_SOCK}", timeout=TIMEOUT)
+    return docker_sdk.from_env(timeout=TIMEOUT)  # host: DOCKER_HOST or the platform default (npipe on Windows)
+
+
+def docker_inspect(name: str) -> dict[str, Any]:
+    """`docker inspect <name>` as a dict; LookupError if no such container."""
+    from docker.errors import NotFound
+
+    try:
+        return docker_client().containers.get(name).attrs
+    except NotFound as exc:
+        raise LookupError(f"no container named {name}") from exc
+
+
+def docker_containers() -> list[dict[str, Any]]:
+    """Inspect data of every container, running or not. Containers removed mid-listing are skipped."""
+    return [c.attrs for c in docker_client().containers.list(all=True, ignore_removed=True)]
+
+
+def docker_events(since: datetime, until: datetime, actions: tuple[str, ...]) -> list[dict[str, Any]]:
+    """Container lifecycle events between two times (Docker keeps only a short in-memory buffer)."""
+    filters = {"type": "container", "event": list(actions)}
+    return list(docker_client().events(since=since, until=until, filters=filters, decode=True))
+
+
+def docker_host_port(container: str, port: int) -> str | None:
+    """Host port Docker published for a container port, or None."""
+    try:
+        bindings = (docker_inspect(container).get("NetworkSettings", {}).get("Ports") or {}).get(f"{port}/tcp") or []
+    except LookupError:
+        return None
+    return bindings[0]["HostPort"] if bindings else None
