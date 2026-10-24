@@ -37,7 +37,9 @@ def _final(ids: list[str], confidence: float = 0.9, escalate: bool = False) -> s
     })
 
 
-@pytest.fixture(params=["loop", "graph"])
+_ENGINES = ["loop"] + (["graph"] if getattr(graph_engine, "StateGraph", None) is not None else [])
+
+@pytest.fixture(params=_ENGINES)
 def investigate(request):
     return (loop_engine if request.param == "loop" else graph_engine).investigate
 

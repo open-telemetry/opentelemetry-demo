@@ -6,7 +6,7 @@ Developed for the **Bosch "Incident Zero: Build an AI On-Call Engineer" Hackatho
 
 ## 1. System Overview & Architecture
 
-The **AI On-Call Engineer** is an evidence-driven, safety-constrained autonomous agent designed to triage, isolate, and remediate microservice outages in real time.
+The **AI On-Call Engineer** is an evidence-driven, safety-constrained autonomous agent designed to triage, isolate, remediate, and report microservice outages in real time.
 
 ```
        [ Alert Ingress: Prometheus / PagerDuty / Webhook ]
@@ -27,12 +27,17 @@ The **AI On-Call Engineer** is an evidence-driven, safety-constrained autonomous
         +----------------------+----------------------+
                                |
                                v
-               [DeploymentHistoryTool (Git Commits)]
+                [DeploymentHistoryTool (Git Commits)]
                                |
                                v
               +---------------------------------+
               | Evidence Consistency & Root     |
               | Cause Synthesis Engine          |
+              +---------------------------------+
+                               |
+                               v
+              +---------------------------------+
+              | Adversarial Reviewer (Stretch 2)|
               +---------------------------------+
                                |
                                v
@@ -49,74 +54,112 @@ The **AI On-Call Engineer** is an evidence-driven, safety-constrained autonomous
                 |                              |
                 v                              v
        [ Safe Escalation ]            [ Permitted Action API ]
-                                      (Restart / Reset Flags)
+                                      (Restart / Reset Flags / Throttle)
+                                      + Action Log (action_log.jsonl)
                                                |
                                                v
                                       [ Recovery Verifier ]
                                       (Post-Action 10-60s)
+                                      [ Auto-Rollback on Fail ]
                                                |
                                                v
-                                      [ Post-Mortem Report ]
-                                      (Markdown + JSON Schema)
+                                      [ Post-Mortem & Prevention ]
+                                      (JSON Schema + Prevention Strategy)
 ```
 
 ---
 
-## 2. Checkpoint Status Summary
+## 2. All Four Checkpoints Status
 
-| Checkpoint | Status | Key Deliverables Verified |
+| Checkpoint | Status | Requirements & Verification |
 | :--- | :--- | :--- |
-| **Checkpoint 1: The Eyes** | **COMPLETE** | Prometheus, Jaeger, OpenSearch, Git tools operational; ReAct loop; 1 live practice run; 1-page architecture sketch |
-| **Checkpoint 2: The Brain** | **COMPLETE** | Evidence-based root cause isolation; Downstream dependency isolation (`checkout` -> `payment`); Rule 6 compliance (Zero flag-reading cheats); 3 mentor practice incidents passing in JSON schema |
-| **Checkpoint 3: The Hands** | **READY** | Action API client (Flagd, Docker container restart), Human Approval Gate with cryptographic tokens, Evidence Consistency Guard, Post-action recovery verifier |
-| **Checkpoint 4: The Voice** | **READY** | Automated structured post-mortem reports with categorized evidence (Confirmed Facts, Likely Causes, Ruled Out Hypotheses) in Markdown & JSON |
+| **Checkpoint 0: Setup** | **COMPLETE** | OpenTelemetry Demo environment configured with telemetry ingress, dual-mode fallback, and git workflow. |
+| **Checkpoint 1: The Eyes** | **COMPLETE** | Prometheus, Jaeger, OpenSearch, Git tools operational; ReAct loop; 1 live practice run; 1-page architecture sketch ([`ARCHITECTURE.md`](ARCHITECTURE.md)). |
+| **Checkpoint 2: The Brain** | **COMPLETE** | Evidence-based root-cause isolation; Downstream dependency isolation (`checkout` $\rightarrow$ `payment`); Rule 6 compliance (Zero flag-reading cheats); 3 mentor practice incidents passing in JSON schema ([`checkpoint2_diagnoses.json`](checkpoint2_diagnoses.json)). |
+| **Checkpoint 3: The Hands** | **COMPLETE** | 4 Allowlisted Action API runbooks (`RESTART_CONTAINER`, `RESET_FEATURE_FLAG`, `THROTTLE_LOAD_GENERATOR`, `SCALE_SERVICE`), Human Approval Gate with cryptographic tokens, Pre-flight Consistency Guard, Dry-run mode, Emergency Kill Switch, Action Audit Logging, and Automated Rollback on recovery failure. |
+| **Checkpoint 4: The Voice & Submission** | **COMPLETE** | Structured post-mortem reports with categorized evidence, incident recurrence prevention recommendations, all 5 hackathon deliverables in repo, ready for unseen evaluation incidents. |
 
 ---
 
-## 3. Quick Start & Evaluation Commands
+## 3. Quick Start & Execution Commands
 
-### Checkpoint 1 Demo (Live Practice Run)
-Demonstrates the working telemetry tools, correct root-cause logic, downstream isolation, and consistency guard:
-```bash
-python oncall/demo_practice_incident.py
-```
-
-### Checkpoint 2 Benchmark (3 Practice Incidents in JSON Schema)
-Evaluates the agent across all 3 mentor scenarios and outputs `oncall/checkpoint2_diagnoses.json`:
-```bash
-python oncall/evaluate_practice_incidents.py
-```
-
-### End-to-End Interactive CLI (With Safety Gate)
+### A. Run End-to-End CLI Pipeline (Production Run)
 ```bash
 # Interactive mode (prompts human operator for approval):
 python oncall/cli.py --service cart
 
 # Automated evaluation mode (auto-approves validated actions):
 python oncall/cli.py --service cart --auto-approve
+
+# Dry-run mode (validates action without mutating system state):
+python oncall/cli.py --service cart --auto-approve --dry-run
+
+# Emergency Kill Switch (halts all actions and escalates):
+python oncall/cli.py --kill-switch
+```
+
+### B. Run Checkpoint 1 Demo (Live Practice Run)
+```bash
+python oncall/demo_practice_incident.py
+```
+
+### C. Run Checkpoint 2 Benchmark (3 Practice Incidents)
+```bash
+python oncall/evaluate_practice_incidents.py
+```
+
+### D. Launch Interactive Web Console (Stretch Goal 4)
+```bash
+python oncall/ui.py
+# Open in browser: http://localhost:5000
 ```
 
 ---
 
-## 4. Emergency Kill Switch & Safety Controls
+## 4. Safety Controls & The Approval Gate
 
 1. **Human Approval Barrier**:
    The agent **cannot execute any action** without an explicit approval token signed by an authorized human operator. If rejected or timed out, the incident is cleanly escalated without mutating system state.
 2. **Pre-Execution Consistency Guard**:
    If an operator or agent attempts to mutate a configuration flag or container that is already in the target state, the action is **aborted immediately** with an `EVIDENCE CONSISTENCY ERROR` to prevent redundant or destructive operations.
 3. **Core Infrastructure Whitelist**:
-   The Action API enforces an immutable deny-list. Critical infrastructure (`otel-collector`, `prometheus`, `jaeger`, `opensearch`, `flagd`) can never be stopped or restarted by the agent.
-4. **Emergency Abort (`Ctrl+C`)**:
-   All async verification loops and tool calls register SIGINT handlers, ensuring that interrupting the CLI halts all outbound requests immediately.
+   The Action API enforces an immutable deny-list. Critical infrastructure (`otel-collector`, `prometheus`, `jaeger`, `opensearch`, `flagd`, `astronomy-db`, `valkey-cart`) can never be stopped or restarted by the agent.
+4. **Dry-Run Mode (`--dry-run`)**:
+   Allows operators or testing harnesses to simulate and validate the execution path, parameters, and safety barriers without mutating application state.
+5. **Emergency Kill Switch (`--kill-switch` / `Ctrl+C`)**:
+   Provides an immediate, unconditional halt to all agent operations, cleanly transferring incident context to human responders.
+6. **Automated Rollback & Audit Trail**:
+   All executed actions are appended to `oncall/action_log.jsonl`. If post-action recovery verification fails, the Action Manager automatically triggers a rollback to the previous state.
 
 ---
 
-## 5. Team Structure & Contributions (5 Members)
+## 5. Five Stretch Goals Implemented
 
-| Member | Branch | Responsibilities |
-| :--- | :--- | :--- |
-| **Teammate 1** (Observability Lead) | `feat/telemetry-signals` | `oncall/tools/prometheus.py`, `oncall/tools/jaeger.py` (Golden signals, latency quantiles, span DAG traversal) |
-| **Teammate 2** (Context & Logs Lead) | `feat/telemetry-context` | `oncall/tools/opensearch.py`, `oncall/tools/deployment_history.py` (Trace ID log correlation, git deployment history) |
-| **Teammate 3** (Agent Brain Lead) | `feat/agent-brain` | `oncall/agent.py`, `oncall/models.py` (ReAct investigation loop, calibrated confidence scoring, root-cause synthesis) |
-| **Teammate 4** (Safety & Action Lead) | `feat/actions-safety` | `oncall/actions/`, `oncall/safety/` (Approval barrier, action API, evidence consistency guard, recovery verifier) |
-| **Teammate 5** (Integration & Evaluation Lead) | `feat/pipeline-integration` | `oncall/cli.py`, `oncall/reporter.py`, `oncall/evaluate_practice_incidents.py` (Evaluation benchmarks, schema compliance) |
+1. **Stretch Goal 1: Incident Memory (`oncall/memory/incident_memory.py`)**:
+   Matches incident symptoms against previously resolved outages to accelerate triage and reuse proven remediation patterns.
+2. **Stretch Goal 2: Adversarial Reviewer Agent (`oncall/safety/reviewer_agent.py`)**:
+   An independent critic agent audits the primary diagnosis for counter-hypotheses, evidence gaps, and Rule 6 compliance before presenting to human on-call.
+3. **Stretch Goal 3: Calibrated Confidence**:
+   Dynamic confidence scoring matches empirical accuracy across the practice set (0.82–0.98).
+4. **Stretch Goal 4: Chat-Style / Web Console Approval (`oncall/ui.py`)**:
+   Interactive dark-mode incident operations console for point-and-click triage, live ReAct stepping, and approval authorization.
+5. **Stretch Goal 5: Prevention Engine (`oncall/prevention.py`)**:
+   Generates actionable code, configuration, and alerting improvements to prevent incident recurrence.
+
+---
+
+## 6. Official Deliverables Checklist (Slide 4)
+
+- [x] **Deliverable 1: Source Code & README**: This documentation and clean codebase.
+- [x] **Deliverable 2: Architecture Overview**: [`ARCHITECTURE.md`](ARCHITECTURE.md) (One-page architecture overview).
+- [x] **Deliverable 3: Incident Reports**: [`checkpoint2_diagnoses.json`](checkpoint2_diagnoses.json) (JSON schema + Markdown post-mortems).
+- [x] **Deliverable 4: Evaluation Note**: [`EVALUATION_NOTE.md`](EVALUATION_NOTE.md) (Practice incident accuracy analysis).
+- [x] **Deliverable 5: Team Form**: [`TEAM_FORM.md`](TEAM_FORM.md) (Team declaration and tool disclosures).
+
+---
+
+## 7. Known Limitations
+
+1. **Kubernetes Multi-Cluster Scaling**: The `SCALE_SERVICE` action operates locally in simulation or Docker compose mode; native multi-node Kubernetes HPA scaling requires active `kubectl` cluster credentials.
+2. **Offline Telemetry Granularity**: In offline mode (when Docker is terminated), the system uses recorded OpenTelemetry incident bundles. While realistic, real-time live Prometheus metric scrapes provide higher temporal granularity.
+3. **Action API Concurrency**: To avoid race conditions, the Action API allows only one active remediation action at a time per incident.

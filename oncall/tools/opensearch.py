@@ -9,12 +9,13 @@ Does NOT fabricate or attach trace IDs to unrelated logs.
 
 import os
 import requests
+from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional
 from oncall.models import TelemetryObservation, TelemetryCitation
 
 
 OPENSEARCH_HOST = os.environ.get("OPENSEARCH_HOST", "localhost")
-OPENSEARCH_PORT = os.environ.get("OPENSEARCH_PORT", "9200")
+OPENSEARCH_PORT = os.environ.get("OPENSEARCH_PORT", "49234")
 OPENSEARCH_URL = os.environ.get("OPENSEARCH_URL", f"http://{OPENSEARCH_HOST}:{OPENSEARCH_PORT}")
 
 # Genuine OpenTelemetry Demo log fixtures keyed strictly by real trace_id
@@ -60,22 +61,22 @@ FIXTURE_LOGS_BY_TRACE_ID = {
 FIXTURE_LOGS_BY_SERVICE = {
     "cart": [
         {
-            "timestamp": "2026-10-23T08:50:10.100Z",
+            "timestamp": "2026-10-23T08:50:10.120Z",
             "service": "cart",
-            "severity_text": "WARN",
-            "severity_number": 13,
-            "body": "Slow response from cache store: CartService.AddItem took 2340ms.",
+            "severity_text": "ERROR",
+            "severity_number": 17,
+            "body": "Failed to persist cart item to database: timeout after 2000ms connecting to redis:6379",
             "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
             "span_id": "00f067aa0ba902b7"
         }
     ],
-    "payment": [
+    "checkout": [
         {
-            "timestamp": "2026-10-23T09:12:03.950Z",
-            "service": "payment",
+            "timestamp": "2026-10-23T09:12:01.005Z",
+            "service": "checkout",
             "severity_text": "ERROR",
             "severity_number": 17,
-            "body": "Credit card processing failed for user 5b7d9f2a: Gateway unreachable.",
+            "body": "Order placement failed: RPC to payment service failed with status UNAVAILABLE",
             "trace_id": "9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d",
             "span_id": "8a7b6c5d4e3f2a1b"
         }
@@ -97,9 +98,25 @@ FIXTURE_LOGS_BY_SERVICE = {
 class OpenSearchTool:
     def __init__(self, base_url: Optional[str] = None):
         self.base_url = (base_url or OPENSEARCH_URL).rstrip("/")
-        self.timeout = 5.0
+        self.timeout = 4.0
 
-    def query_logs(self, service_name: str, trace_id: Optional[str] = None, limit: int = 5) -> TelemetryObservation:
+    def check_connection(self) -> Dict[str, Any]:
+        """Checks whether OpenSearch is reachable and responding."""
+        try:
+            resp = requests.get(f"{self.base_url}/_cluster/health", timeout=self.timeout)
+            if resp.status_code == 200:
+                cluster_data = resp.json()
+                return {
+                    "connected": True,
+                    "status": "CONNECTED",
+                    "cluster_status": cluster_data.get("status", "unknown"),
+                    "checked_at": datetime.now(timezone.utc).isoformat()
+                }
+            return {"connected": False, "status": "DEGRADED", "error": f"HTTP status {resp.status_code}"}
+        except Exception as e:
+            return {"connected": False, "status": "DISCONNECTED", "error": str(e)}
+
+    def query_logs(self, service_name: str, trace_id: Optional[str] = None, limit: int = 5, allow_fixtures: bool = False) -> TelemetryObservation:
         """
         Query correlated logs from OpenSearch.
         If trace_id is specified, filters exclusively by that trace_id.
@@ -147,8 +164,8 @@ class OpenSearchTool:
         except Exception:
             pass
 
-        # If live cluster is warming up or unavailable, query fixture store strictly by key
-        if not is_live:
+        # If live cluster is warming up or unavailable, query fixture store ONLY if allow_fixtures is True
+        if not is_live and allow_fixtures:
             if trace_id:
                 # Look up ONLY logs that genuinely match this trace_id
                 matched_logs = FIXTURE_LOGS_BY_TRACE_ID.get(trace_id, [])

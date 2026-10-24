@@ -1,49 +1,87 @@
 [
   {
     "incident_id": "ALERT-PRAC-001",
+    "scenario_id": "cart_incident",
     "target_service": "cart",
     "root_cause_service": "cart",
+    "is_downstream": false,
     "failure_mode": "INTERNAL_DATASTORE_TIMEOUT_OR_EXHAUSTION (cart)",
-    "confidence_score": 0.82,
+    "confidence_score": 0.94,
     "confirmed_facts": [
-      "Prometheus: Service 'cart' exhibits P95 latency of 2450ms and error rate of 14.2 req/s.",
-      "Jaeger: Bottleneck localized to service 'cart' in span 'CartService/AddItem' (duration: 2340ms).",
-      "OpenSearch: Correlated log in trace '4bf92f3577b34da6a3ce929d0e0e4736': System.TimeoutException: The operation has timed out while executing Redis/Valkey command 'SET' on valkey-cart..."
+      "Prometheus Active Outage Confirmed: Current P95 latency is 2450ms (threshold: 1000ms), error rate: 14.2 req/s.",
+      "Jaeger Local Bottleneck: Operation 'CartService/AddItem' executed locally in 'cart' consuming 2450.0ms without downstream blocker delegations.",
+      "OpenSearch Correlated Log: Trace '4bf92f3577b34da6a3ce929d0e0e4736' emitted: 'System.TimeoutException: The operation has timed out while executing Redis/Valkey command 'SET' on valkey-cart...'"
     ],
     "likely_causes": [
-      "Service 'cart' is failing due to internal dependency timeouts (e.g. cache/datastore exhaustion)."
+      "Bottleneck localized internally to service 'cart'."
     ],
     "unresolved_hypotheses": [
-      "Hypothesis 'Recent breaking code deployment': Audited git log commits on main; no breaking commit in incident window - RULED OUT."
+      "Repository Context: Commit [26c51b56] on 'main' audited. Classified as repository context only (no runtime container deployment/rollout record was verified in incident window) - RULED OUT AS ACTIVE ROLLOUT."
     ],
+    "incident_snapshot": {
+      "alert_id": "ALERT-PRAC-001",
+      "service_name": "cart",
+      "trigger_p95_latency_ms": 1000.0,
+      "trigger_error_rate_rps": 0.0,
+      "threshold_ms": 1000.0,
+      "timestamp_utc": "2026-10-24T08:32:40.798342+00:00"
+    },
+    "current_telemetry": {
+      "current_p95_latency_ms": 2450.0,
+      "current_error_rate_rps": 14.2,
+      "evaluation_time_utc": "2026-10-24T08:32:40.798560+00:00",
+      "query_window": "5m sliding rate",
+      "threshold_ms": 1000.0,
+      "live_cluster": false
+    },
+    "telemetry_reconciliation_status": "ACTIVE_OUTAGE",
+    "trace_summary": {
+      "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
+      "span_id": "00f067aa0ba902b7",
+      "parent_operation": "CartService/AddItem",
+      "parent_duration_ms": 2450.0,
+      "downstream_service": null,
+      "downstream_operation": "ValkeySet",
+      "downstream_duration_ms": 2340.5,
+      "consumption_percentage": 95.5,
+      "causal_proof": "Operation 'CartService/AddItem' executed locally in 'cart' consuming 2450.0ms without downstream blocker delegations."
+    },
+    "log_evidence_status": "CORROBORATING_LOGS_FOUND",
+    "deployment_evidence_type": "REPOSITORY_COMMIT_CONTEXT_ONLY",
     "evidence_consistency_passed": true,
     "consistency_errors": [],
     "investigation_steps": [
       {
         "step_number": 1,
-        "intent": "Triage incident alert 'CartAddItemHighLatency' on 'cart'. Query Prometheus metrics to verify Golden Signals (P95 latency, error rates, throughput).",
+        "intent": "Triage incident alert 'CartAddItemHighLatency' on 'cart'. Query Prometheus metrics (5m sliding rate) at 2026-10-24T08:32:40Z to reconcile triggering snapshot.",
         "tool_name": "prometheus_inspect_service",
         "tool_parameters": {
-          "service_name": "cart"
+          "service_name": "cart",
+          "window": "5m"
         },
         "observation": {
           "tool_name": "prometheus_inspect_service",
           "success": true,
-          "summary": "Service 'cart' metrics: Elevated P95 Latency detected = 2450ms (normal baseline < 50ms), Error Rate = 14.2 req/s (HTTP 500 spike).",
+          "summary": "Elevated P95 Latency detected = 2450ms (normal baseline < 50ms), Error Rate = 14.2 req/s (HTTP 500 spike).",
           "data": {
             "p95_latency_sec": 2.45,
+            "p95_latency_ms": 2450.0,
             "error_rate_rps": 14.2,
             "throughput_rps": 85.0,
-            "live": false
+            "evaluation_time_utc": "2026-10-24T08:32:40.798560+00:00",
+            "query_window": "5m sliding rate (fixture)",
+            "threshold_ms": 500.0,
+            "live": false,
+            "status": "CRITICAL"
           },
           "citations": [
             {
               "source_type": "prometheus_metric",
-              "identifier": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service_name=\"cart\"}[5m])))",
-              "summary": "P95 latency observed at 2450ms (threshold exceeded > 1000ms)",
+              "identifier": "histogram_quantile(0.95, sum by (le) (rate(traces_span_metrics_duration_milliseconds_bucket{service_name=\"cart\"}[5m])))",
+              "summary": "P95 latency observed: 2450.0ms [Test Fixture]",
               "evidence_payload": {
-                "p95_latency_seconds": 2.45,
-                "promql": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service_name=\"cart\"}[5m])))"
+                "p95_latency_ms": 2450.0,
+                "live": false
               }
             }
           ]
@@ -51,7 +89,7 @@
       },
       {
         "step_number": 2,
-        "intent": "Metrics confirmed degradation on 'cart'. Querying Jaeger distributed traces to inspect the execution tree and determine whether the root cause is local or downstream.",
+        "intent": "Querying Jaeger distributed trace DAG tree for 'cart'. Walking parent-child execution spans to isolate whether bottleneck is local or in a downstream service.",
         "tool_name": "jaeger_inspect_traces",
         "tool_parameters": {
           "service_name": "cart",
@@ -60,7 +98,7 @@
         "observation": {
           "tool_name": "jaeger_inspect_traces",
           "success": true,
-          "summary": "Jaeger trace analysis for 'cart': Local failure detected in trace '4bf92f3577b34da6a3ce929d0e0e4736'. Operation 'CartService/AddItem' took 2340.5ms blocking on valkey-cart (error=True).",
+          "summary": "Jaeger Distributed Tracing: LOCAL FAILURE isolated to 'cart'. Operation 'CartService/AddItem' executed locally in 'cart' consuming 2450.0ms without downstream blocker delegations.",
           "data": {
             "traces": [
               {
@@ -68,28 +106,43 @@
                 "span_id": "00f067aa0ba902b7",
                 "service": "cart",
                 "operation": "CartService/AddItem",
-                "duration_ms": 2340.5,
+                "duration_ms": 2450.0,
                 "is_error": true,
                 "error_source_service": "cart",
+                "downstream_operation": "ValkeySet",
+                "downstream_duration_ms": 2340.5,
                 "downstream_dependency": "valkey-cart",
-                "status_message": "Valkey operation timeout on SET"
+                "status_message": "Valkey operation timeout on SET after 2000ms"
               }
             ],
             "queried_service": "cart",
             "isolated_root_cause_service": "cart",
+            "root_cause_service": "cart",
             "is_downstream_dependency_failure": false,
+            "is_downstream": false,
+            "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
+            "span_id": "00f067aa0ba902b7",
+            "parent_operation": "CartService/AddItem",
+            "parent_duration_ms": 2450.0,
+            "downstream_operation": "ValkeySet",
+            "downstream_duration_ms": 2340.5,
+            "consumption_percentage": 95.5,
+            "causal_proof": "Operation 'CartService/AddItem' executed locally in 'cart' consuming 2450.0ms without downstream blocker delegations.",
             "live": false
           },
           "citations": [
             {
               "source_type": "jaeger_trace",
               "identifier": "trace:4bf92f3577b34da6a3ce929d0e0e4736#span:00f067aa0ba902b7",
-              "summary": "Operation 'CartService/AddItem' failed in cart taking 2340.5ms",
+              "summary": "Local operation 'CartService/AddItem' in 'cart' consumed 2450.0ms (error=True)",
               "evidence_payload": {
                 "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
+                "span_id": "00f067aa0ba902b7",
                 "root_cause_service": "cart",
                 "operation": "CartService/AddItem",
-                "duration_ms": 2340.5
+                "duration_ms": 2450.0,
+                "causal_proof": "Operation 'CartService/AddItem' executed locally in 'cart' consuming 2450.0ms without downstream blocker delegations.",
+                "live": false
               }
             }
           ]
@@ -97,7 +150,7 @@
       },
       {
         "step_number": 3,
-        "intent": "Trace analysis identified bottleneck in trace '4bf92f3577b34da6a3ce929d0e0e4736'. Querying OpenSearch for correlated exception logs belonging to trace '4bf92f3577b34da6a3ce929d0e0e4736'.",
+        "intent": "Querying OpenSearch index 'otel-logs-*' for trace '4bf92f3577b34da6a3ce929d0e0e4736'. Filtering strictly by trace_id to correlate root cause logs.",
         "tool_name": "opensearch_query_logs",
         "tool_parameters": {
           "service_name": "cart",
@@ -139,7 +192,7 @@
       },
       {
         "step_number": 4,
-        "intent": "Auditing recent git deployment history and commit logs for culprit service 'cart'.",
+        "intent": "Auditing repository code history for culprit 'cart' to evaluate recent commit context.",
         "tool_name": "deployment_history_inspect",
         "tool_parameters": {
           "service_name": "cart"
@@ -147,45 +200,44 @@
         "observation": {
           "tool_name": "deployment_history_inspect",
           "success": true,
-          "summary": "Deployment History for 'cart': Verified repository history on branch 'main'. Latest commit: [321ed975] 'feat(oncall): implement AI on-call engineer for Checkpoints' by natisha19 on 2026-10-23 16:59:25 +0530. No uncommitted code changes detected in service directory.",
+          "summary": "Repository History Context for 'cart': Inspected commits on branch 'main'. Latest commit: [26c51b56] 'feat(brain): add LangGraph investigation engine alongside the loop' by PreethamVJ on 2026-10-23 22:12:47 +0530. [Note: Repository history provides code context only; no runtime rollout/deployment event verified in incident window].",
           "data": {
             "service_name": "cart",
             "git_deployment_history": {
               "available": true,
               "commits": [
                 {
-                  "hash": "321ed975",
-                  "author": "natisha19",
-                  "date": "2026-10-23 16:59:25 +0530",
-                  "message": "feat(oncall): implement AI on-call engineer for Checkpoints"
-                },
-                {
-                  "hash": "49cba28b",
-                  "author": "Charan-Tej5",
-                  "date": "2026-10-23 16:53:30 +0530",
-                  "message": "feat(platform): oncall skeleton, contracts, ledger, guard, registry, llm client [P1]"
-                },
-                {
-                  "hash": "49784906",
+                  "hash": "26c51b56",
                   "author": "PreethamVJ",
-                  "date": "2026-10-23 16:25:32 +0530",
-                  "message": "feat(platform): dockerfile, compose.oncall layer, healthz, helper scripts [P1]"
+                  "date": "2026-10-23 22:12:47 +0530",
+                  "message": "feat(brain): add LangGraph investigation engine alongside the loop"
+                },
+                {
+                  "hash": "ed07bc09",
+                  "author": "PreethamVJ",
+                  "date": "2026-10-23 21:03:23 +0530",
+                  "message": "fix(brain): resolve llm.py merge, use shared tenacity retry"
+                },
+                {
+                  "hash": "23fc0766",
+                  "author": "PreethamVJ",
+                  "date": "2026-10-23 18:04:13 +0530",
+                  "message": "feat(eyes+brain): tools, summarise, agent loop, eval script"
                 }
               ]
             },
-            "has_recent_deployment_regression": false,
-            "checked_status": "NO_RECENT_BREAKING_DEPLOYMENT"
+            "evidence_classification": "REPOSITORY_COMMIT_CONTEXT_ONLY",
+            "runtime_rollout_verified": false
           },
           "citations": [
             {
-              "source_type": "system_health",
-              "identifier": "git:commit:321ed975",
-              "summary": "Deployment commit 321ed975: feat(oncall): implement AI on-call engineer for Checkpoints (verified stable deployment)",
+              "source_type": "repository_context",
+              "identifier": "git:commit:26c51b56",
+              "summary": "Repository commit 26c51b56 provides code context (runtime rollout unverified)",
               "evidence_payload": {
-                "hash": "321ed975",
-                "author": "natisha19",
-                "date": "2026-10-23 16:59:25 +0530",
-                "message": "feat(oncall): implement AI on-call engineer for Checkpoints"
+                "commit_hash": "26c51b56",
+                "message": "feat(brain): add LangGraph investigation engine alongside the loop",
+                "evidence_classification": "REPOSITORY_COMMIT_CONTEXT_ONLY"
               }
             }
           ]
@@ -195,22 +247,25 @@
     "citations": [
       {
         "source_type": "prometheus_metric",
-        "identifier": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service_name=\"cart\"}[5m])))",
-        "summary": "P95 latency observed at 2450ms (threshold exceeded > 1000ms)",
+        "identifier": "histogram_quantile(0.95, sum by (le) (rate(traces_span_metrics_duration_milliseconds_bucket{service_name=\"cart\"}[5m])))",
+        "summary": "P95 latency observed: 2450.0ms [Test Fixture]",
         "evidence_payload": {
-          "p95_latency_seconds": 2.45,
-          "promql": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service_name=\"cart\"}[5m])))"
+          "p95_latency_ms": 2450.0,
+          "live": false
         }
       },
       {
         "source_type": "jaeger_trace",
         "identifier": "trace:4bf92f3577b34da6a3ce929d0e0e4736#span:00f067aa0ba902b7",
-        "summary": "Operation 'CartService/AddItem' failed in cart taking 2340.5ms",
+        "summary": "Local operation 'CartService/AddItem' in 'cart' consumed 2450.0ms (error=True)",
         "evidence_payload": {
           "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
+          "span_id": "00f067aa0ba902b7",
           "root_cause_service": "cart",
           "operation": "CartService/AddItem",
-          "duration_ms": 2340.5
+          "duration_ms": 2450.0,
+          "causal_proof": "Operation 'CartService/AddItem' executed locally in 'cart' consuming 2450.0ms without downstream blocker delegations.",
+          "live": false
         }
       },
       {
@@ -224,69 +279,106 @@
         }
       },
       {
-        "source_type": "system_health",
-        "identifier": "git:commit:321ed975",
-        "summary": "Deployment commit 321ed975: feat(oncall): implement AI on-call engineer for Checkpoints (verified stable deployment)",
+        "source_type": "repository_context",
+        "identifier": "git:commit:26c51b56",
+        "summary": "Repository commit 26c51b56 provides code context (runtime rollout unverified)",
         "evidence_payload": {
-          "hash": "321ed975",
-          "author": "natisha19",
-          "date": "2026-10-23 16:59:25 +0530",
-          "message": "feat(oncall): implement AI on-call engineer for Checkpoints"
+          "commit_hash": "26c51b56",
+          "message": "feat(brain): add LangGraph investigation engine alongside the loop",
+          "evidence_classification": "REPOSITORY_COMMIT_CONTEXT_ONLY"
         }
       }
     ],
-    "explanation": "Incident localized to service 'cart'. Prometheus recorded P95 latency at 2450ms. Jaeger trace '4bf92f3577b34da6a3ce929d0e0e4736' isolated bottleneck span 'CartService/AddItem'. Service 'cart' is failing due to internal dependency timeouts (e.g. cache/datastore exhaustion).",
-    "recommended_action": "Restart service 'cart' container and verify datastore connectivity.",
+    "explanation": "Incident localized to 'cart'. Operation 'CartService/AddItem' executed locally in 'cart' consuming 2450.0ms without downstream blocker delegations. Temporal reconciliation: Trigger was 1000ms; current measurement is 2450.0ms (ACTIVE_OUTAGE). Log evidence: CORROBORATING_LOGS_FOUND.",
+    "recommended_action": "Restart container 'cart' to clear datastore connection deadlocks.",
     "action_type": "RESTART_CONTAINER",
+    "action_status": "PENDING_APPROVAL",
+    "verification_status": "NOT_STARTED",
     "is_mitigated": false
   },
   {
     "incident_id": "ALERT-PRAC-002",
+    "scenario_id": "checkout_incident",
     "target_service": "checkout",
     "root_cause_service": "payment",
+    "is_downstream": true,
     "failure_mode": "DOWNSTREAM_DEPENDENCY_FAILURE (payment)",
-    "confidence_score": 0.88,
+    "confidence_score": 0.96,
     "confirmed_facts": [
-      "Prometheus: Service 'checkout' exhibits P95 latency of 2450ms and error rate of 14.2 req/s.",
-      "Jaeger: Parent operation 'CheckoutService/PlaceOrder' on 'checkout' stalled waiting on downstream service 'payment'.",
-      "OpenSearch: Correlated log in trace '9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d': PaymentService.Charge failed: Transaction declined by mock payment gateway. StatusCode: UNAVAILABLE...."
+      "Prometheus Active Outage Confirmed: Current P95 latency is 2510ms (threshold: 1000ms), error rate: 18.5 req/s.",
+      "Jaeger Distributed Tracing Proof: Parent operation 'CheckoutService/PlaceOrder' (2510.0ms) blocked on downstream service 'payment' (operation 'PaymentService/Charge', duration: 2480.0ms, accounting for 98.8% of execution tree).",
+      "OpenSearch Correlated Log: Trace '9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d' emitted: 'PaymentService.Charge failed: Transaction declined by mock payment gateway. StatusCode: UNAVAILABLE....'"
     ],
     "likely_causes": [
-      "The degradation on 'checkout' is a symptom; the primary fault originated in downstream service 'payment'.",
-      "Service 'payment' is unresponsive or failing on upstream requests from 'checkout'."
+      "Degradation on 'checkout' is a symptom; primary blocker is downstream service 'payment'."
     ],
     "unresolved_hypotheses": [
-      "Hypothesis 'Recent breaking code deployment': Audited git log commits on main; no breaking commit in incident window - RULED OUT.",
-      "Hypothesis 'Local internal bug in checkout': Tracing confirmed latency was consumed inside downstream 'payment' - RULED OUT."
+      "Repository Context: Commit [26c51b56] on 'main' audited. Classified as repository context only (no runtime container deployment/rollout record was verified in incident window) - RULED OUT AS ACTIVE ROLLOUT."
     ],
+    "incident_snapshot": {
+      "alert_id": "ALERT-PRAC-002",
+      "service_name": "checkout",
+      "trigger_p95_latency_ms": 1000.0,
+      "trigger_error_rate_rps": 0.0,
+      "threshold_ms": 1000.0,
+      "timestamp_utc": "2026-10-24T08:32:40.798455+00:00"
+    },
+    "current_telemetry": {
+      "current_p95_latency_ms": 2510.0,
+      "current_error_rate_rps": 18.5,
+      "evaluation_time_utc": "2026-10-24T08:32:41.020541+00:00",
+      "query_window": "5m sliding rate",
+      "threshold_ms": 1000.0,
+      "live_cluster": false
+    },
+    "telemetry_reconciliation_status": "ACTIVE_OUTAGE",
+    "trace_summary": {
+      "trace_id": "9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d",
+      "span_id": "8a7b6c5d4e3f2a1b",
+      "parent_operation": "CheckoutService/PlaceOrder",
+      "parent_duration_ms": 2510.0,
+      "downstream_service": "payment",
+      "downstream_operation": "PaymentService/Charge",
+      "downstream_duration_ms": 2480.0,
+      "consumption_percentage": 98.8,
+      "causal_proof": "Parent operation 'CheckoutService/PlaceOrder' (2510.0ms) blocked on downstream service 'payment' (operation 'PaymentService/Charge', duration: 2480.0ms, accounting for 98.8% of execution tree)."
+    },
+    "log_evidence_status": "CORROBORATING_LOGS_FOUND",
+    "deployment_evidence_type": "REPOSITORY_COMMIT_CONTEXT_ONLY",
     "evidence_consistency_passed": true,
     "consistency_errors": [],
     "investigation_steps": [
       {
         "step_number": 1,
-        "intent": "Triage incident alert 'CheckoutOrderPlacementErrors' on 'checkout'. Query Prometheus metrics to verify Golden Signals (P95 latency, error rates, throughput).",
+        "intent": "Triage incident alert 'CheckoutOrderPlacementErrors' on 'checkout'. Query Prometheus metrics (5m sliding rate) at 2026-10-24T08:32:41Z to reconcile triggering snapshot.",
         "tool_name": "prometheus_inspect_service",
         "tool_parameters": {
-          "service_name": "checkout"
+          "service_name": "checkout",
+          "window": "5m"
         },
         "observation": {
           "tool_name": "prometheus_inspect_service",
           "success": true,
-          "summary": "Service 'checkout' metrics: Elevated P95 Latency detected = 2450ms (normal baseline < 50ms), Error Rate = 14.2 req/s (HTTP 500 spike).",
+          "summary": "Elevated P95 Latency detected = 2510ms, Error Rate = 18.5 req/s (downstream timeout).",
           "data": {
-            "p95_latency_sec": 2.45,
-            "error_rate_rps": 14.2,
-            "throughput_rps": 85.0,
-            "live": false
+            "p95_latency_sec": 2.51,
+            "p95_latency_ms": 2510.0,
+            "error_rate_rps": 18.5,
+            "throughput_rps": 42.0,
+            "evaluation_time_utc": "2026-10-24T08:32:41.020541+00:00",
+            "query_window": "5m sliding rate (fixture)",
+            "threshold_ms": 1000.0,
+            "live": false,
+            "status": "CRITICAL"
           },
           "citations": [
             {
               "source_type": "prometheus_metric",
-              "identifier": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service_name=\"checkout\"}[5m])))",
-              "summary": "P95 latency observed at 2450ms (threshold exceeded > 1000ms)",
+              "identifier": "histogram_quantile(0.95, sum by (le) (rate(traces_span_metrics_duration_milliseconds_bucket{service_name=\"checkout\"}[5m])))",
+              "summary": "P95 latency observed: 2510.0ms [Test Fixture]",
               "evidence_payload": {
-                "p95_latency_seconds": 2.45,
-                "promql": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service_name=\"checkout\"}[5m])))"
+                "p95_latency_ms": 2510.0,
+                "live": false
               }
             }
           ]
@@ -294,7 +386,7 @@
       },
       {
         "step_number": 2,
-        "intent": "Metrics confirmed degradation on 'checkout'. Querying Jaeger distributed traces to inspect the execution tree and determine whether the root cause is local or downstream.",
+        "intent": "Querying Jaeger distributed trace DAG tree for 'checkout'. Walking parent-child execution spans to isolate whether bottleneck is local or in a downstream service.",
         "tool_name": "jaeger_inspect_traces",
         "tool_parameters": {
           "service_name": "checkout",
@@ -303,7 +395,7 @@
         "observation": {
           "tool_name": "jaeger_inspect_traces",
           "success": true,
-          "summary": "Jaeger trace analysis for 'checkout': DOWNSTREAM FAILURE DETECTED! Parent operation 'CheckoutService/PlaceOrder' was stalled for 2510.0ms waiting on downstream service 'payment' (operation 'PaymentService/Charge', taking 2480.0ms). Root cause originated in service 'payment', NOT 'checkout'!",
+          "summary": "Jaeger Distributed Tracing: DOWNSTREAM DEPENDENCY FAILURE isolated. Parent operation 'CheckoutService/PlaceOrder' (2510.0ms) blocked on downstream service 'payment' (operation 'PaymentService/Charge', duration: 2480.0ms, accounting for 98.8% of execution tree). Root cause is 'payment', NOT alerted service 'checkout'.",
           "data": {
             "traces": [
               {
@@ -318,25 +410,41 @@
                 "downstream_operation": "PaymentService/Charge",
                 "downstream_duration_ms": 2480.0,
                 "downstream_error": true,
-                "status_message": "gRPC call to PaymentService.Charge failed: UNAVAILABLE"
+                "status_message": "gRPC call to PaymentService.Charge failed: StatusCode UNAVAILABLE"
               }
             ],
             "queried_service": "checkout",
             "isolated_root_cause_service": "payment",
+            "root_cause_service": "payment",
             "is_downstream_dependency_failure": true,
+            "is_downstream": true,
+            "trace_id": "9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d",
+            "span_id": "8a7b6c5d4e3f2a1b",
+            "parent_operation": "CheckoutService/PlaceOrder",
+            "parent_duration_ms": 2510.0,
+            "downstream_operation": "PaymentService/Charge",
+            "downstream_duration_ms": 2480.0,
+            "consumption_percentage": 98.8,
+            "causal_proof": "Parent operation 'CheckoutService/PlaceOrder' (2510.0ms) blocked on downstream service 'payment' (operation 'PaymentService/Charge', duration: 2480.0ms, accounting for 98.8% of execution tree).",
             "live": false
           },
           "citations": [
             {
               "source_type": "jaeger_trace",
               "identifier": "trace:9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d#span:8a7b6c5d4e3f2a1b",
-              "summary": "Downstream bottleneck: 'payment' (PaymentService/Charge) consumed 2480.0ms (error=True)",
+              "summary": "Downstream blocker 'payment' (PaymentService/Charge) consumed 2480.0ms of parent span",
               "evidence_payload": {
                 "trace_id": "9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d",
+                "span_id": "8a7b6c5d4e3f2a1b",
                 "alerted_service": "checkout",
                 "root_cause_service": "payment",
+                "parent_operation": "CheckoutService/PlaceOrder",
+                "parent_duration_ms": 2510.0,
                 "downstream_operation": "PaymentService/Charge",
-                "duration_ms": 2480.0
+                "downstream_duration_ms": 2480.0,
+                "consumption_percentage": 98.8,
+                "causal_proof": "Parent operation 'CheckoutService/PlaceOrder' (2510.0ms) blocked on downstream service 'payment' (operation 'PaymentService/Charge', duration: 2480.0ms, accounting for 98.8% of execution tree).",
+                "live": false
               }
             }
           ]
@@ -344,7 +452,7 @@
       },
       {
         "step_number": 3,
-        "intent": "Trace analysis identified bottleneck in trace '9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d'. Querying OpenSearch for correlated exception logs belonging to trace '9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d'.",
+        "intent": "Querying OpenSearch index 'otel-logs-*' for trace '9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d'. Filtering strictly by trace_id to correlate root cause logs.",
         "tool_name": "opensearch_query_logs",
         "tool_parameters": {
           "service_name": "payment",
@@ -386,7 +494,7 @@
       },
       {
         "step_number": 4,
-        "intent": "Auditing recent git deployment history and commit logs for culprit service 'payment'.",
+        "intent": "Auditing repository code history for culprit 'payment' to evaluate recent commit context.",
         "tool_name": "deployment_history_inspect",
         "tool_parameters": {
           "service_name": "payment"
@@ -394,45 +502,44 @@
         "observation": {
           "tool_name": "deployment_history_inspect",
           "success": true,
-          "summary": "Deployment History for 'payment': Verified repository history on branch 'main'. Latest commit: [321ed975] 'feat(oncall): implement AI on-call engineer for Checkpoints' by natisha19 on 2026-10-23 16:59:25 +0530. No uncommitted code changes detected in service directory.",
+          "summary": "Repository History Context for 'payment': Inspected commits on branch 'main'. Latest commit: [26c51b56] 'feat(brain): add LangGraph investigation engine alongside the loop' by PreethamVJ on 2026-10-23 22:12:47 +0530. [Note: Repository history provides code context only; no runtime rollout/deployment event verified in incident window].",
           "data": {
             "service_name": "payment",
             "git_deployment_history": {
               "available": true,
               "commits": [
                 {
-                  "hash": "321ed975",
-                  "author": "natisha19",
-                  "date": "2026-10-23 16:59:25 +0530",
-                  "message": "feat(oncall): implement AI on-call engineer for Checkpoints"
-                },
-                {
-                  "hash": "49cba28b",
-                  "author": "Charan-Tej5",
-                  "date": "2026-10-23 16:53:30 +0530",
-                  "message": "feat(platform): oncall skeleton, contracts, ledger, guard, registry, llm client [P1]"
-                },
-                {
-                  "hash": "49784906",
+                  "hash": "26c51b56",
                   "author": "PreethamVJ",
-                  "date": "2026-10-23 16:25:32 +0530",
-                  "message": "feat(platform): dockerfile, compose.oncall layer, healthz, helper scripts [P1]"
+                  "date": "2026-10-23 22:12:47 +0530",
+                  "message": "feat(brain): add LangGraph investigation engine alongside the loop"
+                },
+                {
+                  "hash": "ed07bc09",
+                  "author": "PreethamVJ",
+                  "date": "2026-10-23 21:03:23 +0530",
+                  "message": "fix(brain): resolve llm.py merge, use shared tenacity retry"
+                },
+                {
+                  "hash": "23fc0766",
+                  "author": "PreethamVJ",
+                  "date": "2026-10-23 18:04:13 +0530",
+                  "message": "feat(eyes+brain): tools, summarise, agent loop, eval script"
                 }
               ]
             },
-            "has_recent_deployment_regression": false,
-            "checked_status": "NO_RECENT_BREAKING_DEPLOYMENT"
+            "evidence_classification": "REPOSITORY_COMMIT_CONTEXT_ONLY",
+            "runtime_rollout_verified": false
           },
           "citations": [
             {
-              "source_type": "system_health",
-              "identifier": "git:commit:321ed975",
-              "summary": "Deployment commit 321ed975: feat(oncall): implement AI on-call engineer for Checkpoints (verified stable deployment)",
+              "source_type": "repository_context",
+              "identifier": "git:commit:26c51b56",
+              "summary": "Repository commit 26c51b56 provides code context (runtime rollout unverified)",
               "evidence_payload": {
-                "hash": "321ed975",
-                "author": "natisha19",
-                "date": "2026-10-23 16:59:25 +0530",
-                "message": "feat(oncall): implement AI on-call engineer for Checkpoints"
+                "commit_hash": "26c51b56",
+                "message": "feat(brain): add LangGraph investigation engine alongside the loop",
+                "evidence_classification": "REPOSITORY_COMMIT_CONTEXT_ONLY"
               }
             }
           ]
@@ -442,23 +549,29 @@
     "citations": [
       {
         "source_type": "prometheus_metric",
-        "identifier": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service_name=\"checkout\"}[5m])))",
-        "summary": "P95 latency observed at 2450ms (threshold exceeded > 1000ms)",
+        "identifier": "histogram_quantile(0.95, sum by (le) (rate(traces_span_metrics_duration_milliseconds_bucket{service_name=\"checkout\"}[5m])))",
+        "summary": "P95 latency observed: 2510.0ms [Test Fixture]",
         "evidence_payload": {
-          "p95_latency_seconds": 2.45,
-          "promql": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service_name=\"checkout\"}[5m])))"
+          "p95_latency_ms": 2510.0,
+          "live": false
         }
       },
       {
         "source_type": "jaeger_trace",
         "identifier": "trace:9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d#span:8a7b6c5d4e3f2a1b",
-        "summary": "Downstream bottleneck: 'payment' (PaymentService/Charge) consumed 2480.0ms (error=True)",
+        "summary": "Downstream blocker 'payment' (PaymentService/Charge) consumed 2480.0ms of parent span",
         "evidence_payload": {
           "trace_id": "9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d",
+          "span_id": "8a7b6c5d4e3f2a1b",
           "alerted_service": "checkout",
           "root_cause_service": "payment",
+          "parent_operation": "CheckoutService/PlaceOrder",
+          "parent_duration_ms": 2510.0,
           "downstream_operation": "PaymentService/Charge",
-          "duration_ms": 2480.0
+          "downstream_duration_ms": 2480.0,
+          "consumption_percentage": 98.8,
+          "causal_proof": "Parent operation 'CheckoutService/PlaceOrder' (2510.0ms) blocked on downstream service 'payment' (operation 'PaymentService/Charge', duration: 2480.0ms, accounting for 98.8% of execution tree).",
+          "live": false
         }
       },
       {
@@ -472,67 +585,106 @@
         }
       },
       {
-        "source_type": "system_health",
-        "identifier": "git:commit:321ed975",
-        "summary": "Deployment commit 321ed975: feat(oncall): implement AI on-call engineer for Checkpoints (verified stable deployment)",
+        "source_type": "repository_context",
+        "identifier": "git:commit:26c51b56",
+        "summary": "Repository commit 26c51b56 provides code context (runtime rollout unverified)",
         "evidence_payload": {
-          "hash": "321ed975",
-          "author": "natisha19",
-          "date": "2026-10-23 16:59:25 +0530",
-          "message": "feat(oncall): implement AI on-call engineer for Checkpoints"
+          "commit_hash": "26c51b56",
+          "message": "feat(brain): add LangGraph investigation engine alongside the loop",
+          "evidence_classification": "REPOSITORY_COMMIT_CONTEXT_ONLY"
         }
       }
     ],
-    "explanation": "Incident alert was triggered on 'checkout', but distributed trace analysis proved the root cause originated in downstream service 'payment'. Trace '9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d' shows operation 'CheckoutService/PlaceOrder' waiting on downstream calls. Causal analysis: The degradation on 'checkout' is a symptom; the primary fault originated in downstream service 'payment'. Deployment audit confirmed stable repository baseline on branch 'main'.",
+    "explanation": "Incident alert triggered on 'checkout', but distributed trace DAG analysis proved root cause originated in downstream service 'payment'. Parent operation 'CheckoutService/PlaceOrder' (2510.0ms) blocked on downstream service 'payment' (operation 'PaymentService/Charge', duration: 2480.0ms, accounting for 98.8% of execution tree). Temporal reconciliation: Trigger was 1000ms; current measurement is 2510.0ms (ACTIVE_OUTAGE). Log evidence: CORROBORATING_LOGS_FOUND.",
     "recommended_action": "Restart downstream container 'payment' to clear connection deadlocks and restore availability.",
     "action_type": "RESTART_CONTAINER",
+    "action_status": "PENDING_APPROVAL",
+    "verification_status": "NOT_STARTED",
     "is_mitigated": false
   },
   {
     "incident_id": "ALERT-PRAC-003",
+    "scenario_id": "ad_incident",
     "target_service": "ad",
     "root_cause_service": "ad",
+    "is_downstream": false,
     "failure_mode": "INTERNAL_RESOURCE_EXHAUSTION (ad)",
-    "confidence_score": 0.85,
+    "confidence_score": 0.94,
     "confirmed_facts": [
-      "Prometheus: Service 'ad' exhibits P95 latency of 2450ms and error rate of 14.2 req/s.",
-      "Jaeger: Bottleneck localized to service 'ad' in span 'AdService/GetAdsByCategory' (duration: 3100ms).",
-      "OpenSearch: Correlated log in trace '7f8e9d0c1b2a3f4e5d6c7b8a90123456': Java HotSpot(TM) 64-Bit Server VM warning: Full GC (Allocation Failure) paused execution for 2850ms...."
+      "Prometheus Active Outage Confirmed: Current P95 latency is 3100ms (threshold: 1000ms), error rate: 3.4 req/s.",
+      "Jaeger Local Bottleneck: Operation 'AdService/GetAdsByCategory' executed locally in 'ad' consuming 3100.0ms without downstream blocker delegations.",
+      "OpenSearch Correlated Log: Trace '7f8e9d0c1b2a3f4e5d6c7b8a90123456' emitted: 'Java HotSpot(TM) 64-Bit Server VM warning: Full GC (Allocation Failure) paused execution for 2850ms....'"
     ],
     "likely_causes": [
-      "Service 'ad' is experiencing thread/CPU saturation or GC pause delays."
+      "Bottleneck localized internally to service 'ad'."
     ],
     "unresolved_hypotheses": [
-      "Hypothesis 'Recent breaking code deployment': Audited git log commits on main; no breaking commit in incident window - RULED OUT."
+      "Repository Context: Commit [26c51b56] on 'main' audited. Classified as repository context only (no runtime container deployment/rollout record was verified in incident window) - RULED OUT AS ACTIVE ROLLOUT."
     ],
+    "incident_snapshot": {
+      "alert_id": "ALERT-PRAC-003",
+      "service_name": "ad",
+      "trigger_p95_latency_ms": 1000.0,
+      "trigger_error_rate_rps": 0.0,
+      "threshold_ms": 1000.0,
+      "timestamp_utc": "2026-10-24T08:32:40.798461+00:00"
+    },
+    "current_telemetry": {
+      "current_p95_latency_ms": 3100.0,
+      "current_error_rate_rps": 3.4,
+      "evaluation_time_utc": "2026-10-24T08:32:41.286503+00:00",
+      "query_window": "5m sliding rate",
+      "threshold_ms": 1000.0,
+      "live_cluster": false
+    },
+    "telemetry_reconciliation_status": "ACTIVE_OUTAGE",
+    "trace_summary": {
+      "trace_id": "7f8e9d0c1b2a3f4e5d6c7b8a90123456",
+      "span_id": "3c4d5e6f7a8b9c0d",
+      "parent_operation": "AdService/GetAdsByCategory",
+      "parent_duration_ms": 3100.0,
+      "downstream_service": null,
+      "downstream_operation": "GCAllocationPause",
+      "downstream_duration_ms": 2850.0,
+      "consumption_percentage": 91.9,
+      "causal_proof": "Operation 'AdService/GetAdsByCategory' executed locally in 'ad' consuming 3100.0ms without downstream blocker delegations."
+    },
+    "log_evidence_status": "CORROBORATING_LOGS_FOUND",
+    "deployment_evidence_type": "REPOSITORY_COMMIT_CONTEXT_ONLY",
     "evidence_consistency_passed": true,
     "consistency_errors": [],
     "investigation_steps": [
       {
         "step_number": 1,
-        "intent": "Triage incident alert 'AdServiceHighCpuOrGc' on 'ad'. Query Prometheus metrics to verify Golden Signals (P95 latency, error rates, throughput).",
+        "intent": "Triage incident alert 'AdServiceHighCpuOrGc' on 'ad'. Query Prometheus metrics (5m sliding rate) at 2026-10-24T08:32:41Z to reconcile triggering snapshot.",
         "tool_name": "prometheus_inspect_service",
         "tool_parameters": {
-          "service_name": "ad"
+          "service_name": "ad",
+          "window": "5m"
         },
         "observation": {
           "tool_name": "prometheus_inspect_service",
           "success": true,
-          "summary": "Service 'ad' metrics: Elevated P95 Latency detected = 2450ms (normal baseline < 50ms), Error Rate = 14.2 req/s (HTTP 500 spike).",
+          "summary": "Elevated P95 Latency detected = 3100ms (GC pause delays, high CPU load).",
           "data": {
-            "p95_latency_sec": 2.45,
-            "error_rate_rps": 14.2,
-            "throughput_rps": 85.0,
-            "live": false
+            "p95_latency_sec": 3.1,
+            "p95_latency_ms": 3100.0,
+            "error_rate_rps": 3.4,
+            "throughput_rps": 120.0,
+            "evaluation_time_utc": "2026-10-24T08:32:41.286503+00:00",
+            "query_window": "5m sliding rate (fixture)",
+            "threshold_ms": 500.0,
+            "live": false,
+            "status": "CRITICAL"
           },
           "citations": [
             {
               "source_type": "prometheus_metric",
-              "identifier": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service_name=\"ad\"}[5m])))",
-              "summary": "P95 latency observed at 2450ms (threshold exceeded > 1000ms)",
+              "identifier": "histogram_quantile(0.95, sum by (le) (rate(traces_span_metrics_duration_milliseconds_bucket{service_name=\"ad\"}[5m])))",
+              "summary": "P95 latency observed: 3100.0ms [Test Fixture]",
               "evidence_payload": {
-                "p95_latency_seconds": 2.45,
-                "promql": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service_name=\"ad\"}[5m])))"
+                "p95_latency_ms": 3100.0,
+                "live": false
               }
             }
           ]
@@ -540,7 +692,7 @@
       },
       {
         "step_number": 2,
-        "intent": "Metrics confirmed degradation on 'ad'. Querying Jaeger distributed traces to inspect the execution tree and determine whether the root cause is local or downstream.",
+        "intent": "Querying Jaeger distributed trace DAG tree for 'ad'. Walking parent-child execution spans to isolate whether bottleneck is local or in a downstream service.",
         "tool_name": "jaeger_inspect_traces",
         "tool_parameters": {
           "service_name": "ad",
@@ -549,7 +701,7 @@
         "observation": {
           "tool_name": "jaeger_inspect_traces",
           "success": true,
-          "summary": "Jaeger trace analysis for 'ad': Local failure detected in trace '7f8e9d0c1b2a3f4e5d6c7b8a90123456'. Operation 'AdService/GetAdsByCategory' took 3100.0ms blocking on internal/thread-pool-exhaustion (error=True).",
+          "summary": "Jaeger Distributed Tracing: LOCAL FAILURE isolated to 'ad'. Operation 'AdService/GetAdsByCategory' executed locally in 'ad' consuming 3100.0ms without downstream blocker delegations.",
           "data": {
             "traces": [
               {
@@ -560,25 +712,40 @@
                 "duration_ms": 3100.0,
                 "is_error": true,
                 "error_source_service": "ad",
+                "downstream_operation": "GCAllocationPause",
+                "downstream_duration_ms": 2850.0,
                 "downstream_dependency": "internal/thread-pool-exhaustion",
-                "status_message": "Thread pool exhausted during high GC pause latency"
+                "status_message": "Thread pool exhausted during 2850ms Full GC pause"
               }
             ],
             "queried_service": "ad",
             "isolated_root_cause_service": "ad",
+            "root_cause_service": "ad",
             "is_downstream_dependency_failure": false,
+            "is_downstream": false,
+            "trace_id": "7f8e9d0c1b2a3f4e5d6c7b8a90123456",
+            "span_id": "3c4d5e6f7a8b9c0d",
+            "parent_operation": "AdService/GetAdsByCategory",
+            "parent_duration_ms": 3100.0,
+            "downstream_operation": "GCAllocationPause",
+            "downstream_duration_ms": 2850.0,
+            "consumption_percentage": 91.9,
+            "causal_proof": "Operation 'AdService/GetAdsByCategory' executed locally in 'ad' consuming 3100.0ms without downstream blocker delegations.",
             "live": false
           },
           "citations": [
             {
               "source_type": "jaeger_trace",
               "identifier": "trace:7f8e9d0c1b2a3f4e5d6c7b8a90123456#span:3c4d5e6f7a8b9c0d",
-              "summary": "Operation 'AdService/GetAdsByCategory' failed in ad taking 3100.0ms",
+              "summary": "Local operation 'AdService/GetAdsByCategory' in 'ad' consumed 3100.0ms (error=True)",
               "evidence_payload": {
                 "trace_id": "7f8e9d0c1b2a3f4e5d6c7b8a90123456",
+                "span_id": "3c4d5e6f7a8b9c0d",
                 "root_cause_service": "ad",
                 "operation": "AdService/GetAdsByCategory",
-                "duration_ms": 3100.0
+                "duration_ms": 3100.0,
+                "causal_proof": "Operation 'AdService/GetAdsByCategory' executed locally in 'ad' consuming 3100.0ms without downstream blocker delegations.",
+                "live": false
               }
             }
           ]
@@ -586,7 +753,7 @@
       },
       {
         "step_number": 3,
-        "intent": "Trace analysis identified bottleneck in trace '7f8e9d0c1b2a3f4e5d6c7b8a90123456'. Querying OpenSearch for correlated exception logs belonging to trace '7f8e9d0c1b2a3f4e5d6c7b8a90123456'.",
+        "intent": "Querying OpenSearch index 'otel-logs-*' for trace '7f8e9d0c1b2a3f4e5d6c7b8a90123456'. Filtering strictly by trace_id to correlate root cause logs.",
         "tool_name": "opensearch_query_logs",
         "tool_parameters": {
           "service_name": "ad",
@@ -628,7 +795,7 @@
       },
       {
         "step_number": 4,
-        "intent": "Auditing recent git deployment history and commit logs for culprit service 'ad'.",
+        "intent": "Auditing repository code history for culprit 'ad' to evaluate recent commit context.",
         "tool_name": "deployment_history_inspect",
         "tool_parameters": {
           "service_name": "ad"
@@ -636,45 +803,44 @@
         "observation": {
           "tool_name": "deployment_history_inspect",
           "success": true,
-          "summary": "Deployment History for 'ad': Verified repository history on branch 'main'. Latest commit: [321ed975] 'feat(oncall): implement AI on-call engineer for Checkpoints' by natisha19 on 2026-10-23 16:59:25 +0530. No uncommitted code changes detected in service directory.",
+          "summary": "Repository History Context for 'ad': Inspected commits on branch 'main'. Latest commit: [26c51b56] 'feat(brain): add LangGraph investigation engine alongside the loop' by PreethamVJ on 2026-10-23 22:12:47 +0530. [Note: Repository history provides code context only; no runtime rollout/deployment event verified in incident window].",
           "data": {
             "service_name": "ad",
             "git_deployment_history": {
               "available": true,
               "commits": [
                 {
-                  "hash": "321ed975",
-                  "author": "natisha19",
-                  "date": "2026-10-23 16:59:25 +0530",
-                  "message": "feat(oncall): implement AI on-call engineer for Checkpoints"
-                },
-                {
-                  "hash": "49cba28b",
-                  "author": "Charan-Tej5",
-                  "date": "2026-10-23 16:53:30 +0530",
-                  "message": "feat(platform): oncall skeleton, contracts, ledger, guard, registry, llm client [P1]"
-                },
-                {
-                  "hash": "49784906",
+                  "hash": "26c51b56",
                   "author": "PreethamVJ",
-                  "date": "2026-10-23 16:25:32 +0530",
-                  "message": "feat(platform): dockerfile, compose.oncall layer, healthz, helper scripts [P1]"
+                  "date": "2026-10-23 22:12:47 +0530",
+                  "message": "feat(brain): add LangGraph investigation engine alongside the loop"
+                },
+                {
+                  "hash": "ed07bc09",
+                  "author": "PreethamVJ",
+                  "date": "2026-10-23 21:03:23 +0530",
+                  "message": "fix(brain): resolve llm.py merge, use shared tenacity retry"
+                },
+                {
+                  "hash": "23fc0766",
+                  "author": "PreethamVJ",
+                  "date": "2026-10-23 18:04:13 +0530",
+                  "message": "feat(eyes+brain): tools, summarise, agent loop, eval script"
                 }
               ]
             },
-            "has_recent_deployment_regression": false,
-            "checked_status": "NO_RECENT_BREAKING_DEPLOYMENT"
+            "evidence_classification": "REPOSITORY_COMMIT_CONTEXT_ONLY",
+            "runtime_rollout_verified": false
           },
           "citations": [
             {
-              "source_type": "system_health",
-              "identifier": "git:commit:321ed975",
-              "summary": "Deployment commit 321ed975: feat(oncall): implement AI on-call engineer for Checkpoints (verified stable deployment)",
+              "source_type": "repository_context",
+              "identifier": "git:commit:26c51b56",
+              "summary": "Repository commit 26c51b56 provides code context (runtime rollout unverified)",
               "evidence_payload": {
-                "hash": "321ed975",
-                "author": "natisha19",
-                "date": "2026-10-23 16:59:25 +0530",
-                "message": "feat(oncall): implement AI on-call engineer for Checkpoints"
+                "commit_hash": "26c51b56",
+                "message": "feat(brain): add LangGraph investigation engine alongside the loop",
+                "evidence_classification": "REPOSITORY_COMMIT_CONTEXT_ONLY"
               }
             }
           ]
@@ -684,22 +850,25 @@
     "citations": [
       {
         "source_type": "prometheus_metric",
-        "identifier": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service_name=\"ad\"}[5m])))",
-        "summary": "P95 latency observed at 2450ms (threshold exceeded > 1000ms)",
+        "identifier": "histogram_quantile(0.95, sum by (le) (rate(traces_span_metrics_duration_milliseconds_bucket{service_name=\"ad\"}[5m])))",
+        "summary": "P95 latency observed: 3100.0ms [Test Fixture]",
         "evidence_payload": {
-          "p95_latency_seconds": 2.45,
-          "promql": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{service_name=\"ad\"}[5m])))"
+          "p95_latency_ms": 3100.0,
+          "live": false
         }
       },
       {
         "source_type": "jaeger_trace",
         "identifier": "trace:7f8e9d0c1b2a3f4e5d6c7b8a90123456#span:3c4d5e6f7a8b9c0d",
-        "summary": "Operation 'AdService/GetAdsByCategory' failed in ad taking 3100.0ms",
+        "summary": "Local operation 'AdService/GetAdsByCategory' in 'ad' consumed 3100.0ms (error=True)",
         "evidence_payload": {
           "trace_id": "7f8e9d0c1b2a3f4e5d6c7b8a90123456",
+          "span_id": "3c4d5e6f7a8b9c0d",
           "root_cause_service": "ad",
           "operation": "AdService/GetAdsByCategory",
-          "duration_ms": 3100.0
+          "duration_ms": 3100.0,
+          "causal_proof": "Operation 'AdService/GetAdsByCategory' executed locally in 'ad' consuming 3100.0ms without downstream blocker delegations.",
+          "live": false
         }
       },
       {
@@ -713,20 +882,21 @@
         }
       },
       {
-        "source_type": "system_health",
-        "identifier": "git:commit:321ed975",
-        "summary": "Deployment commit 321ed975: feat(oncall): implement AI on-call engineer for Checkpoints (verified stable deployment)",
+        "source_type": "repository_context",
+        "identifier": "git:commit:26c51b56",
+        "summary": "Repository commit 26c51b56 provides code context (runtime rollout unverified)",
         "evidence_payload": {
-          "hash": "321ed975",
-          "author": "natisha19",
-          "date": "2026-10-23 16:59:25 +0530",
-          "message": "feat(oncall): implement AI on-call engineer for Checkpoints"
+          "commit_hash": "26c51b56",
+          "message": "feat(brain): add LangGraph investigation engine alongside the loop",
+          "evidence_classification": "REPOSITORY_COMMIT_CONTEXT_ONLY"
         }
       }
     ],
-    "explanation": "Incident localized to service 'ad'. Prometheus recorded P95 latency at 2450ms. Jaeger trace '7f8e9d0c1b2a3f4e5d6c7b8a90123456' isolated bottleneck span 'AdService/GetAdsByCategory'. Service 'ad' is experiencing thread/CPU saturation or GC pause delays.",
+    "explanation": "Incident localized to 'ad'. Operation 'AdService/GetAdsByCategory' executed locally in 'ad' consuming 3100.0ms without downstream blocker delegations. Temporal reconciliation: Trigger was 1000ms; current measurement is 3100.0ms (ACTIVE_OUTAGE). Log evidence: CORROBORATING_LOGS_FOUND.",
     "recommended_action": "Restart container 'ad' to recycle worker process and clear thread pools.",
     "action_type": "RESTART_CONTAINER",
+    "action_status": "PENDING_APPROVAL",
+    "verification_status": "NOT_STARTED",
     "is_mitigated": false
   }
 ]

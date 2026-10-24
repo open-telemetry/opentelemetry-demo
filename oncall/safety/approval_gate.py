@@ -43,6 +43,15 @@ class HumanApprovalGate:
         """
         token = f"AUTH-{uuid.uuid4().hex[:8].upper()}"
 
+        # 0. No Action Check
+        if diagnosis.action_type == "NO_ACTION" or proposed_action.get("action") == "NO_ACTION":
+            return ApprovalDecision(
+                approved=False,
+                token="NO_ACTION_REQUIRED",
+                approver="safety_policy",
+                notes="No approval required for NO_ACTION decision. Service is nominal or auto-recovered."
+            )
+
         # 1. Pre-flight consistency validation
         if not diagnosis.evidence_consistency_passed:
             reasons = "; ".join(diagnosis.consistency_errors)

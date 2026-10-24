@@ -3,7 +3,11 @@ from __future__ import annotations
 import re
 from typing import Any, TypedDict
 
-from langgraph.graph import END, StateGraph
+try:
+    from langgraph.graph import END, StateGraph
+except ImportError:
+    END = None
+    StateGraph = None
 
 from oncall.agent.prompts import FINAL_REMINDER, SYSTEM_PROMPT
 from oncall.agent.run import MAX_ITERATIONS, _assistant_message, _parse_diagnosis

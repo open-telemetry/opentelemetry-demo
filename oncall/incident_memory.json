@@ -1,0 +1,80 @@
+[
+  {
+    "fingerprint": "cart|CartAddItemHighLatency|timeout",
+    "service": "cart",
+    "root_cause_service": "cart",
+    "failure_mode": "INTERNAL_DATASTORE_TIMEOUT_OR_EXHAUSTION (cart)",
+    "proven_action": "RESTART_CONTAINER",
+    "resolution_summary": "Valkey datastore timeout cleared by container process recycling."
+  },
+  {
+    "fingerprint": "checkout|CheckoutOrderPlacementErrors|payment",
+    "service": "checkout",
+    "root_cause_service": "payment",
+    "failure_mode": "DOWNSTREAM_DEPENDENCY_FAILURE (payment)",
+    "proven_action": "RESTART_CONTAINER",
+    "resolution_summary": "Downstream payment service connection deadlock cleared by restart."
+  },
+  {
+    "fingerprint": "ad|AdServiceHighCpuOrGc|gc",
+    "service": "ad",
+    "root_cause_service": "ad",
+    "failure_mode": "INTERNAL_RESOURCE_EXHAUSTION (ad)",
+    "proven_action": "RESTART_CONTAINER",
+    "resolution_summary": "Full GC pause delays resolved by worker recycling."
+  },
+  {
+    "incident_id": "INC-CART-001",
+    "recorded_at": "2026-10-24T02:27:17.854489+00:00",
+    "service": "cart",
+    "root_cause_service": "cart",
+    "failure_mode": "INTERNAL_DATASTORE_TIMEOUT_OR_EXHAUSTION (cart)",
+    "proven_action": "RESTART_CONTAINER",
+    "resolution_summary": "Incident localized to service 'cart'. Prometheus recorded P95 latency at 2450ms. Jaeger trace '4bf92f3577b34da6a3ce929d0e0e4736' isolated bottleneck span 'CartService/AddItem'. Service 'cart' is failing due to internal dependency timeouts (e.g. cache/datastore exhaustion)."
+  },
+  {
+    "incident_id": "INC-CART-001",
+    "recorded_at": "2026-10-24T02:27:53.003248+00:00",
+    "service": "cart",
+    "root_cause_service": "cart",
+    "failure_mode": "INTERNAL_DATASTORE_TIMEOUT_OR_EXHAUSTION (cart)",
+    "proven_action": "RESTART_CONTAINER",
+    "resolution_summary": "Incident localized to service 'cart'. Prometheus recorded P95 latency at 2450ms. Jaeger trace '4bf92f3577b34da6a3ce929d0e0e4736' isolated bottleneck span 'CartService/AddItem'. Service 'cart' is failing due to internal dependency timeouts (e.g. cache/datastore exhaustion)."
+  },
+  {
+    "incident_id": "ALERT-CHECKOUT-1792817136",
+    "recorded_at": "2026-10-24T04:46:02.279707+00:00",
+    "service": "checkout",
+    "root_cause_service": "frontend-proxy",
+    "failure_mode": "DOWNSTREAM_DEPENDENCY_FAILURE (frontend-proxy)",
+    "proven_action": "RESTART_CONTAINER",
+    "resolution_summary": "Incident alert was triggered on 'checkout', but distributed trace analysis proved the root cause originated in downstream service 'frontend-proxy'. Trace '93cea278f10634a7c0d285dee37efc17' shows operation 'router frontend egress' waiting on downstream calls. Causal analysis: The degradation on 'checkout' is a symptom; the primary fault originated in downstream service 'frontend-proxy'. Deployment audit confirmed stable repository baseline on branch 'main'."
+  },
+  {
+    "incident_id": "ALERT-PAYMENT-1792817167",
+    "recorded_at": "2026-10-24T04:46:29.238440+00:00",
+    "service": "payment",
+    "root_cause_service": "frontend-proxy",
+    "failure_mode": "DOWNSTREAM_DEPENDENCY_FAILURE (frontend-proxy)",
+    "proven_action": "RESTART_CONTAINER",
+    "resolution_summary": "Incident alert was triggered on 'payment', but distributed trace analysis proved the root cause originated in downstream service 'frontend-proxy'. Trace '93cea278f10634a7c0d285dee37efc17' shows operation 'router frontend egress' waiting on downstream calls. Causal analysis: The degradation on 'payment' is a symptom; the primary fault originated in downstream service 'frontend-proxy'. Deployment audit confirmed stable repository baseline on branch 'main'."
+  },
+  {
+    "incident_id": "ALERT-CHECKOUT-1792817567",
+    "recorded_at": "2026-10-24T04:54:36.954912+00:00",
+    "service": "checkout",
+    "root_cause_service": "frontend-proxy",
+    "failure_mode": "DOWNSTREAM_DEPENDENCY_FAILURE (frontend-proxy)",
+    "proven_action": "RESTART_CONTAINER",
+    "resolution_summary": "Incident alert was triggered on 'checkout', but distributed trace analysis proved the root cause originated in downstream service 'frontend-proxy'. Trace '93cea278f10634a7c0d285dee37efc17' shows operation 'router frontend egress' waiting on downstream calls. Causal analysis: The degradation on 'checkout' is a symptom; the primary fault originated in downstream service 'frontend-proxy'. Deployment audit confirmed stable repository baseline on branch 'main'."
+  },
+  {
+    "incident_id": "ALERT-CART-1792817681",
+    "recorded_at": "2026-10-24T05:00:08.075348+00:00",
+    "service": "cart",
+    "root_cause_service": "frontend-web",
+    "failure_mode": "DOWNSTREAM_DEPENDENCY_FAILURE (frontend-web)",
+    "proven_action": "RESTART_CONTAINER",
+    "resolution_summary": "Incident alert was triggered on 'cart', but distributed trace analysis proved the root cause originated in downstream service 'frontend-web'. Trace '07e97aac13dc4505bf9e679962fed6bc' shows operation 'GET' waiting on downstream calls. Causal analysis: The degradation on 'cart' is a symptom; the primary fault originated in downstream service 'frontend-web'. Deployment audit confirmed stable repository baseline on branch 'main'."
+  }
+]

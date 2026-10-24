@@ -71,7 +71,7 @@ def evaluate_checkpoint_2():
         print(f"\n[INCIDENT {idx}/{total_tests}] Evaluating Alert: {alert.title} ({alert.alert_id})")
         print(f"  Target Service: {alert.service_name} | Severity: {alert.severity.upper()}")
         
-        diag = agent.investigate(alert)
+        diag = agent.investigate(alert, allow_fixtures=True)
         diagnoses.append(diag)
 
         # Assertions for evaluation
