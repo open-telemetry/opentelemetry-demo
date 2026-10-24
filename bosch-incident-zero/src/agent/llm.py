@@ -16,6 +16,9 @@ Configuration (environment variables, or bosch-incident-zero/.env which is git-i
   LLM_FALLBACK_MODELS  OpenAI-style providers: comma-separated models tried in order when the current one
                    fails at transport level (402, 404, 408, 429, 5xx, timeout, connection). Bad output
                    never triggers a fallback.
+  LLM_FALLBACK_PROVIDER  optional second OpenAI-style provider (e.g. gemini) tried, with its own key, after
+                   every model above fails at transport level: LLM_FALLBACK_API_KEY, LLM_FALLBACK_MODELS_2
+                   (comma-separated; default gemini-3.5-flash for gemini), LLM_FALLBACK_BASE_URL (optional).
 
 Every LLMResponse carries the token usage the provider reported (None when it reported none).
 """
@@ -38,6 +41,10 @@ ANTHROPIC_DEFAULT_MODEL = "claude-opus-5-5"
 _FALLBACK_MODELS = {"claude-opus-5-5", "claude-fable-5-1", "claude-sonnet-5-5"}
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1"
 OPENAI_PROVIDERS = ("openai", "gemini", "openrouter", "openai_compatible")
+_FALLBACK_PROVIDER_DEFAULT_MODELS = {"gemini": ("gemini-3.5-flash",)}
+# Fields every OpenAI-style server accepts; provider-specific extras are dropped when another provider continues.
+_PORTABLE_MESSAGE_KEYS = ("role", "content", "tool_calls", "tool_call_id", "name")
+_PROVIDER_KEY = "_provider"
 _OPENAI_DEFAULT_URLS = {
     "openai": "https://api.openai.com/v1",
     "gemini": "https://generativelanguage.googleapis.com/v1beta/openai/",
@@ -102,6 +109,10 @@ class LLMConfig:
     timeout_seconds: float = 180.0
     fallbacks: bool = True
     fallback_models: Tuple[str, ...] = ()
+    fallback_provider: str = ""
+    fallback_api_key: str = ""
+    fallback_base_url: str = ""
+    fallback_provider_models: Tuple[str, ...] = ()
 
     @classmethod
     def from_env(cls, root_dir: Optional[Path] = None) -> "LLMConfig":
@@ -121,6 +132,9 @@ class LLMConfig:
             timeout_seconds=float(get("LLM_TIMEOUT_SECONDS", "180") or 180),
             fallbacks=get("LLM_FALLBACKS", "1") not in ("0", "false", "no"),
             fallback_models=tuple(m.strip() for m in get("LLM_FALLBACK_MODELS").split(",") if m.strip()),
+            fallback_provider=get("LLM_FALLBACK_PROVIDER").lower(), fallback_api_key=get("LLM_FALLBACK_API_KEY"),
+            fallback_base_url=get("LLM_FALLBACK_BASE_URL"),
+            fallback_provider_models=tuple(m.strip() for m in get("LLM_FALLBACK_MODELS_2").split(",") if m.strip()),
         )
 
 
@@ -261,6 +275,16 @@ class OpenAISession(LLMSession):
                                                         "parameters": t["parameters"]}} for t in tools]
         self.messages: List[Dict[str, Any]] = [{"role": "system", "content": system}]
         self.models = [m for m in dict.fromkeys((cfg.model, *cfg.fallback_models)) if m]
+        # (client, model, provider) in the order tried; None means self.client. A fallback provider adds its own
+        # client and models.
+        self.targets: List[Tuple[Any, str, str]] = [(None, m, cfg.provider) for m in self.models]
+        if cfg.fallback_provider in OPENAI_PROVIDERS and cfg.fallback_api_key:
+            client = openai.OpenAI(api_key=cfg.fallback_api_key,
+                                   base_url=cfg.fallback_base_url or _OPENAI_DEFAULT_URLS.get(cfg.fallback_provider),
+                                   max_retries=0, timeout=cfg.timeout_seconds)
+            models = cfg.fallback_provider_models or _FALLBACK_PROVIDER_DEFAULT_MODELS.get(cfg.fallback_provider, ())
+            self.targets += [(client, m, cfg.fallback_provider) for m in dict.fromkeys(models)]
+            self.models += [m for m in models if m not in self.models]
         self.model_index = 0
 
     def _transport_failure(self, e: LLMError) -> bool:
@@ -273,11 +297,17 @@ class OpenAISession(LLMSession):
     def _create(self, kwargs: Dict[str, Any]) -> Tuple[Any, str]:
         failures: List[str] = []
         while True:
-            model = self.models[self.model_index]
-            last = self.model_index == len(self.models) - 1
+            client, model, provider = self.targets[self.model_index]
+            last = self.model_index == len(self.targets) - 1
+            call = dict(kwargs)
+            call["messages"] = [_for_provider(m, provider, self.cfg.provider) for m in kwargs["messages"]]
+            if provider == "openai" or self.cfg.provider == "openai":
+                cap = call.pop("max_completion_tokens", None) or call.pop("max_tokens", None)
+                call["max_completion_tokens" if provider == "openai" else "max_tokens"] = cap
             try:
                 # Earlier models fail over at once; only the last one spends backoff retries.
-                return call_with_retries(lambda: self.client.chat.completions.create(**kwargs, model=model),
+                api = client or self.client
+                return call_with_retries(lambda: api.chat.completions.create(**call, model=model),
                                          self._classify, max_retries=self.cfg.max_retries if last else 0), model
             except LLMError as e:
                 failures.append(f"{model}: {e}")
@@ -311,7 +341,7 @@ class OpenAISession(LLMSession):
         resp, model = self._create(kwargs)
         choice = resp.choices[0]
         msg = choice.message
-        self.messages.append(msg.model_dump(exclude_none=True))
+        self.messages.append({**msg.model_dump(exclude_none=True), _PROVIDER_KEY: self.targets[self.model_index][2]})
         calls: List[ToolCall] = []
         for tc in msg.tool_calls or []:
             raw = tc.function.arguments or "{}"
@@ -324,6 +354,25 @@ class OpenAISession(LLMSession):
         usage = token_usage(u.prompt_tokens, u.completion_tokens, u.total_tokens) if u is not None else None
         return LLMResponse(text=msg.content or "", tool_calls=calls, stop_reason=choice.finish_reason or "stop",
                            usage=usage, model=model)
+
+
+def _for_provider(message: Dict[str, Any], provider: str, primary: str) -> Dict[str, Any]:
+    """A message as sent to ``provider``: its own replies unchanged, another provider's reduced to portable fields."""
+    source = message.get(_PROVIDER_KEY, primary)
+    clean = {k: v for k, v in message.items() if k != _PROVIDER_KEY}
+    return clean if source == provider else _portable(clean)
+
+
+def _portable(message: Dict[str, Any]) -> Dict[str, Any]:
+    out = {k: message[k] for k in _PORTABLE_MESSAGE_KEYS if message.get(k) is not None}
+    if out.get("tool_calls"):
+        out["tool_calls"] = [{"id": c.get("id"), "type": "function",
+                              "function": {"name": (c.get("function") or {}).get("name"),
+                                           "arguments": (c.get("function") or {}).get("arguments") or "{}"}}
+                             for c in out["tool_calls"]]
+    if out.get("role") == "assistant" and "content" not in out:
+        out["content"] = ""
+    return out
 
 
 ScriptStep = Union[LLMResponse, Callable[[Optional[str], Sequence[ToolResultMessage]], LLMResponse]]

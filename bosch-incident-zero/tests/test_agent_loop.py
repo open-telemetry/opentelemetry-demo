@@ -793,3 +793,98 @@ def test_answering_model_is_recorded_on_transcript_and_diagnosis_event():
 def test_fallback_models_are_read_from_env(monkeypatch):
     monkeypatch.setenv("LLM_FALLBACK_MODELS", " b:free, ,c:free ")
     assert LLMConfig.from_env().fallback_models == ("b:free", "c:free")
+
+
+def _provider_fallback_session(primary, secondary, fallback_models=("g",)):
+    cfg = LLMConfig(provider="openai_compatible", base_url=OPENROUTER_API_URL, model="a", api_key="test-key",
+                    max_tokens=4096, max_retries=0, fallback_provider="gemini", fallback_api_key="gem-key",
+                    fallback_provider_models=tuple(fallback_models))
+    session = OpenAISession(cfg, "system", SPECS)
+    sent = []
+
+    def fake(replies, who):
+        def create(**kw):
+            sent.append((who, kw["model"], kw))
+            reply = replies.pop(0)
+            if isinstance(reply, Exception):
+                raise reply
+            return reply
+        return SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
+
+    session.client = fake(primary, "openrouter")
+    session.targets = [(fake(secondary, "gemini") if c is not None else None, m, p) for c, m, p in session.targets]
+    return session, sent
+
+
+def test_second_provider_takes_over_after_every_primary_model_fails_and_sticks():
+    tool_call = [{"id": "c1", "type": "function", "function": {"name": "system_overview", "arguments": "{}"}}]
+    from openai.types.chat import ChatCompletion
+
+    first = ChatCompletion.model_validate({
+        "id": "gen-1", "object": "chat.completion", "created": 0, "model": "served",
+        "choices": [{"index": 0, "finish_reason": "stop", "message": {
+            "role": "assistant", "content": "", "tool_calls": tool_call, "reasoning": "provider-only field"}}]})
+    session, sent = _provider_fallback_session([first, _status_error(429, "free-models-per-day")],
+                                               [_completion("from gemini"), _completion("again")])
+    assert session.send(user_text="ALERT").model == "a"
+    from src.agent.llm import ToolResultMessage
+    resp = session.send(tool_results=[ToolResultMessage("c1", "ok")])
+    assert resp.model == "g" and resp.text == "from gemini"
+    assert session.send(user_text="more").model == "g"
+    assert [(who, m) for who, m, _ in sent] == [("openrouter", "a"), ("openrouter", "a"),
+                                                ("gemini", "g"), ("gemini", "g")]
+    gemini_messages = sent[2][2]["messages"]
+    assert all(set(m) <= {"role", "content", "tool_calls", "tool_call_id", "name"} for m in gemini_messages)
+    assert gemini_messages[2]["tool_calls"][0]["function"]["name"] == "system_overview"
+    assert sent[2][2]["max_tokens"] == 4096
+
+
+def test_second_provider_is_not_used_for_bad_requests():
+    session, sent = _provider_fallback_session([_status_error(400, "bad request")], [_completion("never")])
+    with pytest.raises(LLMError):
+        session.send(user_text="x")
+    assert [who for who, _, _ in sent] == ["openrouter"]
+
+
+def test_all_providers_failing_lists_every_model():
+    session, _ = _provider_fallback_session([_status_error(429, "free-models-per-day")],
+                                            [_status_error(429, "RESOURCE_EXHAUSTED PerDay")])
+    with pytest.raises(LLMError) as exc:
+        session.send(user_text="x")
+    assert "all models failed" in str(exc.value) and "a: " in str(exc.value) and "g: " in str(exc.value)
+
+
+def test_fallback_provider_is_read_from_env_with_gemini_default_model(monkeypatch):
+    monkeypatch.setenv("LLM_FALLBACK_PROVIDER", "Gemini")
+    monkeypatch.setenv("LLM_FALLBACK_API_KEY", "gem-key")
+    monkeypatch.setenv("LLM_FALLBACK_MODELS_2", "")
+    cfg = LLMConfig.from_env()
+    assert cfg.fallback_provider == "gemini" and cfg.fallback_api_key == "gem-key"
+    session = OpenAISession(LLMConfig(provider="openrouter", model="a", api_key="k", fallback_provider="gemini",
+                                      fallback_api_key="gem-key"), "system", SPECS)
+    assert [(m, p) for _, m, p in session.targets] == [("a", "openrouter"), ("gemini-3.5-flash", "gemini")]
+
+
+def test_no_fallback_provider_without_its_key():
+    session = OpenAISession(LLMConfig(provider="openrouter", model="a", api_key="k", fallback_provider="gemini"),
+                            "system", SPECS)
+    assert [m for _, m, _ in session.targets] == ["a"]
+
+
+def test_a_providers_own_reply_fields_go_back_to_it_unchanged():
+    from src.agent.llm import ToolResultMessage
+
+    tool_call = [{"id": "g1", "type": "function", "function": {"name": "system_overview", "arguments": "{}"}}]
+    from openai.types.chat import ChatCompletion
+
+    gemini_reply = ChatCompletion.model_validate({
+        "id": "gen-1", "object": "chat.completion", "created": 0, "model": "served",
+        "choices": [{"index": 0, "finish_reason": "stop", "message": {
+            "role": "assistant", "content": "", "tool_calls": tool_call,
+            "extra_content": {"google": {"thought_signature": "sig"}}}}]})
+    session, sent = _provider_fallback_session([_status_error(503)], [gemini_reply, _completion("done")])
+    session.send(user_text="ALERT")
+    session.send(tool_results=[ToolResultMessage("g1", "ok")])
+    replayed = sent[-1][2]["messages"][2]
+    assert replayed["extra_content"] == {"google": {"thought_signature": "sig"}}
+    assert "_provider" not in replayed

@@ -42,12 +42,15 @@ LLM_FALLBACK_MODELS=nvidia/nemotron-3.5-super-vl:free,poolside/laguna-s-2.1:free
 LLM_API_KEY=<your key>
 ```
 
-**Models: free tier on OpenRouter only.**
+**Models: free tiers only (OpenRouter, then Google AI Studio).**
 
 - The main model is `nvidia/nemotron-3-ultra-550b-a55b:free`.
 - The fallbacks in `LLM_FALLBACK_MODELS` are tried in order only when the provider fails (HTTP 402, 404,
   429, 5xx or a timeout), never because of bad model output. Bad output is handled by the guards and
   escalates.
+- When every OpenRouter model fails that way, the Gemini free tier takes over for the rest of the run:
+  `LLM_FALLBACK_PROVIDER=gemini`, `LLM_FALLBACK_API_KEY=<AI Studio key>`, and
+  `LLM_FALLBACK_MODELS_2=gemini-3.5-flash,gemini-flash-latest,gemini-3.5-flash-lite`. It has its own daily quota.
 - The model that actually answered is recorded in the transcript and in the `DIAGNOSIS` event.
 - Free-tier limits on an account with no credits: about 20 requests a minute and about 50 a day. That is
   roughly 4 live investigations a day, which is why the tests and the rehearsal use recorded transcripts.
