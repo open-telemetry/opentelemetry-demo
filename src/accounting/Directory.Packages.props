@@ -3,13 +3,13 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Confluent.Kafka" Version="2.15.0" />
+    <PackageVersion Include="Confluent.Kafka" Version="2.16.0" />
     <PackageVersion Include="EFCore.NamingConventions" Version="10.0.1" />
-    <PackageVersion Include="Google.Protobuf" Version="3.35.1" />
-    <PackageVersion Include="Grpc.Tools" Version="2.83.0" />
-    <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.10" />
+    <PackageVersion Include="Google.Protobuf" Version="3.36.2" />
+    <PackageVersion Include="Grpc.Tools" Version="2.85.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.14" />
     <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
-    <PackageVersion Include="OpenTelemetry.AutoInstrumentation" Version="1.17.0" />
+    <PackageVersion Include="OpenTelemetry.AutoInstrumentation" Version="1.18.0" />
   </ItemGroup>
 </Project>
