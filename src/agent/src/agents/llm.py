@@ -5,12 +5,18 @@
 
 import asyncio
 import os
+import threading
 import time
 
 import httpx
 from langchain_openai import ChatOpenAI
 from src.agents.feature_flags import get_int_feature_flag
 from src.agents.patch_vcr import VCR
+
+
+# vcrpy patches global state, so overlapping cassette contexts leave stale patches behind
+_async_vcr_lock = asyncio.Lock()
+_sync_vcr_lock = threading.Lock()
 
 
 class ChatLLM(ChatOpenAI):
@@ -41,7 +47,7 @@ class ChatLLM(ChatOpenAI):
         if delay_ms:
             time.sleep(delay_ms / 1000)
         if getattr(self, "_use_vcr", False):
-            with VCR.use_cassette(self._cassette_name):
+            with _sync_vcr_lock, VCR.use_cassette(self._cassette_name):
                 return super()._generate(messages, stop, run_manager, **kwargs)
         return super()._generate(messages, stop, run_manager, **kwargs)
 
@@ -50,6 +56,7 @@ class ChatLLM(ChatOpenAI):
         if delay_ms:
             await asyncio.sleep(delay_ms / 1000)
         if getattr(self, "_use_vcr", False):
-            with VCR.use_cassette(self._cassette_name):
-                return await super()._agenerate(messages, stop, run_manager, **kwargs)
+            async with _async_vcr_lock:
+                with VCR.use_cassette(self._cassette_name):
+                    return await super()._agenerate(messages, stop, run_manager, **kwargs)
         return await super()._agenerate(messages, stop, run_manager, **kwargs)
