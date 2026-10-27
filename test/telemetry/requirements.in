@@ -1,2 +1,2 @@
-pytest==9.0.3
+pytest==9.1.1
 requests==2.34.2
