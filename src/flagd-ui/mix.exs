@@ -66,7 +66,7 @@ defmodule FlagdUi.MixProject do
       {:gettext, "~> 1.0.2"},
       {:jason, "~> 1.4.5"},
       {:dns_cluster, "~> 0.3.0"},
-      {:bandit, "~> 1.13.1"},
+      {:bandit, "~> 1.14.0"},
       {:credo, "~> 1.7.19", only: [:dev, :test], runtime: false},
       {:opentelemetry, "~> 1.7.0"},
       {:opentelemetry_api, "~> 1.5.0"},
