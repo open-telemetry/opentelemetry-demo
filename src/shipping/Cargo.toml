@@ -14,21 +14,21 @@ name = "healthcheck"
 path = "src/healthcheck.rs"
 
 [dependencies]
-actix-web = "4"
+actix-web = "4.18.1"
 anyhow = "1.0.104"
-awc = { version = "3.8.2", default-features = false, features = ["compress-zstd"] }
+awc = { version = "3.11.0", default-features = false, features = ["compress-zstd"] }
 open-feature = "0.3"
 open-feature-flagd = { version = "0.3.0", default-features = false, features = ["rpc", "in-process"] }
 serde = { version = "1.0.229", features = ["derive"] }
-tonic = "0.14.6"
+tonic = "0.14.7"
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
 
-opentelemetry = "0.33.0"
-opentelemetry_sdk = "0.33.0"
-opentelemetry-otlp = "0.33.0"
+opentelemetry = "0.33.1"
+opentelemetry_sdk = "0.33.1"
+opentelemetry-otlp = "0.33.1"
 opentelemetry-instrumentation-actix-web = { version = "0.25.0", features = ["sync-middleware", "awc", "metrics"] }
-opentelemetry-appender-tracing = "0.33.0"
+opentelemetry-appender-tracing = "0.33.1"
 opentelemetry-resource-detectors = "0.13.0"
 
 [dependencies.uuid]
