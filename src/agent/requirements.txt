@@ -1347,13 +1347,13 @@ keyring==25.7.0 \
     --hash=sha256:be4a0b195f149690c166e850609a477c532ddbfbaed96a404d4e43f8d5e2689f \
     --hash=sha256:fe01bd85eb3f8fb3dd0405defdeac9a5b4f6f0439edbb3149577f244a2e8245b
     # via py-key-value-aio
-langchain==1.4.6 \
-    --hash=sha256:7c3fbd5460ddc180115c10bbd385fbbde335fa166dd525ad22c0f599d13a9fad \
-    --hash=sha256:ad3ccfdc50005eb06bf1fcbae61aa69ad98fe8bc7d7c1b4ad88323b5bda4cbac
+langchain==1.4.7 \
+    --hash=sha256:818275348cd707f7fbbe92ece0a725c25823140a054cf29865f420e0200fa2af \
+    --hash=sha256:bc40d4a9a46f0c3d75e316c0e576931fe19bceef83912a71dc1e0df781eb8f82
     # via -r requirements.in
-langchain-core==1.6.10 \
-    --hash=sha256:14341bdd8b42d0dd9a53dbbcd8b0599ab47b0c718c7caa12e3eb5c50b32cffcb \
-    --hash=sha256:3ad7a64eab150c1fea9f8a748b1c076aa1a960c5cf7c28d81a841a2f2dbffad1
+langchain-core==1.7.0 \
+    --hash=sha256:c34e53358b103cd73f43c63f5f46f9b5c6c3467efdffcdf134892b89020494e4 \
+    --hash=sha256:e82b24d7ac51fc74874baa29d6b3c0b8234880d4f3d897f8ff57fb80dfd9b07d
     # via
     #   langchain
     #   langchain-mcp-adapters
@@ -1370,9 +1370,9 @@ langchain-openai==1.7.2 \
     --hash=sha256:9be7980edf355ca2dd595b795a5125836ccf04515ef9377228913246156e59f5 \
     --hash=sha256:e1fcbc7a96f7c8c94679d61639a979bba88f27889c0a68dfa225b8057345328d
     # via -r requirements.in
-langchain-protocol==0.0.19 \
-    --hash=sha256:4cdf879a492a35980fd859ae792d3c65458ccaae504e183c9a10d7eac1f0720f \
-    --hash=sha256:79d90a1425122ac87e8052e2ec054fbd09c3edbf341bdfb6397112a495c7bf8c
+langchain-protocol==0.0.20 \
+    --hash=sha256:0f5bd002474265648e91161771a9e0438fe9480bd55a416e51af0f60070637ec \
+    --hash=sha256:3c935e5e46b0f6f9cb52f45ba7cfa53d1b9fa80c82c4a277d47f03e07f7385b1
     # via
     #   langchain-core
     #   langgraph-sdk
@@ -1396,9 +1396,9 @@ langgraph-sdk==0.4.5 \
     --hash=sha256:d49a98a2ee8e0c494b101a7caf8061c8b4b94d3ee5ada0ea2dbe50903a5487b1 \
     --hash=sha256:e03ef033a20d21288af496e9b6c08ae3afcc1b58dc5abcd37575bfd1a93045de
     # via langgraph
-langsmith==0.14.2 \
-    --hash=sha256:2df33ebe2ff20461b1f818895b8f15cbfd6e5b95be9d9e754ab3045cc6fe6f53 \
-    --hash=sha256:9e3dda3df013514b919acf3b147fcecc1758b8ef04a764b6cb61052991617ee2
+langsmith==0.14.12 \
+    --hash=sha256:9dafba7f615afa77204dc8afbb9c803e4ba1b55e96249f12c8f9aafb23fae6d0 \
+    --hash=sha256:b4d6a24ed74333095da476803ad9d22ee35f9dae1052cebf1e366d3889a9b675
     # via langchain-core
 markdown-it-py==4.2.0 \
     --hash=sha256:04a21681d6fbb623de53f6f364d352309d4094dd4194040a10fd51833e418d49 \
@@ -1869,9 +1869,9 @@ openfeature-hooks-opentelemetry==0.3.1 \
     --hash=sha256:6d399244a6f5408f474ae2b0233257e30d8a041d635f71c2727c033dbfe1fe92 \
     --hash=sha256:ef4cddec8d328a9b6b738494de3aed623a9917d3b83b2e6b0377e4d2a21d3b22
     # via -r requirements.in
-openfeature-provider-flagd==0.6.0 \
-    --hash=sha256:1a29f9a6b1946fe006989d3e5429a6fde3d3c76aa3afd46f9628c6eeff13bfce \
-    --hash=sha256:91cfec21e713d7136d33d3ece4ef32e5c3cc280f022ec509119df6e04bd9493a
+openfeature-provider-flagd==0.6.1 \
+    --hash=sha256:51abf745af31fccc2029d093f87f5769af488c2634794cee935fc3594add8d52 \
+    --hash=sha256:f6a3f9b9873923f0ba8cae10248f3503e1f6929b5b60909f54677cdb8868f4b8
     # via -r requirements.in
 openfeature-sdk==0.10.0 \
     --hash=sha256:75497ea75d73f684eef509a25f79ad6386368862e050af80ab70a44ae49b33e4 \
