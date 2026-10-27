@@ -30,7 +30,7 @@ using OpenFeature.Providers.Flagd;
 using OpenTelemetry.OpAmp.Client;
 
 var builder = WebApplication.CreateBuilder(args);
-string valkeyAddress = builder.Configuration["VALKEY_ADDR"];
+string? valkeyAddress = builder.Configuration["VALKEY_ADDR"];
 if (string.IsNullOrEmpty(valkeyAddress))
 {
     Console.WriteLine("VALKEY_ADDR environment variable is required.");
@@ -99,7 +99,7 @@ builder.Services.AddSingleton<HealthServiceImpl>();
 
 var app = builder.Build();
 
-OpAmpClient opAmpClient = null;
+OpAmpClient? opAmpClient = null;
 var opampEndpoint = builder.Configuration["OPAMP_SERVER_ENDPOINT"];
 var opampSkipTlsCertificateVerification =
     builder.Configuration.GetValue<bool>("OPAMP_SERVER_TLS_INSECURE_SKIP_VERIFY");
