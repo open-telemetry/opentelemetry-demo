@@ -5,7 +5,7 @@
 plugins {
     id 'java'
     id 'idea'
-    id 'org.springframework.boot' version '4.1.1'
+    id 'org.springframework.boot' version '4.1.2'
     id 'com.google.protobuf' version '0.10.0'
 }
 
@@ -18,7 +18,7 @@ group = "recommendation"
 version = "0.1.0-SNAPSHOT"
 
 // protoc-gen-grpc-java, kept at the gRPC version the Spring Boot BOM manages for the runtime
-def grpcVersion = "1.85.0"
+def grpcVersion = "1.85.1"
 def protocVersion = "4.36.2"
 def opentelemetryInstrumentationVersion = "2.31.1"
 def openFeatureSdkVersion = "1.23.0"
