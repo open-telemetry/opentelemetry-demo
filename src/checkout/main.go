@@ -378,7 +378,7 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 	shippingTrackingAttribute := attribute.String("demo.shipping.tracking.id", shippingTrackingID)
 	span.AddEvent("shipped", trace.WithAttributes(shippingTrackingAttribute))
 
-	_ = cs.emptyUserCart(ctx, req.UserId)
+	cs.emptyCartAfterOrder(ctx, req.UserId, orderID.String())
 
 	orderResult := &pb.OrderResult{
 		OrderId:            orderID.String(),
@@ -530,6 +530,25 @@ func (cs *checkout) getUserCart(ctx context.Context, userID string) ([]*pb.CartI
 		return nil, fmt.Errorf("failed to get user cart during checkout: %+v", err)
 	}
 	return cart.GetItems(), nil
+}
+
+// emptyCartAfterOrder empties the user's cart once an order has been charged
+// and shipped. The order is already complete at that point, so a failure must
+// not fail the request; it is recorded on the span and logged so that the
+// leftover cart (which could be checked out a second time) is visible.
+func (cs *checkout) emptyCartAfterOrder(ctx context.Context, userID, orderID string) {
+	err := cs.emptyUserCart(ctx, userID)
+	if err == nil {
+		return
+	}
+	trace.SpanFromContext(ctx).RecordError(err)
+	logger.LogAttrs(
+		ctx,
+		slog.LevelWarn, "order placed but cart could not be emptied",
+		slog.String("user_id", userID),
+		slog.String("demo.order.id", orderID),
+		slog.String("error", err.Error()),
+	)
 }
 
 func (cs *checkout) emptyUserCart(ctx context.Context, userID string) error {
