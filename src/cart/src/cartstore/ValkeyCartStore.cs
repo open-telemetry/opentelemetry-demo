@@ -30,8 +30,7 @@ public class ValkeyCartStore : ICartStore
     private readonly byte[] _emptyCartBytes;
     private readonly string _connectionString;
 
-    private static readonly ActivitySource CartActivitySource = new("OpenTelemetry.Demo.Cart");
-    private static readonly Meter CartMeter = new Meter("OpenTelemetry.Demo.Cart");
+    private static readonly Meter CartMeter = new("OpenTelemetry.Demo.Cart");
     private static readonly Histogram<double> addItemHistogram = CartMeter.CreateHistogram(
         "demo.cart.add_item.latency",
         unit: "s",
@@ -168,7 +167,7 @@ public class ValkeyCartStore : ICartStore
                 }
             }
 
-            await db.HashSetAsync(userId, new[]{ new HashEntry(CartFieldName, cart.ToByteArray()) });
+            await db.HashSetAsync(userId, [new HashEntry(CartFieldName, cart.ToByteArray())]);
             await db.KeyExpireAsync(userId, TimeSpan.FromMinutes(60));
         }
         catch (Exception ex)
@@ -190,7 +189,7 @@ public class ValkeyCartStore : ICartStore
             var db = _redis.GetDatabase();
 
             // Update the cache with empty cart for given user
-            await db.HashSetAsync(userId, new[] { new HashEntry(CartFieldName, _emptyCartBytes) });
+            await db.HashSetAsync(userId, [new HashEntry(CartFieldName, _emptyCartBytes)]);
             await db.KeyExpireAsync(userId, TimeSpan.FromMinutes(60));
         }
         catch (Exception ex)

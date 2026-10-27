@@ -2,13 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 using System;
 
-using Grpc.Health.V1;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using System.Threading.Tasks;
-using System.Threading;
-
-using Grpc.Core;
-
 using cart.cartstore;
 using cart.services;
 using cart.healthcheck;
@@ -17,7 +10,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Instrumentation.StackExchangeRedis;
 using OpenTelemetry.Logs;
@@ -91,9 +83,9 @@ builder.Services.AddOpenTelemetry()
         .SetExemplarFilter(ExemplarFilterType.TraceBased)
         .AddOtlpExporter());
 builder.Services.AddGrpc();
-builder.Services.AddSingleton<readinessCheck>();
+builder.Services.AddSingleton<ReadinessCheck>();
 builder.Services.AddGrpcHealthChecks()
-    .AddCheck<readinessCheck>("oteldemo.CartService");
+    .AddCheck<ReadinessCheck>("oteldemo.CartService");
 
 builder.Services.AddSingleton<HealthServiceImpl>();
 

@@ -1,30 +1,23 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
-
-using cart;
 using Grpc.Core;
-using Grpc.HealthCheck;
 using Grpc.Health.V1;
 using System.Threading.Tasks;
 using System.Threading;
 
 using OpenFeature;
-using OpenFeature.Hooks;
-using OpenFeature.Providers.Flagd;
 
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 
 namespace cart.healthcheck
 {
-    public class readinessCheck : IHealthCheck
+    public class ReadinessCheck : IHealthCheck
     {
         private readonly IFeatureClient _featureClient;
 
-        public readinessCheck(IFeatureClient featureClient)
+        public ReadinessCheck(IFeatureClient featureClient)
         {
             _featureClient = featureClient;
         }
