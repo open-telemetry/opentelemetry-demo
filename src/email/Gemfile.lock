@@ -31,33 +31,33 @@ GEM
     google-protobuf (4.36.2-x86_64-linux-musl)
       bigdecimal
       rake (~> 13.3)
-    googleapis-common-protos-types (1.23.0)
+    googleapis-common-protos-types (1.24.0)
       google-protobuf (~> 4.26)
-    grpc (1.84.0)
+    grpc (1.85.0)
       google-protobuf (>= 3.25, < 5.0)
       googleapis-common-protos-types (~> 1.0)
-    grpc (1.84.0-aarch64-linux-gnu)
+    grpc (1.85.0-aarch64-linux-gnu)
       google-protobuf (>= 3.25, < 5.0)
       googleapis-common-protos-types (~> 1.0)
-    grpc (1.84.0-aarch64-linux-musl)
+    grpc (1.85.0-aarch64-linux-musl)
       google-protobuf (>= 3.25, < 5.0)
       googleapis-common-protos-types (~> 1.0)
-    grpc (1.84.0-arm64-darwin)
+    grpc (1.85.0-arm64-darwin)
       google-protobuf (>= 3.25, < 5.0)
       googleapis-common-protos-types (~> 1.0)
-    grpc (1.84.0-x86-linux-gnu)
+    grpc (1.85.0-x86-linux-gnu)
       google-protobuf (>= 3.25, < 5.0)
       googleapis-common-protos-types (~> 1.0)
-    grpc (1.84.0-x86-linux-musl)
+    grpc (1.85.0-x86-linux-musl)
       google-protobuf (>= 3.25, < 5.0)
       googleapis-common-protos-types (~> 1.0)
-    grpc (1.84.0-x86_64-darwin)
+    grpc (1.85.0-x86_64-darwin)
       google-protobuf (>= 3.25, < 5.0)
       googleapis-common-protos-types (~> 1.0)
-    grpc (1.84.0-x86_64-linux-gnu)
+    grpc (1.85.0-x86_64-linux-gnu)
       google-protobuf (>= 3.25, < 5.0)
       googleapis-common-protos-types (~> 1.0)
-    grpc (1.84.0-x86_64-linux-musl)
+    grpc (1.85.0-x86_64-linux-musl)
       google-protobuf (>= 3.25, < 5.0)
       googleapis-common-protos-types (~> 1.0)
     logger (1.7.0)
@@ -82,7 +82,7 @@ GEM
     openfeature-flagd-provider (0.1.0)
       grpc (~> 1.50)
       openfeature-sdk (~> 0.3)
-    openfeature-sdk (0.6.5)
+    openfeature-sdk (0.8.1)
     opentelemetry-api (1.11.1)
       logger
     opentelemetry-common (0.25.2)
@@ -110,7 +110,7 @@ GEM
       opentelemetry-logs-sdk (~> 0.1)
       opentelemetry-sdk
       opentelemetry-semantic_conventions
-    opentelemetry-exporter-otlp-metrics (0.14.0)
+    opentelemetry-exporter-otlp-metrics (0.15.0)
       google-protobuf (>= 3.18, < 5.0)
       googleapis-common-protos-types (~> 1.3)
       opentelemetry-api (~> 1.1)
@@ -287,7 +287,7 @@ GEM
       opentelemetry-sdk (~> 1.3)
     opentelemetry-metrics-api (0.10.0)
       opentelemetry-api (~> 1.0)
-    opentelemetry-metrics-sdk (0.21.0)
+    opentelemetry-metrics-sdk (0.22.0)
       opentelemetry-api (~> 1.1)
       opentelemetry-metrics-api (~> 0.10.0)
       opentelemetry-sdk (~> 1.13.0)
@@ -342,14 +342,14 @@ DEPENDENCIES
   google-protobuf (~> 4.36.2)
   net-smtp (~> 0.5.1)
   openfeature-flagd-provider (~> 0.1)
-  openfeature-sdk (~> 0.6)
+  openfeature-sdk (~> 0.8)
   opentelemetry-common (~> 0.25)
   opentelemetry-exporter-otlp (~> 0.36)
   opentelemetry-exporter-otlp-logs (~> 0.7)
-  opentelemetry-exporter-otlp-metrics (~> 0.14)
+  opentelemetry-exporter-otlp-metrics (~> 0.15)
   opentelemetry-instrumentation-all (~> 0.99)
   opentelemetry-logs-sdk (~> 0.8)
-  opentelemetry-metrics-sdk (~> 0.21)
+  opentelemetry-metrics-sdk (~> 0.22)
   opentelemetry-sdk (~> 1.13)
   ostruct
   pony (~> 1.13)
@@ -370,16 +370,16 @@ CHECKSUMS
   google-protobuf (4.36.2-x86_64-darwin) sha256=8d1bd2a344f7f589703b202ad2ee4cca8ef731b4ced45782ef92d385967384ba
   google-protobuf (4.36.2-x86_64-linux-gnu) sha256=d25a820873e423f1d209ae8c672a4a28b019e2429debd0901d26670a0b4e14db
   google-protobuf (4.36.2-x86_64-linux-musl) sha256=0fa17686c896da96a60a705e56ddc7d4ff56413f52787c655bd4c9fb33ffe14f
-  googleapis-common-protos-types (1.23.0) sha256=992e740a523794d9fc5f29a504465d8fc737aaa16c930fe7228e3346860faf0a
-  grpc (1.84.0) sha256=df2dd2d379fe3419a58af64f2fab514202437e28b7df5b441a16da542486a98f
-  grpc (1.84.0-aarch64-linux-gnu) sha256=38bcb6998cca338718e39e2b89785964850f71444279a033c296ceb40406cfad
-  grpc (1.84.0-aarch64-linux-musl) sha256=514fad5bc13ed336d424ac056d21803c27f4e2feaddf9eddfc94750bae03f40b
-  grpc (1.84.0-arm64-darwin) sha256=aee56ed688f44750832fbc50c17eb1c75ce1c0d38693dc08d4f37560e1646277
-  grpc (1.84.0-x86-linux-gnu) sha256=f9846e8aa06f7d70b41b5ea96a7ff97dd5cce28d379788040f93eab1c0f9b52b
-  grpc (1.84.0-x86-linux-musl) sha256=adb35f72337bd6709e6e874e165d11096ea7015cb9ef33ed30f0a072e1bb2817
-  grpc (1.84.0-x86_64-darwin) sha256=deb0ba1f82af9200afd0a71301e2039306cd1a3ca3010c814fb67f57eed38642
-  grpc (1.84.0-x86_64-linux-gnu) sha256=3e9be3e4c4734a2a4977aa34446c604b1542a21fe67e4b7772be01602eac6bb3
-  grpc (1.84.0-x86_64-linux-musl) sha256=1ded8b5df0fafb16b195bf559470bf38b9a22bf74a820b892ebb931ca9f2d8ee
+  googleapis-common-protos-types (1.24.0) sha256=f76599ac6eeddf9ed1cc909c2ff6c9f028c50f69cb1696f43101df6a1fe9f106
+  grpc (1.85.0) sha256=790fb8073453a7a4e4ade9ab265b92d6e8129f60c8ddae06cc9e3cb18e3e2366
+  grpc (1.85.0-aarch64-linux-gnu) sha256=d38ea50e5b45ce7ee8416b522e5926d271a94f8a3346d886625efe0043c6e2bd
+  grpc (1.85.0-aarch64-linux-musl) sha256=a84380f5586ae7d6393f69543c07ff5c85758236f52ebdc02c675530d2154015
+  grpc (1.85.0-arm64-darwin) sha256=27441b9851dbb07b57442b54cfaa4c31a6f0446a409bf0d932c1d0f94fc243b7
+  grpc (1.85.0-x86-linux-gnu) sha256=23466d2db1f493e615e025323f483af50e36316fa8f4645adcf9d5f7f0abcc13
+  grpc (1.85.0-x86-linux-musl) sha256=1066fa19a851954a1954ea98fab520f8af00e7454de00edd2a87e3a10f5cf86d
+  grpc (1.85.0-x86_64-darwin) sha256=e451ef4d733408530db44028197e8d9449743fcaed2ef81801e537a3c03d1516
+  grpc (1.85.0-x86_64-linux-gnu) sha256=1623b7d7c9a7c8a2f4709ffa00ad98fb873a530cf7003de76fc9136adebcaa9d
+  grpc (1.85.0-x86_64-linux-musl) sha256=dfc3ffa78de52c9b491d580ca445e0a4f62fbbc88c5d9e0c24abcdb812133d7b
   logger (1.7.0) sha256=196edec7cc44b66cfb40f9755ce11b392f21f7967696af15d274dde7edff0203
   mail (2.9.1) sha256=06574eca475253d6c18145dd70af80d0eb970182d55053497c5f4d797ea160e8
   mini_mime (1.1.5) sha256=8681b7e2e4215f2a159f9400b5816d85e9d8c6c6b491e96a12797e798f8bccef
@@ -390,13 +390,13 @@ CHECKSUMS
   net-smtp (0.5.2) sha256=35103cc04d6b2d94632f9928ede07483c24b70b9c0db1f231fea43909b678f3c
   nio4r (2.7.5) sha256=6c90168e48fb5f8e768419c93abb94ba2b892a1d0602cb06eef16d8b7df1dca1
   openfeature-flagd-provider (0.1.0) sha256=5fcf40e2b3b3c93a8f4c6da35ad467d9f7692e11ba506eda246699df668c595d
-  openfeature-sdk (0.6.5) sha256=43e89fa7c2000a534522fb4aacf4a5791e90bfe4287a3a3a1255a14ccb2d28de
+  openfeature-sdk (0.8.1) sha256=848384105923a686e93c154a445c60df5c540a99926a5c75c6d9c41201e24cda
   opentelemetry-api (1.11.1) sha256=d07f9987ea6240b3fd5ed5dd7450f93c58e403e0553e804069c23ae18ba61ff7
   opentelemetry-common (0.25.2) sha256=c035d44987789356fe8feeeb870708b44fe7564ffc032dec7200c39da92a911d
   opentelemetry-exporter-otlp (0.37.0) sha256=edc8bda657dce5f4d527ac735f75d44043bb5924de6df0e3f01260108aa76136
   opentelemetry-exporter-otlp-common (0.4.0) sha256=a52eee35b18267b960b107dbd875cdd6d66d0f8e09e91332a87983ca0f645cd8
   opentelemetry-exporter-otlp-logs (0.7.0) sha256=a6a53d24a9287e20f73a7a29180bfa10da2c205a72d12d5a8f47f98d3165843d
-  opentelemetry-exporter-otlp-metrics (0.14.0) sha256=ba25126db14cbb25c00d9ee0f20ca189966fb66132744c70c20c50e7dea421f1
+  opentelemetry-exporter-otlp-metrics (0.15.0) sha256=54ab87d96462988736c02588cffef5526ccd262834b70ecced53a79c69b1414c
   opentelemetry-helpers-mysql (0.6.0) sha256=7eeb5e6950c434775a8cf28b5fde4defc12e8b865c86479ce3119fcf593d9337
   opentelemetry-helpers-sql (0.4.0) sha256=b10e8c3a2cca28a98af951bbb3e4efdc59e68b25ba0825e055574af543420afb
   opentelemetry-helpers-sql-processor (0.5.1) sha256=c0a054c56429b549af33b7af9ad1db9db2cc33f1267fe120cbee4241fb6cf825
@@ -450,7 +450,7 @@ CHECKSUMS
   opentelemetry-logs-api (0.7.0) sha256=53ea80e36b830bf068d6e44ec3776da7bf42f62ccc1d5a5944cc221999febe5d
   opentelemetry-logs-sdk (0.8.1) sha256=cb02f3b325ebbced9eb07f56057c93b1ee2d8cb44144b77d0ecf59684747d3a3
   opentelemetry-metrics-api (0.10.0) sha256=bbeeba7606886d7a918b3e4edeb96ac51eb8d3308630d610eee12be53836c755
-  opentelemetry-metrics-sdk (0.21.0) sha256=eddb7772559e0b5a60b31059df68d4390baac2f2972f594574f2e9dd8da2e383
+  opentelemetry-metrics-sdk (0.22.0) sha256=8bf3e7d4dc32ff4b41d91e626ca36e8c23fab0bf0f77b1922e6abbe7bb80ebe2
   opentelemetry-registry (0.6.3) sha256=568fa8eaea94394f29f4fce3f0339ab10c3bf6d6c8beed6b3cfee6fd37fcc608
   opentelemetry-sdk (1.13.1) sha256=91c9cc315ac7ef30243549eeff8b27cd0d39bd02bdf9c9ae481ab96a1cec6754
   opentelemetry-semantic_conventions (1.44.0) sha256=b09b8793422f13b01c08f7a6f29b5f511f47f37bcdb57c0513465a0464168513

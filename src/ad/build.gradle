@@ -20,9 +20,9 @@ group = "ad"
 version = "0.1.0-SNAPSHOT"
 
 def opentelemetryVersion = "1.67.0"
-def opentelemetryInstrumentationVersion = "2.32.0"
-def grpcVersion = "1.85.0"
-def jacksonVersion = "2.22.3"
+def opentelemetryInstrumentationVersion = "2.33.0"
+def grpcVersion = "1.85.1"
+def jacksonVersion = "2.22.4"
 def protocVersion = "4.36.2"
 def prometheusMetricsVersion = "1.10.0"
 

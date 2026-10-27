@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.78.0@sha256:bec336cd9581df9be51b4dfb8fb19e76723c275b8f824b60d7a18c7ae5943942 AS otelagent
+FROM ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.82.0-1@sha256:5e62930ff177336e7220017f88c86f6f7b5ca95a38beb8f029ff96eff809028e AS otelagent
 
 # -----------------------------------------------------------------------------
 
