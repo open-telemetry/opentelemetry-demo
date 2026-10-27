@@ -47,7 +47,7 @@ public class ValkeyCartStore : ICartStore
         });
     private readonly ConfigurationOptions _redisConnectionOptions;
 
-    public ValkeyCartStore(ILogger<ValkeyCartStore> logger, string valkeyAddress, IFeatureClient featureClient, string valkeyPassword = null, bool valkeyTls = false)
+    public ValkeyCartStore(ILogger<ValkeyCartStore> logger, string valkeyAddress, IFeatureClient featureClient, string? valkeyPassword = null, bool valkeyTls = false)
     {
         _logger = logger;
         _featureClient = featureClient;
