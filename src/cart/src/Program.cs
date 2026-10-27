@@ -28,7 +28,7 @@ if (string.IsNullOrEmpty(valkeyAddress))
     Console.WriteLine("VALKEY_ADDR environment variable is required.");
     Environment.Exit(1);
 }
-string valkeyPassword = builder.Configuration["VALKEY_PASSWORD"];
+string? valkeyPassword = builder.Configuration["VALKEY_PASSWORD"];
 bool valkeyTls = bool.TryParse(builder.Configuration["VALKEY_TLS"], out var tls) && tls;
 
 builder.Logging
