@@ -19,6 +19,7 @@ concurrency:
 jobs:
   analyze:
     name: Analyze ${{ matrix.language }}
+    if: ${{ !github.event.repository.fork }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     permissions:

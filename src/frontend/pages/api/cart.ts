@@ -48,7 +48,7 @@ const handler: NextApiHandler<TResponse> = async ({ method, body, query }, res) 
     }
 
     default: {
-      return res.status(405);
+      return res.status(405).send('');
     }
   }
 };
