@@ -10,7 +10,7 @@ component: cart
 note: Support connecting to a Valkey/Redis server that requires TLS or a password, via the optional `VALKEY_TLS` and `VALKEY_PASSWORD` environment variables.
 
 # One or more tracking issues or pull requests related to the change. You can use the PR number here if no issue exists.
-issues: []
+issues: [4215]
 
 # (Optional) One or more lines of additional information to render under the primary note.
 # These lines will be padded with 2 spaces and then inserted directly into the document.
