@@ -190,7 +190,7 @@ const CheckoutForm = ({ onSubmit }: IProps) => {
         name="creditCardCvv"
       />
       <ThemedView style={styles.submitContainer}>
-        <Pressable style={styles.submit} onPress={handleSubmit(onSubmit)}>
+        <Pressable style={styles.submit} onPress={() => handleSubmit(onSubmit)()}>
           <ThemedText style={styles.submitText}>Place Order</ThemedText>
         </Pressable>
       </ThemedView>
