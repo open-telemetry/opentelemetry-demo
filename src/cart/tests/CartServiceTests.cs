@@ -50,6 +50,7 @@ public class CartServiceTests
         // Setup test server and client
         using var server = await _host.StartAsync();
         var httpClient = server.GetTestClient();
+        Assert.NotNull(httpClient.BaseAddress);
 
         string userId = Guid.NewGuid().ToString();
 
@@ -79,6 +80,7 @@ public class CartServiceTests
         // Setup test server and client
         using var server = await _host.StartAsync();
         var httpClient = server.GetTestClient();
+        Assert.NotNull(httpClient.BaseAddress);
 
         string userId = Guid.NewGuid().ToString();
 
@@ -125,6 +127,7 @@ public class CartServiceTests
         // Setup test server and client
         using var server = await _host.StartAsync();
         var httpClient = server.GetTestClient();
+        Assert.NotNull(httpClient.BaseAddress);
 
         string userId = Guid.NewGuid().ToString();
 

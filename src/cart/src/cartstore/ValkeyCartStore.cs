@@ -11,6 +11,7 @@ using Google.Protobuf;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics.Metrics;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
 namespace cart.cartstore;
@@ -22,15 +23,14 @@ public class ValkeyCartStore : ICartStore
     private const string CartFieldName = "cart";
     private const int RedisRetryNumber = 30;
 
-    private volatile ConnectionMultiplexer _redis;
+    private volatile ConnectionMultiplexer? _redis;
     private volatile bool _isRedisConnectionOpened;
 
     private readonly Lock _locker = new();
     private readonly byte[] _emptyCartBytes;
     private readonly string _connectionString;
 
-    private static readonly ActivitySource CartActivitySource = new("OpenTelemetry.Demo.Cart");
-    private static readonly Meter CartMeter = new Meter("OpenTelemetry.Demo.Cart");
+    private static readonly Meter CartMeter = new("OpenTelemetry.Demo.Cart");
     private static readonly Histogram<double> addItemHistogram = CartMeter.CreateHistogram(
         "demo.cart.add_item.latency",
         unit: "s",
@@ -47,16 +47,22 @@ public class ValkeyCartStore : ICartStore
         });
     private readonly ConfigurationOptions _redisConnectionOptions;
 
-    public ValkeyCartStore(ILogger<ValkeyCartStore> logger, string valkeyAddress, IFeatureClient featureClient)
+    public ValkeyCartStore(ILogger<ValkeyCartStore> logger, string valkeyAddress, IFeatureClient featureClient, string? valkeyPassword = null, bool valkeyTls = false)
     {
         _logger = logger;
         _featureClient = featureClient;
         // Serialize empty cart into byte array.
         var cart = new Oteldemo.Cart();
         _emptyCartBytes = cart.ToByteArray();
-        _connectionString = $"{valkeyAddress},ssl=false,allowAdmin=true,abortConnect=false";
+        _connectionString = $"{valkeyAddress},ssl={(valkeyTls ? "true" : "false")},allowAdmin=true,abortConnect=false";
 
         _redisConnectionOptions = ConfigurationOptions.Parse(_connectionString);
+
+        // Set the password on the options rather than the connection string, which gets logged.
+        if (!string.IsNullOrEmpty(valkeyPassword))
+        {
+            _redisConnectionOptions.Password = valkeyPassword;
+        }
 
         // Try to reconnect multiple times if the first retry fails.
         _redisConnectionOptions.ConnectRetry = RedisRetryNumber;
@@ -76,9 +82,10 @@ public class ValkeyCartStore : ICartStore
         EnsureRedisConnected();
     }
 
+    [MemberNotNull(nameof(_redis))]
     private void EnsureRedisConnected()
     {
-        if (_isRedisConnectionOpened)
+        if (_isRedisConnectionOpened && _redis is not null)
         {
             return;
         }
@@ -86,7 +93,7 @@ public class ValkeyCartStore : ICartStore
         // Connection is closed or failed - open a new one but only at the first thread
         lock (_locker)
         {
-            if (_isRedisConnectionOpened)
+            if (_isRedisConnectionOpened && _redis is not null)
             {
                 return;
             }
@@ -108,7 +115,7 @@ public class ValkeyCartStore : ICartStore
 
             Log.RedisSmallTest(_logger);
             cache.StringSet("cart", "OK" );
-            string res = (string)cache.StringGet("cart");
+            string? res = cache.StringGet("cart");
 
             Log.RedisSmallTestResult(_logger, res);
 
@@ -141,10 +148,10 @@ public class ValkeyCartStore : ICartStore
             var db = _redis.GetDatabase();
 
             // Access the cart from the cache
-            var value = await db.HashGetAsync(userId, CartFieldName);
+            var value = (byte[]?)await db.HashGetAsync(userId, CartFieldName);
 
             Oteldemo.Cart cart;
-            if (value.IsNull)
+            if (value is null)
             {
                 cart = new Oteldemo.Cart
                 {
@@ -154,7 +161,7 @@ public class ValkeyCartStore : ICartStore
             }
             else
             {
-                cart = Oteldemo.Cart.Parser.ParseFrom((byte[])value);
+                cart = Oteldemo.Cart.Parser.ParseFrom(value);
                 var existingItem = cart.Items.SingleOrDefault(i => i.ProductId == productId);
                 if (existingItem == null)
                 {
@@ -166,7 +173,7 @@ public class ValkeyCartStore : ICartStore
                 }
             }
 
-            await db.HashSetAsync(userId, new[]{ new HashEntry(CartFieldName, cart.ToByteArray()) });
+            await db.HashSetAsync(userId, [new HashEntry(CartFieldName, cart.ToByteArray())]);
             await db.KeyExpireAsync(userId, TimeSpan.FromMinutes(60));
         }
         catch (Exception ex)
@@ -188,7 +195,7 @@ public class ValkeyCartStore : ICartStore
             var db = _redis.GetDatabase();
 
             // Update the cache with empty cart for given user
-            await db.HashSetAsync(userId, new[] { new HashEntry(CartFieldName, _emptyCartBytes) });
+            await db.HashSetAsync(userId, [new HashEntry(CartFieldName, _emptyCartBytes)]);
             await db.KeyExpireAsync(userId, TimeSpan.FromMinutes(60));
         }
         catch (Exception ex)
@@ -212,11 +219,11 @@ public class ValkeyCartStore : ICartStore
             var db = _redis.GetDatabase();
 
             // Access the cart from the cache
-            var value = await db.HashGetAsync(userId, CartFieldName);
+            var value = (byte[]?)await db.HashGetAsync(userId, CartFieldName);
 
-            if (!value.IsNull)
+            if (value is not null)
             {
-                return Oteldemo.Cart.Parser.ParseFrom((byte[])value);
+                return Oteldemo.Cart.Parser.ParseFrom(value);
             }
 
             // We decided to return empty cart in cases when user wasn't in the cache before
@@ -233,7 +240,7 @@ public class ValkeyCartStore : ICartStore
                 // Intentionally bad practice: trace IDs as metric attributes cause high cardinality.
                 // Only for demonstrating overflow. Use exemplars for metric-to-trace correlation.
                 getCartHistogram.Record(stopwatch.Elapsed.TotalSeconds,
-                    new KeyValuePair<string, object>("demo.cart.trace_id", activity.TraceId.ToString()));
+                    new KeyValuePair<string, object?>("demo.cart.trace_id", activity.TraceId.ToString()));
             }
             else
             {
@@ -246,6 +253,11 @@ public class ValkeyCartStore : ICartStore
     {
         try
         {
+            if (_redis is null)
+            {
+                return false;
+            }
+
             var cache = _redis.GetDatabase();
             var res = cache.Ping();
             return res != TimeSpan.Zero;

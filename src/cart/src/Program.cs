@@ -2,13 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 using System;
 
-using Grpc.Health.V1;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using System.Threading.Tasks;
-using System.Threading;
-
-using Grpc.Core;
-
 using cart.cartstore;
 using cart.services;
 using cart.healthcheck;
@@ -17,7 +10,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Instrumentation.StackExchangeRedis;
 using OpenTelemetry.Logs;
@@ -30,12 +22,14 @@ using OpenFeature.Providers.Flagd;
 using OpenTelemetry.OpAmp.Client;
 
 var builder = WebApplication.CreateBuilder(args);
-string valkeyAddress = builder.Configuration["VALKEY_ADDR"];
+string? valkeyAddress = builder.Configuration["VALKEY_ADDR"];
 if (string.IsNullOrEmpty(valkeyAddress))
 {
     Console.WriteLine("VALKEY_ADDR environment variable is required.");
     Environment.Exit(1);
 }
+string? valkeyPassword = builder.Configuration["VALKEY_PASSWORD"];
+bool valkeyTls = bool.TryParse(builder.Configuration["VALKEY_TLS"], out var tls) && tls;
 
 builder.Logging
     .AddOpenTelemetry(options => options.AddOtlpExporter())
@@ -43,7 +37,7 @@ builder.Logging
 
 builder.Services.AddSingleton<ICartStore>(x =>
 {
-    var store = new ValkeyCartStore(x.GetRequiredService<ILogger<ValkeyCartStore>>(), valkeyAddress, x.GetRequiredService<IFeatureClient>());
+    var store = new ValkeyCartStore(x.GetRequiredService<ILogger<ValkeyCartStore>>(), valkeyAddress, x.GetRequiredService<IFeatureClient>(), valkeyPassword, valkeyTls);
     store.Initialize();
     return store;
 });
@@ -91,15 +85,15 @@ builder.Services.AddOpenTelemetry()
         .SetExemplarFilter(ExemplarFilterType.TraceBased)
         .AddOtlpExporter());
 builder.Services.AddGrpc();
-builder.Services.AddSingleton<readinessCheck>();
+builder.Services.AddSingleton<ReadinessCheck>();
 builder.Services.AddGrpcHealthChecks()
-    .AddCheck<readinessCheck>("oteldemo.CartService");
+    .AddCheck<ReadinessCheck>("oteldemo.CartService");
 
 builder.Services.AddSingleton<HealthServiceImpl>();
 
 var app = builder.Build();
 
-OpAmpClient opAmpClient = null;
+OpAmpClient? opAmpClient = null;
 var opampEndpoint = builder.Configuration["OPAMP_SERVER_ENDPOINT"];
 var opampSkipTlsCertificateVerification =
     builder.Configuration.GetValue<bool>("OPAMP_SERVER_TLS_INSECURE_SKIP_VERIFY");
