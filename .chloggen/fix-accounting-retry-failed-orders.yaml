@@ -15,4 +15,6 @@ issues: [4155]
 # Use a strip-chomping block scalar (|-) for multiline entries so no trailing
 # whitespace is emitted into CHANGELOG.md.
 subtext: |-
-  The Kafka consumer now commits an order's offset only after it is saved (or recognised as a duplicate), and re-reads the message after a short delay when the database write fails. Messages that cannot be parsed are still skipped.
+  The Kafka consumer now commits an order's offset only after it is saved (or recognised as a duplicate),
+  and re-reads the message after a short delay when the database write fails.
+  Messages that cannot be parsed are still skipped.
