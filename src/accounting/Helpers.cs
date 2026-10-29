@@ -31,7 +31,7 @@ namespace Accounting
         {
             foreach (var env in envs.OrderBy(x => x.Key))
             {
-                Console.WriteLine(IsSensitive(env.Key.ToString()) ? new DictionaryEntry(env.Key, "***") : env);
+                Console.WriteLine(IsSensitive(env.Key.ToString()) ? new DictionaryEntry(env.Key, "[REDACTED]") : env);
             }
         }
 
