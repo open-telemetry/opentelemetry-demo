@@ -150,7 +150,7 @@ type checkout struct {
 	paymentSvcAddr        string
 	kafkaBrokerSvcAddr    string
 	pb.UnimplementedCheckoutServiceServer
-	KafkaProducerClient     sarama.AsyncProducer
+	KafkaProducerClient     *kafka.Producer
 	shippingSvcClient       pb.ShippingServiceClient
 	productCatalogSvcClient pb.ProductCatalogServiceClient
 	cartSvcClient           pb.CartServiceClient
@@ -679,49 +679,26 @@ func (cs *checkout) sendToPostProcessor(ctx context.Context, result *pb.OrderRes
 
 	// Send message and handle response
 	startTime := time.Now()
-	select {
-	case cs.KafkaProducerClient.Input() <- &msg:
-		select {
-		case successMsg := <-cs.KafkaProducerClient.Successes():
-			span.SetAttributes(
-				attribute.Bool("messaging.kafka.producer.success", true),
-				attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
-				attribute.KeyValue(semconv.MessagingKafkaMessageOffset(int(successMsg.Offset))),
-			)
-			logger.Info(fmt.Sprintf("Successful to write message. offset: %v, duration: %v", successMsg.Offset, time.Since(startTime)))
-		case errMsg := <-cs.KafkaProducerClient.Errors():
-			span.SetAttributes(
-				attribute.Bool("messaging.kafka.producer.success", false),
-				attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
-			)
-			span.SetStatus(otelcodes.Error, errMsg.Err.Error())
-			logger.Error(fmt.Sprintf("Failed to write message: %v", errMsg.Err))
-		case <-ctx.Done():
-			span.SetAttributes(
-				attribute.Bool("messaging.kafka.producer.success", false),
-				attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
-			)
-			span.SetStatus(otelcodes.Error, "Context cancelled: "+ctx.Err().Error())
-			logger.Warn(fmt.Sprintf("Context canceled before success message received: %v", ctx.Err()))
-		}
-	case <-ctx.Done():
-		span.SetAttributes(
-			attribute.Bool("messaging.kafka.producer.success", false),
-			attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
-		)
-		span.SetStatus(otelcodes.Error, "Failed to send: "+ctx.Err().Error())
-		logger.Error(fmt.Sprintf("Failed to send message to Kafka within context deadline: %v", ctx.Err()))
+	err = cs.KafkaProducerClient.Send(ctx, &msg)
+	span.SetAttributes(
+		attribute.Bool("messaging.kafka.producer.success", err == nil),
+		attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
+	)
+	if err != nil {
+		span.SetStatus(otelcodes.Error, err.Error())
+		logger.Error(fmt.Sprintf("Failed to write message, queued for retry: %v", err))
 		return
 	}
+	span.SetAttributes(attribute.KeyValue(semconv.MessagingKafkaMessageOffset(int(msg.Offset))))
+	logger.Info(fmt.Sprintf("Successful to write message. offset: %v, duration: %v", msg.Offset, time.Since(startTime)))
 
 	ffValue := flags.KafkaQueueProblems.Value(ctx, openfeature.EvaluationContext{})
 	if ffValue > 0 {
 		logger.Info("Warning: FeatureFlag 'kafkaQueueProblems' is activated, overloading queue now.")
 		for range ffValue {
-			go func(msg sarama.ProducerMessage) {
-				cs.KafkaProducerClient.Input() <- &msg
-				<-cs.KafkaProducerClient.Successes()
-			}(msg)
+			go func() {
+				cs.KafkaProducerClient.Input() <- &sarama.ProducerMessage{Topic: msg.Topic, Value: msg.Value, Headers: msg.Headers}
+			}()
 		}
 		logger.Info(fmt.Sprintf("Done with #%d messages for overload simulation.", ffValue))
 	}

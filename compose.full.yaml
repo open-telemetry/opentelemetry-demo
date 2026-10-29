@@ -131,6 +131,7 @@ services:
     environment:
       - KAFKA_ADDR
       - KAFKA_TOPIC
+      - KAFKA_RETRY_QUEUE_SIZE
     depends_on:
       kafka:
         condition: service_healthy

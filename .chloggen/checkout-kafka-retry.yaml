@@ -1,0 +1,10 @@
+change_type: bug_fix
+
+component: checkout
+
+note: Wait for Kafka to acknowledge order events and retry undelivered ones from a bounded in-memory queue, so orders placed while Kafka is down still reach accounting.
+
+issues: [4156]
+
+subtext: |-
+  The queue holds up to `KAFKA_RETRY_QUEUE_SIZE` events (default 1000). When it is full, the oldest event is dropped and logged.
