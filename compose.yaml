@@ -856,6 +856,9 @@ services:
       - --config=/etc/otelcol-config-extras.yml
       - --feature-gates=service.profilesSupport
     user: 0:0
+    # Required for docker_stats to access the Podman socket on SELinux hosts.
+    security_opt:
+      - label=disable
     volumes:
       - ${HOST_FILESYSTEM}:/hostfs:ro
       - ${DOCKER_SOCK}:/var/run/docker.sock:ro
