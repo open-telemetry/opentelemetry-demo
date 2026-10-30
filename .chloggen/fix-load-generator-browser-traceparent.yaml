@@ -1,0 +1,4 @@
+change_type: bug_fix
+component: load-generator
+note: Propagate traceparent on Playwright browser requests so frontend-proxy spans no longer show a missing parent.
+issues: [4227]

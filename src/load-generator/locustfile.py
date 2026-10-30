@@ -7,6 +7,7 @@ import json
 import os
 import random
 import uuid
+import functools
 import logging
 
 from locust import HttpUser, task, between
@@ -18,6 +19,7 @@ import grpc.experimental.gevent
 grpc.experimental.gevent.gevent_loaded = True
 
 from opentelemetry import context, baggage, trace
+from opentelemetry.propagate import inject
 from opentelemetry.context import Context
 from opentelemetry.metrics import set_meter_provider
 from opentelemetry.sdk.metrics import MeterProvider
@@ -274,7 +276,7 @@ if browser_traffic_enabled:
             with tracer.start_as_current_span("browser_change_currency", context=Context()):
                 try:
                     page.on("console", lambda msg: print(msg.text))
-                    await page.route('**/*', add_baggage_header)
+                    await page.route('**/*', functools.partial(add_baggage_header, otel_context=context.get_current()))
                     await page.goto("/cart", wait_until="domcontentloaded")
                     await page.select_option('[name="currency_code"]', 'CHF')
                     await page.wait_for_timeout(2000)  # giving the browser time to export the traces
@@ -289,7 +291,7 @@ if browser_traffic_enabled:
             with tracer.start_as_current_span("browser_add_to_cart", context=Context()):
                 try:
                     page.on("console", lambda msg: print(msg.text))
-                    await page.route('**/*', add_baggage_header)
+                    await page.route('**/*', functools.partial(add_baggage_header, otel_context=context.get_current()))
                     # Wait for Roof Binoculars image to load (awaiting successful XHR response in less than 15 seconds)
                     async with page.expect_event(
                         "response",
@@ -306,10 +308,11 @@ if browser_traffic_enabled:
                 except Exception as e:
                     logging.error(f"Error in add to cart task: {str(e)}")
 
-async def add_baggage_header(route: Route, request: Request):
+async def add_baggage_header(route: Route, request: Request, otel_context=None):
     existing_baggage = request.headers.get('baggage', '')
     headers = {
         **request.headers,
         'baggage': ', '.join(filter(None, (existing_baggage, 'synthetic_request=true')))
     }
+    inject(headers, context=otel_context)
     await route.continue_(headers=headers)
