@@ -44,7 +44,7 @@ docker build --file ./src/ad/Dockerfile ./
 
 The Ad service intentionally emits custom metrics in **two different ways**:
 
-1. **OpenTelemetry SDK** (recommended): `adRequestsCounter`
+1. **OpenTelemetry API** (recommended): `adRequestsCounter`
    (`demo.ad.requests`) is created via `GlobalOpenTelemetry.getMeter(...)`
    and exported to the OTel Collector over OTLP.
 2. **Prometheus client library**: `adsServedCounter`
@@ -62,7 +62,7 @@ OpenTelemetry-native pipeline without rewriting everything up front. The
 Collector's `prometheus` receiver is the bridge that makes this possible.
 
 **Recommendation**: this is a *transitional* pattern. Prefer the
-OpenTelemetry SDK for new custom metrics, and migrate existing
+OpenTelemetry API for new custom metrics, and migrate existing
 Prometheus-client metrics to it - incremental migration as you touch
 the surrounding code has proven successful in practice, but a focused
 refactor works too; what matters is that the migration happens.
