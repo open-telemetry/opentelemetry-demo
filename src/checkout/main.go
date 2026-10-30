@@ -378,7 +378,7 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 	shippingTrackingAttribute := attribute.String("demo.shipping.tracking.id", shippingTrackingID)
 	span.AddEvent("shipped", trace.WithAttributes(shippingTrackingAttribute))
 
-	_ = cs.emptyUserCart(ctx, req.UserId)
+	cs.emptyCartAfterOrder(ctx, req.UserId, orderID.String())
 
 	orderResult := &pb.OrderResult{
 		OrderId:            orderID.String(),
@@ -532,6 +532,16 @@ func (cs *checkout) getUserCart(ctx context.Context, userID string) ([]*pb.CartI
 	return cart.GetItems(), nil
 }
 
+func (cs *checkout) emptyCartAfterOrder(ctx context.Context, userID, orderID string) {
+	if err := cs.emptyUserCart(ctx, userID); err != nil {
+		trace.SpanFromContext(ctx).RecordError(err)
+		logger.LogAttrs(ctx, slog.LevelWarn, "order placed but cart could not be emptied",
+			slog.String("user_id", userID),
+			slog.String("demo.order.id", orderID),
+			slog.Any("error", err),
+		)
+	}
+}
 func (cs *checkout) emptyUserCart(ctx context.Context, userID string) error {
 	if _, err := cs.cartSvcClient.EmptyCart(ctx, &pb.EmptyCartRequest{UserId: userID}); err != nil {
 		return fmt.Errorf("failed to empty user cart during checkout: %+v", err)
