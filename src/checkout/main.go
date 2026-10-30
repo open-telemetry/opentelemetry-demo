@@ -533,20 +533,15 @@ func (cs *checkout) getUserCart(ctx context.Context, userID string) ([]*pb.CartI
 }
 
 func (cs *checkout) emptyCartAfterOrder(ctx context.Context, userID, orderID string) {
-	err := cs.emptyUserCart(ctx, userID)
-	if err == nil {
-		return
+	if err := cs.emptyUserCart(ctx, userID); err != nil {
+		trace.SpanFromContext(ctx).RecordError(err)
+		logger.LogAttrs(ctx, slog.LevelWarn, "order placed but cart could not be emptied",
+			slog.String("user_id", userID),
+			slog.String("demo.order.id", orderID),
+			slog.Any("error", err),
+		)
 	}
-	trace.SpanFromContext(ctx).RecordError(err)
-	logger.LogAttrs(
-		ctx,
-		slog.LevelWarn, "order placed but cart could not be emptied",
-		slog.String("user_id", userID),
-		slog.String("demo.order.id", orderID),
-		slog.String("error", err.Error()),
-	)
 }
-
 func (cs *checkout) emptyUserCart(ctx context.Context, userID string) error {
 	if _, err := cs.cartSvcClient.EmptyCart(ctx, &pb.EmptyCartRequest{UserId: userID}); err != nil {
 		return fmt.Errorf("failed to empty user cart during checkout: %+v", err)
