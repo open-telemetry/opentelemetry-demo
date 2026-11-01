@@ -18,7 +18,7 @@ components:
   frontend:
     replicas: 3
   cart:
-    replicas: 3
+    replicas: 0
   checkout:
     replicas: 2
   currency:
