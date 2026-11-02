@@ -21,8 +21,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import oteldemo.Demo.Empty;
 import oteldemo.Demo.ListRecommendationsRequest;
@@ -47,6 +49,7 @@ public class RecommendationService extends RecommendationServiceGrpc.Recommendat
   private final Client featureFlags;
   private final Tracer tracer;
   private final LongCounter recommendations;
+  private final long catalogTimeoutMillis;
 
   private final List<String> cachedIds = new ArrayList<>();
   private boolean firstRun = true;
@@ -54,8 +57,13 @@ public class RecommendationService extends RecommendationServiceGrpc.Recommendat
   public RecommendationService(
       ProductCatalogServiceBlockingStub productCatalog,
       Client featureFlags,
-      OpenTelemetry openTelemetry) {
+      OpenTelemetry openTelemetry,
+      @Value("${recommendation.catalog-timeout-ms:2000}") long catalogTimeoutMillis) {
+    if (catalogTimeoutMillis <= 0) {
+      throw new IllegalArgumentException("recommendation.catalog-timeout-ms must be positive");
+    }
     this.productCatalog = productCatalog;
+    this.catalogTimeoutMillis = catalogTimeoutMillis;
     this.featureFlags = featureFlags;
     this.tracer = openTelemetry.getTracer("recommendation");
     this.recommendations =
@@ -151,7 +159,8 @@ public class RecommendationService extends RecommendationServiceGrpc.Recommendat
   }
 
   private List<String> fetchProductIds() {
-    return productCatalog.listProducts(Empty.getDefaultInstance()).getProductsList().stream()
+    return productCatalog.withDeadlineAfter(catalogTimeoutMillis, TimeUnit.MILLISECONDS)
+        .listProducts(Empty.getDefaultInstance()).getProductsList().stream()
         .map(Product::getId)
         .toList();
   }
