@@ -1,4 +1,4 @@
-FROM node:24.13.0-alpine AS build
+FROM node:24.22.2-alpine AS build
 
 WORKDIR /usr/src/app
 
@@ -8,7 +8,7 @@ RUN npm ci --omit-dev
 
 # -----------------------------------------------------------------------------
 
-FROM node:24.13.0-alpine
+FROM node:24.22.2-alpine
 
 RUN apk upgrade --no-cache
 
