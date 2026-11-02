@@ -372,6 +372,17 @@ agent:
           - attributes["url.full"] == "http://flagd:8013/flagd.evaluation.v1.Service/EventStream"
           - attributes["url.full"] == "http://flagd:8013/flagd.evaluation.v2.Service/EventStream"
           - attributes["url.path"] == "/live/longpoll"
+          # Envoy CLIENT "router flagservice egress" 404s. FlagdWebProvider
+          # EventStream is rewritten onto flagd:8016 (OFREP), which 404s.
+          # drop_flagd already removes the SERVER parent (url has
+          # flagd.evaluation.v1.Service); the CLIENT child has no URL, so
+          # it was leaking through as a 404 error on frontend-proxy.
+          - name == "router flagservice egress" and attributes["http.status_code"] == 404
+          - name == "router flagservice egress" and attributes["http.status_code"] == "404"
+          - name == "router flagservice egress" and attributes["http.response.status_code"] == 404
+          - name == "router flagservice egress" and attributes["http.response.status_code"] == "404"
+          - attributes["upstream_cluster"] == "flagservice" and attributes["http.status_code"] == 404
+          - attributes["upstream_cluster"] == "flagservice" and attributes["http.status_code"] == "404"
       # Drop kubelet health-probe spans.
       #
       # Every gRPC service in the demo carries a livenessProbe (10s) and a
