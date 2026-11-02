@@ -38,7 +38,9 @@ module.exports = {
 
   // OTEL Resource Attributes
   resourceAttributes: {
-    'service.version': '1.7.0-a',
+    // Buttercup demo version — APM Troubleshooting groups errors by this.
+    // Must not be a shop tag like 2.0.9 (stitch would also clobber digits).
+    'service.version': 'v350.9',
     'payment.variant': 'A',
     'payment.api.version': 'v1',
     'deployment.stability': 'stable',
