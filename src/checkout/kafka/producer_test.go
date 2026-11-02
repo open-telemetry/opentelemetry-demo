@@ -198,6 +198,54 @@ func TestFullQueueDropsOldest(t *testing.T) {
 	}
 }
 
+func TestZeroQueueSizeDropsFailedMessage(t *testing.T) {
+	mock := newMockProducer(t)
+	mock.ExpectInputAndFail(errBrokerDown)
+	var logs syncBuffer
+	p := newProducer(mock, 0, time.Hour, slog.New(slog.NewTextHandler(&logs, nil)))
+
+	if p.RetryEnabled() {
+		t.Error("RetryEnabled() = true, want false for queue size 0")
+	}
+	if err := p.Send(context.Background(), newMessage("order-1")); !errors.Is(err, errBrokerDown) {
+		t.Fatalf("Send() error = %v, want %v", err, errBrokerDown)
+	}
+	if n := p.queued(); n != 0 {
+		t.Errorf("queued = %d, want 0", n)
+	}
+	if n := strings.Count(logs.String(), "Kafka retry queue is disabled"); n != 1 {
+		t.Errorf("drop log lines = %d, want 1, logs:\n%s", n, logs.String())
+	}
+	if err := mock.Close(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestGetRetryQueueSize(t *testing.T) {
+	for _, tc := range []struct {
+		value string
+		want  int
+		warn  bool
+	}{
+		{"", defaultRetryQueueSize, false},
+		{"0", 0, false},
+		{"25", 25, false},
+		{"abc", defaultRetryQueueSize, true},
+		{"-1", defaultRetryQueueSize, true},
+	} {
+		t.Run(tc.value, func(t *testing.T) {
+			t.Setenv("KAFKA_RETRY_QUEUE_SIZE", tc.value)
+			var logs syncBuffer
+			if got := getRetryQueueSize(slog.New(slog.NewTextHandler(&logs, nil))); got != tc.want {
+				t.Errorf("getRetryQueueSize() = %d, want %d", got, tc.want)
+			}
+			if warned := strings.Contains(logs.String(), "Invalid KAFKA_RETRY_QUEUE_SIZE"); warned != tc.warn {
+				t.Errorf("warning logged = %v, want %v, logs:\n%s", warned, tc.warn, logs.String())
+			}
+		})
+	}
+}
+
 func TestFailureAfterContextDoneIsQueued(t *testing.T) {
 	mock := newMockProducer(t)
 	release := make(chan struct{})

@@ -134,6 +134,12 @@ func (p *Producer) Send(ctx context.Context, msg *sarama.ProducerMessage) error 
 	}
 }
 
+// RetryEnabled reports whether messages that could not be delivered are kept
+// for retry, which is the case unless KAFKA_RETRY_QUEUE_SIZE is 0.
+func (p *Producer) RetryEnabled() bool {
+	return p.queueSize > 0
+}
+
 // dispatchResults is the only reader of Successes and Errors. It hands each
 // result to the channel in the message's Metadata.
 func (p *Producer) dispatchResults() {
@@ -165,6 +171,10 @@ func (p *Producer) deliverResult(msg *sarama.ProducerMessage, err error) {
 }
 
 func (p *Producer) enqueue(msg *sarama.ProducerMessage) {
+	if !p.RetryEnabled() {
+		p.logger.ErrorContext(messageContext(msg), "Kafka retry queue is disabled (KAFKA_RETRY_QUEUE_SIZE is 0), dropping the message")
+		return
+	}
 	p.mu.Lock()
 	p.queue = append(p.queue, msg)
 	p.dropOverflow()

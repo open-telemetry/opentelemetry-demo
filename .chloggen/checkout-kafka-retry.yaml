@@ -7,4 +7,4 @@ note: Wait for Kafka to acknowledge order events and retry undelivered ones from
 issues: [4156]
 
 subtext: |-
-  The queue holds up to `KAFKA_RETRY_QUEUE_SIZE` events (default 1000). When it is full, the oldest event is dropped and logged.
+  The queue holds up to `KAFKA_RETRY_QUEUE_SIZE` events (default 1000, 0 disables the retry). When it is full, the oldest event is dropped and logged.

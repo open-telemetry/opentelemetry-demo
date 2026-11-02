@@ -686,7 +686,11 @@ func (cs *checkout) sendToPostProcessor(ctx context.Context, result *pb.OrderRes
 	)
 	if err != nil {
 		span.SetStatus(otelcodes.Error, err.Error())
-		logger.Error(fmt.Sprintf("Failed to write message, queued for retry: %v", err))
+		if cs.KafkaProducerClient.RetryEnabled() {
+			logger.Error(fmt.Sprintf("Failed to write message, queued for retry: %v", err))
+		} else {
+			logger.Error(fmt.Sprintf("Failed to write message: %v", err))
+		}
 		return
 	}
 	span.SetAttributes(attribute.KeyValue(semconv.MessagingKafkaMessageOffset(int(msg.Offset))))
