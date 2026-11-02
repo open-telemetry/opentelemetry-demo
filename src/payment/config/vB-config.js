@@ -49,7 +49,9 @@ module.exports = {
 
   // OTEL Resource Attributes
   resourceAttributes: {
-    'service.version': '1.7.0-b',
+    // Buttercup demo version — APM Troubleshooting groups errors by this.
+    // Failed Charge traces should concentrate here (not shop tag 2.0.9).
+    'service.version': 'v350.10',
     'payment.variant': 'B',
     'payment.api.version': 'v2',
     'deployment.stability': 'canary',

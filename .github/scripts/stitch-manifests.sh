@@ -246,9 +246,11 @@ stitch_payment() {
 
         if [ -n "$REGISTRY_URL" ] && [ "$SHOULD_REPLACE" = "true" ]; then
             local TMP; TMP=$(mktemp)
+            # Do not rewrite payment A/B service.version — v350.9 / v350.10
+            # are the Buttercup demo versions APM uses to split errors.
+            # stitch's numeric regex used to turn 1.7.2-a/b into the shop tag.
             sed -e "s|ghcr.io/[^/]*/[^/]*|${REGISTRY_URL}|g" \
                 -e "s|app.kubernetes.io/version: [0-9][0-9.]*[^\"[:space:]]*|app.kubernetes.io/version: ${SERVICE_VERSION}|g" \
-                -e "s|service.version=[0-9][0-9.]*[^,[:space:]]*|service.version=${SERVICE_VERSION}|g" \
                 "$CURRENT_MANIFEST" > "$TMP"
             apply_image_versions "$TMP"
             cat "$TMP" >> "$OUT_FILE"
@@ -257,7 +259,6 @@ stitch_payment() {
             cat "$CURRENT_MANIFEST" >> "$OUT_FILE"
         else
             sed -e "s|app.kubernetes.io/version: [0-9][0-9.]*[^\"[:space:]]*|app.kubernetes.io/version: ${SERVICE_VERSION}|g" \
-                -e "s|service.version=[0-9][0-9.]*[^,[:space:]]*|service.version=${SERVICE_VERSION}|g" \
                 "$CURRENT_MANIFEST" >> "$OUT_FILE"
         fi
 
