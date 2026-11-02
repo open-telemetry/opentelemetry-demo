@@ -1,0 +1,43 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
+plugins {
+    id 'application'
+    id 'com.google.protobuf' version '0.10.0'
+}
+
+repositories {
+    mavenCentral()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 17
+}
+
+dependencies {
+    implementation 'org.apache.kafka:kafka-clients:4.4.0'
+    implementation 'com.google.protobuf:protobuf-java:4.36.2'
+    implementation 'io.opentelemetry:opentelemetry-api:1.67.0'
+    runtimeOnly 'org.slf4j:slf4j-jdk14:2.0.20'
+
+    testImplementation platform('org.junit:junit-bom:5.14.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'io.opentelemetry:opentelemetry-sdk-testing:1.67.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+sourceSets.main.proto.srcDir '../../pb'
+
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:4.36.2'
+    }
+}
+
+application {
+    mainClass = 'oteldemo.businessmetrics.BusinessMetricsApplication'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

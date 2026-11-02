@@ -1,0 +1,29 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+attributes:
+  - key: currency
+    type: string
+    brief: Currency of the ordered products
+    stability: development
+    examples: ["USD", "EUR"]
+
+metrics:
+  - name: demo.business.orders
+    brief: Number of processed orders
+    instrument: counter
+    unit: "{order}"
+    stability: development
+    annotations:
+      service: business-metrics
+  - name: demo.business.sales
+    brief: Value of ordered products excluding shipping
+    instrument: counter
+    unit: "{currency}"
+    stability: development
+    annotations:
+      service: business-metrics
+    attributes:
+      - ref: currency
+        requirement_level: required

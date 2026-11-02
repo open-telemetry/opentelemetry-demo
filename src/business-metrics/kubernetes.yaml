@@ -1,0 +1,36 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: business-metrics
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: business-metrics
+  template:
+    metadata:
+      labels:
+        app: business-metrics
+      annotations:
+        instrumentation.opentelemetry.io/inject-java: "true"
+    spec:
+      containers:
+        - name: business-metrics
+          image: otel-demo-business-metrics:local
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: KAFKA_ADDR
+              value: kafka:9092
+            - name: KAFKA_TOPIC
+              value: orders
+            - name: OTEL_SERVICE_NAME
+              value: business-metrics
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 100m
+            limits:
+              memory: 256Mi

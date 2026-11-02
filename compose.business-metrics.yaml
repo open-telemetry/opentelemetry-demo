@@ -1,0 +1,27 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+# Optional order consumer. Add after compose.yaml and compose.full.yaml.
+services:
+  business-metrics:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-business-metrics
+    build:
+      context: ./
+      dockerfile: ./src/business-metrics/Dockerfile
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    environment:
+      - KAFKA_ADDR
+      - KAFKA_TOPIC
+      - OTEL_SERVICE_NAME=business-metrics
+    depends_on:
+      kafka:
+        condition: service_healthy
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"

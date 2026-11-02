@@ -1,0 +1,4 @@
+change_type: new_component
+component: business-metrics
+note: Add an optional order consumer demonstrating custom business metrics and operator-injected Java instrumentation.
+issues: [850]
