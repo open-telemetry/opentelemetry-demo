@@ -5,7 +5,7 @@ go 1.26.0
 require (
 	github.com/XSAM/otelsql v0.44.0
 	github.com/lib/pq v1.12.3
-	github.com/open-feature/go-sdk v1.19.0
+	github.com/open-feature/go-sdk v1.20.0
 	github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.8
 	github.com/open-feature/go-sdk-contrib/providers/flagd v0.8.0
 	github.com/open-telemetry/opamp-go v0.25.0
@@ -18,7 +18,7 @@ require (
 	go.opentelemetry.io/otel/metric v1.47.0
 	go.opentelemetry.io/otel/sdk v1.47.0
 	go.opentelemetry.io/otel/trace v1.47.0
-	google.golang.org/grpc v1.84.0
+	google.golang.org/grpc v1.85.0
 	google.golang.org/protobuf v1.36.12
 )
 
