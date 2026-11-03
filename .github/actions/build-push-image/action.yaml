@@ -64,6 +64,13 @@ runs:
 
         echo "Building $SERVICE (registry-type=$REGISTRY_TYPE, push=$PUSH)"
 
+        # Load the Dynatrace Dockerfile overrides (*_DOCKERFILE)
+        if [ -f .env.override ]; then
+          ci_image_name="$IMAGE_NAME"
+          set -a; . ./.env.override; set +a
+          IMAGE_NAME="$ci_image_name"
+        fi
+
         if [ "$REGISTRY_TYPE" == "ecr" ]; then
           if [ "$PUSH" == "true" ]; then
             PUSH_FLAG="--push"
@@ -121,6 +128,13 @@ runs:
         set -euo pipefail
 
         echo "Building and pushing $SERVICE with latest tag..."
+
+        # Same override handling as the build step; keep CI-provided registry.
+        if [ -f .env.override ]; then
+          ci_image_name="$IMAGE_NAME"
+          set -a; . ./.env.override; set +a
+          IMAGE_NAME="$ci_image_name"
+        fi
 
         docker buildx bake \
           --file "$COMPOSE_FILE" \
