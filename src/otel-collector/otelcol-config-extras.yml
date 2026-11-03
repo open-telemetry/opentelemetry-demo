@@ -54,13 +54,13 @@ service:
   pipelines:
     traces/aegis:
       receivers: [otlp]
-      processors: [resourcedetection, memory_limiter, transform/sanitize_spans, resource/aegis_tenant]
+      processors: [resource_detection, memory_limiter, transform/sanitize_spans, transform/redact_sensitive_data, redaction, resource/aegis_tenant]
       exporters: [otlphttp/aegis]
     metrics/aegis:
       receivers: [otlp]
-      processors: [resourcedetection, memory_limiter, resource/aegis_tenant]
+      processors: [resource_detection, memory_limiter, resource/aegis_tenant]
       exporters: [otlphttp/aegis]
     logs/aegis:
       receivers: [otlp]
-      processors: [resourcedetection, memory_limiter, transform/sanitize_logs, resource/aegis_tenant]
+      processors: [resource_detection, memory_limiter, transform/sanitize_logs, resource/aegis_tenant]
       exporters: [otlphttp/aegis]
