@@ -95,13 +95,13 @@
       "state": "ENABLED",
       "variants": {
         "off": {
+          "american-express": "American Express",
           "mastercard": "Mastercard",
-          "unionpay": "UnionPay",
           "visa": "Visa"
         },
         "on": {
+          "american_express": "American Express",
           "mastercard": "Mastercard",
-          "union_pay": "UnionPay",
           "visa": "Visa"
         }
       }
