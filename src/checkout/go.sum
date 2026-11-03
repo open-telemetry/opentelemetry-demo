@@ -83,8 +83,8 @@ github.com/open-feature/flagd-schemas v0.2.13 h1:LzoyQfirfpR8cxI4PKnoFRtpwPjpC/c
 github.com/open-feature/flagd-schemas v0.2.13/go.mod h1:C0jnJ4C3j2LzGuqKgLDdTsdfKEWQp6sOHZyxu3QohFU=
 github.com/open-feature/flagd/core v0.19.0 h1:bglWn4AnXLAzSETFlLGYt2H0ko/74xr6V5iux1iSK54=
 github.com/open-feature/flagd/core v0.19.0/go.mod h1:dSUGvUAx9k1xoh79Gj1HUSpor+SJw6Xefmcwk9gHbFY=
-github.com/open-feature/go-sdk v1.19.0 h1:vahRSX/kYzLny7bUuxssNiiHOGqHlDIG47z+jJ/DCEY=
-github.com/open-feature/go-sdk v1.19.0/go.mod h1:JlS8ClrWUzfywMOOeFo0Ro3BeT8cS5O/KbZUOOjwtyQ=
+github.com/open-feature/go-sdk v1.20.0 h1:cQV15LaPAQi1bLEoR2KHlzVxm6UuEqrohJ7qXVq+ZAk=
+github.com/open-feature/go-sdk v1.20.0/go.mod h1:lnLzUUPhw3J9gfj1utYmc7vXG9eM0apShLvr/rGAyCs=
 github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.8 h1:Q4qE8pJzHIUvUOxxOGCjVC6JCvwhEAhd1dORiqZRQkM=
 github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.8/go.mod h1:tAfMn9uwFTEispHdfltEbmMJ+am+LqyNJwtB9KXMNdc=
 github.com/open-feature/go-sdk-contrib/providers/flagd v0.8.0 h1:iE/eQP3zl6ceFKMxw+V3Omr09PAJHyMs7Xc3HaVR3DQ=
@@ -209,8 +209,8 @@ google.golang.org/genproto/googleapis/api v0.0.0-20260928230214-8a89bd6388cc h1:
 google.golang.org/genproto/googleapis/api v0.0.0-20260928230214-8a89bd6388cc/go.mod h1:K/n0XLazCJHjD73YuMyNJsN38BPPy1kfFnKxUXaThFU=
 google.golang.org/genproto/googleapis/rpc v0.0.0-20260928230214-8a89bd6388cc h1:4bNTbnb44EqGVy9HaQxSY2jnafSUdgV3qHtedvNpDKg=
 google.golang.org/genproto/googleapis/rpc v0.0.0-20260928230214-8a89bd6388cc/go.mod h1:OaIUM3+LpYcK2GXM4FTmhWoIq371Owdr+Cc7/BsYHHc=
-google.golang.org/grpc v1.84.0 h1:soMyaPJ8pAak5PIQ0DGBUir0XRo2fRoMqhNWMLlLxO0=
-google.golang.org/grpc v1.84.0/go.mod h1:ljCht0DrxQrXBDRTZp52Qxh3Ffk8CdYm2sj4O2QN2C0=
+google.golang.org/grpc v1.85.0 h1:BPBCfuVRQ1qvBhKDOq9uvQllMvO59rKsYhXpp7Dd8vw=
+google.golang.org/grpc v1.85.0/go.mod h1:0rQrOD58yjal/0EaVbGBANindixsCZNQPDV3VKtaKuQ=
 google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.5.1 h1:F29+wU6Ee6qgu9TddPgooOdaqsxTMunOoj8KA5yuS5A=
 google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.5.1/go.mod h1:5KF+wpkbTSbGcR9zteSqZV6fqFOWBl4Yde8En8MryZA=
 google.golang.org/protobuf v1.36.12 h1:pJOKDDOyeXErUroCihFAd5LQuwXBSpVnKGrj5o/fwxc=
