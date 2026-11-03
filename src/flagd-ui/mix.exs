@@ -44,7 +44,7 @@ defmodule FlagdUi.MixProject do
   defp deps do
     [
       {:phoenix, "~> 1.8.9", override: true},
-      {:phoenix_html, "~> 4.3.0"},
+      {:phoenix_html, "~> 4.4.0"},
       {:phoenix_live_reload, "~> 1.7.0", only: :dev},
       {:phoenix_live_view, "~> 1.2.3"},
       {:floki, "~> 0.38.4", only: :test},
@@ -59,18 +59,18 @@ defmodule FlagdUi.MixProject do
        app: false,
        compile: false,
        depth: 1},
-      {:swoosh, "~> 1.28.0"},
+      {:swoosh, "~> 1.29.0"},
       {:req, "~> 0.7.2"},
       {:telemetry_metrics, "~> 1.2.0"},
       {:telemetry_poller, "~> 1.3.0"},
       {:gettext, "~> 1.0.2"},
       {:jason, "~> 1.4.5"},
       {:dns_cluster, "~> 0.3.0"},
-      {:bandit, "~> 1.12.0"},
+      {:bandit, "~> 1.14.0"},
       {:credo, "~> 1.7.19", only: [:dev, :test], runtime: false},
       {:opentelemetry, "~> 1.7.0"},
       {:opentelemetry_api, "~> 1.5.0"},
-      {:opentelemetry_exporter, "~> 1.10.0"},
+      {:opentelemetry_exporter, "~> 1.11.0"},
       {:opentelemetry_phoenix, "~> 2.0.1"},
       {:opentelemetry_bandit, "~> 0.3.0"}
     ]

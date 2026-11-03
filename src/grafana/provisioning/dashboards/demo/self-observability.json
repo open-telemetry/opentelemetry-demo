@@ -15,7 +15,7 @@
       }
     ]
   },
-  "description": "OpenTelemetry self-observability: internal metrics emitted by the OpenTelemetry SDKs themselves (experimental `otel.sdk.*` semantic conventions). Works for any service that opts in to SDK self-monitoring; new services appear automatically via the Service template variable.",
+  "description": "OpenTelemetry SDK self-observability: internal otel.sdk.* metrics and metric cardinality overflow. Services reporting either signal appear automatically in the Service selector.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
@@ -939,6 +939,185 @@
         }
       ],
       "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 79
+      },
+      "id": 50,
+      "panels": [],
+      "title": "Metric cardinality overflow",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${prometheus_datasource}"
+      },
+      "description": "Distinct services with an overflow point reported in the selected time range. Zero means no overflow observed, not proof that every SDK supports or reports cardinality limits.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 0,
+        "y": 80
+      },
+      "id": 51,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${prometheus_datasource}"
+          },
+          "editorMode": "code",
+          "expr": "count(group by (service_namespace, service_name) (last_over_time({otel_metric_overflow=\"true\",service_name=~\"$service_name\"}[$__range]))) or vector(0)",
+          "instant": true,
+          "legendFormat": "Services",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Services with overflow observed",
+      "type": "stat"
+    },
+    {
+      "id": 52,
+      "type": "text",
+      "title": "Interpreting overflow",
+      "gridPos": {
+        "h": 9,
+        "w": 18,
+        "x": 6,
+        "y": 80
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "Overflow preserves measurement values but loses their measurement attributes.\n\nFor synchronous instruments:\n- **Cumulative:** once capacity is exhausted, new attribute combinations continue overflowing until SDK state is reset, typically by restarting the service. Previously tracked combinations continue normally.\n- **Delta:** overflow can stop in subsequent collection cycles when active cardinality falls below the limit.\n\nThis dashboard shows overflow **observed within the selected time range**, which can remain visible after recovery.\n\n[Learn about cardinality limits](https://opentelemetry.io/docs/concepts/signals/metrics/#cardinality-limits)"
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${prometheus_datasource}"
+      },
+      "description": "One row per metric, service instance, and scope observed in the selected time range. Classic histogram components are grouped under their base Prometheus name only when matching _bucket series with an le label are present for the same service instance and scope. The suffix regex extracts a candidate base name; unmatched names are preserved. A row indicates presence, not lost measurement count, configured limit, or current overflow activity.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 89
+      },
+      "id": 53,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Service"
+          }
+        ]
+      },
+      "pluginVersion": "12.3.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${prometheus_datasource}"
+          },
+          "editorMode": "code",
+          "expr": "group by (metric, service_namespace, service_name, service_instance_id, otel_scope_name, otel_scope_version) ((label_replace(group by (__name__, service_namespace, service_name, service_instance_id, otel_scope_name, otel_scope_version) (last_over_time({otel_metric_overflow=\"true\",service_name=~\"$service_name\"}[$__range])), \"metric\", \"$1\", \"__name__\", \"(.+)_(bucket|sum|count)\") and on (metric, service_namespace, service_name, service_instance_id, otel_scope_name, otel_scope_version) label_replace(group by (__name__, service_namespace, service_name, service_instance_id, otel_scope_name, otel_scope_version) (last_over_time({otel_metric_overflow=\"true\",service_name=~\"$service_name\",__name__=~\".+_bucket\",le!=\"\"}[$__range])), \"metric\", \"$1\", \"__name__\", \"(.+)_bucket\")) or label_replace((label_replace(group by (__name__, service_namespace, service_name, service_instance_id, otel_scope_name, otel_scope_version) (last_over_time({otel_metric_overflow=\"true\",service_name=~\"$service_name\"}[$__range])), \"metric\", \"$1\", \"__name__\", \"(.+)_(bucket|sum|count)\") unless on (metric, service_namespace, service_name, service_instance_id, otel_scope_name, otel_scope_version) label_replace(group by (__name__, service_namespace, service_name, service_instance_id, otel_scope_name, otel_scope_version) (last_over_time({otel_metric_overflow=\"true\",service_name=~\"$service_name\",__name__=~\".+_bucket\",le!=\"\"}[$__range])), \"metric\", \"$1\", \"__name__\", \"(.+)_bucket\")), \"metric\", \"$1\", \"__name__\", \"(.+)\"))",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Metrics with overflow observed",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": true
+            },
+            "indexByName": {
+              "service_namespace": 0,
+              "service_name": 1,
+              "service_instance_id": 2,
+              "otel_scope_name": 3,
+              "otel_scope_version": 4,
+              "metric": 5
+            },
+            "renameByName": {
+              "service_namespace": "Namespace",
+              "service_name": "Service",
+              "service_instance_id": "Instance",
+              "otel_scope_name": "Scope",
+              "otel_scope_version": "Scope version",
+              "metric": "Metric"
+            }
+          }
+        }
+      ],
+      "type": "table"
     }
   ],
   "preload": false,
@@ -962,20 +1141,20 @@
         "allValue": ".*",
         "current": { "text": [ "All" ], "value": [ "$__all" ] },
         "datasource": { "type": "prometheus", "uid": "${prometheus_datasource}" },
-        "definition": "label_values({__name__=~\"otel_sdk_.+\"},service_name)",
-        "description": "Services emitting OpenTelemetry SDK self-observability metrics. Any new service that opts in appears here automatically.",
+        "definition": "query_result(group by (service_name) (last_over_time({__name__=~\"otel_sdk_.+\",service_name!=\"\"}[$__range]) or last_over_time({otel_metric_overflow=\"true\",service_name!=\"\"}[$__range])))",
+        "description": "Services reporting SDK internal metrics or cardinality overflow in the selected time range.",
         "includeAll": true,
         "label": "Service",
         "multi": true,
         "name": "service_name",
         "options": [],
         "query": {
-          "qryType": 1,
-          "query": "label_values({__name__=~\"otel_sdk_.+\"},service_name)",
+          "qryType": 3,
+          "query": "query_result(group by (service_name) (last_over_time({__name__=~\"otel_sdk_.+\",service_name!=\"\"}[$__range]) or last_over_time({otel_metric_overflow=\"true\",service_name!=\"\"}[$__range])))",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 2,
-        "regex": "",
+        "regex": "/service_name=\"([^\"]+)\"/",
         "sort": 1,
         "type": "query"
       }

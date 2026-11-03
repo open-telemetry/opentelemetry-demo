@@ -23,13 +23,6 @@ gen_proto_cpp() {
     cp -r "/$1/build/generated" "/build/src/$1/build/"
 }
 
-gen_proto_python() {
-  echo "Generating Python protobuf files for $1"
-  docker build -f "src/$1/genproto/Dockerfile" -t "$1-genproto" .
-  docker run --rm -v $(pwd):/build "$1-genproto" \
-    python -m grpc_tools.protoc -I /build/pb/ --python_out="./src/$1/" --grpc_python_out="./src/$1/" /build/pb/demo.proto
-}
-
 gen_proto_ts() {
   echo "Generating Typescript protobuf files for $1"
   docker build -f "src/$1/genproto/Dockerfile" -t "$1-genproto" .
@@ -54,7 +47,6 @@ if [ -z "$1" ]; then
   #gen_proto_js payment
   gen_proto_go product-catalog
   #gen_proto_php quote
-  gen_proto_python recommendation
   #gen_proto_rust shipping
 else
   "gen_proto_$1" "$2"

@@ -1,0 +1,11 @@
+change_type: enhancement
+
+component: ci
+
+note: Add a sanity check that fails when a collector config layer drops a pipeline receiver, processor, or exporter set by an earlier layer.
+
+issues: [4148]
+
+subtext: |-
+  The collector replaces arrays when merging `--config` files, so overlays must repeat
+  earlier entries. otelcol-config-extras.yml is excluded because forks may replace lists there.

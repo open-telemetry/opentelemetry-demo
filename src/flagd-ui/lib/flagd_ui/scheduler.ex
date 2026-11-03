@@ -66,7 +66,8 @@ defmodule FlagdUi.Scheduler do
   pairs, given a flagd configuration.
 
   A flag is eligible when it has a resting variant, its configured default, to
-  return to and at least one other variant to switch to.
+  return to, at least one other variant to switch to, and metadata is not configured
+  to opt out of scheduling (`metadata.schedulable: false`).
   """
   def schedulable_flags(config) do
     config
@@ -86,8 +87,9 @@ defmodule FlagdUi.Scheduler do
     variants = variant_names(data)
     resting = Map.get(data, "defaultVariant")
     activatable = Enum.sort(variants -- [resting])
+    schedulable = get_in(data, ["metadata", "schedulable"]) != false
 
-    if resting in variants and activatable != [] do
+    if schedulable and resting in variants and activatable != [] do
       [{name, resting, activatable}]
     else
       []

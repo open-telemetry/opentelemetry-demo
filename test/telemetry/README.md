@@ -87,14 +87,16 @@ signals it emits:
 
 ## Backend API Queries
 
-**Jaeger (traces):**
+**Jaeger (traces):** Jaeger 2.21 serves only the v3 query API under the UI base
+path; the legacy `/api/services` and `/api/traces` endpoints were removed.
 
-- List services: `GET /jaeger/ui/api/services`
-- Find traces: `GET /jaeger/ui/api/traces?service={name}&limit=1`
-- Verify directed inter-service edges: walk traces returned from
-  `GET /jaeger/ui/api/traces?service={parent}&limit=20` and match
-  parent spans to their direct children via `references[CHILD_OF]`
-  (or `parentSpanID`) plus `processes[processID].serviceName`.
+- List services: `GET /jaeger/ui/api/v3/services` (returns `{"services": [...]}`).
+- Find traces: `GET /jaeger/ui/api/v3/traces?query.service_name={name}&query.num_traces=1`
+  plus a `query.start_time_min`/`query.start_time_max` window; returns OTLP
+  `{"result": {"resourceSpans": [...]}}`.
+- Verify directed inter-service edges: walk the returned `resourceSpans` for
+  `query.service_name={child}`, build a `(traceId, spanId)` to service map from
+  each resource's `service.name`, and match each child span's `parentSpanId`.
   We do not use `/api/dependencies` because Jaeger's in-memory
   backend rotates traces and the aggregator output is unreliable
   within the warmup window.

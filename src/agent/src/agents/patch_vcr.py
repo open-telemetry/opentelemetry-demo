@@ -121,24 +121,14 @@ def _parse_body(request):
         return None
 
 
-def _unwrap_tool_content(content):
-    if isinstance(content, str):
-        return content
-    if isinstance(content, list):
-        parts = []
-        for block in content:
-            if isinstance(block, dict):
-                parts.append(str(block.get("text", block.get("content", ""))))
-            else:
-                parts.append(str(block))
-        return "".join(parts)
-    return _stringify(content)
-
-
 def _normalize_message(msg):
     if isinstance(msg, dict) and msg.get("role") == "tool":
+        # Tool results (e.g. get_recommendations) can be non-deterministic on
+        # the live backend, so their content is excluded from similarity
+        # scoring - only that a tool responded here is compared, not what it
+        # returned.
         normalized = dict(msg)
-        normalized["content"] = _unwrap_tool_content(msg.get("content"))
+        normalized["content"] = "<tool-result>"
         return normalized
     return msg
 

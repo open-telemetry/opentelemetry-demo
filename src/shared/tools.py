@@ -3,15 +3,39 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
+import functools
 import json
 import os
 
 import httpx
+from opentelemetry import metrics
+from opentelemetry.semconv._incubating.attributes.gen_ai_attributes import (
+    GEN_AI_TOOL_NAME,
+)
 
 BASE_URL = os.getenv("APPLICATION_ENDPOINT", "localhost:8080")
 TIMEOUT = httpx.Timeout(10.0)
 
+meter = metrics.get_meter(__name__)
+tool_call_counter = meter.create_counter(
+    "demo.tool.calls",
+    unit="{call}",
+    description="Number of Astronomy Shop tool calls made by the agent and MCP services",
+)
 
+
+def count_tool_call(func):
+    """Records a demo.tool.calls counter each time the wrapped tool runs."""
+
+    @functools.wraps(func)
+    async def wrapper(*args, **kwargs):
+        tool_call_counter.add(1, {GEN_AI_TOOL_NAME: func.__name__})
+        return await func(*args, **kwargs)
+
+    return wrapper
+
+
+@count_tool_call
 async def get_ads(category: str):
     """Fetch promotional ads for Astronomy Shop homepage.
     Eg : category: `telescopes` or `travel`"""
@@ -26,6 +50,7 @@ async def get_ads(category: str):
         return f"Error fetching ads: {e}"
 
 
+@count_tool_call
 async def add_to_cart(user_id: str, product_id: str, quantity: int = 1):
     """Add a product (product_id) to the shopping cart for a user (user_id)."""
     url = f"http://{BASE_URL}/api/cart"
@@ -45,6 +70,7 @@ async def add_to_cart(user_id: str, product_id: str, quantity: int = 1):
         return f"Error while adding product to cart: {e}"
 
 
+@count_tool_call
 async def get_cart(user_id: str):
     """Retrieve the current contents of a user's cart."""
     url = f"http://{BASE_URL}/api/cart"
@@ -57,6 +83,7 @@ async def get_cart(user_id: str):
         return f"Error while fetching cart: {e}"
 
 
+@count_tool_call
 async def empty_cart(user_id: str):
     """Empty the shopping cart for a user."""
     url = f"http://{BASE_URL}/api/cart"
@@ -72,6 +99,7 @@ async def empty_cart(user_id: str):
         return f"Error while emptying cart: {e}"
 
 
+@count_tool_call
 async def list_products():
     """List all products available in the Astronomy Shop."""
     url = f"http://{BASE_URL}/api/products"
@@ -84,6 +112,7 @@ async def list_products():
         return f"Error while fetching product list: {e}"
 
 
+@count_tool_call
 async def get_product(product_id: str):
     """Get detailed information about a product using its ID."""
     url = f"http://{BASE_URL}/api/products/{product_id}"
@@ -96,6 +125,7 @@ async def get_product(product_id: str):
         return f"Error while fetching product {product_id}: {e}"
 
 
+@count_tool_call
 async def checkout(checkout_person):
     """Checkout the user's cart and create an order.
     Takes request in the format {string user_id, string userCurrency, Address address, string email, CreditCardInfo creditCard}
@@ -120,6 +150,7 @@ async def checkout(checkout_person):
         return f"Error while performing checkout: {e}"
 
 
+@count_tool_call
 async def get_supported_currencies():
     """List supported currencies in Astronomy Shop."""
     url = f"http://{BASE_URL}/api/currency"
@@ -132,6 +163,7 @@ async def get_supported_currencies():
         return f"Error while fetching currency list: {e}"
 
 
+@count_tool_call
 async def get_recommendations(product_id: str):
     """Get product recommendations for a user."""
     url = f"http://{BASE_URL}/api/recommendations"
@@ -145,6 +177,7 @@ async def get_recommendations(product_id: str):
         return f"Error fetching recommendations: {e}"
 
 
+@count_tool_call
 async def get_shipping_quote(items, currency_code, address):
     """Get estimated shipping cost for a given address.
     `items`: list of {productId, quantity} (a single dict is also accepted).

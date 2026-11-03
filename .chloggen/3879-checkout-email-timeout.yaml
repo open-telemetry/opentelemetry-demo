@@ -1,5 +1,0 @@
-change_type: bug_fix
-component: checkout
-note: Bound order confirmation email requests so an unavailable email service cannot block orders until the caller deadline.
-issues: [3879]
-subtext:

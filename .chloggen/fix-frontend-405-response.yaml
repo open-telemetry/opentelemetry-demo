@@ -1,0 +1,7 @@
+change_type: bug_fix
+
+component: frontend
+
+note: Complete the response with an explicit 405 for unsupported methods on the `/api/cart`, `/api/currency` and `/api/shipping` routes instead of leaving the request open.
+
+issues: [4160]

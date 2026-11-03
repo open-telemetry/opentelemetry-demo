@@ -130,7 +130,7 @@ addlicense:	$(ADDLICENSE)
 .PHONY: checklinks
 checklinks:
 	@echo "Checking links..."
-	lychee --config .lychee.toml --cache .
+	lychee --config .github/lychee.toml --cache .
 
 # Run all checks in order of speed / likely failure.
 .PHONY: check
@@ -297,7 +297,6 @@ docker-generate-protobuf:
 .PHONY: clean
 clean:
 	rm -rf ./src/{checkout,product-catalog}/genproto/oteldemo/
-	rm -rf ./src/recommendation/{demo_pb2,demo_pb2_grpc}.py
 	rm -rf ./src/frontend/protos/demo.ts
 
 .PHONY: check-clean-work-tree

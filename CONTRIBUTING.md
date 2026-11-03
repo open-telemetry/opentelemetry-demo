@@ -330,9 +330,11 @@ For any user-visible behavior, telemetry, configuration, or workflow change:
    with `make chlog-preview`.
 4. Commit the fragment as part of your PR.
 
-Trivial typo, cosmetic, and purely internal cleanup changes may not need a
-changelog entry. If your PR does not require one, add the `Skip Changelog` label
-to indicate the omission is intentional.
+The `Changelog` check fails if a PR adds no fragment, or edits `CHANGELOG.md`
+directly. Trivial typo, cosmetic, and purely internal cleanup changes may not
+need a changelog entry. For those, a maintainer or approver can add the
+`Skip Changelog` label to skip the check. Dependabot and Renovate PRs are
+skipped automatically.
 
 #### How fragments become the changelog at release time
 
@@ -470,7 +472,8 @@ Maintainers can create a new release when desired by following these steps.
    `change_type`) and deletes the consumed fragment files, leaving `.chloggen/`
    empty aside from `TEMPLATE.yaml` for the next release. See
    [How fragments become the changelog at release time](#how-fragments-become-the-changelog-at-release-time)
-   for the grouping details. Merge the Pull Request.
+   for the grouping details. Add the `Skip Changelog` label, since this Pull
+   Request edits `CHANGELOG.md` directly, then merge it.
 4. Create a new Pull Request to update the deployment of the demo in the
    [OpenTelemetry Helm
    Charts](https://github.com/open-telemetry/opentelemetry-helm-charts) repo.

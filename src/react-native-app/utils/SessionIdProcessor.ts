@@ -8,7 +8,7 @@ import {
   ReadableSpan,
   Span,
   SpanProcessor,
-} from "@opentelemetry/sdk-trace-web";
+} from "@opentelemetry/sdk-trace";
 import SessionGateway from "@/gateways/Session.gateway";
 
 export class SessionIdProcessor implements SpanProcessor {

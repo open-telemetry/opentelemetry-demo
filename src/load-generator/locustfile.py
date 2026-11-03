@@ -12,6 +12,11 @@ import logging
 from locust import HttpUser, task, between
 from locust_plugins.users.playwright import PlaywrightUser, pw, PageWithRetry, event
 
+# Workaround for gRPC/gevent incompatibility on shutdown (greenlet finalization crash).
+# Mark gevent as loaded before gRPC exporter imports to prevent C-extension cleanup conflicts.
+import grpc.experimental.gevent
+grpc.experimental.gevent.gevent_loaded = True
+
 from opentelemetry import context, baggage, trace
 from opentelemetry.context import Context
 from opentelemetry.metrics import set_meter_provider
@@ -122,6 +127,17 @@ products = [
 people_file = open('people.json')
 people = json.load(people_file)
 
+# Prompts the AstronomyShopAgent's bundled VCR fixtures
+# (src/agent/fixtures/vcr_cassettes) have canned responses for, so
+# USE_VCR=True replays cleanly without a real LLM.
+agent_prompts = [
+    "Show all available products in the store.",
+    "What currencies are supported by the Astronomy Shop?",
+    "What current promotions are available on binoculars?",
+]
+agent_endpoint = os.environ.get("AGENT_ENDPOINT", "agent")
+agent_port = os.environ.get("AGENT_PORT", "8010")
+
 class WebsiteUser(HttpUser):
     weight = int(os.environ.get("LOCUST_HTTP_USER_WEIGHT", "9"))
     wait_time = between(1, 10)
@@ -218,6 +234,17 @@ class WebsiteUser(HttpUser):
                 logging.info(f"User flooding homepage {flood_count} times")
                 for _ in range(0, flood_count):
                     self.client.get("/")
+
+    @task(3)
+    def ask_agent(self):
+        prompt = random.choice(agent_prompts)
+        input_messages = json.dumps([{"role": "user", "parts": [{"type": "text", "content": prompt}]}])
+        with self.tracer.start_as_current_span("user_ask_agent", context=context.get_current(), attributes={"gen_ai.input.messages": input_messages}):
+            logging.info(f"User asking agent: {prompt}")
+            self.client.post(
+                f"http://{agent_endpoint}:{agent_port}/prompt",
+                json={"message": prompt},
+            )
 
     def on_start(self):
         session_id = str(uuid.uuid4())

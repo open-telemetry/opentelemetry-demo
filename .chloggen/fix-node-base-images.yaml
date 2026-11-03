@@ -1,0 +1,8 @@
+change_type: bug_fix
+component: frontend
+note: Bump Node.js build images to 26.12.1 and the runtime image to Node 24.22.1 for the October 2026 Node.js security releases
+issues: [4187]
+subtext: |-
+  Node 25 (frontend, frontend genproto) is end-of-life. The frontend runtime
+  image (distroless nodejs24) now runs Node 24.22.1, which includes the
+  October 2026 Node.js security fixes.

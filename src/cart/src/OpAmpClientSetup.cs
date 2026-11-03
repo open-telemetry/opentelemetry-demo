@@ -1,7 +1,7 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 using System;
-using System.Collections.Generic;
+using System.Collections.Frozen;
 using System.Net.WebSockets;
 using System.Threading.Tasks;
 
@@ -11,12 +11,12 @@ using OpenTelemetry.Resources;
 
 internal static class OpAmpClientSetup
 {
-    private static readonly HashSet<string> IdentifyingKeys = new()
-    {
+    private static readonly FrozenSet<string> IdentifyingKeys =
+    [
         "service.name",
         "service.instance.id",
-        "service.namespace",
-    };
+        "service.namespace"
+    ];
 
     public static async Task<OpAmpClient> StartAsync(
         string endpoint,

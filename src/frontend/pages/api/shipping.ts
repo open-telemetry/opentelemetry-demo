@@ -21,7 +21,7 @@ const handler = async ({ method, query }: NextApiRequest, res: NextApiResponse<T
     }
 
     default: {
-      return res.status(405);
+      return res.status(405).send('');
     }
   }
 };

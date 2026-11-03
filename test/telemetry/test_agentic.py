@@ -12,19 +12,19 @@ service graph (e.g. the LangGraph workflow span emitted by Traceloop).
 import os
 
 import pytest
-import requests
 
-from conftest import poll_until
+from conftest import jaeger_resource_spans, poll_until
 
 TEST_SCOPE = os.environ.get("TEST_SCOPE", "minimal")
 
 
-def _find_span_by_operation(traces, operation_fragment: str) -> bool:
-    """Return True if any span in the trace list contains *operation_fragment*."""
-    for trace in traces:
-        for span in trace.get("spans", []):  # Jaeger returns spans as a list
-            if operation_fragment in span.get("operationName", ""):
-                return True
+def _find_span_by_name(resource_spans, name_fragment: str) -> bool:
+    """Return True if any v3 OTLP span's name contains *name_fragment*."""
+    for rs in resource_spans:
+        for scope_spans in rs.get("scopeSpans", []):
+            for span in scope_spans.get("spans", []):
+                if name_fragment in span.get("name", ""):
+                    return True
     return False
 
 
@@ -34,14 +34,8 @@ def test_agent_has_workflow_span(jaeger_url):
     'astronomy_shop_agent_workflow' span that reaches Jaeger."""
 
     def check():
-        resp = requests.get(
-            f"{jaeger_url}/jaeger/ui/api/traces",
-            params={"service": "agent", "limit": 20, "lookback": "1h"},
-            timeout=10,
-        )
-        resp.raise_for_status()
-        traces = resp.json().get("data", [])
-        return _find_span_by_operation(traces, "astronomy_shop_agent_workflow")
+        resource_spans = jaeger_resource_spans(jaeger_url, "agent", num_traces=20)
+        return _find_span_by_name(resource_spans, "astronomy_shop_agent_workflow")
 
     poll_until(
         check,

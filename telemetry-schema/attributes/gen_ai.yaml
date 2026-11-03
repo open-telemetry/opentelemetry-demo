@@ -1,0 +1,11 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+attributes:
+  - key: gen_ai.tool.name
+    type: string
+    brief: Name of the tool invoked by the agent
+    stability: stable
+    examples: ["list_products", "add_to_cart"]
+    note: The name of the Astronomy Shop tool invoked by the agent or MCP service

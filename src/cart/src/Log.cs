@@ -21,7 +21,7 @@ internal static partial class Log
     public static partial void RedisSmallTest(ILogger logger);
 
     [LoggerMessage(Level = LogLevel.Debug, EventName = "cart.redis.small_test_result", Message = "Small test result: {result}")]
-    public static partial void RedisSmallTestResult(ILogger logger, string result);
+    public static partial void RedisSmallTestResult(ILogger logger, string? result);
 
     [LoggerMessage(Level = LogLevel.Information, EventName = "cart.redis.connection_restored", Message = "Connection to redis was restored successfully.")]
     public static partial void RedisConnectionRestored(ILogger logger);

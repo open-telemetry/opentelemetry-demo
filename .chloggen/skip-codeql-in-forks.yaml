@@ -1,0 +1,9 @@
+change_type: enhancement
+
+component: ci
+
+note: Skip the advanced CodeQL workflow in forks, where an org-enforced CodeQL default setup rejects its SARIF upload.
+
+issues: [4176]
+
+subtext:
