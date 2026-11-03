@@ -1,0 +1,4 @@
+change_type: enhancement
+component: frontend
+note: Add a live local-time clock to the header, change the header background to light gray and color the header cart icon red.
+issues: [19]

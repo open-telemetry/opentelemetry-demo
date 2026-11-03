@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import CartIcon from '../CartIcon';
+import Clock from '../Clock';
 import CurrencySwitcher from '../CurrencySwitcher';
 import * as S from './Header.styled';
 
@@ -14,6 +15,7 @@ const Header = () => {
             <S.BrandImg />
           </S.NavBarBrand>
           <S.Controls>
+            <Clock />
             <CurrencySwitcher />
             <CartIcon />
           </S.Controls>
