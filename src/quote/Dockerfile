@@ -24,6 +24,9 @@ COPY --from=installer /usr/bin/install-php-extensions /usr/local/bin/
 
 RUN install-php-extensions opcache pcntl protobuf opentelemetry
 
+# CVE-2026-111497: brotli-libs (pulled in by libcurl) fixed in 1.1.1-r0
+RUN apk upgrade --no-cache brotli-libs
+
 WORKDIR /var/www
 
 USER www-data

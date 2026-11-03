@@ -3,6 +3,10 @@
 
 FROM nginxinc/nginx-unprivileged:1.29.0-alpine3.22-otel
 
+# CVE-2026-111497: brotli-libs (pulled in by libcurl, libfreetype) fixed in 1.1.1-r0
+USER root
+RUN apk upgrade --no-cache brotli-libs
+
 USER 101
 
 COPY src/image-provider/static/ /static/
