@@ -91,7 +91,7 @@ us in
 ### Maintainers
 
 - [Cyrille Le Clerc](https://github.com/cyrille-leclerc), Datadog
-- [Juliano Costa](https://github.com/julianocosta89), Datadog
+- [Juliano Costa](https://github.com/julianocosta89), Dash0
 - [Shenoy Pratik](https://github.com/ps48), AWS OpenSearch
 
 For more information about the maintainer role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).
