@@ -176,9 +176,8 @@ func TestRetryKeepsQueueOrder(t *testing.T) {
 
 func TestFullQueueDropsOldest(t *testing.T) {
 	mock := newMockProducer(t)
-	for range 4 {
-		mock.ExpectInputAndFail(errBrokerDown)
-	}
+	// Only order-1 reaches the broker. The later ones are queued behind it.
+	mock.ExpectInputAndFail(errBrokerDown)
 	var logs syncBuffer
 	p := newProducer(mock, 2, time.Hour, slog.New(slog.NewTextHandler(&logs, nil)))
 
@@ -216,6 +215,57 @@ func (h *lockProbe) Handle(context.Context, slog.Record) error {
 		h.held++
 	}
 	return nil
+}
+
+func TestSendQueuesBehindQueuedMessages(t *testing.T) {
+	mock := newMockProducer(t)
+	p := newProducer(mock, 10, time.Hour, slog.New(slog.DiscardHandler))
+	p.enqueue(newMessage("order-1"))
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	if err := p.Send(ctx, newMessage("order-2")); !errors.Is(err, errQueuedBehind) {
+		t.Fatalf("Send() error = %v, want %v", err, errQueuedBehind)
+	}
+	if got, want := queuedValues(p), []string{"order-1", "order-2"}; fmt.Sprint(got) != fmt.Sprint(want) {
+		t.Errorf("queue = %v, want %v", got, want)
+	}
+	// The mock has no expectations, so it fails the test if anything was sent.
+	if err := mock.Close(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSendQueuesBehindMessageBeingResent(t *testing.T) {
+	mock := newMockProducer(t)
+	var rec recorder
+	entered, release := make(chan struct{}), make(chan struct{})
+	mock.ExpectInputWithMessageCheckerFunctionAndSucceed(func(msg *sarama.ProducerMessage) error {
+		close(entered)
+		<-release
+		return rec.check(nil)(msg)
+	})
+	mock.ExpectInputWithMessageCheckerFunctionAndSucceed(rec.check(nil))
+	var logs syncBuffer
+	p := newProducer(mock, 10, time.Millisecond, slog.New(slog.NewTextHandler(&logs, nil)))
+	p.enqueue(newMessage("order-1"))
+	<-entered // the retry loop took order-1 from the queue and is resending it
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	if err := p.Send(ctx, newMessage("order-2")); !errors.Is(err, errQueuedBehind) {
+		t.Fatalf("Send() error = %v, want %v", err, errQueuedBehind)
+	}
+	close(release)
+	waitFor(t, "both messages to be delivered", func() bool {
+		return strings.Count(logs.String(), "Delivered queued Kafka message on retry") == 2
+	})
+	if got, want := rec.delivered(), []string{"order-1", "order-2"}; fmt.Sprint(got) != fmt.Sprint(want) {
+		t.Errorf("messages in the order the broker saw them = %v, want %v", got, want)
+	}
+	if err := mock.Close(); err != nil {
+		t.Fatal(err)
+	}
 }
 
 func TestDropIsLoggedAfterReleasingTheLock(t *testing.T) {
@@ -381,7 +431,9 @@ func TestConcurrentSendsGetTheirOwnResult(t *testing.T) {
 			mock.ExpectInputWithMessageCheckerFunctionAndFail(rec.check(errBrokerDown), errBrokerDown)
 		}
 	}
-	p := newProducer(mock, sends, time.Hour, slog.New(slog.DiscardHandler))
+	// The queue is disabled so that every send reaches the broker. With a queue,
+	// sends that start after the first failure would be queued behind it.
+	p := newProducer(mock, 0, time.Hour, slog.New(slog.DiscardHandler))
 
 	got := make([]error, sends)
 	var wg sync.WaitGroup
@@ -403,9 +455,6 @@ func TestConcurrentSendsGetTheirOwnResult(t *testing.T) {
 		if !errors.Is(got[i], want) {
 			t.Errorf("Send(%s) = %v, but the broker answered %v", value, got[i], want)
 		}
-	}
-	if n := p.queued(); n != sends/2 {
-		t.Errorf("queued = %d, want %d", n, sends/2)
 	}
 	if err := mock.Close(); err != nil {
 		t.Fatal(err)

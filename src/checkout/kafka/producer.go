@@ -26,6 +26,8 @@ var (
 	// The result is logged when it arrives, and the message is queued for
 	// retry if it failed.
 	ErrInFlight = errors.New("no answer from Kafka yet, the message is still in flight")
+
+	errQueuedBehind = errors.New("not sent, earlier messages are still queued for retry")
 )
 
 const (
@@ -92,8 +94,9 @@ type Producer struct {
 	retryBackoff time.Duration
 	wake         chan struct{}
 
-	mu    sync.Mutex
-	queue []*sarama.ProducerMessage
+	mu        sync.Mutex
+	queue     []*sarama.ProducerMessage
+	resending bool // a message taken from the queue is being resent
 }
 
 func newProducer(producer sarama.AsyncProducer, queueSize int, retryBackoff time.Duration, logger *slog.Logger) *Producer {
@@ -110,11 +113,16 @@ func newProducer(producer sarama.AsyncProducer, queueSize int, retryBackoff time
 }
 
 // Send hands msg to Kafka and waits for its result. If msg cannot be delivered,
-// it is queued for retry and Send returns the error. If ctx is done before msg
+// it is queued for retry and Send returns the error. While earlier messages are
+// queued for retry, msg is queued behind them without being sent, so that it
+// cannot overtake them, and Send returns at once. If ctx is done before msg
 // was handed over, msg is queued and Send returns ctx.Err(). If ctx is done
 // while msg is in flight, Send returns an error that wraps ErrInFlight and
 // ctx.Err(), and the late result is handled by awaitLateResult.
 func (p *Producer) Send(ctx context.Context, msg *sarama.ProducerMessage) error {
+	if p.enqueueBehind(msg) {
+		return errQueuedBehind
+	}
 	result := make(chan error, 1)
 	msg.Metadata = result
 	select {
@@ -198,10 +206,31 @@ func (p *Producer) enqueue(msg *sarama.ProducerMessage) {
 	}
 }
 
-func (p *Producer) requeueFirst(msg *sarama.ProducerMessage) {
+// enqueueBehind queues msg if earlier messages are queued or being resent, so
+// that msg cannot overtake them. It reports whether msg was queued.
+func (p *Producer) enqueueBehind(msg *sarama.ProducerMessage) bool {
 	p.mu.Lock()
-	p.queue = slices.Insert(p.queue, 0, msg)
+	if len(p.queue) == 0 && !p.resending {
+		p.mu.Unlock()
+		return false
+	}
+	p.queue = append(p.queue, msg)
 	dropped := p.dropOverflow()
+	p.mu.Unlock()
+	p.logDropped(dropped)
+	return true
+}
+
+// finishResend marks the resend of msg as done and, if requeue is set, puts
+// msg back first in the queue.
+func (p *Producer) finishResend(msg *sarama.ProducerMessage, requeue bool) {
+	p.mu.Lock()
+	p.resending = false
+	var dropped []*sarama.ProducerMessage
+	if requeue {
+		p.queue = slices.Insert(p.queue, 0, msg)
+		dropped = p.dropOverflow()
+	}
 	p.mu.Unlock()
 	p.logDropped(dropped)
 }
@@ -233,6 +262,7 @@ func (p *Producer) popFirst() *sarama.ProducerMessage {
 	msg := p.queue[0]
 	p.queue[0] = nil
 	p.queue = p.queue[1:]
+	p.resending = true
 	return msg
 }
 
@@ -266,8 +296,9 @@ func (p *Producer) resendQueued() bool {
 		result := make(chan error, 1)
 		msg.Metadata = result
 		p.Input() <- msg
-		if err := <-result; err != nil {
-			p.requeueFirst(msg)
+		err := <-result
+		p.finishResend(msg, err != nil)
+		if err != nil {
 			p.logger.WarnContext(messageContext(msg), fmt.Sprintf("Retry of queued Kafka message failed, %d messages queued: %v", p.queued(), err))
 			return false
 		}
