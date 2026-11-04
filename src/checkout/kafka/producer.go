@@ -69,9 +69,6 @@ func CreateKafkaProducer(brokers []string, logger *slog.Logger) (*Producer, erro
 
 	saramaConfig.Version = ProtocolVersion
 
-	// So we can know the partition and offset of messages.
-	saramaConfig.Producer.Return.Successes = true
-
 	producer, err := sarama.NewAsyncProducer(brokers, saramaConfig)
 	if err != nil {
 		return nil, err
