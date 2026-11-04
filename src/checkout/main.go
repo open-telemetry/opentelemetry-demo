@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -680,10 +681,12 @@ func (cs *checkout) sendToPostProcessor(ctx context.Context, result *pb.OrderRes
 	// Send message and handle response
 	startTime := time.Now()
 	err = cs.KafkaProducerClient.Send(ctx, &msg)
-	span.SetAttributes(
-		attribute.Bool("messaging.kafka.producer.success", err == nil),
-		attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
-	)
+	span.SetAttributes(attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())))
+	if errors.Is(err, kafka.ErrInFlight) {
+		logger.Warn(fmt.Sprintf("Kafka did not answer before the request ended, the result will be logged when it arrives: %v", err))
+		return
+	}
+	span.SetAttributes(attribute.Bool("messaging.kafka.producer.success", err == nil))
 	if err != nil {
 		span.SetStatus(otelcodes.Error, err.Error())
 		if cs.KafkaProducerClient.RetryEnabled() {

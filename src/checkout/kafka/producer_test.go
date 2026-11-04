@@ -292,18 +292,51 @@ func TestFailureAfterContextDoneIsQueued(t *testing.T) {
 		<-release
 		return nil
 	}, errBrokerDown)
-	p := newProducer(mock, 10, time.Hour, slog.New(slog.DiscardHandler))
+	var logs syncBuffer
+	p := newProducer(mock, 10, time.Hour, slog.New(slog.NewTextHandler(&logs, nil)))
 
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
 	defer cancel()
-	if err := p.Send(ctx, newMessage("order-1")); !errors.Is(err, context.DeadlineExceeded) {
-		t.Fatalf("Send() error = %v, want %v", err, context.DeadlineExceeded)
+	err := p.Send(ctx, newMessage("order-1"))
+	if !errors.Is(err, ErrInFlight) || !errors.Is(err, context.DeadlineExceeded) {
+		t.Fatalf("Send() error = %v, want %v and %v", err, ErrInFlight, context.DeadlineExceeded)
 	}
 	if n := p.queued(); n != 0 {
 		t.Fatalf("queued = %d before the broker answered, want 0", n)
 	}
 	close(release)
 	waitFor(t, "the late failure to be queued", func() bool { return p.queued() == 1 })
+	if !strings.Contains(logs.String(), "Failed to write message after the context ended: broker down") {
+		t.Errorf("late failure not logged, logs:\n%s", logs.String())
+	}
+	if err := mock.Close(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSuccessAfterContextDoneIsLogged(t *testing.T) {
+	mock := newMockProducer(t)
+	release := make(chan struct{})
+	mock.ExpectInputWithMessageCheckerFunctionAndSucceed(func(*sarama.ProducerMessage) error {
+		<-release
+		return nil
+	})
+	var logs syncBuffer
+	p := newProducer(mock, 10, time.Hour, slog.New(slog.NewTextHandler(&logs, nil)))
+
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	defer cancel()
+	err := p.Send(ctx, newMessage("order-1"))
+	if !errors.Is(err, ErrInFlight) || !errors.Is(err, context.DeadlineExceeded) {
+		t.Fatalf("Send() error = %v, want %v and %v", err, ErrInFlight, context.DeadlineExceeded)
+	}
+	close(release)
+	waitFor(t, "the late delivery to be logged", func() bool {
+		return strings.Contains(logs.String(), "Delivered Kafka message after the context ended. offset: 1")
+	})
+	if n := p.queued(); n != 0 {
+		t.Errorf("queued = %d, want 0", n)
+	}
 	if err := mock.Close(); err != nil {
 		t.Fatal(err)
 	}

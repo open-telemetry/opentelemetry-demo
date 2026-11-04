@@ -4,6 +4,7 @@ package kafka
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"os"
@@ -20,6 +21,11 @@ import (
 var (
 	Topic           = getTopic()
 	ProtocolVersion = sarama.V3_0_0_0
+
+	// ErrInFlight is returned by Send when ctx is done before Kafka answered.
+	// The result is logged when it arrives, and the message is queued for
+	// retry if it failed.
+	ErrInFlight = errors.New("no answer from Kafka yet, the message is still in flight")
 )
 
 const (
@@ -104,8 +110,10 @@ func newProducer(producer sarama.AsyncProducer, queueSize int, retryBackoff time
 }
 
 // Send hands msg to Kafka and waits for its result. If msg cannot be delivered,
-// it is queued for retry and Send returns the error. If ctx is done first, Send
-// returns ctx.Err() and msg is queued if it fails later.
+// it is queued for retry and Send returns the error. If ctx is done before msg
+// was handed over, msg is queued and Send returns ctx.Err(). If ctx is done
+// while msg is in flight, Send returns an error that wraps ErrInFlight and
+// ctx.Err(), and the late result is handled by awaitLateResult.
 func (p *Producer) Send(ctx context.Context, msg *sarama.ProducerMessage) error {
 	result := make(chan error, 1)
 	msg.Metadata = result
@@ -122,13 +130,20 @@ func (p *Producer) Send(ctx context.Context, msg *sarama.ProducerMessage) error 
 		}
 		return err
 	case <-ctx.Done():
-		go func() {
-			if err := <-result; err != nil {
-				p.enqueue(msg)
-			}
-		}()
-		return ctx.Err()
+		go p.awaitLateResult(msg, result)
+		return fmt.Errorf("%w: %w", ErrInFlight, ctx.Err())
 	}
+}
+
+// awaitLateResult logs the result of a message whose Send returned before Kafka
+// answered, and queues the message if it failed.
+func (p *Producer) awaitLateResult(msg *sarama.ProducerMessage, result <-chan error) {
+	if err := <-result; err != nil {
+		p.logger.ErrorContext(messageContext(msg), fmt.Sprintf("Failed to write message after the context ended: %v", err))
+		p.enqueue(msg)
+		return
+	}
+	p.logger.InfoContext(messageContext(msg), fmt.Sprintf("Delivered Kafka message after the context ended. offset: %v", msg.Offset))
 }
 
 // RetryEnabled reports whether messages that could not be delivered are kept
