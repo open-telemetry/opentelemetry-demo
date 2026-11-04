@@ -15,7 +15,11 @@ import (
 
 	"github.com/IBM/sarama"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/propagation"
+	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
+	"go.opentelemetry.io/otel/trace"
 )
 
 var (
@@ -373,10 +377,17 @@ func (p *Producer) resendQueued() bool {
 		if msg == nil {
 			return true
 		}
+		headers := msg.Headers
+		ctx, span := startRetrySpan(msg)
 		result := make(chan error, 1)
 		msg.Metadata = result
 		p.Input() <- msg
 		err := <-result
+		endRetrySpan(span, msg, err)
+		if err != nil {
+			// The next attempt is again a child of the span that published msg first.
+			msg.Headers = headers
+		}
 		if IsPermanent(err) {
 			p.finishResend(msg, false)
 			p.logRejected(msg, err)
@@ -384,11 +395,50 @@ func (p *Producer) resendQueued() bool {
 		}
 		p.finishResend(msg, err != nil)
 		if err != nil {
-			p.logger.WarnContext(messageContext(msg), fmt.Sprintf("Retry of queued Kafka message failed, %d messages queued: %v", p.queued(), err))
+			p.logger.WarnContext(ctx, fmt.Sprintf("Retry of queued Kafka message failed, %d messages queued: %v", p.queued(), err))
 			return false
 		}
-		p.logger.InfoContext(messageContext(msg), fmt.Sprintf("Delivered queued Kafka message on retry. offset: %v, %d messages still queued", msg.Offset, p.queued()))
+		p.logger.InfoContext(ctx, fmt.Sprintf("Delivered queued Kafka message on retry. offset: %v, %d messages still queued", msg.Offset, p.queued()))
 	}
+}
+
+// startRetrySpan starts a producer span for one resend of msg, as a child of the
+// span that published msg first, and puts its trace context into the message
+// headers, so that the consumers' spans follow the attempt that delivered msg.
+func startRetrySpan(msg *sarama.ProducerMessage) (context.Context, trace.Span) {
+	ctx, span := otel.Tracer("checkout").Start(messageContext(msg), fmt.Sprintf("%s publish", msg.Topic),
+		trace.WithSpanKind(trace.SpanKindProducer),
+		trace.WithAttributes(
+			semconv.PeerService("kafka"),
+			semconv.NetworkTransportTCP,
+			semconv.MessagingSystemKafka,
+			semconv.MessagingDestinationName(msg.Topic),
+			semconv.MessagingOperationPublish,
+		),
+	)
+	carrier := propagation.MapCarrier{}
+	otel.GetTextMapPropagator().Inject(ctx, carrier)
+	headers := make([]sarama.RecordHeader, 0, len(msg.Headers))
+	for _, h := range msg.Headers {
+		if _, replaced := carrier[string(h.Key)]; !replaced {
+			headers = append(headers, h)
+		}
+	}
+	for key, value := range carrier {
+		headers = append(headers, sarama.RecordHeader{Key: []byte(key), Value: []byte(value)})
+	}
+	msg.Headers = headers
+	return ctx, span
+}
+
+func endRetrySpan(span trace.Span, msg *sarama.ProducerMessage, err error) {
+	span.SetAttributes(attribute.Bool("messaging.kafka.producer.success", err == nil))
+	if err != nil {
+		span.SetStatus(codes.Error, err.Error())
+	} else {
+		span.SetAttributes(semconv.MessagingKafkaMessageOffset(int(msg.Offset)))
+	}
+	span.End()
 }
 
 // messageContext returns the trace context carried in the message headers, so

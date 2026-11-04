@@ -15,6 +15,12 @@ import (
 
 	"github.com/IBM/sarama"
 	"github.com/IBM/sarama/mocks"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/propagation"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/sdk/trace/tracetest"
+	"go.opentelemetry.io/otel/trace"
 )
 
 var errBrokerDown = errors.New("broker down")
@@ -142,6 +148,67 @@ func TestFailedSendIsRetriedUntilDelivered(t *testing.T) {
 		t.Errorf("failed retry log lines = %d, want 1, logs:\n%s", n, logs.String())
 	}
 
+	if err := mock.Close(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestRetryIsTracedAsChildOfThePublishSpan(t *testing.T) {
+	spans := tracetest.NewSpanRecorder()
+	tp := sdktrace.NewTracerProvider(sdktrace.WithSpanProcessor(spans))
+	prevProvider, prevPropagator := otel.GetTracerProvider(), otel.GetTextMapPropagator()
+	otel.SetTracerProvider(tp)
+	otel.SetTextMapPropagator(propagation.TraceContext{})
+	t.Cleanup(func() {
+		otel.SetTracerProvider(prevProvider)
+		otel.SetTextMapPropagator(prevPropagator)
+	})
+
+	mock := newMockProducer(t)
+	mock.ExpectInputAndFail(errBrokerDown)
+	mock.ExpectInputAndFail(errBrokerDown)
+	mock.ExpectInputAndSucceed()
+	var logs syncBuffer
+	p := newProducer(mock, 10, 10*time.Millisecond, slog.New(slog.NewTextHandler(&logs, nil)))
+
+	msg := newMessage("order-1")
+	ctx, publish := tp.Tracer("test").Start(context.Background(), "orders publish")
+	carrier := propagation.MapCarrier{}
+	otel.GetTextMapPropagator().Inject(ctx, carrier)
+	for key, value := range carrier {
+		msg.Headers = append(msg.Headers, sarama.RecordHeader{Key: []byte(key), Value: []byte(value)})
+	}
+	publish.End()
+
+	_ = p.Send(context.Background(), msg)
+	waitFor(t, "the delivery on the second retry", func() bool {
+		return strings.Contains(logs.String(), "Delivered queued Kafka message on retry")
+	})
+
+	var retries []sdktrace.ReadOnlySpan
+	for _, s := range spans.Ended() {
+		if s.SpanContext().SpanID() != publish.SpanContext().SpanID() {
+			retries = append(retries, s)
+		}
+	}
+	if len(retries) != 2 {
+		t.Fatalf("retry spans = %d, want 2", len(retries))
+	}
+	for i, s := range retries {
+		if s.Name() != "orders publish" || s.SpanKind() != trace.SpanKindProducer {
+			t.Errorf("retry span %d = %q kind %v, want \"orders publish\" kind producer", i, s.Name(), s.SpanKind())
+		}
+		if s.Parent().SpanID() != publish.SpanContext().SpanID() {
+			t.Errorf("retry span %d has parent %v, want the publish span %v", i, s.Parent().SpanID(), publish.SpanContext().SpanID())
+		}
+	}
+	if retries[0].Status().Code != codes.Error || retries[1].Status().Code == codes.Error {
+		t.Errorf("retry span status = %v then %v, want Error then not Error", retries[0].Status().Code, retries[1].Status().Code)
+	}
+	// The consumers' spans follow the attempt that delivered the message.
+	if got := trace.SpanContextFromContext(messageContext(msg)).SpanID(); got != retries[1].SpanContext().SpanID() {
+		t.Errorf("message headers carry span %v, want the delivering retry span %v", got, retries[1].SpanContext().SpanID())
+	}
 	if err := mock.Close(); err != nil {
 		t.Fatal(err)
 	}
