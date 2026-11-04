@@ -78,6 +78,10 @@ func CreateKafkaProducer(brokers []string, logger *slog.Logger) (*Producer, erro
 	saramaConfig.Producer.Return.Successes = true
 	saramaConfig.Producer.Return.Errors = true
 	saramaConfig.Producer.RequiredAcks = sarama.WaitForLocal
+	// Fetch metadata on first use, not when the producer is created, so that the
+	// producer can be created while Kafka is not reachable yet. Until Kafka is
+	// up, sends fail and are queued for retry.
+	saramaConfig.Metadata.Full = false
 
 	saramaConfig.Version = ProtocolVersion
 

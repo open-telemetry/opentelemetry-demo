@@ -421,8 +421,8 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 		logger.Info("order confirmation email sent")
 	}
 
-	// send to kafka only if kafka broker address is set
-	if cs.kafkaBrokerSvcAddr != "" {
+	// send to kafka only if the kafka producer was created
+	if cs.KafkaProducerClient != nil {
 		logger.Info("sending to postProcessor")
 		cs.sendToPostProcessor(ctx, orderResult)
 	}

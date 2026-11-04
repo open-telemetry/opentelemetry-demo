@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"net"
 	"strings"
 	"sync"
 	"testing"
@@ -523,6 +524,31 @@ func TestZeroQueueSizeDropsFailedMessage(t *testing.T) {
 	if err := mock.Close(); err != nil {
 		t.Fatal(err)
 	}
+}
+
+func TestCreateKafkaProducerWithoutBroker(t *testing.T) {
+	lis, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	addr := lis.Addr().String()
+	lis.Close() // nothing listens on addr now
+
+	p, err := CreateKafkaProducer([]string{addr}, slog.New(slog.DiscardHandler))
+	if err != nil {
+		t.Fatalf("CreateKafkaProducer() error = %v, want nil while Kafka is not reachable", err)
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	if err := p.Send(ctx, newMessage("order-1")); err == nil || errors.Is(err, ErrInFlight) {
+		t.Fatalf("Send() error = %v, want a delivery error", err)
+	}
+	if n := p.queued(); n != 1 {
+		t.Errorf("queued = %d, want 1", n)
+	}
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer shutdownCancel()
+	p.Shutdown(shutdownCtx)
 }
 
 func TestGetRetryQueueSize(t *testing.T) {
