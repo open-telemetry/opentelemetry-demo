@@ -57,11 +57,6 @@ runs:
         # Set default image tag in values.yaml; the path differs per chart
         cd ${{ inputs.chart-path }}
         yq -i "${{ inputs.image-tag-path }} = \"$VERSION\"" values.yaml
-        # Only the umbrella chart has opentelemetry-demo components carrying a
-        # DT_RELEASE_VERSION placeholder; on other charts yq would create one
-        if yq -e '.opentelemetry-demo.components' values.yaml >/dev/null 2>&1; then
-          yq -i '(.opentelemetry-demo.components.*.envOverrides[] | select(.name == "DT_RELEASE_VERSION")).value |= sub("TAG", "'"$VERSION"'")' values.yaml
-        fi
         echo "version=$VERSION" >> $GITHUB_OUTPUT
 
     - name: Update Helm dependencies
