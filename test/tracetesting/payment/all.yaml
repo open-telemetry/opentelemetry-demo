@@ -9,5 +9,5 @@ spec:
   steps:
   - ./valid-credit-card.yaml
   - ./invalid-credit-card.yaml
-  - ./amex-credit-card-not-allowed.yaml
+  - ./unionpay-credit-card-not-allowed.yaml
   - ./expired-credit-card.yaml

@@ -14,7 +14,7 @@ const meter = metrics.getMeter('payment')
 const transactionsCounter = meter.createCounter('app.payment.transactions')
 
 const LOYALTY_LEVEL = ['platinum', 'gold', 'silver', 'bronze']
-const SUPPORTED_CARDS_DEFAULT = { visa: 'Visa', mastercard: 'MasterCard', 'american-express': 'American Express' }
+const SUPPORTED_CARDS_DEFAULT = { visa: 'Visa', mastercard: 'MasterCard', unionpay: 'UnionPay' }
 
 /** Return random element from given array */
 function random(arr) {
