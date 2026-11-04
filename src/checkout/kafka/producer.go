@@ -93,10 +93,14 @@ type Producer struct {
 	queueSize    int
 	retryBackoff time.Duration
 	wake         chan struct{}
+	stop         chan struct{} // closed by Shutdown
+	retryDone    chan struct{} // closed when retryQueued returns
+	resultsDone  chan struct{} // closed when dispatchResults returns
 
 	mu        sync.Mutex
 	queue     []*sarama.ProducerMessage
 	resending bool // a message taken from the queue is being resent
+	closed    bool // set by Shutdown, nothing is taken from the queue after it
 }
 
 func newProducer(producer sarama.AsyncProducer, queueSize int, retryBackoff time.Duration, logger *slog.Logger) *Producer {
@@ -106,6 +110,9 @@ func newProducer(producer sarama.AsyncProducer, queueSize int, retryBackoff time
 		queueSize:     queueSize,
 		retryBackoff:  retryBackoff,
 		wake:          make(chan struct{}, 1),
+		stop:          make(chan struct{}),
+		retryDone:     make(chan struct{}),
+		resultsDone:   make(chan struct{}),
 	}
 	go p.dispatchResults()
 	go p.retryQueued()
@@ -190,6 +197,7 @@ func (p *Producer) RetryEnabled() bool {
 // dispatchResults is the only reader of Successes and Errors. It hands each
 // result to the channel in the message's Metadata.
 func (p *Producer) dispatchResults() {
+	defer close(p.resultsDone)
 	successes, errs := p.Successes(), p.Errors()
 	for successes != nil || errs != nil {
 		select {
@@ -283,7 +291,7 @@ func (p *Producer) logDropped(dropped []*sarama.ProducerMessage) {
 func (p *Producer) popFirst() *sarama.ProducerMessage {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	if len(p.queue) == 0 {
+	if len(p.queue) == 0 || p.closed {
 		return nil
 	}
 	msg := p.queue[0]
@@ -299,16 +307,60 @@ func (p *Producer) queued() int {
 	return len(p.queue)
 }
 
+// retryQueued resends the queue after each failure, waiting longer after each
+// failed attempt. When Shutdown is called, it makes one last attempt at once
+// and returns.
 func (p *Producer) retryQueued() {
-	for range p.wake {
+	defer close(p.retryDone)
+	for {
+		select {
+		case <-p.wake:
+		case <-p.stop:
+			p.resendQueued()
+			return
+		}
 		backoff := p.retryBackoff
 		for {
-			time.Sleep(backoff)
+			select {
+			case <-time.After(backoff):
+			case <-p.stop:
+				p.resendQueued()
+				return
+			}
 			if p.resendQueued() {
 				break
 			}
 			backoff = min(2*backoff, maxRetryBackoff)
 		}
+	}
+}
+
+// Shutdown makes one last attempt to deliver the queued messages, logs how many
+// are dropped, and closes the producer. It returns when ctx is done at the
+// latest, and then leaves the producer open if the last attempt is still
+// running. Send must not be called after Shutdown.
+func (p *Producer) Shutdown(ctx context.Context) {
+	close(p.stop)
+	select {
+	case <-p.retryDone:
+	case <-ctx.Done():
+	}
+	p.mu.Lock()
+	p.closed = true
+	dropped := len(p.queue)
+	p.queue = nil
+	p.mu.Unlock()
+	if dropped > 0 {
+		p.logger.Error(fmt.Sprintf("Shutting down with %d messages in the Kafka retry queue, dropping them", dropped))
+	}
+	select {
+	case <-p.retryDone:
+		p.AsyncClose()
+		select {
+		case <-p.resultsDone:
+		case <-ctx.Done():
+		}
+	case <-ctx.Done():
 	}
 }
 

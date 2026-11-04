@@ -279,6 +279,92 @@ func TestPermanentRejectionOnRetryDoesNotBlockTheQueue(t *testing.T) {
 	}
 }
 
+func TestShutdownDeliversQueuedMessages(t *testing.T) {
+	mock := newMockProducer(t)
+	var rec recorder
+	mock.ExpectInputWithMessageCheckerFunctionAndFail(rec.check(errBrokerDown), errBrokerDown)
+	mock.ExpectInputWithMessageCheckerFunctionAndSucceed(rec.check(nil))
+	mock.ExpectInputWithMessageCheckerFunctionAndSucceed(rec.check(nil))
+	var logs syncBuffer
+	p := newProducer(mock, 10, time.Hour, slog.New(slog.NewTextHandler(&logs, nil)))
+	// order-1 fails, order-2 is queued behind it, and the retry loop waits an hour.
+	_ = p.Send(context.Background(), newMessage("order-1"))
+	_ = p.Send(context.Background(), newMessage("order-2"))
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	p.Shutdown(ctx)
+	if ctx.Err() != nil {
+		t.Fatal("Shutdown returned only at the deadline")
+	}
+	if got, want := rec.delivered(), []string{"order-1", "order-1", "order-2"}; fmt.Sprint(got) != fmt.Sprint(want) {
+		t.Errorf("messages the broker saw = %v, want %v", got, want)
+	}
+	if strings.Contains(logs.String(), "dropping") {
+		t.Errorf("messages dropped, logs:\n%s", logs.String())
+	}
+	select {
+	case _, open := <-mock.Successes():
+		if open {
+			t.Error("unexpected success after Shutdown")
+		}
+	case <-time.After(time.Second):
+		t.Error("Shutdown did not close the producer")
+	}
+}
+
+func TestShutdownLogsDroppedMessages(t *testing.T) {
+	mock := newMockProducer(t)
+	mock.ExpectInputAndFail(errBrokerDown) // the first send of order-1
+	mock.ExpectInputAndFail(errBrokerDown) // the last attempt at shutdown
+	var logs syncBuffer
+	p := newProducer(mock, 10, time.Hour, slog.New(slog.NewTextHandler(&logs, nil)))
+	for i := 1; i <= 3; i++ {
+		_ = p.Send(context.Background(), newMessage(fmt.Sprintf("order-%d", i)))
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	p.Shutdown(ctx)
+	if !strings.Contains(logs.String(), "Shutting down with 3 messages in the Kafka retry queue, dropping them") {
+		t.Errorf("drop not logged, logs:\n%s", logs.String())
+	}
+}
+
+func TestShutdownReturnsAtTheDeadline(t *testing.T) {
+	mock := newMockProducer(t)
+	release := make(chan struct{})
+	mock.ExpectInputWithMessageCheckerFunctionAndSucceed(func(*sarama.ProducerMessage) error {
+		<-release
+		return nil
+	})
+	var logs syncBuffer
+	p := newProducer(mock, 10, time.Hour, slog.New(slog.NewTextHandler(&logs, nil)))
+	p.enqueue(newMessage("order-1"))
+	p.enqueue(newMessage("order-2"))
+
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	defer cancel()
+	start := time.Now()
+	p.Shutdown(ctx) // the broker does not answer the last attempt for order-1
+	if d := time.Since(start); d > 2*time.Second {
+		t.Errorf("Shutdown took %v, want about 100ms", d)
+	}
+	if !strings.Contains(logs.String(), "Shutting down with 1 messages in the Kafka retry queue, dropping them") {
+		t.Errorf("drop not logged, logs:\n%s", logs.String())
+	}
+	close(release)
+	select {
+	case <-p.retryDone:
+	case <-time.After(5 * time.Second):
+		t.Fatal("the retry loop did not stop after its last attempt")
+	}
+	// Shutdown left the producer open, so it can be closed here.
+	if err := mock.Close(); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestSendQueuesBehindQueuedMessages(t *testing.T) {
 	mock := newMockProducer(t)
 	p := newProducer(mock, 10, time.Hour, slog.New(slog.DiscardHandler))

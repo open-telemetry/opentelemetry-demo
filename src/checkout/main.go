@@ -286,6 +286,12 @@ func main() {
 
 	srv.GracefulStop()
 	logger.Info("Checkout gRPC server stopped")
+
+	if svc.KafkaProducerClient != nil {
+		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
+		svc.KafkaProducerClient.Shutdown(shutdownCtx)
+		shutdownCancel()
+	}
 }
 
 func mustMapEnv(target *string, envKey string) {
