@@ -3402,9 +3402,9 @@ uvicorn==0.54.0 \
     # via
     #   fastmcp-slim
     #   mcp
-vcrpy==8.3.0 \
-    --hash=sha256:46d64e77e8d95e5c76c7d9a94ff05d8b38b2ae4e1d4869eb0235024b6fcb5212 \
-    --hash=sha256:bd66e6143746778157f00e2a922527a8d96b2fdc350be8988a45a29c843815b9
+vcrpy==9.2.0 \
+    --hash=sha256:a22f6f2cd47687e363c64ff77fbc7b7bbfbc036db793b4413faf6dd9d6718f93 \
+    --hash=sha256:c325fa276b175de06bc7afe1b2a45204dbe1fddd90d1b2a18ab14dff2e8e2e4a
     # via -r requirements.in
 watchfiles==1.3.0 \
     --hash=sha256:000b9688fc8133037a8b075c8ebf98f32844ff8964dda61e85c1db547dafc441 \

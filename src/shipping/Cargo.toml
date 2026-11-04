@@ -20,7 +20,7 @@ awc = { version = "3.11.0", default-features = false, features = ["compress-zstd
 open-feature = "0.3"
 open-feature-flagd = { version = "0.3.0", default-features = false, features = ["rpc", "in-process"] }
 serde = { version = "1.0.229", features = ["derive"] }
-tonic = "0.14.7"
+tonic = "0.14.9"
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
 
@@ -32,7 +32,7 @@ opentelemetry-appender-tracing = "0.33.1"
 opentelemetry-resource-detectors = "0.13.0"
 
 [dependencies.uuid]
-version = "1.27.0"
+version = "1.29.0"
 features = [
     "v4",                # Lets you generate random UUIDs
     "fast-rng",          # Use a faster (but still sufficiently random) RNG
