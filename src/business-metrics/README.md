@@ -21,8 +21,8 @@ or an increase over one hour to sales for sales/hour, grouped by currency.
 
 Offsets are committed after processing each batch. Delivery is at least once,
 so replay after a crash can count an order again. Counters reset when the
-process restarts. These are demonstration metrics, not a financial ledger.
-Malformed messages are logged and skipped. Kafka tombstones are ignored.
+process restarts. Malformed messages are logged and skipped. Kafka tombstones
+are ignored.
 
 ## Docker Compose
 
