@@ -217,6 +217,68 @@ func (h *lockProbe) Handle(context.Context, slog.Record) error {
 	return nil
 }
 
+func TestPermanentRejectionIsDropped(t *testing.T) {
+	for _, rejection := range []error{
+		sarama.ErrMessageSizeTooLarge,
+		sarama.ConfigurationError("Attempt to produce message larger than configured Producer.MaxMessageBytes: 1048577 > 1048576"),
+		sarama.ErrInvalidTopic,
+		sarama.ErrInvalidRecord,
+	} {
+		t.Run(rejection.Error(), func(t *testing.T) {
+			mock := newMockProducer(t)
+			mock.ExpectInputAndFail(rejection)
+			var logs syncBuffer
+			p := newProducer(mock, 10, time.Hour, slog.New(slog.NewTextHandler(&logs, nil)))
+
+			if err := p.Send(context.Background(), newMessage("order-1")); !errors.Is(err, rejection) {
+				t.Fatalf("Send() error = %v, want %v", err, rejection)
+			}
+			if n := p.queued(); n != 0 {
+				t.Errorf("queued = %d, want 0", n)
+			}
+			if !strings.Contains(logs.String(), "Kafka rejected the message, dropping it without retry") {
+				t.Errorf("drop not logged, logs:\n%s", logs.String())
+			}
+			if err := mock.Close(); err != nil {
+				t.Fatal(err)
+			}
+		})
+	}
+}
+
+func TestPermanentRejectionOnRetryDoesNotBlockTheQueue(t *testing.T) {
+	mock := newMockProducer(t)
+	var rec recorder
+	mock.ExpectInputWithMessageCheckerFunctionAndFail(rec.check(sarama.ErrMessageSizeTooLarge), sarama.ErrMessageSizeTooLarge)
+	mock.ExpectInputWithMessageCheckerFunctionAndSucceed(rec.check(nil))
+	var logs syncBuffer
+	p := newProducer(mock, 10, 10*time.Millisecond, slog.New(slog.NewTextHandler(&logs, nil)))
+
+	p.mu.Lock()
+	p.queue = append(p.queue, newMessage("order-1"), newMessage("order-2"))
+	p.mu.Unlock()
+	p.wake <- struct{}{}
+
+	waitFor(t, "order-2 to be delivered", func() bool {
+		return strings.Contains(logs.String(), "Delivered queued Kafka message on retry")
+	})
+	if got, want := rec.delivered(), []string{"order-1", "order-2"}; fmt.Sprint(got) != fmt.Sprint(want) {
+		t.Errorf("messages the broker saw = %v, want %v", got, want)
+	}
+	if n := p.queued(); n != 0 {
+		t.Errorf("queued = %d, want 0", n)
+	}
+	if !strings.Contains(logs.String(), "Kafka rejected the message, dropping it without retry") {
+		t.Errorf("drop not logged, logs:\n%s", logs.String())
+	}
+	if strings.Contains(logs.String(), "Retry of queued Kafka message failed") {
+		t.Errorf("rejected message was retried, logs:\n%s", logs.String())
+	}
+	if err := mock.Close(); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestSendQueuesBehindQueuedMessages(t *testing.T) {
 	mock := newMockProducer(t)
 	p := newProducer(mock, 10, time.Hour, slog.New(slog.DiscardHandler))

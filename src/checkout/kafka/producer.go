@@ -134,7 +134,7 @@ func (p *Producer) Send(ctx context.Context, msg *sarama.ProducerMessage) error 
 	select {
 	case err := <-result:
 		if err != nil {
-			p.enqueue(msg)
+			p.enqueueUnlessPermanent(msg, err)
 		}
 		return err
 	case <-ctx.Done():
@@ -148,10 +148,37 @@ func (p *Producer) Send(ctx context.Context, msg *sarama.ProducerMessage) error 
 func (p *Producer) awaitLateResult(msg *sarama.ProducerMessage, result <-chan error) {
 	if err := <-result; err != nil {
 		p.logger.ErrorContext(messageContext(msg), fmt.Sprintf("Failed to write message after the context ended: %v", err))
-		p.enqueue(msg)
+		p.enqueueUnlessPermanent(msg, err)
 		return
 	}
 	p.logger.InfoContext(messageContext(msg), fmt.Sprintf("Delivered Kafka message after the context ended. offset: %v", msg.Offset))
+}
+
+// IsPermanent reports whether err means that the message itself was rejected,
+// so that every retry would fail the same way. That is the case when it is
+// larger than Producer.MaxMessageBytes (sarama returns a ConfigurationError)
+// or than the broker's limit, or when the broker finds its topic or record
+// invalid.
+func IsPermanent(err error) bool {
+	var configErr sarama.ConfigurationError
+	return errors.As(err, &configErr) ||
+		errors.Is(err, sarama.ErrMessageSizeTooLarge) ||
+		errors.Is(err, sarama.ErrInvalidTopic) ||
+		errors.Is(err, sarama.ErrInvalidRecord)
+}
+
+// enqueueUnlessPermanent queues msg for retry, or drops it with a log line if
+// err is permanent.
+func (p *Producer) enqueueUnlessPermanent(msg *sarama.ProducerMessage, err error) {
+	if IsPermanent(err) {
+		p.logRejected(msg, err)
+		return
+	}
+	p.enqueue(msg)
+}
+
+func (p *Producer) logRejected(msg *sarama.ProducerMessage, err error) {
+	p.logger.ErrorContext(messageContext(msg), fmt.Sprintf("Kafka rejected the message, dropping it without retry: %v", err))
 }
 
 // RetryEnabled reports whether messages that could not be delivered are kept
@@ -287,6 +314,7 @@ func (p *Producer) retryQueued() {
 
 // resendQueued sends queued messages in order, one at a time, until the queue is
 // empty (true) or a message fails and is put back first in the queue (false).
+// A message that is rejected permanently is dropped instead.
 func (p *Producer) resendQueued() bool {
 	for {
 		msg := p.popFirst()
@@ -297,6 +325,11 @@ func (p *Producer) resendQueued() bool {
 		msg.Metadata = result
 		p.Input() <- msg
 		err := <-result
+		if IsPermanent(err) {
+			p.finishResend(msg, false)
+			p.logRejected(msg, err)
+			continue
+		}
 		p.finishResend(msg, err != nil)
 		if err != nil {
 			p.logger.WarnContext(messageContext(msg), fmt.Sprintf("Retry of queued Kafka message failed, %d messages queued: %v", p.queued(), err))
