@@ -198,6 +198,45 @@ func TestFullQueueDropsOldest(t *testing.T) {
 	}
 }
 
+// lockProbe is a log handler that counts the records logged while p.mu was held.
+type lockProbe struct {
+	p          *Producer
+	logs, held int
+}
+
+func (h *lockProbe) Enabled(context.Context, slog.Level) bool { return true }
+func (h *lockProbe) WithAttrs([]slog.Attr) slog.Handler       { return h }
+func (h *lockProbe) WithGroup(string) slog.Handler            { return h }
+
+func (h *lockProbe) Handle(context.Context, slog.Record) error {
+	h.logs++
+	if h.p.mu.TryLock() {
+		h.p.mu.Unlock()
+	} else {
+		h.held++
+	}
+	return nil
+}
+
+func TestDropIsLoggedAfterReleasingTheLock(t *testing.T) {
+	mock := newMockProducer(t)
+	probe := &lockProbe{}
+	p := newProducer(mock, 1, time.Hour, slog.New(probe))
+	probe.p = p
+
+	p.enqueue(newMessage("order-1"))
+	p.enqueue(newMessage("order-2"))
+	if got, want := queuedValues(p), []string{"order-2"}; fmt.Sprint(got) != fmt.Sprint(want) {
+		t.Errorf("queue = %v, want %v", got, want)
+	}
+	if probe.logs != 1 || probe.held != 0 {
+		t.Errorf("drop log lines = %d, logged while holding the lock = %d, want 1 and 0", probe.logs, probe.held)
+	}
+	if err := mock.Close(); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestZeroQueueSizeDropsFailedMessage(t *testing.T) {
 	mock := newMockProducer(t)
 	mock.ExpectInputAndFail(errBrokerDown)

@@ -174,8 +174,9 @@ func (p *Producer) enqueue(msg *sarama.ProducerMessage) {
 	}
 	p.mu.Lock()
 	p.queue = append(p.queue, msg)
-	p.dropOverflow()
+	dropped := p.dropOverflow()
 	p.mu.Unlock()
+	p.logDropped(dropped)
 	select {
 	case p.wake <- struct{}{}:
 	default:
@@ -185,16 +186,26 @@ func (p *Producer) enqueue(msg *sarama.ProducerMessage) {
 func (p *Producer) requeueFirst(msg *sarama.ProducerMessage) {
 	p.mu.Lock()
 	p.queue = slices.Insert(p.queue, 0, msg)
-	p.dropOverflow()
+	dropped := p.dropOverflow()
 	p.mu.Unlock()
+	p.logDropped(dropped)
 }
 
-// dropOverflow must be called with p.mu held.
-func (p *Producer) dropOverflow() {
+// dropOverflow must be called with p.mu held. It returns the dropped messages,
+// which the caller logs with logDropped after releasing p.mu.
+func (p *Producer) dropOverflow() []*sarama.ProducerMessage {
+	var dropped []*sarama.ProducerMessage
 	for len(p.queue) > p.queueSize {
-		p.logger.ErrorContext(messageContext(p.queue[0]), fmt.Sprintf("Kafka retry queue is full (%d messages), dropping the oldest message", p.queueSize))
+		dropped = append(dropped, p.queue[0])
 		p.queue[0] = nil
 		p.queue = p.queue[1:]
+	}
+	return dropped
+}
+
+func (p *Producer) logDropped(dropped []*sarama.ProducerMessage) {
+	for _, msg := range dropped {
+		p.logger.ErrorContext(messageContext(msg), fmt.Sprintf("Kafka retry queue is full (%d messages), dropping the oldest message", p.queueSize))
 	}
 }
 
