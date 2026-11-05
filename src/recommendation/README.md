@@ -15,6 +15,10 @@ It is a Spring Boot 4 application. The gRPC API is served with Spring gRPC, and
 the telemetry comes from the OpenTelemetry Spring Boot starter plus the
 OpenTelemetry gRPC instrumentation library, so no Java agent is involved.
 
+Catalog calls have a two-second deadline, so a catalog that stops responding
+does not hold recommendation requests open indefinitely. Set
+`RECOMMENDATION_CATALOG_TIMEOUT_MS` to change this timeout in milliseconds.
+
 ## Local Build
 
 Requires JDK 21 or newer. The protobuf classes are generated from
