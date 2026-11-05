@@ -16,14 +16,14 @@ metrics:
     unit: "{order}"
     stability: development
     annotations:
-      service: business-metrics
+      service: fraud-detection
   - name: demo.business.sales
     brief: Value of ordered products excluding shipping
     instrument: counter
     unit: "{currency}"
     stability: development
     annotations:
-      service: business-metrics
+      service: fraud-detection
     attributes:
       - ref: currency
         requirement_level: required

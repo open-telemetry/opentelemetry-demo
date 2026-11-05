@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package oteldemo.businessmetrics;
+package frauddetection;
 
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.AttributeKey;
@@ -21,7 +21,7 @@ final class OrderMetrics {
   private final DoubleCounter sales;
 
   OrderMetrics(OpenTelemetry telemetry) {
-    var meter = telemetry.getMeter("business-metrics");
+    var meter = telemetry.getMeter("fraud-detection");
     orders = meter.counterBuilder("demo.business.orders")
         .setDescription("Number of processed orders")
         .setUnit("{order}")

@@ -82,10 +82,6 @@ jobs:
             tag_suffix: agent
             context: ./
             setup-qemu: true
-          - file: ./src/business-metrics/Dockerfile
-            tag_suffix: business-metrics
-            context: ./
-            setup-qemu: true
           - file: ./src/cart/src/Dockerfile
             tag_suffix: cart
             context: ./
