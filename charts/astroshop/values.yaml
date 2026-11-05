@@ -12,7 +12,7 @@ components:
     # annotations: {}
     # name of the TLS secret containing the certificate and key for HTTPS
     # secretName: ""
-
+    
     # used for setting host in ingress, the url set in loadgen should match this
     # host: ""
     # you can use this for fine-grain control over which ingresses are created
@@ -44,6 +44,11 @@ opentelemetry-demo:
     image:
       repository: europe-docker.pkg.dev/dynatrace-demoability/docker/astroshop
       tag: 5824c4b
+    envOverrides:
+      # Release version stamped on every component: <image tag>-<component>,
+      # e.g. 1.2.3-payment. The image tag is set by CI from calc-version.
+      - name: DT_RELEASE_VERSION
+        value: '{{ printf "%s-%s" (default .Chart.AppVersion .defaultValues.image.tag) .name }}'
   components:
     # ---------------------------------------------------
     accounting:
@@ -58,8 +63,6 @@ opentelemetry-demo:
           value: "none" # 'console', 'none', 'otlp'
         - name: OTEL_METRICS_EXPORTER
           value: "console,otlp" # 'console', 'none', 'otlp'
-        - name: DT_RELEASE_VERSION
-          value: "TAG-accounting"
         - name: DB_CONNECTION_STRING
           value: Host=postgresql.astroshop.svc.cluster.local;Username=otelu;Password=otelp;Database=otel
       resources:
@@ -82,8 +85,6 @@ opentelemetry-demo:
           value: "none" # 'console', 'none', 'otlp'
         - name: OTEL_METRICS_EXPORTER
           value: "console,otlp" # 'console', 'none', 'otlp
-        - name: DT_RELEASE_VERSION
-          value: "TAG-ad"
       resources:
         requests:
           cpu: 25m # 100
@@ -104,8 +105,6 @@ opentelemetry-demo:
           value: "none" # 'console', 'none', 'otlp'
         - name: OTEL_METRICS_EXPORTER
           value: "console,otlp" # 'console', 'none', 'otlp'
-        - name: DT_RELEASE_VERSION
-          value: "TAG-cart"
       resources:
         requests:
           cpu: 25m
@@ -124,8 +123,6 @@ opentelemetry-demo:
           value: "none" # 'console', 'none', 'otlp'
         - name: OTEL_METRICS_EXPORTER
           value: "console,otlp" # 'console', 'none', 'otlp'
-        - name: DT_RELEASE_VERSION
-          value: "TAG-checkout"
       resources:
         requests:
           cpu: 50m
@@ -138,9 +135,6 @@ opentelemetry-demo:
       podAnnotations:
         dynatrace.com/inject: "false"
         metadata.dynatrace.com/process.technology: "cpp"
-      envOverrides:
-        - name: DT_RELEASE_VERSION
-          value: "TAG-currency"
       resources:
         requests:
           cpu: 25m
@@ -153,9 +147,6 @@ opentelemetry-demo:
       podAnnotations:
         dynatrace.com/inject: "false"
         metadata.dynatrace.com/process.technology: "ruby"
-      envOverrides:
-        - name: DT_RELEASE_VERSION
-          value: "TAG-email"
       resources:
         requests:
           cpu: 25m
@@ -168,9 +159,6 @@ opentelemetry-demo:
       podAnnotations:
         dynatrace.com/inject: "false"
         metadata.dynatrace.com/process.technology: "flagd"
-      envOverrides:
-        - name: DT_RELEASE_VERSION
-          value: "TAG-flagd"
       resources:
         requests:
           cpu: 25m
@@ -183,9 +171,6 @@ opentelemetry-demo:
       podAnnotations:
         dynatrace.com/inject: "false"
         metadata.dynatrace.com/process.technology: "Java"
-      envOverrides:
-        - name: DT_RELEASE_VERSION
-          value: "TAG-fraud-detection"
       resources:
         requests:
           cpu: 25m
@@ -212,8 +197,6 @@ opentelemetry-demo:
           value: ""
         - name: NEXT_OTEL_VERBOSE
           value: "0" # This expects users to use `kubectl port-forward ...`
-        - name: DT_RELEASE_VERSION
-          value: "TAG-frontend"
       resources:
         requests:
           cpu: 200m
@@ -229,8 +212,6 @@ opentelemetry-demo:
           value: "flagd"
         - name: FLAGD_UI_PORT
           value: "4000"
-        - name: DT_RELEASE_VERSION
-          value: "TAG-frontend-proxy"
     # ---------------------------------------------------
     image-provider:
       podAnnotations:
@@ -255,7 +236,7 @@ opentelemetry-demo:
             env: false
       envOverrides:
         - name: DT_RELEASE_VERSION
-          value: "TAG-image-provider"
+          value: '{{ printf "%s-%s" (default .Chart.AppVersion .defaultValues.image.tag) .name }}'
       resources:
         requests:
           cpu: 25m
@@ -276,8 +257,6 @@ opentelemetry-demo:
           value: "2"
         - name: LOCUST_HEADLESS
           value: "true"
-        - name: DT_RELEASE_VERSION
-          value: "TAG-load-generator"
       resources:
         requests:
           cpu: 250m
@@ -300,8 +279,6 @@ opentelemetry-demo:
           value: "" # other examples - http,grpc,dns,net
         - name: NODE_OPTIONS
           value: "" # - do not instrument at all with things like '-r ./Instrumentation.js' Avoid duplicate spans from OA and Otel - https://opentelemetry.io/docs/zero-code/js/
-        - name: DT_RELEASE_VERSION
-          value: "TAG-payment"
       resources:
         requests:
           cpu: 25m
@@ -319,8 +296,6 @@ opentelemetry-demo:
             secretKeyRef:
               name: product-db-connection
               key: connection_string
-        - name: DT_RELEASE_VERSION
-          value: "TAG-product-catalog"
       resources:
         requests:
           cpu: 25m
@@ -335,8 +310,6 @@ opentelemetry-demo:
       envOverrides:
         - name: OTEL_PHP_AUTOLOAD_ENABLED
           value: "true"
-        - name: DT_RELEASE_VERSION
-          value: "TAG-quote"
       resources:
         requests:
           cpu: 50m
@@ -349,9 +322,6 @@ opentelemetry-demo:
       podAnnotations:
         dynatrace.com/inject: "false"
         metadata.dynatrace.com/process.technology: "python"
-      envOverrides:
-        - name: DT_RELEASE_VERSION
-          value: "TAG-recommendation"
       resources:
         requests:
           cpu: 50m
@@ -364,9 +334,6 @@ opentelemetry-demo:
       podAnnotations:
         dynatrace.com/inject: "false"
         metadata.dynatrace.com/process.technology: "rust"
-      envOverrides:
-        - name: DT_RELEASE_VERSION
-          value: "TAG-shipping"
       resources:
         requests:
           cpu: 25m
@@ -381,8 +348,6 @@ opentelemetry-demo:
       envOverrides:
         - name: KAFKA_OPTS
           value: "-Dotel.jmx.target.system=kafka-broker"
-        - name: DT_RELEASE_VERSION
-          value: "TAG-kafka"
       resources:
         requests:
           cpu: 25m
@@ -392,9 +357,6 @@ opentelemetry-demo:
           memory: 1024Mi
     # ---------------------------------------------------
     postgresql:
-      envOverrides:
-        - name: DT_RELEASE_VERSION
-          value: "TAG-postgresql"
       resources:
         requests:
           cpu: 25m
