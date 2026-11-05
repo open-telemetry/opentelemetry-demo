@@ -1,0 +1,6 @@
+change_type: enhancement
+component: collector
+note: Add the optional `OTEL_COLLECTOR_SELINUX_LABEL` setting for the collector's SELinux label.
+issues: [4225]
+subtext: |-
+  Set it to `disable` in `.env.override` so the `docker_stats` receiver can read the Podman socket when running Podman on macOS.
