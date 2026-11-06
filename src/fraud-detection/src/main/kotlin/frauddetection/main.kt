@@ -5,6 +5,7 @@
 
 package frauddetection
 
+import io.opentelemetry.api.GlobalOpenTelemetry
 import org.apache.kafka.clients.consumer.ConsumerConfig.*
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.ByteArrayDeserializer
@@ -59,6 +60,7 @@ fun main() {
     // False while kafkaConsumerDead has the consumer out of the group
     var subscribed = true
 
+    val orderMetrics = OrderMetrics(GlobalOpenTelemetry.get())
     var totalCount = 0L
 
     consumer.use {
@@ -90,6 +92,11 @@ fun main() {
                         Thread.sleep(sleepMs.toLong())
                     }
                     val orders = OrderResult.parseFrom(record.value())
+                    try {
+                        orderMetrics.record(orders)
+                    } catch (e: IllegalArgumentException) {
+                        logger.warn("Skipping business metrics for invalid order", e)
+                    }
                     logger.info("Consumed record with orderId: ${orders.orderId}, and updated total count to: $newCount")
                     newCount
                 }

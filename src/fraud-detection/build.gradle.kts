@@ -35,6 +35,10 @@ repositories {
 dependencies {
     implementation("com.google.protobuf:protobuf-java:${protobufVersion}")
     testImplementation(kotlin("test"))
+    testImplementation(platform("org.junit:junit-bom:5.14.2"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("io.opentelemetry:opentelemetry-sdk-testing:1.67.0")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation(kotlin("script-runtime"))
     implementation("org.apache.kafka:kafka-clients:4.4.0")
     implementation("com.google.api.grpc:proto-google-common-protos:2.79.0")
