@@ -6,6 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<ProtosDir>$(ProjectDir)..\..\pb</ProtosDir>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -24,11 +25,13 @@
 
 	<ItemGroup>
 		<!-- GrpcServices is 'none' so that we do not need to depend on the grpc nuget package, and we only need protobuf support. -->
-		<Protobuf Include="src\protos\demo.proto" GrpcServices="none" />
+		<Protobuf Include="$(ProtosDir)\demo.proto" GrpcServices="none" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="src\protos\" />
+		<Compile Remove="tests\**" />
+		<EmbeddedResource Remove="tests\**" />
+		<None Remove="tests\**" />
 	</ItemGroup>
 
 </Project>
