@@ -8,23 +8,184 @@ metadata:
 data:
   local-file: |
     /* eslint-disable no-console */
-    const { Console } = require('console');
+    const { execFileSync } = require('child_process');
     const puppeteer = require('puppeteer');
-    const customUserAgent = 'Mozilla/5.0 (X11; Linux x86_64; Splunk RUM_LoadGen) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36';
 
     // Debug logging flag (set via DEBUG_LOGGING env var)
     const debugEnabled = process.env.DEBUG_LOGGING === 'true';
-    if (debugEnabled) console.log('DEBUG: Using User Agent:', customUserAgent);
+    const fallbackChromeVersion = '142.0.0.0';
 
-    // Global browser instance for reuse across cycles
-    let globalBrowser = null;
+    function debug(...args) {
+      if (debugEnabled) console.log('[DEBUG]', ...args);
+    }
 
+    function positiveInt(value, fallback) {
+      const parsed = Number(value);
+      if (!Number.isFinite(parsed) || parsed < 1) {
+        return fallback;
+      }
+      return Math.floor(parsed);
+    }
 
-    async function launchBrowser() {
-      console.log('🔹 Starting headless browser...');
-      const browser = await puppeteer.launch({
+    function detectChromiumVersion() {
+      const fromEnv = process.env.RUM_CHROME_VERSION;
+      if (fromEnv && /^\d+\.\d+\.\d+\.\d+$/.test(fromEnv)) {
+        return fromEnv;
+      }
+      const candidates = [
+        process.env.PUPPETEER_EXECUTABLE_PATH,
+        '/usr/bin/chromium-browser',
+        '/usr/bin/chromium',
+      ].filter(Boolean);
+      for (const bin of candidates) {
+        try {
+          const output = execFileSync(bin, ['--version'], { encoding: 'utf8', timeout: 10000 });
+          const match = output.match(/(\d+\.\d+\.\d+\.\d+)/);
+          if (match) {
+            return match[1];
+          }
+        } catch (error) {
+          debug('Could not read Chromium version from', bin, error.message);
+        }
+      }
+      console.log('Could not read Chromium version, using fallback:', fallbackChromeVersion);
+      return fallbackChromeVersion;
+    }
+
+    // Chrome's GREASE brand is a pure function of the major version.
+    // https://wicg.github.io/ua-client-hints/#create-arbitrary-brands-section
+    function clientHintBrands(major, fullVersion) {
+      const chars = [' ', '(', ':', '-', '.', '/', ')', ';', '=', '?', '_'];
+      const greasedVersions = ['8', '99', '24'];
+      const greaseVersion = greasedVersions[major % greasedVersions.length];
+      const greaseBrand = `Not${chars[major % chars.length]}A${chars[(major + 1) % chars.length]}Brand`;
+      const entries = [
+        { brand: greaseBrand, major: greaseVersion, full: `${greaseVersion}.0.0.0` },
+        { brand: 'Chromium', major: String(major), full: fullVersion },
+        { brand: 'Google Chrome', major: String(major), full: fullVersion },
+      ];
+      const orders = [
+        [0, 1, 2],
+        [0, 2, 1],
+        [1, 0, 2],
+        [1, 2, 0],
+        [2, 0, 1],
+        [2, 1, 0],
+      ];
+      const order = orders[major % orders.length];
+      return {
+        brands: order.map(index => ({ brand: entries[index].brand, version: entries[index].major })),
+        fullVersionList: order.map(index => ({ brand: entries[index].brand, version: entries[index].full })),
+      };
+    }
+
+    function buildPersonas(fullVersion) {
+      const major = Number(fullVersion.split('.')[0]);
+      const reduced = `${major}.0.0.0`;
+      const hints = clientHintBrands(major, fullVersion);
+      const chrome = uaPlatform => (
+        `Mozilla/5.0 (${uaPlatform}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${reduced} Safari/537.36`
+      );
+      const metadata = (platform, platformVersion) => ({
+        brands: hints.brands,
+        fullVersionList: hints.fullVersionList,
+        fullVersion,
+        platform,
+        platformVersion,
+        architecture: 'x86',
+        model: '',
+        mobile: false,
+        bitness: '64',
+        wow64: false,
+      });
+
+      return [
+        {
+          name: 'windows-en-us',
+          locale: 'en-US',
+          acceptLanguage: 'en-US,en;q=0.9',
+          languages: ['en-US', 'en'],
+          timezone: 'America/Chicago',
+          navPlatform: 'Win32',
+          viewport: { width: 1920, height: 1080, deviceScaleFactor: 1 },
+          userAgent: chrome('Windows NT 10.0; Win64; x64'),
+          metadata: metadata('Windows', '15.0.0'),
+        },
+        {
+          name: 'mac-en-gb',
+          locale: 'en-GB',
+          acceptLanguage: 'en-GB,en;q=0.9',
+          languages: ['en-GB', 'en'],
+          timezone: 'Europe/London',
+          navPlatform: 'MacIntel',
+          viewport: { width: 1440, height: 900, deviceScaleFactor: 1 },
+          userAgent: chrome('Macintosh; Intel Mac OS X 10_15_7'),
+          metadata: metadata('macOS', '14.6.1'),
+        },
+        {
+          name: 'windows-en-au',
+          locale: 'en-AU',
+          acceptLanguage: 'en-AU,en;q=0.9',
+          languages: ['en-AU', 'en'],
+          timezone: 'Australia/Sydney',
+          navPlatform: 'Win32',
+          viewport: { width: 1536, height: 864, deviceScaleFactor: 1 },
+          userAgent: chrome('Windows NT 10.0; Win64; x64'),
+          metadata: metadata('Windows', '10.0.0'),
+        },
+      ];
+    }
+
+    async function applyUserAgent(page, persona) {
+      try {
+        await page.setUserAgent({
+          userAgent: persona.userAgent,
+          userAgentMetadata: persona.metadata,
+        });
+      } catch (error) {
+        debug('Object setUserAgent failed, using string form:', error.message);
+        await page.setUserAgent(persona.userAgent, persona.metadata);
+      }
+    }
+
+    async function applyPersona(page, persona) {
+      await page.setViewport(persona.viewport);
+      try {
+        await page.emulateTimezone(persona.timezone);
+      } catch (error) {
+        debug('Timezone emulation skipped:', error.message);
+      }
+      await page.setExtraHTTPHeaders({
+        'Accept-Language': persona.acceptLanguage,
+      });
+      await applyUserAgent(page, persona);
+      await page.evaluateOnNewDocument(profile => {
+        const define = (object, key, value) => {
+          try {
+            Object.defineProperty(object, key, {
+              get: () => value,
+              configurable: true,
+            });
+          } catch (error) {
+            // Some native getters are non-configurable.
+          }
+        };
+        define(Navigator.prototype, 'webdriver', false);
+        define(navigator, 'platform', profile.navPlatform);
+        define(navigator, 'language', profile.languages[0]);
+        define(navigator, 'languages', profile.languages);
+      }, {
+        navPlatform: persona.navPlatform,
+        languages: persona.languages,
+      });
+    }
+
+    function launchOptions(persona) {
+      const viewport = persona.viewport;
+      const options = {
         headless: true,
-        defaultViewport: null,
+        defaultViewport: viewport,
+        ignoreDefaultArgs: ['--enable-automation'],
         args: [
           '--no-sandbox',
           '--disable-setuid-sandbox',
@@ -45,17 +206,75 @@ data:
           // On plain-HTTP deploys they break Chromium fetch/hydration and every
           // cycle fails at waitForSelector. See CERT_FLAG_NOTE.md.
           '--allow-insecure-localhost',
-          `--user-agent=${customUserAgent}`
-        ]
-      });
+          '--disable-blink-features=AutomationControlled',
+          `--lang=${persona.locale}`,
+          `--window-size=${viewport.width},${viewport.height}`,
+          `--user-agent=${persona.userAgent}`,
+        ],
+      };
+      if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+        options.executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
+      }
+      return options;
+    }
+
+    const fullVersion = detectChromiumVersion();
+    let personas = buildPersonas(fullVersion);
+    if (process.env.RUM_USER_AGENT) {
+      console.log('RUM_USER_AGENT is set; using that string instead of a desktop Chrome user agent');
+      personas = personas.map(persona => ({ ...persona, userAgent: process.env.RUM_USER_AGENT }));
+    }
+    const profileCount = Math.min(
+      positiveInt(process.env.RUM_PROFILE_COUNT, personas.length),
+      personas.length,
+    );
+    const cyclesPerProfile = positiveInt(process.env.RUM_PROFILE_CYCLES, 6);
+    console.log(`Chrome ${fullVersion}; rotating ${profileCount} shopper profiles every ${cyclesPerProfile} cycles`);
+
+    // Global browser instance for reuse across cycles; relaunched when the shopper persona rotates.
+    let globalBrowser = null;
+    let profileSlot = 0;
+    let cyclesOnProfile = 0;
+
+    function currentPersona() {
+      return personas[profileSlot % profileCount];
+    }
+
+    async function closeBrowser() {
+      if (!globalBrowser) {
+        return;
+      }
+      const closing = globalBrowser;
+      globalBrowser = null;
+      try {
+        await closing.close();
+      } catch (error) {
+        debug('Error closing browser:', error.message);
+      }
+    }
+
+    async function launchBrowser(persona) {
+      console.log('🔹 Starting headless browser...');
+      console.log(`Chromium shopper ${persona.name}: ${persona.userAgent}`);
+      const browser = await puppeteer.launch(launchOptions(persona));
       console.log('✅ Browser started.');
       return browser;
     }
 
     async function ensureBrowser() {
-      if (!globalBrowser || !globalBrowser.isConnected()) {
+      if (cyclesOnProfile >= cyclesPerProfile) {
+        console.log(`🔄 Rotating shopper after ${cyclesOnProfile} cycles`);
+        await closeBrowser();
+        profileSlot = (profileSlot + 1) % profileCount;
+        cyclesOnProfile = 0;
+      }
+      if (globalBrowser && typeof globalBrowser.isConnected === 'function' && !globalBrowser.isConnected()) {
+        console.log('🔄 Chromium disconnected; launching again');
+        globalBrowser = null;
+      }
+      if (!globalBrowser) {
         console.log('🔄 Launching new global browser instance...');
-        globalBrowser = await launchBrowser();
+        globalBrowser = await launchBrowser(currentPersona());
       }
       return globalBrowser;
     }
@@ -280,6 +499,9 @@ data:
         page = await ctx.newPage();
         page.setDefaultNavigationTimeout(45000);
         page.setDefaultTimeout && page.setDefaultTimeout(30000);
+        const persona = currentPersona();
+        await applyPersona(page, persona);
+        console.log(`🧑 Shopper ${persona.name} (${persona.locale}, ${persona.timezone})`);
 
         // Log all responses for debugging (when DEBUG_LOGGING=true)
         if (debugEnabled) {
@@ -491,6 +713,7 @@ data:
         } catch (e) {
           console.error(`❌ Cycle #${cycle} failed:`, e && e.stack ? e.stack : e);
         }
+        cyclesOnProfile += 1;
         cycle += 1;
         await delay(cycleDelayMs);
       }
@@ -558,6 +781,14 @@ spec:
           value: "1000"
         - name: DEBUG_LOGGING
           value: ""  # Set to "true" to enable debug logging
+        # Desktop Chrome Client Hints personas (windows-en-us, mac-en-gb,
+        # windows-en-au). UA string uses Chrome's reduced form; full version
+        # and GREASE brands go out as Client Hints. Optional overrides:
+        # RUM_USER_AGENT (string only), RUM_CHROME_VERSION (a.b.c.d).
+        - name: RUM_PROFILE_COUNT
+          value: "3"
+        - name: RUM_PROFILE_CYCLES
+          value: "6"
         - name: QUICK_PROMPT_INTERVAL_MS
           value: "300000"  # How often AI quick prompts run (ms). Default 300000 (5min). Set "0" for every cycle.
         - name: SHIPPING_API
