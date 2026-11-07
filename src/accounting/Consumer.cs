@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using Confluent.Kafka;
+using Google.Protobuf;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Npgsql;
@@ -29,6 +30,7 @@ internal class DBContext : DbContext
 internal class Consumer : BackgroundService
 {
     private static readonly string TopicName = Environment.GetEnvironmentVariable("KAFKA_TOPIC") ?? "orders";
+    private static readonly TimeSpan SaveRetryDelay = TimeSpan.FromSeconds(5);
 
     private readonly ILogger _logger;
     private readonly IConsumer<string, byte[]> _consumer;
@@ -62,7 +64,17 @@ internal class Consumer : BackgroundService
                 {
                     using var activity = MyActivitySource.StartActivity("order-consumed",  ActivityKind.Internal);
                     var consumeResult = _consumer.Consume(stoppingToken);
-                    ProcessMessage(consumeResult.Message);
+                    if (ProcessMessage(consumeResult.Message))
+                    {
+                        CommitOffset(consumeResult);
+                    }
+                    else
+                    {
+                        // The order was not saved. Do not commit its offset; rewind so the
+                        // same message is consumed again once the database accepts writes.
+                        _consumer.Seek(consumeResult.TopicPartitionOffset);
+                        await Task.Delay(SaveRetryDelay, stoppingToken);
+                    }
                 }
                 catch (ConsumeException e)
                 {
@@ -80,16 +92,49 @@ internal class Consumer : BackgroundService
         }
     }
 
-    private void ProcessMessage(Message<string, byte[]> message)
+    private void CommitOffset(ConsumeResult<string, byte[]> consumeResult)
     {
         try
         {
-            var order = OrderResult.Parser.ParseFrom(message.Value);
+            _consumer.Commit(consumeResult);
+        }
+        catch (KafkaException e)
+        {
+            // The order is already saved; if the offset is not committed the message is
+            // redelivered after a restart and skipped as a duplicate.
+            Log.CommitError(_logger, e, e.Error.Reason);
+        }
+    }
+
+    /// <summary>
+    /// Processes a single order message.
+    /// </summary>
+    /// <returns>
+    /// <c>true</c> if the message is finished with and its offset can be committed (saved,
+    /// duplicate, or permanently unprocessable); <c>false</c> if saving failed and the
+    /// message must be retried.
+    /// </returns>
+    private bool ProcessMessage(Message<string, byte[]> message)
+    {
+        OrderResult order;
+        try
+        {
+            order = OrderResult.Parser.ParseFrom(message.Value);
+        }
+        catch (InvalidProtocolBufferException ex)
+        {
+            // Retrying can never succeed, so skip it rather than block the partition.
+            Log.OrderParsingFailed(_logger, ex);
+            return true;
+        }
+
+        try
+        {
             Log.OrderReceivedMessage(_logger, order);
 
             if (_dbConnectionString == null)
             {
-                return;
+                return true;
             }
 
             using var dbContext = new DBContext();
@@ -128,14 +173,17 @@ internal class Consumer : BackgroundService
             };
             dbContext.Add(shipping);
             dbContext.SaveChanges();
+            return true;
         }
         catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation })
         {
             Log.DuplicateOrderSkipped(_logger);
+            return true;
         }
         catch (Exception ex)
         {
-            Log.OrderParsingFailed(_logger, ex);
+            Log.OrderSaveFailed(_logger, ex, order.OrderId);
+            return false;
         }
     }
 
@@ -147,7 +195,8 @@ internal class Consumer : BackgroundService
             BootstrapServers = servers,
             // https://github.com/confluentinc/confluent-kafka-dotnet/tree/07de95ed647af80a0db39ce6a8891a630423b952#basic-consumer-example
             AutoOffsetReset = AutoOffsetReset.Earliest,
-            EnableAutoCommit = true
+            // Offsets are committed manually, only after an order has been saved.
+            EnableAutoCommit = false
         };
 
         return new ConsumerBuilder<string, byte[]>(conf)
