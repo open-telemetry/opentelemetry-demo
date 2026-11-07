@@ -5,6 +5,7 @@ networks:
   default:
     name: opentelemetry-demo
     driver: bridge
+    enable_ipv6: ${IPV6_ENABLED}
 
 services:
   otel-ebpf-profiler:
