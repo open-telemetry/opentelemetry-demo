@@ -1,32 +1,36 @@
 import os
 import subprocess
 import sys
-pathlib = __import__('pathlib')
+
 
 def run_git(args):
-    """دالة لتنفيذ أوامر الـ Git وإرجاع الناتج كـ نص"""
+    """Run git commands and return output as text."""
     result = subprocess.run(["git"] + args, capture_output=True, text=True)
     return result.stdout.strip()
 
+
 def commit_exists(commit_sha):
-    """بديل لدالة commit_exists في الـ Bash"""
+    """Check if the commit actually exists in the repository."""
     ZERO_SHA = "0" * 40
     if not commit_sha or commit_sha == ZERO_SHA:
         return False
-    # التحقق مما إذا كان الـ Commit موجوداً فعلياً في المستودع
-    res = subprocess.run(["git", "cat-file", "-e", f"{commit_sha}^{{commit}}"], 
-                         capture_output=True)
+    res = subprocess.run(
+        ["git", "cat-file", "-e", f"{commit_sha}^{{commit}}"],
+        capture_output=True,
+    )
     return res.returncode == 0
 
+
 def use_default_branch_merge_base(default_branch, head_sha):
-    """إيجاد نقطة التقاء الأفرع (Merge Base)"""
+    """Find the merge base with the default branch."""
     print(f"Using merge base with {default_branch}.")
     subprocess.run(["git", "fetch", "--no-tags", "origin", default_branch], capture_output=True)
     merge_base = run_git(["merge-base", head_sha, f"origin/{default_branch}"])
     return merge_base if merge_base else head_sha
 
+
 def main():
-    # 1. جلب المتغيرات البيئية من GitHub Actions
+    # 1. Fetch environment variables from GitHub Actions
     base_sha = os.environ.get("BASE_SHA", "")
     default_branch = os.environ.get("DEFAULT_BRANCH", "main")
     dockerfile = os.environ.get("DOCKERFILE", "")
@@ -37,23 +41,23 @@ def main():
 
     dockerfile_dir = os.path.dirname(dockerfile)
 
-    # 2. فحص البناء الإجباري
+    # 2. Check force build option
     if force_build:
         print("Force build is enabled, proceeding with build.")
         set_output("skip", "false")
         sys.exit(0)
 
-    # 3. التأكد من وجود HEAD_SHA
+    # 3. Ensure HEAD_SHA exists
     if not commit_exists(head_sha):
         print(f"Head SHA {head_sha} is unavailable, using checked out HEAD.")
         head_sha = run_git(["rev-parse", "HEAD"])
 
-    # 4. التعامل مع الأحداث المختلفة (Case equivalent)
+    # 4. Handle different GitHub events
     if event_name in ["pull_request", "merge_group"]:
         if not commit_exists(base_sha):
             print(f"Base SHA unavailable for {event_name}.")
             base_sha = use_default_branch_merge_base(default_branch, head_sha)
-            
+
     elif event_name == "push":
         if ref_name == default_branch:
             if not commit_exists(base_sha):
@@ -73,9 +77,9 @@ def main():
         set_output("skip", "false")
         sys.exit(0)
 
-    # 5. الفحص الفعلي للتغييرات عبر git diff
+    # 5. Actual check for changes using git diff
     diff_output = run_git(["diff", "--name-only", base_sha, head_sha, "--", dockerfile_dir])
-    
+
     if not diff_output:
         print(f"No changes in {dockerfile_dir}, skipping build for {dockerfile}.")
         set_output("skip", "true")
@@ -83,14 +87,16 @@ def main():
         print(f"Changes detected in {dockerfile_dir}, proceeding with build for {dockerfile}.")
         set_output("skip", "false")
 
+
 def set_output(name, value):
-    """كتابة المخرجات بالطريقة الحديثة لـ GitHub Actions"""
+    """Write outputs using the modern GitHub Actions format."""
     github_output = os.environ.get("GITHUB_OUTPUT")
     if github_output:
         with open(github_output, "a") as f:
             f.write(f"{name}={value}\n")
     else:
         print(f"::set-output name={name}::{value}")
+
 
 if __name__ == "__main__":
     main()
