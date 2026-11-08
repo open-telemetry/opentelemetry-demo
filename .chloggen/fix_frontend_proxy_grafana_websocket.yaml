@@ -4,7 +4,7 @@ component: frontend-proxy
 
 note: Enable WebSocket upgrades on the Grafana route so Grafana Live works behind the frontend proxy.
 
-issues: [0]
+issues: [4260]
 
 subtext: |-
   Without this, browsers fail to connect to `/grafana/api/live/ws`.
