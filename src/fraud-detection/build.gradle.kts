@@ -79,7 +79,7 @@ tasks.test {
 
 kotlin {
   compilerOptions {
-    jvmTarget.set(JvmTarget.JVM_17)
+    jvmTarget.set(JvmTarget.JVM_21)
   }
 }
 
@@ -102,6 +102,14 @@ protobuf {
                 // NamedDomainObjectContainer binds the methods.
                 id("grpc") { }
             }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        proto {
+            srcDir("../../pb")
         }
     }
 }
