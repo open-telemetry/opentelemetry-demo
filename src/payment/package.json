@@ -14,13 +14,28 @@
     "@openfeature/flagd-provider": "0.18.0",
     "@openfeature/server-sdk": "1.23.0",
     "@opentelemetry/api": "1.10.0",
+    "@opentelemetry/auto-instrumentations-node": "0.82.0",
+    "@opentelemetry/core": "3.0.0",
+    "@opentelemetry/exporter-metrics-otlp-grpc": "0.300.0",
+    "@opentelemetry/exporter-trace-otlp-grpc": "0.300.0",
+    "@opentelemetry/instrumentation-runtime-node": "0.37.0",
+    "@opentelemetry/resource-detector-alibaba-cloud": "0.39.0",
+    "@opentelemetry/resource-detector-aws": "3.1.0",
+    "@opentelemetry/resource-detector-container": "0.9.1",
+    "@opentelemetry/resource-detector-gcp": "0.59.0",
+    "@opentelemetry/resources": "3.0.0",
+    "@opentelemetry/sdk-metrics": "3.0.0",
+    "@opentelemetry/sdk-node": "0.300.0",
     "@opentelemetry/semantic-conventions": "1.44.0",
     "grpc-js-health-check": "1.2.2",
     "pino": "^10.4.0",
+    "pino-opentelemetry-transport": "^4.0.2",
     "simple-card-validator": "1.1.0",
     "uuid": "14.0.3"
   },
-  "devDependencies": {
-    "@opentelemetry/auto-instrumentations-node": "0.82.0"
+  "overrides": {
+    "@opentelemetry/core": "3.0.0",
+    "@opentelemetry/resources": "3.0.0",
+    "@opentelemetry/sdk-metrics": "3.0.0"
   }
 }
