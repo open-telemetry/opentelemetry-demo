@@ -5,10 +5,14 @@
 
 package frauddetection
 
+
 import org.apache.kafka.clients.consumer.ConsumerConfig.*
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.ByteArrayDeserializer
 import org.apache.kafka.common.serialization.StringDeserializer
+import org.apache.kafka.clients.CommonClientConfigs.SECURITY_PROTOCOL_CONFIG
+import org.apache.kafka.common.config.SaslConfigs.SASL_JAAS_CONFIG
+import org.apache.kafka.common.config.SaslConfigs.SASL_MECHANISM
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import oteldemo.Demo.*
@@ -53,6 +57,16 @@ fun main() {
         exitProcess(1)
     }
     props[BOOTSTRAP_SERVERS_CONFIG] = bootstrapServers
+
+    // Optional TLS/SASL settings for Kafka clusters that require them. Without them the connection stays plaintext.
+    configureKafkaSecurity(
+        props,
+        System.getenv("KAFKA_SECURITY_PROTOCOL"),
+        System.getenv("KAFKA_SASL_MECHANISM"),
+        System.getenv("KAFKA_SASL_USERNAME"),
+        System.getenv("KAFKA_SASL_PASSWORD")
+    )
+
     val consumer = KafkaConsumer<String, ByteArray>(props).apply {
         subscribe(listOf(topic))
     }
