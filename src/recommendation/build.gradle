@@ -6,7 +6,7 @@ plugins {
     id 'java'
     id 'idea'
     id 'org.springframework.boot' version '4.1.2'
-    id 'com.google.protobuf' version '0.10.0'
+    id 'com.google.protobuf' version '0.10.1'
 }
 
 repositories {
