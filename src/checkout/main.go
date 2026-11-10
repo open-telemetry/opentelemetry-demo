@@ -504,21 +504,30 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 		attribute.Int("app.order.items.count", len(prep.orderItems)),
 		shippingTrackingAttribute,
 	)
-	logger.LogAttrs(
-		ctx,
-		slog.LevelInfo, "order placed",
-		slog.String("app.order.id", orderID.String()),
-		slog.Float64("app.shipping.amount", shippingCostFloat),
-		slog.Float64("app.order.amount", totalPriceFloat),
-		slog.Float64("app.order.amount.charged", chargedPriceFloat),
-		slog.String("app.order.currency", total.GetCurrencyCode()),
-		slog.Float64("app.order.amount.usd", totalUSDFloat),
-		slog.Float64("app.order.amount.charged.usd", chargedUSDFloat),
-		slog.String("app.promo.code", promoCode),
-		slog.Float64("app.order.discount.pct", float64(discountPct)),
-		slog.Int("app.order.items.count", len(prep.orderItems)),
-		slog.String("app.shipping.tracking.id", shippingTrackingID),
-	)
+	
+	orderLog := map[string]any{
+		"message":                      "order placed",
+		"app.order.id":                 orderID.String(),
+		"app.shipping.amount":          shippingCostFloat,
+		"app.order.amount":             totalPriceFloat,
+		"app.order.amount.charged":     chargedPriceFloat,
+		"app.order.currency":           total.GetCurrencyCode(),
+		"app.order.amount.usd":         totalUSDFloat,
+		"app.order.amount.charged.usd": chargedUSDFloat,
+		"app.promo.code":               promoCode,
+		"app.order.discount.pct":       float64(discountPct),
+		"app.order.items.count":        len(prep.orderItems),
+		"app.shipping.tracking.id":     shippingTrackingID,
+	}
+
+	if payload, err := json.Marshal(orderLog); err != nil {
+		logger.ErrorContext(ctx, "failed to serialize order log",
+			slog.String("error", err.Error()),
+			slog.String("app.order.id", orderID.String()),
+		)
+	} else {
+		logger.InfoContext(ctx, string(payload))
+	}
 
 	if err := cs.sendOrderConfirmation(ctx, req.Email, orderResult); err != nil {
 		logger.Warn(fmt.Sprintf("failed to send order confirmation: %+v", err))
