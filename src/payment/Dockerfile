@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.82.0-3@sha256:609216a9e468279bd41b56829c1fd5e73cb29b5b1002ed95921bf59da854e09a AS otelagent
+FROM ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.82.0-5@sha256:fec6d251e1d6de952c4e2f913378a9f3566d3daacca86b44900f3625f39bb297 AS otelagent
 
 # -----------------------------------------------------------------------------
 
@@ -17,7 +17,7 @@ RUN npm ci --omit=dev
 
 # -----------------------------------------------------------------------------
 
-FROM gcr.io/distroless/nodejs24-debian13:nonroot@sha256:b8cec4b2f2126ff7bd034ec9ac207ffb3272667dfdc48376e3b035d3270549ba
+FROM gcr.io/distroless/nodejs24-debian13:nonroot@sha256:088a01637f22908632ba09018be2e0b516f2fa6f7869c191d29491139db43c78
 
 WORKDIR /usr/src/app/
 
