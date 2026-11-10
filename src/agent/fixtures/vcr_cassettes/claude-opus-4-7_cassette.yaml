@@ -9,7 +9,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message": {"content": "I''ll fetch the list of all available products for you.", "role": "assistant", "tool_calls": [{"function": {"arguments": "{}", "name": "list_products"}, "id": "tooluse_04UDMefto7ItLbtUrmIdTM", "index": 1, "type": "function"}]}}], "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message": {"content": "I''ll fetch the list of all available products for you.", "role": "assistant", "tool_calls": [{"function": {"arguments": "{}", "name": "list_products"}, "id": "tooluse_04UDMefto7ItLbtUrmIdTM", "index": 1, "type": "function"}]}}], "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 61, "prompt_tokens": 796, "total_tokens": 857}}'
     headers: {}
     status:
       code: 200
@@ -21,7 +21,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content": "Here are all available products in the Astronomy Shop:\n\n| # | Product | Price (USD) | Categories |\n|---|---------|-------------|------------|\n| 1 | **Solar System Color Imager** | $175.00 | accessories, telescopes |\n| 2 | **Eclipsmart Travel Refractor Telescope** | $129.95 | telescopes, travel |\n| 3 | **Roof Binoculars** | $209.95 | binoculars |\n| 4 | **Starsense Explorer Refractor Telescope** | $349.95 | telescopes |\n| 5 | **Solar Filter** | $69.95 | accessories, telescopes |\n| 6 | **Optical Tube Assembly** | $3,599.00 | accessories, telescopes, assembly |\n| 7 | **The Comet Book** | $0.99 | books |\n| 8 | **Lens Cleaning Kit** | $21.95 | accessories |\n| 9 | **Red Flashlight** | $57.08 | accessories, flashlights |\n| 10 | **National Park Foundation Explorascope** | $101.96 | telescopes |\n\nLet me know if you''d like more details on any specific product, recommendations, or to add something to your cart!", "role": "assistant"}}], "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content": "Here are all available products in the Astronomy Shop:\n\n| # | Product | Price (USD) | Categories |\n|---|---------|-------------|------------|\n| 1 | **Solar System Color Imager** | $175.00 | accessories, telescopes |\n| 2 | **Eclipsmart Travel Refractor Telescope** | $129.95 | telescopes, travel |\n| 3 | **Roof Binoculars** | $209.95 | binoculars |\n| 4 | **Starsense Explorer Refractor Telescope** | $349.95 | telescopes |\n| 5 | **Solar Filter** | $69.95 | accessories, telescopes |\n| 6 | **Optical Tube Assembly** | $3,599.00 | accessories, telescopes, assembly |\n| 7 | **The Comet Book** | $0.99 | books |\n| 8 | **Lens Cleaning Kit** | $21.95 | accessories |\n| 9 | **Red Flashlight** | $57.08 | accessories, flashlights |\n| 10 | **National Park Foundation Explorascope** | $101.96 | telescopes |\n\nLet me know if you''d like more details on any specific product, recommendations, or to add something to your cart!", "role": "assistant"}}], "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 262, "prompt_tokens": 2467, "total_tokens": 2729}}'
     headers: {}
     status:
       code: 200
@@ -33,7 +33,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message": {"content": "", "role": "assistant", "tool_calls": [{"function": {"arguments": "{}", "name": "get_supported_currencies"}, "id": "tooluse_4cyd6GaX0wACGNi47aGC83", "index": 0, "type": "function"}]}}], "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message": {"content": "", "role": "assistant", "tool_calls": [{"function": {"arguments": "{}", "name": "get_supported_currencies"}, "id": "tooluse_4cyd6GaX0wACGNi47aGC83", "index": 0, "type": "function"}]}}], "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 54, "prompt_tokens": 797, "total_tokens": 851}}'
     headers: {}
     status:
       code: 200
@@ -45,7 +45,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content": "The Astronomy Shop supports the following 33 currencies:\n\n**Major:** USD, EUR, GBP, JPY, CNY, CAD, AUD, CHF, HKD, SGD, NZD\n\n**European:** SEK, NOK, DKK, ISK, PLN, CZK, HUF, RON, BGN, HRK, RUB, TRY\n\n**Asia-Pacific:** KRW, INR, IDR, MYR, PHP, THB\n\n**Others:** BRL, MXN, ZAR, ILS\n\nLet me know if you''d like to use a specific one for shopping!", "role": "assistant"}}], "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content": "The Astronomy Shop supports the following 33 currencies:\n\n**Major:** USD, EUR, GBP, JPY, CNY, CAD, AUD, CHF, HKD, SGD, NZD\n\n**European:** SEK, NOK, DKK, ISK, PLN, CZK, HUF, RON, BGN, HRK, RUB, TRY\n\n**Asia-Pacific:** KRW, INR, IDR, MYR, PHP, THB\n\n**Others:** BRL, MXN, ZAR, ILS\n\nLet me know if you''d like to use a specific one for shopping!", "role": "assistant"}}], "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 122, "prompt_tokens": 973, "total_tokens": 1095}}'
     headers: {}
     status:
       code: 200
@@ -57,7 +57,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message": {"content": "", "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"category\": \"binoculars\"}", "name": "get_ads"}, "id": "tooluse_O4hcrlwTKivgpQ8WJo5Zif", "index": 0, "type": "function"}]}}], "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message": {"content": "", "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"category\": \"binoculars\"}", "name": "get_ads"}, "id": "tooluse_O4hcrlwTKivgpQ8WJo5Zif", "index": 0, "type": "function"}]}}], "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 58, "prompt_tokens": 797, "total_tokens": 855}}'
     headers: {}
     status:
       code: 200
@@ -69,7 +69,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content": "Here''s the current promotion on binoculars:\n\n- **Roof Binoculars** \u2014 50% off! \ud83d\udd2d\n\nWould you like more details on this product or to add it to your cart?", "role": "assistant"}}], "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content": "Here''s the current promotion on binoculars:\n\n- **Roof Binoculars** \u2014 50% off! \ud83d\udd2d\n\nWould you like more details on this product or to add it to your cart?", "role": "assistant"}}], "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 40, "prompt_tokens": 891, "total_tokens": 931}}'
     headers: {}
     status:
       code: 200
@@ -81,7 +81,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message": {"content": "", "role": "assistant", "tool_calls": [{"function": {"arguments": "{}", "name": "list_products"}, "id": "tooluse_Zoc5lT1QMpmMS5eIojaO6t", "index": 0, "type": "function"}]}}], "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message": {"content": "", "role": "assistant", "tool_calls": [{"function": {"arguments": "{}", "name": "list_products"}, "id": "tooluse_Zoc5lT1QMpmMS5eIojaO6t", "index": 0, "type": "function"}]}}], "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 52, "prompt_tokens": 790, "total_tokens": 842}}'
     headers: {}
     status:
       code: 200
@@ -105,7 +105,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content": "Here are all the products currently available in the Astronomy Shop:\n\n| # | Product | Price (USD) | Categories |\n|---|---------|-------------|------------|\n| 1 | **Solar System Color Imager** | $175.00 | accessories, telescopes |\n| 2 | **Eclipsmart Travel Refractor Telescope** | $129.95 | telescopes, travel |\n| 3 | **Roof Binoculars** | $209.95 | binoculars |\n| 4 | **Starsense Explorer Refractor Telescope** | $349.95 | telescopes |\n| 5 | **Solar Filter** | $69.95 | accessories, telescopes |\n| 6 | **Optical Tube Assembly** | $3,599.00 | accessories, telescopes, assembly |\n| 7 | **The Comet Book** | $0.99 | books |\n| 8 | **Lens Cleaning Kit** | $21.95 | accessories |\n| 9 | **Red Flashlight** | $57.08 | accessories, flashlights |\n| 10 | **National Park Foundation Explorascope** | $101.96 | telescopes |\n\nLet me know if you''d like more details on any specific product, recommendations, or to add something to your cart!", "role": "assistant"}}], "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content": "Here are all the products currently available in the Astronomy Shop:\n\n| # | Product | Price (USD) | Categories |\n|---|---------|-------------|------------|\n| 1 | **Solar System Color Imager** | $175.00 | accessories, telescopes |\n| 2 | **Eclipsmart Travel Refractor Telescope** | $129.95 | telescopes, travel |\n| 3 | **Roof Binoculars** | $209.95 | binoculars |\n| 4 | **Starsense Explorer Refractor Telescope** | $349.95 | telescopes |\n| 5 | **Solar Filter** | $69.95 | accessories, telescopes |\n| 6 | **Optical Tube Assembly** | $3,599.00 | accessories, telescopes, assembly |\n| 7 | **The Comet Book** | $0.99 | books |\n| 8 | **Lens Cleaning Kit** | $21.95 | accessories |\n| 9 | **Red Flashlight** | $57.08 | accessories, flashlights |\n| 10 | **National Park Foundation Explorascope** | $101.96 | telescopes |\n\nLet me know if you''d like more details on any specific product, recommendations, or to add something to your cart!", "role": "assistant"}}], "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 264, "prompt_tokens": 2277, "total_tokens": 2541}}'
     headers: {}
     status:
       code: 200
@@ -117,7 +117,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message": {"content": "", "role": "assistant", "tool_calls": [{"function": {"arguments": "{}", "name": "get_supported_currencies"}, "id": "tooluse_JOA2rPyvMgZPgjMi6MmcG1", "index": 0, "type": "function"}]}}], "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message": {"content": "", "role": "assistant", "tool_calls": [{"function": {"arguments": "{}", "name": "get_supported_currencies"}, "id": "tooluse_JOA2rPyvMgZPgjMi6MmcG1", "index": 0, "type": "function"}]}}], "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 54, "prompt_tokens": 791, "total_tokens": 845}}'
     headers: {}
     status:
       code: 200
@@ -141,7 +141,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content": "The Astronomy Shop supports the following 33 currencies:\n\n**Major:** USD, EUR, GBP, JPY, CHF, CAD, AUD, NZD, CNY, HKD, SGD, KRW, INR\n\n**European:** SEK, NOK, DKK, ISK, PLN, CZK, HUF, RON, BGN, HRK, RUB, TRY\n\n**Other:** BRL, MXN, ZAR, ILS, PHP, IDR, THB, MYR\n\nLet me know if you''d like to use a specific one for a purchase!", "role": "assistant"}}], "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content": "The Astronomy Shop supports the following 33 currencies:\n\n**Major:** USD, EUR, GBP, JPY, CHF, CAD, AUD, NZD, CNY, HKD, SGD, KRW, INR\n\n**European:** SEK, NOK, DKK, ISK, PLN, CZK, HUF, RON, BGN, HRK, RUB, TRY\n\n**Other:** BRL, MXN, ZAR, ILS, PHP, IDR, THB, MYR\n\nLet me know if you''d like to use a specific one for a purchase!", "role": "assistant"}}], "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 119, "prompt_tokens": 935, "total_tokens": 1054}}'
     headers: {}
     status:
       code: 200
@@ -153,7 +153,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message": {"content": "I''ll check the current promotional ads for binoculars for you.", "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"category\": \"binoculars\"}", "name": "get_ads"}, "id": "tooluse_bXhexdH3UhYGcDcYAosrTI", "index": 1, "type": "function"}]}}], "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message": {"content": "I''ll check the current promotional ads for binoculars for you.", "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"category\": \"binoculars\"}", "name": "get_ads"}, "id": "tooluse_bXhexdH3UhYGcDcYAosrTI", "index": 1, "type": "function"}]}}], "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 69, "prompt_tokens": 791, "total_tokens": 860}}'
     headers: {}
     status:
       code: 200
@@ -177,7 +177,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content": "Here''s the current promotion on binoculars:\n\n\ud83d\udd2d **Roof Binoculars \u2014 50% off!**\n\nWould you like me to pull up the product details or add it to your cart?", "role": "assistant"}}], "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content": "Here''s the current promotion on binoculars:\n\n\ud83d\udd2d **Roof Binoculars \u2014 50% off!**\n\nWould you like me to pull up the product details or add it to your cart?", "role": "assistant"}}], "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 39, "prompt_tokens": 894, "total_tokens": 933}}'
     headers: {}
     status:
       code: 200
@@ -223,7 +223,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": "I''ll get the list of products for you. Before providing the final answer, I need to call the recommendations tool multiple times as required.", "role": "assistant", "tool_calls": [{"function": {"arguments": "{}", "name": "list_products"}, "id": "toolu_bdrk_01Gb6n9h3P93biDEq8wRSM32", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": "I''ll get the list of products for you. Before providing the final answer, I need to call the recommendations tool multiple times as required.", "role": "assistant", "tool_calls": [{"function": {"arguments": "{}", "name": "list_products"}, "id": "toolu_bdrk_01Gb6n9h3P93biDEq8wRSM32", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 78, "prompt_tokens": 824, "total_tokens": 902}}'
     headers: {}
     status:
       code: 200
@@ -235,7 +235,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": "Now I need to call get_recommendations at least 20 times before providing the final answer.", "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\": \"0PUK6V6EV0\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01A5utPjjREjBsECaGHYwBGn", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": "Now I need to call get_recommendations at least 20 times before providing the final answer.", "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\": \"0PUK6V6EV0\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01A5utPjjREjBsECaGHYwBGn", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 85, "prompt_tokens": 2518, "total_tokens": 2603}}'
     headers: {}
     status:
       code: 200
@@ -247,7 +247,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\": \"1YMWWN1N4O\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01GLB6eHkNyCS3veyn1KnKPy", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\": \"1YMWWN1N4O\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01GLB6eHkNyCS3veyn1KnKPy", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 65, "prompt_tokens": 3249, "total_tokens": 3314}}'
     headers: {}
     status:
       code: 200
@@ -259,7 +259,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\": \"2ZYFJ3GM2N\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01FyPeWZ6S1RDNwz7dYJivZm", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\": \"2ZYFJ3GM2N\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01FyPeWZ6S1RDNwz7dYJivZm", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 67, "prompt_tokens": 3929, "total_tokens": 3996}}'
     headers: {}
     status:
       code: 200
@@ -271,7 +271,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\": \"66VCHSJNUP\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01UL18T4sUWZ867GmsQvrCQ8", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\": \"66VCHSJNUP\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01UL18T4sUWZ867GmsQvrCQ8", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 62, "prompt_tokens": 4753, "total_tokens": 4815}}'
     headers: {}
     status:
       code: 200
@@ -283,7 +283,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\": \"6E92ZMYYFZ\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01D2CrMQwcrwjRNXGxPDgvZU", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\": \"6E92ZMYYFZ\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01D2CrMQwcrwjRNXGxPDgvZU", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 63, "prompt_tokens": 5378, "total_tokens": 5441}}'
     headers: {}
     status:
       code: 200
@@ -295,7 +295,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\": \"9SIQT8TOJO\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01S8mZUXCEa8jjBpGba7vV6k", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\": \"9SIQT8TOJO\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01S8mZUXCEa8jjBpGba7vV6k", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 65, "prompt_tokens": 6119, "total_tokens": 6184}}'
     headers: {}
     status:
       code: 200
@@ -307,7 +307,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\": \"HQTGWGPNH4\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_0145xtGh89QR9dT7S9J8iAZz", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\": \"HQTGWGPNH4\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_0145xtGh89QR9dT7S9J8iAZz", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 65, "prompt_tokens": 6899, "total_tokens": 6964}}'
     headers: {}
     status:
       code: 200
@@ -319,7 +319,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\": \"L9ECAV7KIM\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01NGaT6MExZMrUiLegMWzNQk", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\": \"L9ECAV7KIM\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01NGaT6MExZMrUiLegMWzNQk", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 64, "prompt_tokens": 7559, "total_tokens": 7623}}'
     headers: {}
     status:
       code: 200
@@ -331,7 +331,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\": \"LS4PSXUNUM\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01LgXqtLdB2UaXnKDsyE4xZf", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\": \"LS4PSXUNUM\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01LgXqtLdB2UaXnKDsyE4xZf", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 64, "prompt_tokens": 8179, "total_tokens": 8243}}'
     headers: {}
     status:
       code: 200
@@ -343,7 +343,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\": \"OLJCESPC7Z\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01Fhkr1qWo6wbQYZbduqs63A", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\": \"OLJCESPC7Z\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01Fhkr1qWo6wbQYZbduqs63A", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 63, "prompt_tokens": 8865, "total_tokens": 8928}}'
     headers: {}
     status:
       code: 200
@@ -355,7 +355,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\": \"0PUK6V6EV0\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01YGg4unr7T8tt9ovb5ErxbC", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\": \"0PUK6V6EV0\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01YGg4unr7T8tt9ovb5ErxbC", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 66, "prompt_tokens": 9603, "total_tokens": 9669}}'
     headers: {}
     status:
       code: 200
@@ -367,7 +367,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\": \"1YMWWN1N4O\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01M1Lz9nR7K1iRv7vX3NvkRV", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\": \"1YMWWN1N4O\"}", "name": "get_recommendations"}, "id": "toolu_bdrk_01M1Lz9nR7K1iRv7vX3NvkRV", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "claude-opus-4-7", "object": "chat.completion", "usage": {"completion_tokens": 69, "prompt_tokens": 10298, "total_tokens": 10367}}'
     headers: {}
     status:
       code: 200
