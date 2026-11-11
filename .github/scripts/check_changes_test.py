@@ -40,7 +40,7 @@ def use_default_branch_merge_base(default_branch, head_sha):
     print(f"Using merge base with {default_branch}.")
     subprocess.run(["git", "fetch", "--no-tags", "origin", default_branch], capture_output=True)
     merge_base = run_git(["merge-base", head_sha, f"origin/{default_branch}"])
-    return merge_base if merge_base else head_sha
+    return merge_base
 
 
 def main():
@@ -53,13 +53,18 @@ def main():
     event_name = os.environ.get("GITHUB_EVENT_NAME", "")
     ref_name = os.environ.get("GITHUB_REF_NAME", "")
 
-    dockerfile_dir = os.path.dirname(dockerfile)
-
     # 2. Check force build option
     if force_build:
         print("Force build is enabled, proceeding with build.")
         set_output("skip", "false")
         sys.exit(0)
+
+    if not dockerfile:
+        print("Dockerfile path is missing, proceeding with build.")
+        set_output("skip", "false")
+        sys.exit(0)
+
+    dockerfile_dir = os.path.dirname(dockerfile) or "."
 
     # 3. Ensure HEAD_SHA exists
     if not commit_exists(head_sha):
@@ -92,15 +97,23 @@ def main():
         sys.exit(0)
 
     # 5. Actual check for changes using git diff
-    diff_output = run_git(["diff", "--name-only", base_sha, head_sha, "--", dockerfile_dir])
+    result = subprocess.run(
+        ["git", "diff", "--name-only", base_sha, head_sha, "--", dockerfile_dir],
+        capture_output=True,
+        text=True,
+    )
 
-    if not diff_output:
+    if result.returncode != 0:
+        print("Git diff failed, proceeding with build.")
+        set_output("skip", "false")
+        sys.exit(0)
+
+    if not result.stdout.strip():
         print(f"No changes in {dockerfile_dir}, skipping build for {dockerfile}.")
         set_output("skip", "true")
     else:
         print(f"Changes detected in {dockerfile_dir}, proceeding with build for {dockerfile}.")
         set_output("skip", "false")
-
 
 def set_output(name, value):
     """Write outputs using the modern GitHub Actions format."""
