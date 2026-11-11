@@ -91,7 +91,7 @@ GEM
     molinillo (0.8.0)
     mutex_m (0.3.0)
     nanaimo (0.4.0)
-    nap (1.1.1)
+    nap (1.2.0)
     netrc (0.11.0)
     nkf (0.3.0)
     public_suffix (4.0.7)
@@ -175,7 +175,7 @@ CHECKSUMS
   molinillo (0.8.0) sha256=efbff2716324e2a30bccd3eba1ff3a735f4d5d53ffddbc6a2f32c0ca9433045d
   mutex_m (0.3.0) sha256=cfcb04ac16b69c4813777022fdceda24e9f798e48092a2b817eb4c0a782b0751
   nanaimo (0.4.0) sha256=faf069551bab17f15169c1f74a1c73c220657e71b6e900919897a10d991d0723
-  nap (1.1.1) sha256=62a0067e3940e5dabb5edb013fba21896cb6752314e329ee239196864b4216ea
+  nap (1.2.0) sha256=fdb4fd0de5509edca600b471570d00ce90745c9c06dc7d877efb513401953051
   netrc (0.11.0) sha256=de1ce33da8c99ab1d97871726cba75151113f117146becbe45aa85cb3dabee3f
   nkf (0.3.0) sha256=357a8dbeba38b727b75930f665146546076a394a1c243faf634ff176e3588895
   public_suffix (4.0.7) sha256=8be161e2421f8d45b0098c042c06486789731ea93dc3a896d30554ee38b573b8

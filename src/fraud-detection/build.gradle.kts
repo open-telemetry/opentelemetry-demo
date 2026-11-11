@@ -13,7 +13,7 @@ plugins {
     application
     id("java")
     id("idea")
-    id("com.google.protobuf") version "0.10.0"
+    id("com.google.protobuf") version "0.10.1"
     id("com.gradleup.shadow") version "9.6.1"
 }
 
@@ -37,13 +37,13 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation(kotlin("script-runtime"))
     implementation("org.apache.kafka:kafka-clients:4.4.0")
-    implementation("com.google.api.grpc:proto-google-common-protos:2.79.0")
+    implementation("com.google.api.grpc:proto-google-common-protos:2.81.0")
     implementation("io.grpc:grpc-protobuf:${grpcVersion}")
     implementation("io.grpc:grpc-stub:${grpcVersion}")
     implementation("io.grpc:grpc-netty:${grpcVersion}")
     implementation("io.grpc:grpc-services:${grpcVersion}")
-    implementation("io.opentelemetry:opentelemetry-api:1.67.0")
-    implementation("io.opentelemetry:opentelemetry-sdk:1.67.0")
+    implementation("io.opentelemetry:opentelemetry-api:1.68.0")
+    implementation("io.opentelemetry:opentelemetry-sdk:1.68.0")
     implementation("io.opentelemetry:opentelemetry-extension-annotations:1.18.0")
     implementation("org.apache.logging.log4j:log4j-core:2.26.1")
     implementation("org.slf4j:slf4j-api:2.0.20")
