@@ -1,6 +1,6 @@
 # Cart Service
 
-This service stores user shopping carts in Valkey.
+This is service stores user shopping carts in Valkey.
 
 ## Local Build
 
