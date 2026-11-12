@@ -72,7 +72,6 @@ builder.Services.AddOpenTelemetry()
         .AddSource("OpenTelemetry.Demo.Cart")
         .AddRedisInstrumentation(
             options => options.SetVerboseDatabaseStatements = true)
-        .AddAspNetCoreInstrumentation()
         .AddGrpcClientInstrumentation()
         .AddHttpClientInstrumentation()
         .AddOtlpExporter())
@@ -81,7 +80,6 @@ builder.Services.AddOpenTelemetry()
         .AddMeter("OpenFeature")
         .AddProcessInstrumentation()
         .AddRuntimeInstrumentation()
-        .AddAspNetCoreInstrumentation()
         .SetExemplarFilter(ExemplarFilterType.TraceBased)
         .AddOtlpExporter());
 builder.Services.AddGrpc();
