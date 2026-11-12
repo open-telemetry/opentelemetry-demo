@@ -10,6 +10,11 @@ version section directly below the marker and deletes them.
 
 <!-- next version -->
 
+* [accountingservice] Update to .NET 11.
+  ([#4290](https://github.com/open-telemetry/opentelemetry-demo/pull/4290))
+* [cart] Update to .NET 11.
+  ([#4290](https://github.com/open-telemetry/opentelemetry-demo/pull/4290))
+
 ## 3.1.0
 
 ### Breaking changes
