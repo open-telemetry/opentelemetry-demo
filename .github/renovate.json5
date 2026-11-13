@@ -1,0 +1,78 @@
+{
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  extends: [
+    'config:best-practices',
+    'helpers:pinGitHubActionDigestsToSemver',
+  ],
+  prHourlyLimit: 15,
+  prConcurrentLimit: 15,
+  schedule: ['* 50 3 * * 2'],
+  separateMajorMinor: false,
+  minimumReleaseAge: '3 days',
+  postUpdateOptions: [
+    'gomodTidyAll',
+    'gomodUpdateImportPaths',
+  ],
+  labels: [
+    'dependencies',
+  ],
+  lockFileMaintenance: {
+    enabled: true,
+    commitMessageAction: 'Lock file maintenance {{categories}}',
+    branchTopic: 'lock-file-maintenance-{{categories}}',
+    schedule: [
+      'before 8am on Wednesday',
+    ],
+  },
+  packageRules: [
+    {
+      matchManagers: ['github-actions'],
+      groupName: 'actions-production-dependencies',
+    },
+    {
+      matchManagers: ['gomod'],
+      matchFileNames: ['internal/tools/**'],
+      groupName: 'go-production-dependencies',
+    },
+    {
+      matchManagers: ['npm'],
+      matchFileNames: ['package.json'],
+      matchDepTypes: ['dependencies'],
+      groupName: 'npm-production-dependencies',
+    },
+    {
+      matchManagers: ['npm'],
+      matchFileNames: ['package.json'],
+      matchDepTypes: ['devDependencies'],
+      groupName: 'npm-development-dependencies',
+    },
+    {
+      matchFileNames: ['src/**/*'],
+      groupName: 'src-{{parentDir}}',
+    },
+    {
+      description: 'Nuget need dedicated rule as dependencies aren't always in root',
+      matchFileNames: ['src/cart/**'],
+      groupName: 'src-cart',
+    },
+    {
+      matchFileNames: ['src/accounting/**'],
+      groupName: 'src-accounting',
+    },
+    {
+      description: 'Seperate major & minor so minor can be in group & major via approval with the next rule',
+      matchManagers: ['bundler'],
+      matchFileNames: ['src/react-native-app/**'],
+      matchPackageNames: ['json'],
+      separateMajorMinor: true,
+    },
+    {
+      matchManagers: ['bundler'],
+      matchFileNames: ['src/react-native-app/**'],
+      matchPackageNames: ['json'],
+      matchUpdateTypes: ['major'],
+      groupName: '{{categories}} {{updateType}} {{depName}}'
+      dependencyDashboardApproval: true,
+    }
+  ],
+}
