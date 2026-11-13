@@ -9,7 +9,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{}", "name": "list_products"}, "id": "call_fNhLOKLBdmNBsZIXI3wpQ9M4", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{}", "name": "list_products"}, "id": "call_fNhLOKLBdmNBsZIXI3wpQ9M4", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "usage": {"completion_tokens": 46, "prompt_tokens": 790, "total_tokens": 836}}'
     headers: {}
     status:
       code: 200
@@ -21,7 +21,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content": "Available products in the Astronomy Shop:\n\n| ID | Product | Price | Categories |\n|---|---|---:|---|\n| 0PUK6V6EV0 | Solar System Color Imager | $175.00 | accessories, telescopes |\n| 1YMWWN1N4O | Eclipsmart Travel Refractor Telescope | $129.95 | telescopes, travel |\n| 2ZYFJ3GM2N | Roof Binoculars | $209.95 | binoculars |\n| 66VCHSJNUP | Starsense Explorer Refractor Telescope | $349.95 | telescopes |\n| 6E92ZMYYFZ | Solar Filter | $69.95 | accessories, telescopes |\n| 9SIQT8TOJO | Optical Tube Assembly | $3,599.00 | accessories, telescopes, assembly |\n| HQTGWGPNH4 | The Comet Book | $0.99 | books |\n| L9ECAV7KIM | Lens Cleaning Kit | $21.95 | accessories |\n| LS4PSXUNUM | Red Flashlight | $57.08 | accessories, flashlights |\n| OLJCESPC7Z | National Park Foundation Explorascope | $101.96 | telescopes |", "role": "assistant"}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content": "Available products in the Astronomy Shop:\n\n| ID | Product | Price | Categories |\n|---|---|---:|---|\n| 0PUK6V6EV0 | Solar System Color Imager | $175.00 | accessories, telescopes |\n| 1YMWWN1N4O | Eclipsmart Travel Refractor Telescope | $129.95 | telescopes, travel |\n| 2ZYFJ3GM2N | Roof Binoculars | $209.95 | binoculars |\n| 66VCHSJNUP | Starsense Explorer Refractor Telescope | $349.95 | telescopes |\n| 6E92ZMYYFZ | Solar Filter | $69.95 | accessories, telescopes |\n| 9SIQT8TOJO | Optical Tube Assembly | $3,599.00 | accessories, telescopes, assembly |\n| HQTGWGPNH4 | The Comet Book | $0.99 | books |\n| L9ECAV7KIM | Lens Cleaning Kit | $21.95 | accessories |\n| LS4PSXUNUM | Red Flashlight | $57.08 | accessories, flashlights |\n| OLJCESPC7Z | National Park Foundation Explorascope | $101.96 | telescopes |", "role": "assistant"}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "usage": {"completion_tokens": 268, "prompt_tokens": 2452, "total_tokens": 2720}}'
     headers: {}
     status:
       code: 200
@@ -33,7 +33,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{}", "name": "get_supported_currencies"}, "id": "call_VG98EYufOV0lNsMnVFCXaNHv", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{}", "name": "get_supported_currencies"}, "id": "call_VG98EYufOV0lNsMnVFCXaNHv", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "usage": {"completion_tokens": 46, "prompt_tokens": 791, "total_tokens": 837}}'
     headers: {}
     status:
       code: 200
@@ -45,7 +45,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content": "The Astronomy Shop supports these currencies:\n\nZAR, ISK, ILS, RON, GBP, BRL, CZK, AUD, BGN, JPY, PHP, HUF, USD, SGD, IDR, CHF, TRY, NZD, THB, DKK, PLN, NOK, HRK, HKD, EUR, RUB, CAD, INR, SEK, KRW, CNY, MXN, MYR.", "role": "assistant"}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content": "The Astronomy Shop supports these currencies:\n\nZAR, ISK, ILS, RON, GBP, BRL, CZK, AUD, BGN, JPY, PHP, HUF, USD, SGD, IDR, CHF, TRY, NZD, THB, DKK, PLN, NOK, HRK, HKD, EUR, RUB, CAD, INR, SEK, KRW, CNY, MXN, MYR.", "role": "assistant"}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "usage": {"completion_tokens": 92, "prompt_tokens": 965, "total_tokens": 1057}}'
     headers: {}
     status:
       code: 200
@@ -57,7 +57,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"category\":\"binoculars\"}", "name": "get_ads"}, "id": "call_Mvb2RzqGjvVcL1053q5aIjOd", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"category\":\"binoculars\"}", "name": "get_ads"}, "id": "call_Mvb2RzqGjvVcL1053q5aIjOd", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "usage": {"completion_tokens": 52, "prompt_tokens": 791, "total_tokens": 843}}'
     headers: {}
     status:
       code: 200
@@ -69,7 +69,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content": "Current promotion: **Roof Binoculars \u2014 50% off**.  \nProduct link: `/product/2ZYFJ3GM2N`", "role": "assistant"}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content": "Current promotion: **Roof Binoculars \u2014 50% off**.  \nProduct link: `/product/2ZYFJ3GM2N`", "role": "assistant"}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "usage": {"completion_tokens": 31, "prompt_tokens": 886, "total_tokens": 917}}'
     headers: {}
     status:
       code: 200
@@ -81,7 +81,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{}", "name": "list_products"}, "id": "call_OCohRyK7FBjEAXbbEbdE6ZVo", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{}", "name": "list_products"}, "id": "call_OCohRyK7FBjEAXbbEbdE6ZVo", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "usage": {"completion_tokens": 45, "prompt_tokens": 790, "total_tokens": 835}}'
     headers: {}
     status:
       code: 200
@@ -105,7 +105,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content": "Available products in the store:\n\n| ID | Product | Price | Categories |\n|---|---|---:|---|\n| 0PUK6V6EV0 | Solar System Color Imager | $175.00 | accessories, telescopes |\n| 1YMWWN1N4O | Eclipsmart Travel Refractor Telescope | $129.95 | telescopes, travel |\n| 2ZYFJ3GM2N | Roof Binoculars | $209.95 | binoculars |\n| 66VCHSJNUP | Starsense Explorer Refractor Telescope | $349.95 | telescopes |\n| 6E92ZMYYFZ | Solar Filter | $69.95 | accessories, telescopes |\n| 9SIQT8TOJO | Optical Tube Assembly | $3,599.00 | accessories, telescopes, assembly |\n| HQTGWGPNH4 | The Comet Book | $0.99 | books |\n| L9ECAV7KIM | Lens Cleaning Kit | $21.95 | accessories |\n| LS4PSXUNUM | Red Flashlight | $57.08 | accessories, flashlights |\n| OLJCESPC7Z | National Park Foundation Explorascope | $101.96 | telescopes |", "role": "assistant"}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content": "Available products in the store:\n\n| ID | Product | Price | Categories |\n|---|---|---:|---|\n| 0PUK6V6EV0 | Solar System Color Imager | $175.00 | accessories, telescopes |\n| 1YMWWN1N4O | Eclipsmart Travel Refractor Telescope | $129.95 | telescopes, travel |\n| 2ZYFJ3GM2N | Roof Binoculars | $209.95 | binoculars |\n| 66VCHSJNUP | Starsense Explorer Refractor Telescope | $349.95 | telescopes |\n| 6E92ZMYYFZ | Solar Filter | $69.95 | accessories, telescopes |\n| 9SIQT8TOJO | Optical Tube Assembly | $3,599.00 | accessories, telescopes, assembly |\n| HQTGWGPNH4 | The Comet Book | $0.99 | books |\n| L9ECAV7KIM | Lens Cleaning Kit | $21.95 | accessories |\n| LS4PSXUNUM | Red Flashlight | $57.08 | accessories, flashlights |\n| OLJCESPC7Z | National Park Foundation Explorascope | $101.96 | telescopes |", "role": "assistant"}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "usage": {"completion_tokens": 267, "prompt_tokens": 2276, "total_tokens": 2543}}'
     headers: {}
     status:
       code: 200
@@ -117,7 +117,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{}", "name": "get_supported_currencies"}, "id": "call_O1ZFMBSDp8MozWzNGoYErzcx", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{}", "name": "get_supported_currencies"}, "id": "call_O1ZFMBSDp8MozWzNGoYErzcx", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "usage": {"completion_tokens": 47, "prompt_tokens": 791, "total_tokens": 838}}'
     headers: {}
     status:
       code: 200
@@ -141,7 +141,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content": "The Astronomy Shop supports these currencies:\n\nZAR, ISK, ILS, RON, GBP, BRL, CZK, AUD, BGN, JPY, PHP, HUF, USD, SGD, IDR, CHF, TRY, NZD, THB, DKK, PLN, NOK, HRK, HKD, EUR, RUB, CAD, INR, SEK, KRW, CNY, MXN, MYR.", "role": "assistant"}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content": "The Astronomy Shop supports these currencies:\n\nZAR, ISK, ILS, RON, GBP, BRL, CZK, AUD, BGN, JPY, PHP, HUF, USD, SGD, IDR, CHF, TRY, NZD, THB, DKK, PLN, NOK, HRK, HKD, EUR, RUB, CAD, INR, SEK, KRW, CNY, MXN, MYR.", "role": "assistant"}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "usage": {"completion_tokens": 92, "prompt_tokens": 934, "total_tokens": 1026}}'
     headers: {}
     status:
       code: 200
@@ -153,7 +153,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"category\":\"binoculars\"}", "name": "get_ads"}, "id": "call_zm9nZ5hBoFRBnaNqxGANQa1m", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message": {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"category\":\"binoculars\"}", "name": "get_ads"}, "id": "call_zm9nZ5hBoFRBnaNqxGANQa1m", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "usage": {"completion_tokens": 52, "prompt_tokens": 791, "total_tokens": 843}}'
     headers: {}
     status:
       code: 200
@@ -177,7 +177,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content": "Current promotion on binoculars:\n\n- **Roof Binoculars** \u2014 **50% off**\n  - Product link: `/product/2ZYFJ3GM2N`", "role": "assistant"}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion"}'
+      string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content": "Current promotion on binoculars:\n\n- **Roof Binoculars** \u2014 **50% off**\n  - Product link: `/product/2ZYFJ3GM2N`", "role": "assistant"}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "usage": {"completion_tokens": 36, "prompt_tokens": 884, "total_tokens": 920}}'
     headers: {}
     status:
       code: 200
@@ -223,7 +223,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"content_filter_results": {"hate": {"filtered": false, "severity": "safe"}, "protected_material_code": {"detected": false, "filtered": false}, "protected_material_text": {"detected": false, "filtered": false}, "self_harm": {"filtered": false, "severity": "safe"}, "sexual": {"filtered": false, "severity": "safe"}, "violence": {"filtered": false, "severity": "safe"}}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_PrV60kJqtLcNIDwuVpdNSfmy", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260817152615-65eaae31-default-r0-dp0-default"}}'
+      string: '{"choices": [{"content_filter_results": {"hate": {"filtered": false, "severity": "safe"}, "protected_material_code": {"detected": false, "filtered": false}, "protected_material_text": {"detected": false, "filtered": false}, "self_harm": {"filtered": false, "severity": "safe"}, "sexual": {"filtered": false, "severity": "safe"}, "violence": {"filtered": false, "severity": "safe"}}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_PrV60kJqtLcNIDwuVpdNSfmy", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260817152615-65eaae31-default-r0-dp0-default"}, "usage": {"completion_tokens": 51, "prompt_tokens": 824, "total_tokens": 875}}'
     headers: {}
     status:
       code: 200
@@ -235,7 +235,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"content_filter_results": {"hate": {"filtered": false, "severity": "safe"}, "self_harm": {"filtered": false, "severity": "safe"}, "sexual": {"filtered": false, "severity": "safe"}, "violence": {"filtered": false, "severity": "safe"}}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_SJDCoymffG79lBL8KRfKxTWB", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260817152615-65eaae31-default-r0-dp0-default"}}'
+      string: '{"choices": [{"content_filter_results": {"hate": {"filtered": false, "severity": "safe"}, "self_harm": {"filtered": false, "severity": "safe"}, "sexual": {"filtered": false, "severity": "safe"}, "violence": {"filtered": false, "severity": "safe"}}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_SJDCoymffG79lBL8KRfKxTWB", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260817152615-65eaae31-default-r0-dp0-default"}, "usage": {"completion_tokens": 53, "prompt_tokens": 1574, "total_tokens": 1627}}'
     headers: {}
     status:
       code: 200
@@ -247,7 +247,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"content_filter_results": {"hate": {"filtered": false, "severity": "safe"}, "protected_material_code": {"detected": false, "filtered": false}, "protected_material_text": {"detected": false, "filtered": false}, "self_harm": {"filtered": false, "severity": "safe"}, "sexual": {"filtered": false, "severity": "safe"}, "violence": {"filtered": false, "severity": "safe"}}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_S83rYjAVMWoUvNwe6XDmKfd0", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260819125211-aada3362-prefill-r3-dp0-prefill"}}'
+      string: '{"choices": [{"content_filter_results": {"hate": {"filtered": false, "severity": "safe"}, "protected_material_code": {"detected": false, "filtered": false}, "protected_material_text": {"detected": false, "filtered": false}, "self_harm": {"filtered": false, "severity": "safe"}, "sexual": {"filtered": false, "severity": "safe"}, "violence": {"filtered": false, "severity": "safe"}}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_S83rYjAVMWoUvNwe6XDmKfd0", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260819125211-aada3362-prefill-r3-dp0-prefill"}, "usage": {"completion_tokens": 53, "prompt_tokens": 2226, "total_tokens": 2279}}'
     headers: {}
     status:
       code: 200
@@ -259,7 +259,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"content_filter_results": {"hate": {"filtered": false, "severity": "safe"}, "protected_material_code": {"detected": false, "filtered": false}, "protected_material_text": {"detected": false, "filtered": false}, "self_harm": {"filtered": false, "severity": "safe"}, "sexual": {"filtered": false, "severity": "safe"}, "violence": {"filtered": false, "severity": "safe"}}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_aiuGhMmCoUQHXxTHESu4i6uv", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260817152615-65eaae31-default-r0-dp0-default"}}'
+      string: '{"choices": [{"content_filter_results": {"hate": {"filtered": false, "severity": "safe"}, "protected_material_code": {"detected": false, "filtered": false}, "protected_material_text": {"detected": false, "filtered": false}, "self_harm": {"filtered": false, "severity": "safe"}, "sexual": {"filtered": false, "severity": "safe"}, "violence": {"filtered": false, "severity": "safe"}}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_aiuGhMmCoUQHXxTHESu4i6uv", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260817152615-65eaae31-default-r0-dp0-default"}, "usage": {"completion_tokens": 52, "prompt_tokens": 2891, "total_tokens": 2943}}'
     headers: {}
     status:
       code: 200
@@ -271,7 +271,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"content_filter_results": {"hate": {"filtered": false, "severity": "safe"}, "self_harm": {"filtered": false, "severity": "safe"}, "sexual": {"filtered": false, "severity": "safe"}, "violence": {"filtered": false, "severity": "safe"}}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_MHIrNmVW3xi6M10iVO6ooZS6", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260817152615-65eaae31-default-r2-dp0-default"}}'
+      string: '{"choices": [{"content_filter_results": {"hate": {"filtered": false, "severity": "safe"}, "self_harm": {"filtered": false, "severity": "safe"}, "sexual": {"filtered": false, "severity": "safe"}, "violence": {"filtered": false, "severity": "safe"}}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_MHIrNmVW3xi6M10iVO6ooZS6", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260817152615-65eaae31-default-r2-dp0-default"}, "usage": {"completion_tokens": 52, "prompt_tokens": 3691, "total_tokens": 3743}}'
     headers: {}
     status:
       code: 200
@@ -283,7 +283,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"content_filter_results": {"hate": {"filtered": false, "severity": "safe"}, "self_harm": {"filtered": false, "severity": "safe"}, "sexual": {"filtered": false, "severity": "safe"}, "violence": {"filtered": false, "severity": "safe"}}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_vsrcJoqe6v2NiHAdQ7vzYC1z", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260817152615-65eaae31-default-r2-dp0-default"}}'
+      string: '{"choices": [{"content_filter_results": {"hate": {"filtered": false, "severity": "safe"}, "self_harm": {"filtered": false, "severity": "safe"}, "sexual": {"filtered": false, "severity": "safe"}, "violence": {"filtered": false, "severity": "safe"}}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_vsrcJoqe6v2NiHAdQ7vzYC1z", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260817152615-65eaae31-default-r2-dp0-default"}, "usage": {"completion_tokens": 53, "prompt_tokens": 4408, "total_tokens": 4461}}'
     headers: {}
     status:
       code: 200
@@ -295,7 +295,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"content_filter_result": {"error": {"code": "content_filter_error", "message": "The contents are not filtered"}}, "content_filter_results": {}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_AZMvNbZ7Ahv2w7t3z8B5enpW", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260817152615-65eaae31-default-r2-dp0-default"}}'
+      string: '{"choices": [{"content_filter_result": {"error": {"code": "content_filter_error", "message": "The contents are not filtered"}}, "content_filter_results": {}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_AZMvNbZ7Ahv2w7t3z8B5enpW", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260817152615-65eaae31-default-r2-dp0-default"}, "usage": {"completion_tokens": 56, "prompt_tokens": 5056, "total_tokens": 5112}}'
     headers: {}
     status:
       code: 200
@@ -307,7 +307,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"content_filter_results": {"hate": {"filtered": false, "severity": "safe"}, "protected_material_code": {"detected": false, "filtered": false}, "protected_material_text": {"detected": false, "filtered": false}, "self_harm": {"filtered": false, "severity": "safe"}, "sexual": {"filtered": false, "severity": "safe"}, "violence": {"filtered": false, "severity": "safe"}}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_zg3EXphigTe08yiMnEcWRW68", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260817152615-65eaae31-default-r2-dp0-default"}}'
+      string: '{"choices": [{"content_filter_results": {"hate": {"filtered": false, "severity": "safe"}, "protected_material_code": {"detected": false, "filtered": false}, "protected_material_text": {"detected": false, "filtered": false}, "self_harm": {"filtered": false, "severity": "safe"}, "sexual": {"filtered": false, "severity": "safe"}, "violence": {"filtered": false, "severity": "safe"}}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_zg3EXphigTe08yiMnEcWRW68", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260817152615-65eaae31-default-r2-dp0-default"}, "usage": {"completion_tokens": 50, "prompt_tokens": 5843, "total_tokens": 5893}}'
     headers: {}
     status:
       code: 200
@@ -319,7 +319,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"content_filter_results": {"hate": {"filtered": false, "severity": "safe"}, "protected_material_code": {"detected": false, "filtered": false}, "protected_material_text": {"detected": false, "filtered": false}, "self_harm": {"filtered": false, "severity": "safe"}, "sexual": {"filtered": false, "severity": "safe"}, "violence": {"filtered": false, "severity": "safe"}}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_3blUJzTHhG8T7vqLlkTNQSf0", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260817152615-65eaae31-default-r2-dp0-default"}}'
+      string: '{"choices": [{"content_filter_results": {"hate": {"filtered": false, "severity": "safe"}, "protected_material_code": {"detected": false, "filtered": false}, "protected_material_text": {"detected": false, "filtered": false}, "self_harm": {"filtered": false, "severity": "safe"}, "sexual": {"filtered": false, "severity": "safe"}, "violence": {"filtered": false, "severity": "safe"}}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_3blUJzTHhG8T7vqLlkTNQSf0", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260817152615-65eaae31-default-r2-dp0-default"}, "usage": {"completion_tokens": 54, "prompt_tokens": 6502, "total_tokens": 6556}}'
     headers: {}
     status:
       code: 200
@@ -331,7 +331,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"content_filter_results": {"hate": {"filtered": false, "severity": "safe"}, "protected_material_code": {"detected": false, "filtered": false}, "protected_material_text": {"detected": false, "filtered": false}, "self_harm": {"filtered": false, "severity": "safe"}, "sexual": {"filtered": false, "severity": "safe"}, "violence": {"filtered": false, "severity": "safe"}}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_3H4gGpwF1RADF70Zuf88Ftnt", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260819125211-aada3362-prefill-r3-dp0-prefill"}}'
+      string: '{"choices": [{"content_filter_results": {"hate": {"filtered": false, "severity": "safe"}, "protected_material_code": {"detected": false, "filtered": false}, "protected_material_text": {"detected": false, "filtered": false}, "self_harm": {"filtered": false, "severity": "safe"}, "sexual": {"filtered": false, "severity": "safe"}, "violence": {"filtered": false, "severity": "safe"}}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_3H4gGpwF1RADF70Zuf88Ftnt", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260819125211-aada3362-prefill-r3-dp0-prefill"}, "usage": {"completion_tokens": 53, "prompt_tokens": 7142, "total_tokens": 7195}}'
     headers: {}
     status:
       code: 200
@@ -343,7 +343,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"content_filter_results": {"hate": {"filtered": false, "severity": "safe"}, "protected_material_code": {"detected": false, "filtered": false}, "protected_material_text": {"detected": false, "filtered": false}, "self_harm": {"filtered": false, "severity": "safe"}, "sexual": {"filtered": false, "severity": "safe"}, "violence": {"filtered": false, "severity": "safe"}}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_sWaU5LnocAAfj4rdR7zXFCm4", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260817152615-65eaae31-default-r2-dp0-default"}}'
+      string: '{"choices": [{"content_filter_results": {"hate": {"filtered": false, "severity": "safe"}, "protected_material_code": {"detected": false, "filtered": false}, "protected_material_text": {"detected": false, "filtered": false}, "self_harm": {"filtered": false, "severity": "safe"}, "sexual": {"filtered": false, "severity": "safe"}, "violence": {"filtered": false, "severity": "safe"}}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_sWaU5LnocAAfj4rdR7zXFCm4", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260817152615-65eaae31-default-r2-dp0-default"}, "usage": {"completion_tokens": 53, "prompt_tokens": 7880, "total_tokens": 7933}}'
     headers: {}
     status:
       code: 200
@@ -355,7 +355,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"content_filter_results": {"hate": {"filtered": false, "severity": "safe"}, "self_harm": {"filtered": false, "severity": "safe"}, "sexual": {"filtered": false, "severity": "safe"}, "violence": {"filtered": false, "severity": "safe"}}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_cjB9iMvCorM814RVfGjXbRVy", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260817152615-65eaae31-default-r2-dp0-default"}}'
+      string: '{"choices": [{"content_filter_results": {"hate": {"filtered": false, "severity": "safe"}, "self_harm": {"filtered": false, "severity": "safe"}, "sexual": {"filtered": false, "severity": "safe"}, "violence": {"filtered": false, "severity": "safe"}}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_cjB9iMvCorM814RVfGjXbRVy", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260817152615-65eaae31-default-r2-dp0-default"}, "usage": {"completion_tokens": 52, "prompt_tokens": 8591, "total_tokens": 8643}}'
     headers: {}
     status:
       code: 200
@@ -367,7 +367,7 @@ interactions:
     uri: https://vcr.local/
   response:
     body:
-      string: '{"choices": [{"content_filter_results": {"hate": {"filtered": false, "severity": "safe"}, "protected_material_code": {"detected": false, "filtered": false}, "protected_material_text": {"detected": false, "filtered": false}, "self_harm": {"filtered": false, "severity": "safe"}, "sexual": {"filtered": false, "severity": "safe"}, "violence": {"filtered": false, "severity": "safe"}}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_qKSN9OGK5zEfrnp0FQQTh4wZ", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260817152615-65eaae31-default-r2-dp0-default"}}'
+      string: '{"choices": [{"content_filter_results": {"hate": {"filtered": false, "severity": "safe"}, "protected_material_code": {"detected": false, "filtered": false}, "protected_material_text": {"detected": false, "filtered": false}, "self_harm": {"filtered": false, "severity": "safe"}, "sexual": {"filtered": false, "severity": "safe"}, "violence": {"filtered": false, "severity": "safe"}}, "finish_reason": "tool_calls", "index": 0, "logprobs": null, "message": {"audio": null, "content": null, "function_call": null, "refusal": null, "role": "assistant", "tool_calls": [{"function": {"arguments": "{\"product_id\":\"1\"}", "name": "get_recommendations"}, "id": "call_qKSN9OGK5zEfrnp0FQQTh4wZ", "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion", "routing": {"serving_pipereplica": "d20260817152615-65eaae31-default-r2-dp0-default"}, "usage": {"completion_tokens": 54, "prompt_tokens": 9280, "total_tokens": 9334}}'
     headers: {}
     status:
       code: 200
