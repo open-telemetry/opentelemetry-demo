@@ -71,7 +71,7 @@
       matchFileNames: ['src/react-native-app/**'],
       matchPackageNames: ['json'],
       matchUpdateTypes: ['major'],
-      groupName: '{{categories}} {{updateType}} {{depName}}'
+      groupName: '{{categories}} {{updateType}} {{depName}}',
       dependencyDashboardApproval: true,
     }
   ],
