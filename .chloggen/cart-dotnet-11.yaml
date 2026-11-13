@@ -1,0 +1,4 @@
+change_type: enhancement
+component: cart
+note: Update to .NET 11.
+issues: [4290]

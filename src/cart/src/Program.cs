@@ -69,19 +69,19 @@ Action<ResourceBuilder> appResourceBuilder =
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(appResourceBuilder)
     .WithTracing(tracerBuilder => tracerBuilder
+        .AddSource("Microsoft.AspNetCore")
         .AddSource("OpenTelemetry.Demo.Cart")
         .AddRedisInstrumentation(
             options => options.SetVerboseDatabaseStatements = true)
-        .AddAspNetCoreInstrumentation()
         .AddGrpcClientInstrumentation()
         .AddHttpClientInstrumentation()
         .AddOtlpExporter())
     .WithMetrics(meterBuilder => meterBuilder
+        .AddMeter("Microsoft.AspNetCore.*")
         .AddMeter("OpenTelemetry.Demo.Cart")
         .AddMeter("OpenFeature")
         .AddProcessInstrumentation()
         .AddRuntimeInstrumentation()
-        .AddAspNetCoreInstrumentation()
         .SetExemplarFilter(ExemplarFilterType.TraceBased)
         .AddOtlpExporter());
 builder.Services.AddGrpc();
