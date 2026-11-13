@@ -41,6 +41,14 @@ export const Details = styled.div<{ $fullWidth?: boolean }>`
   ${({ $fullWidth }) => $fullWidth && 'grid-column: 1 / -1;'}
 `;
 
+export const DetailsPlaceholder = styled.div`
+  min-height: 300px;
+
+  ${({ theme }) => theme.breakpoints.desktop} {
+    display: none;
+  }
+`;
+
 export const AddToCart = styled(Button)`
   display: flex;
   align-items: center;

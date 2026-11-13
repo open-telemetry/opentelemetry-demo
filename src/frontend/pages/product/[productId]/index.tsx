@@ -79,7 +79,7 @@ const ProductDetail: NextPage = () => {
                 data-cy={CypressFields.ProductPicture}
               />
             ) : null}
-            {isPending ? null : (
+            {isPending ? <S.DetailsPlaceholder /> : (
               <S.Details $fullWidth={!showImage}>
                 <S.Name data-cy={CypressFields.ProductName}>{name}</S.Name>
                 <S.Description data-cy={CypressFields.ProductDescription}>{description}</S.Description>
