@@ -1,0 +1,20 @@
+# Use this changelog template to create an entry for release notes.
+
+# One of 'breaking', 'deprecation', 'new_component', 'enhancement', 'bug_fix'
+change_type: enhancement
+
+# The name of the component, or a single word describing the area of concern, (e.g. frontend, checkout, collector, load-generator)
+component: payment
+
+# A brief description of the change. Surround your text with quotes ("") if it needs to start with a backtick (`).
+note: Revert depending on the OpenTelemetry API only. The payment service installs the OpenTelemetry SDK from npm again, loads it via `NODE_OPTIONS`, and exports logs through `pino-opentelemetry-transport`.
+
+# One or more tracking issues or pull requests related to the change. You can use the PR number here if no issue exists.
+issues: [4264]
+
+# (Optional) One or more lines of additional information to render under the primary note.
+# These lines will be padded with 2 spaces and then inserted directly into the document.
+# Use a strip-chomping block scalar (|-) for multiline entries so no trailing
+# whitespace is emitted into CHANGELOG.md.
+subtext: |-
+  Deployments that set their own environment must set `NODE_OPTIONS=--require @opentelemetry/auto-instrumentations-node/register` for payment again, since the image no longer sets it.
