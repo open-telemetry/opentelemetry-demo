@@ -259,7 +259,7 @@ static_resources:
               - endpoint:
                   address:
                     socket_address:
-                      address: ${LOCUST_WEB_HOST}
+                      address: ${LOAD_GENERATOR_WEB_HOST}
                       port_value: ${LOCUST_WEB_PORT}
     - name: grafana
       type: STRICT_DNS
