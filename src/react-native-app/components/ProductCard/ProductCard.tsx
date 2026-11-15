@@ -46,7 +46,7 @@ const ProductCard = ({
   }, [picture]);
 
   // TODO simplify react native demo for now by hard-coding the selected currency
-  const price = (priceUsd?.units + priceUsd?.nanos / 100000000).toFixed(2);
+  const price = (priceUsd?.units + priceUsd?.nanos / 1000000000).toFixed(2);
 
   return (
     <ThemedView style={styles.container}>

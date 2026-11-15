@@ -1,0 +1,10 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+attributes:
+  - key: demo.feature_flag.recommendation_cache
+    type: boolean
+    brief: Whether recommendation caching is enabled
+    stability: stable
+    note: Indicates whether the recommendation service has caching enabled for this request (feature flag)

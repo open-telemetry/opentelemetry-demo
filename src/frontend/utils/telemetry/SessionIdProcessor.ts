@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Context } from "@opentelemetry/api";
-import { ReadableSpan, Span, SpanProcessor } from "@opentelemetry/sdk-trace-web";
+import { ReadableSpan, Span, SpanProcessor } from "@opentelemetry/sdk-trace";
 import SessionGateway from "../../gateways/Session.gateway";
 import { AttributeNames } from "../enums/AttributeNames";
 
@@ -16,6 +16,7 @@ export class SessionIdProcessor implements SpanProcessor {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onStart(span: Span, parentContext: Context): void {
         span.setAttribute(AttributeNames.SESSION_ID, userId);
+        span.setAttribute(AttributeNames.ENDUSER_ID, userId);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function

@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM docker.io/library/alpine:3.21 AS base
+FROM docker.io/library/alpine:3.24.3@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a AS base
 
 RUN apk update && \
     apk add grpc-dev protobuf-dev
@@ -31,7 +31,8 @@ RUN git clone --depth 1 --branch v${OPENTELEMETRY_CPP_VERSION} https://github.co
     && cd build \
     && cmake .. -DCMAKE_CXX_STANDARD=17 -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
           -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF \
-          -DWITH_EXAMPLES=OFF -DWITH_OTLP_GRPC=ON -DWITH_ABSEIL=ON \
+          -DWITH_BENCHMARK=OFF -DWITH_FUNC_TESTS=OFF \
+          -DWITH_EXAMPLES=OFF -DWITH_OTLP_GRPC=ON \
     && make -j$(nproc || sysctl -n hw.ncpu || echo 1) install && cd ../..
 
 WORKDIR /currency
@@ -53,6 +54,7 @@ FROM base AS release
 
 COPY --from=builder /usr/local /usr/local
 
+ARG CURRENCY_PORT=7001
 EXPOSE ${CURRENCY_PORT}
 
-ENTRYPOINT ["sh", "-c", "./usr/local/bin/currency ${CURRENCY_PORT}"]
+ENTRYPOINT ["sh", "-c", "exec /usr/local/bin/currency \"${CURRENCY_PORT}\""]

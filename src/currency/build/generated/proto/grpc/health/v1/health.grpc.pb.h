@@ -42,6 +42,7 @@
 #include <grpcpp/support/status.h>
 #include <grpcpp/support/stub_options.h>
 #include <grpcpp/support/sync_stream.h>
+#include <grpcpp/ports_def.inc>
 
 namespace grpc {
 namespace health {
@@ -259,4 +260,5 @@ class Health final {
 }  // namespace grpc
 
 
+#include <grpcpp/ports_undef.inc>
 #endif  // GRPC_grpc_2fhealth_2fv1_2fhealth_2eproto__INCLUDED

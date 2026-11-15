@@ -5,6 +5,8 @@ package main
 //go:generate go install google.golang.org/protobuf/cmd/protoc-gen-go
 //go:generate go install google.golang.org/grpc/cmd/protoc-gen-go-grpc
 //go:generate protoc --go_out=./ --go-grpc_out=./ --proto_path=../../pb ../../pb/demo.proto
+//go:generate go install github.com/open-feature/cli/cmd/openfeature@v0.4.0
+//go:generate openfeature generate -o flags --package-name flags go
 
 import (
 	"context"
@@ -15,12 +17,14 @@ import (
 	"os"
 	"os/signal"
 	"strings"
+	"sync/atomic"
 	"syscall"
 	"time"
 
 	_ "github.com/lib/pq"
 	"go.opentelemetry.io/contrib/bridges/otelslog"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc/filters"
 	"go.opentelemetry.io/contrib/instrumentation/runtime"
 	"go.opentelemetry.io/contrib/otelconf"
 	"go.opentelemetry.io/otel"
@@ -43,6 +47,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/XSAM/otelsql"
+	flags "github.com/opentelemetry/opentelemetry-demo/src/product-catalog/flags"
 )
 
 type productCatalog struct {
@@ -72,6 +77,7 @@ func initDatabase() error {
 	var err error
 	db, err = otelsql.Open("postgres", connStr,
 		dbAttrs,
+		otelsql.WithSQLCommenter(true),
 		otelsql.WithSpanOptions(otelsql.SpanOptions{
 			OmitConnResetSession: true,
 			OmitRows:             true,
@@ -96,6 +102,11 @@ func initDatabase() error {
 
 func main() {
 	ctx := context.Background()
+
+	opAMPIdentity, err := prepareOpAMPIdentity()
+	if err != nil {
+		logger.Error(fmt.Sprintf("Failed to prepare OpAMP identity: %v", err))
+	}
 
 	// Initialize OpenTelemetry SDK with otelconf
 	sdk, err := otelconf.NewSDK(otelconf.WithContext(ctx))
@@ -141,16 +152,35 @@ func main() {
 	openfeature.AddHooks(otelhooks.NewTracesHook())
 	provider, err := flagd.NewProvider()
 	if err != nil {
-		logger.Error(err.Error())
+		logger.Error("Error creating flagd provider", slog.Any("error", err))
 	}
+
 	err = openfeature.SetProvider(provider)
 	if err != nil {
-		logger.Error(err.Error())
+		logger.Error("Failed to set flagd as the provider", slog.Any("error", err))
 	}
+	defer openfeature.Shutdown()
+
+	go triggerLockContentionLoop(ctx)
 
 	err = runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
 	if err != nil {
 		logger.Error(err.Error())
+	}
+
+	opAMPClient, err := startOpAMPClient(context.Background(), opAMPIdentity)
+	if err != nil {
+		logger.Error(fmt.Sprintf("Failed to start OpAMP client: %v", err))
+	} else if opAMPClient != nil {
+		defer func() {
+			shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+			if err := opAMPClient.Stop(shutdownCtx); err != nil {
+				logger.Error(fmt.Sprintf("Error stopping OpAMP client: %v", err))
+			} else {
+				logger.Info("Stopped OpAMP client")
+			}
+		}()
 	}
 
 	svc := &productCatalog{}
@@ -165,7 +195,9 @@ func main() {
 	}
 
 	srv := grpc.NewServer(
-		grpc.StatsHandler(otelgrpc.NewServerHandler()),
+		grpc.StatsHandler(otelgrpc.NewServerHandler(
+			otelgrpc.WithFilter(filters.Not(filters.HealthCheck())),
+		)),
 	)
 
 	reflection.Register(srv)
@@ -175,7 +207,7 @@ func main() {
 	healthcheck := health.NewServer()
 	healthpb.RegisterHealthServer(srv, healthcheck)
 
-	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGKILL)
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer cancel()
 
 	go func() {
@@ -365,7 +397,7 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 		msg := "Error: Product Catalog Fail Feature Flag Enabled"
 		span.SetStatus(otelcodes.Error, msg)
 		span.AddEvent(msg)
-		return nil, status.Errorf(codes.Internal, msg)
+		return nil, status.Error(codes.Internal, msg)
 	}
 
 	found, err := getProductFromDB(ctx, req.Id)
@@ -373,7 +405,7 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 		msg := fmt.Sprintf("Product Not Found: %s", req.Id)
 		span.SetStatus(otelcodes.Error, msg)
 		span.AddEvent(msg)
-		return nil, status.Errorf(codes.NotFound, msg)
+		return nil, status.Error(codes.NotFound, msg)
 	}
 
 	span.AddEvent("Product Found")
@@ -408,13 +440,46 @@ func (p *productCatalog) SearchProducts(ctx context.Context, req *pb.SearchProdu
 }
 
 func (p *productCatalog) checkProductFailure(ctx context.Context, id string) bool {
-	if id != "OLJCESPC7Z" {
-		return false
+	return flags.ProductCatalogFailure.Value(ctx, openfeature.NewTargetlessEvaluationContext(map[string]any{"product_id": id}))
+}
+
+func triggerLockContentionLoop(ctx context.Context) {
+	ticker := time.NewTicker(10 * time.Second)
+	defer ticker.Stop()
+
+	var locking atomic.Bool
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-ticker.C:
+			enabled := flags.ProductCatalogLockContention.Value(ctx, openfeature.NewTargetlessEvaluationContext(nil))
+			if enabled && locking.CompareAndSwap(false, true) {
+				go func() {
+					defer locking.Store(false)
+					triggerLockContention(ctx)
+				}()
+			}
+		}
+	}
+}
+
+func triggerLockContention(ctx context.Context) {
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		logger.Error("failed to begin lock contention transaction", slog.Any("error", err))
+		return
+	}
+	defer tx.Rollback()
+
+	if _, err := tx.ExecContext(ctx, "LOCK TABLE catalog.products IN ACCESS EXCLUSIVE MODE"); err != nil {
+		logger.Error("failed to acquire lock for lock contention scenario", slog.Any("error", err))
+		return
 	}
 
-	client := openfeature.NewClient("productCatalog")
-	failureEnabled, _ := client.BooleanValue(
-		ctx, "productCatalogFailure", false, openfeature.EvaluationContext{},
-	)
-	return failureEnabled
+	logger.Info("lock contention scenario active: holding ACCESS EXCLUSIVE lock on catalog.products")
+	select {
+	case <-ctx.Done():
+	case <-time.After(30 * time.Second):
+	}
 }

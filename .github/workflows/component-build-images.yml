@@ -1,11 +1,18 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
+name: Component build images
+
 on:
   workflow_call:
     inputs:
       push:
         description: Should the images be pushed
+        default: false
+        required: false
+        type: boolean
+      force_build:
+        description: Build all images regardless of detected changes
         default: false
         required: false
         type: boolean
@@ -24,28 +31,37 @@ on:
         default: 'ghcr.io/open-telemetry/demo'
         required: false
         type: string
+    secrets:
+      DOCKER_USERNAME:
+        required: false
+      DOCKER_PASSWORD:
+        required: false
 
 permissions:
   contents: read
 
 jobs:
   protobufcheck:
+    name: Check protobuf generated files
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
       - name: Generate
         run: make clean docker-generate-protobuf
-      - name: Check Clean Work Tree
+      - name: Check clean work tree
         run: make check-clean-work-tree
 
   build_and_push_images:
+    name: Build and push ${{ matrix.file_tag.tag_suffix }} image
     runs-on: ubuntu-latest
     needs: protobufcheck
 
     permissions:
-      contents: read
-      packages: write
+      contents: read  # required to read Dockerfiles and source files
+      packages: write  # required to push built images to GHCR
 
     env:
       RELEASE_VERSION: "${{ github.event.release.tag_name }}"
@@ -62,10 +78,18 @@ jobs:
             tag_suffix: ad
             context: ./
             setup-qemu: true
+          - file: ./src/agent/Dockerfile
+            tag_suffix: agent
+            context: ./
+            setup-qemu: true
           - file: ./src/cart/src/Dockerfile
             tag_suffix: cart
             context: ./
             setup-qemu: false
+          - file: ./src/chatbot/Dockerfile
+            tag_suffix: chatbot
+            context: ./
+            setup-qemu: true
           - file: ./src/checkout/Dockerfile
             tag_suffix: checkout
             context: ./
@@ -106,12 +130,16 @@ jobs:
             tag_suffix: kafka
             context: ./
             setup-qemu: true
-          - file: ./src/llm/Dockerfile
-            tag_suffix: llm
-            context: ./
-            setup-qemu: true
           - file: ./src/load-generator/Dockerfile
             tag_suffix: load-generator
+            context: ./
+            setup-qemu: true
+          - file: ./src/opamp-server/Dockerfile
+            tag_suffix: opamp-server
+            context: ./
+            setup-qemu: true
+          - file: ./src/mcp/Dockerfile
+            tag_suffix: mcp
             context: ./
             setup-qemu: true
           - file: ./src/opensearch/Dockerfile
@@ -124,10 +152,6 @@ jobs:
             setup-qemu: true
           - file: ./src/product-catalog/Dockerfile
             tag_suffix: product-catalog
-            context: ./
-            setup-qemu: true
-          - file: ./src/product-reviews/Dockerfile
-            tag_suffix: product-reviews
             context: ./
             setup-qemu: true
           - file: ./src/quote/Dockerfile
@@ -146,15 +170,13 @@ jobs:
             tag_suffix: telemetry-docs
             context: ./
             setup-qemu: true
-          - file: ./test/tracetesting/Dockerfile
-            tag_suffix: traceBasedTests
-            context: ./
-            setup-qemu: true
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Load environment variables from .env file
         run: |
           if [ -f .env ]; then
@@ -168,47 +190,107 @@ jobs:
           fi
       - name: Check for changes and set push options
         id: check_changes
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || github.event.before }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          DOCKER_CONTEXT: ${{ matrix.file_tag.context }}
+          DOCKERFILE: ${{ matrix.file_tag.file }}
+          FORCE_BUILD: ${{ inputs.force_build }}
+          HEAD_SHA: ${{ github.event.merge_group.head_sha || github.sha }}
         run: |
-          DOCKERFILE_DIR=$(dirname ${{ matrix.file_tag.file }})
-          FILES_CHANGED=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} -- $DOCKERFILE_DIR)
-          FORCE_PUSH=${{ inputs.push }}
-          if [ "$FORCE_PUSH" = true ]; then
-            echo "Force push is enabled, proceeding with build."
+          DOCKERFILE_DIR=$(dirname "${DOCKERFILE}")
+          ZERO_SHA=0000000000000000000000000000000000000000
+
+          commit_exists() {
+            [ -n "$1" ] && [ "$1" != "$ZERO_SHA" ] && git cat-file -e "${1}^{commit}" 2>/dev/null
+          }
+
+          use_default_branch_merge_base() {
+            echo "Using merge base with ${DEFAULT_BRANCH}."
+            git fetch --no-tags origin "${DEFAULT_BRANCH}" || true
+            BASE_SHA=$(git merge-base "$HEAD_SHA" "origin/${DEFAULT_BRANCH}" || true)
+          }
+
+          if [ "$FORCE_BUILD" = true ]; then
+            echo "Force build is enabled, proceeding with build."
             echo "skip=false" >> "$GITHUB_OUTPUT"
-          elif [ -z "$FILES_CHANGED" ]; then
-            echo "No changes in ${{ matrix.file_tag.context }}, skipping build."
+            exit 0
+          fi
+
+          if ! commit_exists "$HEAD_SHA"; then
+            echo "Head SHA ${HEAD_SHA} is unavailable, using checked out HEAD."
+            HEAD_SHA=$(git rev-parse HEAD)
+          fi
+
+          case "${GITHUB_EVENT_NAME}" in
+            pull_request|merge_group)
+              if ! commit_exists "$BASE_SHA"; then
+                echo "Base SHA unavailable for ${GITHUB_EVENT_NAME}."
+                use_default_branch_merge_base
+              fi
+              ;;
+            push)
+              if [ "${GITHUB_REF_NAME}" = "${DEFAULT_BRANCH}" ]; then
+                if ! commit_exists "$BASE_SHA"; then
+                  echo "No usable base SHA available for default branch push, proceeding with build."
+                  echo "skip=false" >> "$GITHUB_OUTPUT"
+                  exit 0
+                fi
+              else
+                use_default_branch_merge_base
+              fi
+              ;;
+            *)
+              if ! commit_exists "$BASE_SHA"; then
+                echo "No usable base SHA available for ${GITHUB_EVENT_NAME}, proceeding with build."
+                echo "skip=false" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
+              ;;
+          esac
+
+          if ! commit_exists "$BASE_SHA"; then
+            echo "No usable base SHA available, proceeding with build."
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          FILES_CHANGED=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- "$DOCKERFILE_DIR")
+          if [ -z "$FILES_CHANGED" ]; then
+            echo "No changes in ${DOCKERFILE_DIR}, skipping build for ${DOCKERFILE}."
             echo "skip=true" >> "$GITHUB_OUTPUT"
           else
-            echo "Changes detected in ${{ matrix.file_tag.context }}, proceeding with build."
+            echo "Changes detected in ${DOCKERFILE_DIR}, proceeding with build for ${DOCKERFILE}."
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
-      - name: Log in to the Container registry
-        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121  # v4.1.0
+      - name: Log in to container registry
+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550  # v4.8.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-        if: ${{ inputs.push && !github.event.repository.fork }}
+          password: ${{ github.token }}
+        if: ${{ steps.check_changes.outputs.skip == 'false' && inputs.push && !github.event.repository.fork }}
       - name: Log in to Docker Hub
-        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121  # v4.1.0
+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550  # v4.8.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-        if: ${{ inputs.push && !github.event.repository.fork }}
+        if: ${{ steps.check_changes.outputs.skip == 'false' && inputs.push && !github.event.repository.fork }}
       - name: Set up QEMU
-        if: ${{ matrix.file_tag.setup-qemu }}
-        uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a  # v4.0.0
+        if: ${{ steps.check_changes.outputs.skip == 'false' && matrix.file_tag.setup-qemu }}
+        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1  # v4.4.0
         with:
           image: tonistiigi/binfmt:master
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd  # v4.0.0
+        if: steps.check_changes.outputs.skip == 'false'
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069  # v4.4.1
         with:
           buildkitd-config-inline: |
             [worker.oci]
             max-parallelism = 2
-      - name: Matrix Build and push demo images
+      - name: Build and push demo images
         if: steps.check_changes.outputs.skip == 'false'
-        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f  # v7.1.0
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc  # v7.4.0
         with:
           context: ${{ matrix.file_tag.context }}
           file: ${{ matrix.file_tag.file }}
@@ -217,12 +299,11 @@ jobs:
           build-args: |
             OTEL_JAVA_AGENT_VERSION=${{ env.OTEL_JAVA_AGENT_VERSION }}
             OPENTELEMETRY_CPP_VERSION=${{ env.OPENTELEMETRY_CPP_VERSION }}
-            TRACETEST_IMAGE_VERSION=${{ env.TRACETEST_IMAGE_VERSION }}
-            OPENSEARCH_IMAGE=${{ env.OPENSEARCH_IMAGE }}
+            OPAMP_GO_REF=${{ env.OPAMP_GO_REF }}
           tags: |
             ${{ inputs.dockerhub_repo }}:${{ inputs.version }}-${{matrix.file_tag.tag_suffix }}
             ${{ inputs.dockerhub_repo }}:latest-${{matrix.file_tag.tag_suffix }}
             ${{ inputs.ghcr_repo }}:${{ inputs.version }}-${{ matrix.file_tag.tag_suffix }}
             ${{ inputs.ghcr_repo }}:latest-${{ matrix.file_tag.tag_suffix }}
-          cache-from: type=gha
-          cache-to: type=gha
+          cache-from: type=gha,scope=${{ matrix.file_tag.tag_suffix }}
+          cache-to: type=gha,scope=${{ matrix.file_tag.tag_suffix }}

@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/baggage"
 	"go.opentelemetry.io/otel/log/global"
 	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
 	"go.opentelemetry.io/otel/trace"
@@ -31,13 +32,14 @@ import (
 
 	"go.opentelemetry.io/contrib/bridges/otelslog"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc/filters"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/contrib/instrumentation/runtime"
 	"go.opentelemetry.io/otel"
 	otelcodes "go.opentelemetry.io/otel/codes"
-	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc"
-	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
-	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp"
+	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/propagation"
 
 	sdklog "go.opentelemetry.io/otel/sdk/log"
@@ -53,6 +55,7 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 
+	flags "github.com/open-telemetry/opentelemetry-demo/src/checkout/flags"
 	pb "github.com/open-telemetry/opentelemetry-demo/src/checkout/genproto/oteldemo"
 	"github.com/open-telemetry/opentelemetry-demo/src/checkout/kafka"
 	"github.com/open-telemetry/opentelemetry-demo/src/checkout/money"
@@ -61,11 +64,17 @@ import (
 //go:generate go install google.golang.org/protobuf/cmd/protoc-gen-go
 //go:generate go install google.golang.org/grpc/cmd/protoc-gen-go-grpc
 //go:generate protoc --go_out=./ --go-grpc_out=./ --proto_path=../../pb ../../pb/demo.proto
+//go:generate go install github.com/open-feature/cli/cmd/openfeature@v0.4.0
+//go:generate openfeature generate -o flags --package-name flags go
 
-var logger *slog.Logger
-var tracer trace.Tracer
-var resource *sdkresource.Resource
-var initResourcesOnce sync.Once
+var (
+	logger            *slog.Logger
+	tracer            trace.Tracer
+	resource          *sdkresource.Resource
+	initResourcesOnce sync.Once
+)
+
+const emailRequestTimeout = time.Second
 
 func initResource() *sdkresource.Resource {
 	initResourcesOnce.Do(func() {
@@ -87,9 +96,9 @@ func initResource() *sdkresource.Resource {
 func initTracerProvider() *sdktrace.TracerProvider {
 	ctx := context.Background()
 
-	exporter, err := otlptracegrpc.New(ctx)
+	exporter, err := otlptracehttp.New(ctx)
 	if err != nil {
-		logger.Error(fmt.Sprintf("new otlp trace grpc exporter failed: %v", err))
+		logger.Error(fmt.Sprintf("new otlp trace http exporter failed: %v", err))
 	}
 	tp := sdktrace.NewTracerProvider(
 		sdktrace.WithBatcher(exporter),
@@ -103,9 +112,9 @@ func initTracerProvider() *sdktrace.TracerProvider {
 func initMeterProvider() *sdkmetric.MeterProvider {
 	ctx := context.Background()
 
-	exporter, err := otlpmetricgrpc.New(ctx)
+	exporter, err := otlpmetrichttp.New(ctx)
 	if err != nil {
-		logger.Error(fmt.Sprintf("new otlp metric grpc exporter failed: %v", err))
+		logger.Error(fmt.Sprintf("new otlp metric http exporter failed: %v", err))
 	}
 
 	mp := sdkmetric.NewMeterProvider(
@@ -119,7 +128,7 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 func initLoggerProvider() *sdklog.LoggerProvider {
 	ctx := context.Background()
 
-	logExporter, err := otlploggrpc.New(ctx)
+	logExporter, err := otlploghttp.New(ctx)
 	if err != nil {
 		return nil
 	}
@@ -189,10 +198,14 @@ func main() {
 
 	provider, err := flagd.NewProvider()
 	if err != nil {
-		logger.Error(fmt.Sprintf("Error creating flagd provider: %v", err))
+		logger.Error("Error creating flagd provider", slog.Any("error", err))
 	}
 
-	openfeature.SetProvider(provider)
+	err = openfeature.SetProvider(provider)
+	if err != nil {
+		logger.Error("Failed to set flagd as the provider", slog.Any("error", err))
+	}
+	defer openfeature.Shutdown()
 	openfeature.AddHooks(otelhooks.NewTracesHook())
 
 	tracer = tp.Tracer("checkout")
@@ -248,23 +261,23 @@ func main() {
 		logger.Error(err.Error())
 	}
 
-	var srv = grpc.NewServer(
-		grpc.StatsHandler(otelgrpc.NewServerHandler()),
+	srv := grpc.NewServer(
+		grpc.StatsHandler(otelgrpc.NewServerHandler(
+			otelgrpc.WithFilter(filters.Not(filters.HealthCheck())),
+		)),
 	)
 	pb.RegisterCheckoutServiceServer(srv, svc)
 
 	healthcheck := health.NewServer()
 	healthpb.RegisterHealthServer(srv, healthcheck)
 	logger.Info(fmt.Sprintf("starting to listen on tcp: %q", lis.Addr().String()))
-	err = srv.Serve(lis)
-	logger.Error(err.Error())
 
-	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGKILL)
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer cancel()
 
 	go func() {
 		if err := srv.Serve(lis); err != nil {
-			logger.Error(err.Error())
+			logger.Error("Failed to serve gRPC server", slog.Any("error", err))
 		}
 	}()
 
@@ -296,6 +309,19 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 		attribute.String("user.id", req.UserId),
 		attribute.String("demo.user_context.selected_currency", req.UserCurrency),
 	)
+
+	if flags.EmitRawPii.Value(ctx, openfeature.EvaluationContext{}) {
+		span.SetAttributes(
+			attribute.String("user.email", req.GetEmail()),
+			attribute.String("demo.payment.card_number", req.GetCreditCard().GetCreditCardNumber()),
+			attribute.Int("demo.payment.card_cvv", int(req.GetCreditCard().GetCreditCardCvv())),
+		)
+	}
+
+	if baggage.FromContext(ctx).Member("synthetic_request").Value() == "true" {
+		span.SetAttributes(attribute.String("user_agent.synthetic.type", "test"))
+	}
+
 	logger.LogAttrs(
 		ctx,
 		slog.LevelInfo, "[PlaceOrder]",
@@ -317,13 +343,15 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 
 	prep, err := cs.prepareOrderItemsAndShippingQuoteFromCart(ctx, req.UserId, req.UserCurrency, req.Address)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 	span.AddEvent("prepared")
 
-	total := &pb.Money{CurrencyCode: req.UserCurrency,
-		Units: 0,
-		Nanos: 0}
+	total := &pb.Money{
+		CurrencyCode: req.UserCurrency,
+		Units:        0,
+		Nanos:        0,
+	}
 	total = money.Must(money.Sum(total, prep.shippingCostLocalized))
 	for _, it := range prep.orderItems {
 		multPrice := money.MultiplySlow(it.Cost, uint32(it.GetItem().GetQuantity()))
@@ -360,8 +388,8 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 		Items:              prep.orderItems,
 	}
 
-	shippingCostFloat, _ := strconv.ParseFloat(fmt.Sprintf("%d.%02d", prep.shippingCostLocalized.GetUnits(), prep.shippingCostLocalized.GetNanos()/1000000000), 64)
-	totalPriceFloat, _ := strconv.ParseFloat(fmt.Sprintf("%d.%02d", total.GetUnits(), total.GetNanos()/1000000000), 64)
+	shippingCostFloat, _ := strconv.ParseFloat(fmt.Sprintf("%d.%02d", prep.shippingCostLocalized.GetUnits(), prep.shippingCostLocalized.GetNanos()/10000000), 64)
+	totalPriceFloat, _ := strconv.ParseFloat(fmt.Sprintf("%d.%02d", total.GetUnits(), total.GetNanos()/10000000), 64)
 
 	span.SetAttributes(
 		attribute.String("demo.order.id", orderID.String()),
@@ -403,7 +431,6 @@ type orderPrep struct {
 }
 
 func (cs *checkout) prepareOrderItemsAndShippingQuoteFromCart(ctx context.Context, userID, userCurrency string, address *pb.Address) (orderPrep, error) {
-
 	ctx, span := tracer.Start(ctx, "prepareOrderItemsAndShippingQuoteFromCart")
 	defer span.End()
 
@@ -433,7 +460,7 @@ func (cs *checkout) prepareOrderItemsAndShippingQuoteFromCart(ctx context.Contex
 	for _, ci := range cartItems {
 		totalCart += ci.Quantity
 	}
-	shippingCostFloat, _ := strconv.ParseFloat(fmt.Sprintf("%d.%02d", shippingPrice.GetUnits(), shippingPrice.GetNanos()/1000000000), 64)
+	shippingCostFloat, _ := strconv.ParseFloat(fmt.Sprintf("%d.%02d", shippingPrice.GetUnits(), shippingPrice.GetNanos()/10000000), 64)
 
 	span.SetAttributes(
 		attribute.Float64("demo.shipping.amount", shippingCostFloat),
@@ -476,7 +503,7 @@ func (cs *checkout) quoteShipping(ctx context.Context, address *pb.Address, item
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed POST to email service: expected 200, got %d", resp.StatusCode)
+		return nil, fmt.Errorf("failed POST to shipping service: expected 200, got %d", resp.StatusCode)
 	}
 
 	shippingQuoteBytes, err := io.ReadAll(resp.Body)
@@ -526,7 +553,8 @@ func (cs *checkout) prepOrderItems(ctx context.Context, items []*pb.CartItem, us
 		}
 		out[i] = &pb.OrderItem{
 			Item: item,
-			Cost: price}
+			Cost: price,
+		}
 	}
 	return out, nil
 }
@@ -534,7 +562,8 @@ func (cs *checkout) prepOrderItems(ctx context.Context, items []*pb.CartItem, us
 func (cs *checkout) convertCurrency(ctx context.Context, from *pb.Money, toCurrency string) (*pb.Money, error) {
 	result, err := cs.currencySvcClient.Convert(ctx, &pb.CurrencyConversionRequest{
 		From:   from,
-		ToCode: toCurrency})
+		ToCode: toCurrency,
+	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert currency: %+v", err)
 	}
@@ -543,15 +572,17 @@ func (cs *checkout) convertCurrency(ctx context.Context, from *pb.Money, toCurre
 
 func (cs *checkout) chargeCard(ctx context.Context, amount *pb.Money, paymentInfo *pb.CreditCardInfo) (string, error) {
 	paymentService := cs.paymentSvcClient
-	if cs.isFeatureFlagEnabled(ctx, "paymentUnreachable") {
+	if flags.PaymentUnreachable.Value(ctx, openfeature.EvaluationContext{}) {
 		badAddress := "badAddress:50051"
 		c := mustCreateClient(badAddress)
+		defer c.Close()
 		paymentService = pb.NewPaymentServiceClient(c)
 	}
 
 	paymentResp, err := paymentService.Charge(ctx, &pb.ChargeRequest{
 		Amount:     amount,
-		CreditCard: paymentInfo})
+		CreditCard: paymentInfo,
+	})
 	if err != nil {
 		return "", fmt.Errorf("could not charge the card: %+v", err)
 	}
@@ -567,7 +598,10 @@ func (cs *checkout) sendOrderConfirmation(ctx context.Context, email string, ord
 		return fmt.Errorf("failed to marshal order to JSON: %+v", err)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, "POST", cs.emailSvcAddr+"/send_order_confirmation", bytes.NewBuffer(emailPayload))
+	emailCtx, cancel := context.WithTimeout(ctx, emailRequestTimeout)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(emailCtx, "POST", cs.emailSvcAddr+"/send_order_confirmation", bytes.NewBuffer(emailPayload))
 	if err != nil {
 		return fmt.Errorf("failed to create request: %+v", err)
 	}
@@ -606,7 +640,7 @@ func (cs *checkout) shipOrder(ctx context.Context, address *pb.Address, items []
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("failed POST to email service: expected 200, got %d", resp.StatusCode)
+		return "", fmt.Errorf("failed POST to shipping service: expected 200, got %d", resp.StatusCode)
 	}
 
 	trackingRespBytes, err := io.ReadAll(resp.Body)
@@ -680,14 +714,14 @@ func (cs *checkout) sendToPostProcessor(ctx context.Context, result *pb.OrderRes
 		return
 	}
 
-	ffValue := cs.getIntFeatureFlag(ctx, "kafkaQueueProblems")
+	ffValue := flags.KafkaQueueProblems.Value(ctx, openfeature.EvaluationContext{})
 	if ffValue > 0 {
 		logger.Info("Warning: FeatureFlag 'kafkaQueueProblems' is activated, overloading queue now.")
-		for i := 0; i < ffValue; i++ {
-			go func(i int) {
+		for range ffValue {
+			go func(msg sarama.ProducerMessage) {
 				cs.KafkaProducerClient.Input() <- &msg
-				_ = <-cs.KafkaProducerClient.Successes()
-			}(i)
+				<-cs.KafkaProducerClient.Successes()
+			}(msg)
 		}
 		logger.Info(fmt.Sprintf("Done with #%d messages for overload simulation.", ffValue))
 	}
@@ -717,32 +751,4 @@ func createProducerSpan(ctx context.Context, msg *sarama.ProducerMessage) trace.
 	}
 
 	return span
-}
-
-func (cs *checkout) isFeatureFlagEnabled(ctx context.Context, featureFlagName string) bool {
-	client := openfeature.NewClient("checkout")
-
-	// Default value is set to false, but you could also make this a parameter.
-	featureEnabled, _ := client.BooleanValue(
-		ctx,
-		featureFlagName,
-		false,
-		openfeature.EvaluationContext{},
-	)
-
-	return featureEnabled
-}
-
-func (cs *checkout) getIntFeatureFlag(ctx context.Context, featureFlagName string) int {
-	client := openfeature.NewClient("checkout")
-
-	// Default value is set to 0, but you could also make this a parameter.
-	featureFlagValue, _ := client.IntValue(
-		ctx,
-		featureFlagName,
-		0,
-		openfeature.EvaluationContext{},
-	)
-
-	return int(featureFlagValue)
 }

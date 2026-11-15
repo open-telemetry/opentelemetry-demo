@@ -10,16 +10,28 @@
 
 {#- Helper macro to determine the registry category for an attribute -#}
 {%- macro attr_category(attr_name) -%}
-{%- if attr_name.startswith("app.product") or attr_name.startswith("app.products") or attr_name.startswith("app.filtered_products") or attr_name.startswith("app.ads") or attr_name.startswith("app.product_reviews") -%}
+{%- if attr_name.startswith("demo.product") -%}
 product
-{%- elif attr_name.startswith("app.user") or attr_name.startswith("session") or attr_name.startswith("app.loyalty") -%}
+{%- elif attr_name.startswith("demo.ad") -%}
+ad
+{%- elif attr_name.startswith("user.") or attr_name.startswith("demo.user_context") or attr_name.startswith("session") or attr_name.startswith("enduser.") -%}
 user
-{%- elif attr_name.startswith("app.order") or attr_name.startswith("app.cart") or attr_name.startswith("app.payment") -%}
+{%- elif attr_name.startswith("demo.order") -%}
 order
-{%- elif attr_name.startswith("app.shipping") or attr_name.startswith("app.quote") -%}
+{%- elif attr_name.startswith("demo.cart") -%}
+cart
+{%- elif attr_name.startswith("demo.payment") -%}
+payment
+{%- elif attr_name.startswith("demo.shipping") -%}
 shipping
-{%- else -%}
-misc
+{%- elif attr_name.startswith("demo.exchange") -%}
+exchange
+{%- elif attr_name.startswith("demo.feature_flag") -%}
+feature_flag
+{%- elif attr_name.startswith("demo.recommendation") or attr_name.startswith("recommendation.") -%}
+recommendation
+{%- elif attr_name.startswith("demo.synthetic_request") -%}
+request
 {%- endif -%}
 {%- endmacro -%}
 
@@ -71,4 +83,3 @@ This page documents the telemetry schema for the **{{ ctx.id | replace("_", " ")
 {% endif %}
 {%- endfor %}
 {%- endif %}
-

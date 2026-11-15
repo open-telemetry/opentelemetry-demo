@@ -6,6 +6,7 @@ import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import ApiGateway from '../../gateways/Api.gateway';
 import { Address, Money } from '../../protos/demo';
 import { useCurrency } from '../../providers/Currency.provider';
+import { useCart } from '../../providers/Cart.provider';
 import { IProductCartItem } from '../../types/Cart';
 import ProductPrice from '../ProductPrice';
 import CartItem from './CartItem';
@@ -17,6 +18,7 @@ interface IProps {
 }
 
 const CartItems = ({ productList, shouldShowPrice = true }: IProps) => {
+  const { updateItemQuantity } = useCart();
   const { selectedCurrency } = useCurrency();
   const address: Address = {
     streetAddress: '1600 Amphitheatre Parkway',
@@ -57,9 +59,10 @@ const CartItems = ({ productList, shouldShowPrice = true }: IProps) => {
         <label>Product</label>
         <label>Quantity</label>
         <label>Price</label>
+        <label>Total</label>
       </S.CardItemsHeader>
       {productList.map(({ productId, product, quantity }) => (
-        <CartItem key={productId} product={product} quantity={quantity} />
+        <CartItem key={productId} product={product} quantity={quantity} onQuantityChange={updateItemQuantity} />
       ))}
       {shouldShowPrice && (
         <>

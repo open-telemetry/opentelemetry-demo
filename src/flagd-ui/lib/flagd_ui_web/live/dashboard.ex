@@ -8,6 +8,10 @@ defmodule FlagdUiWeb.Dashboard do
   alias FlagdUiWeb.Components.Navbar
 
   def mount(_, _, socket) do
+    if connected?(socket) do
+      Phoenix.PubSub.subscribe(FlagdUi.PubSub, FlagdUi.Storage.topic())
+    end
+
     %{"flags" => flags} = GenServer.call(Storage, :read)
     {:ok, socket |> assign(:flags, flags)}
   end
@@ -29,7 +33,7 @@ defmodule FlagdUiWeb.Dashboard do
             >
               <div>
                 <p class="mb-4 text-lg font-semibold">{name}</p>
-                <p class="-4 text-sm">{data["description"]}</p>
+                <p class="mb-4 text-sm">{data["description"]}</p>
               </div>
               <div>
                 <div class="flex items-center justify-between">
@@ -37,9 +41,16 @@ defmodule FlagdUiWeb.Dashboard do
                     name={name}
                     type="select"
                     options={get_variants(data)}
-                    value={data["defaultVariant"]}
+                    value={ get_in(data, ["targeting", "if"])
+                      |> case do
+                        [_, on_value | _] -> on_value
+                        _ -> data["defaultVariant"]
+                      end}
                     phx-change="flag_changed"
                   />
+                  <%= if Map.has_key?(data, "targeting") do %>
+                  <div class="text-sm mb-2 text-warning">This flag has targeting rules.</div>
+                  <% end %>
                 </div>
               </div>
             </div>
@@ -53,13 +64,15 @@ defmodule FlagdUiWeb.Dashboard do
   def handle_event("flag_changed", payload, socket) do
     %{"_target" => [target]} = payload
     variant = payload[target]
-
     GenServer.cast(Storage, {:write, target, variant})
-
     new_socket = put_flash(socket, :info, "Saved: #{target}")
-
     {:noreply, new_socket}
   end
+
+  def handle_info({:flags_changed, %{"flags" => flags}}, socket),
+    do: {:noreply, assign(socket, :flags, flags)}
+
+  def handle_info({:flags_changed, _state}, socket), do: {:noreply, socket}
 
   defp get_variants(%{"variants" => variants}), do: Enum.map(variants, fn {key, _} -> key end)
   defp get_variants(_), do: []

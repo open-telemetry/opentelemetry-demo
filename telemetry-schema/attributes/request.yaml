@@ -1,0 +1,20 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+attributes:
+  - key: demo.synthetic_request
+    type: string
+    brief: Whether the request is synthetic/test traffic
+    stability: stable
+    note: >
+      Indicates whether the request is synthetic traffic generated for testing or monitoring purposes ("true") or real user traffic.
+      This helps distinguish production traffic from test traffic in observability systems.
+      Also propagated as synthetic_request baggage.
+    examples: ["true", "false"]
+  - key: demo.request.flood.count
+    type: int
+    brief: Number of repeated requests sent in a flood
+    stability: stable
+    note: The number of times a single synthetic request scenario repeats a request against the same endpoint
+    examples: [10, 50, 100]

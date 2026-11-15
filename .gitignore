@@ -19,8 +19,6 @@
 .codex/
 .cursor/
 .cursorrules
-AGENTS.md
-CLAUDE.md
 
 # Build artifacts
 bin/
@@ -58,6 +56,5 @@ docker-compose.override.yml
 src/frontend/cypress/videos
 src/frontend/cypress/screenshots
 src/shipping/target/
-test/tracetesting/tracetesting-vars.yaml
 
 !src/currency/build

@@ -1,6 +1,8 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
+name: React Native build
+
 on:
   workflow_call:
 
@@ -13,11 +15,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd  # v4.0.0
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069  # v4.4.1
 
       - name: Build Android APK
         run: make build-react-native-android
@@ -29,3 +33,50 @@ jobs:
             exit 1
           fi
           echo "APK size: $(du -h reactnativeapp.apk | cut -f1)"
+
+  build-ios:
+    name: Build iOS app
+    runs-on: macos-26
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1  # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: src/react-native-app/package-lock.json
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@b3aaceaef7e0ee231b499e7b5f49c03fc1d32199  # v1.338.0
+        with:
+          working-directory: src/react-native-app
+          bundler-cache: true
+
+      - name: Install Node.js dependencies
+        working-directory: src/react-native-app
+        run: npm ci
+
+      - name: Generate the iOS project
+        working-directory: src/react-native-app
+        run: npx expo prebuild --platform ios --no-install
+
+      - name: Install CocoaPods dependencies
+        working-directory: src/react-native-app/ios
+        run: bundle exec pod install
+
+      - name: Build for the iOS Simulator
+        working-directory: src/react-native-app/ios
+        run: |
+          xcodebuild \
+            -workspace AstronomyShopApp.xcworkspace \
+            -scheme AstronomyShopApp \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO \
+            build

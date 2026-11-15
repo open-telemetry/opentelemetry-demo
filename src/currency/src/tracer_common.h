@@ -7,7 +7,7 @@
 #include "opentelemetry/context/propagation/text_map_propagator.h"
 #include "opentelemetry/exporters/ostream/span_exporter_factory.h"
 #include "opentelemetry/nostd/shared_ptr.h"
-#include "opentelemetry/sdk/trace/simple_processor_factory.h"
+#include "opentelemetry/sdk/trace/batch_span_processor_factory.h"
 #include "opentelemetry/sdk/trace/tracer_context.h"
 #include "opentelemetry/sdk/trace/tracer_context_factory.h"
 #include "opentelemetry/sdk/trace/tracer_provider_factory.h"
@@ -70,26 +70,29 @@ public:
   ServerContext *context_;
 };
 
-void initTracer()
+std::shared_ptr<opentelemetry::sdk::trace::TracerProvider> initTracer()
 {
   auto exporter = opentelemetry::exporter::otlp::OtlpGrpcExporterFactory::Create();
   auto processor =
-      opentelemetry::sdk::trace::SimpleSpanProcessorFactory::Create(std::move(exporter));
+      opentelemetry::sdk::trace::BatchSpanProcessorFactory::Create(std::move(exporter), {});
   std::vector<std::unique_ptr<opentelemetry::sdk::trace::SpanProcessor>> processors;
   processors.push_back(std::move(processor));
 
   auto context =
       opentelemetry::sdk::trace::TracerContextFactory::Create(std::move(processors));
-  std::shared_ptr<opentelemetry::trace::TracerProvider> provider =
+  std::shared_ptr<opentelemetry::sdk::trace::TracerProvider> provider =
       opentelemetry::sdk::trace::TracerProviderFactory::Create(std::move(context));
+  std::shared_ptr<opentelemetry::trace::TracerProvider> api_provider = provider;
 
   // Set the global trace provider
-  opentelemetry::trace::Provider::SetTracerProvider(provider);
+  opentelemetry::trace::Provider::SetTracerProvider(api_provider);
 
   // set global propagator
   opentelemetry::context::propagation::GlobalTextMapPropagator::SetGlobalPropagator(
       opentelemetry::nostd::shared_ptr<opentelemetry::context::propagation::TextMapPropagator>(
           new opentelemetry::trace::propagation::HttpTraceContext()));
+
+  return provider;
 }
 
 opentelemetry::nostd::shared_ptr<opentelemetry::trace::Tracer> get_tracer(std::string tracer_name)

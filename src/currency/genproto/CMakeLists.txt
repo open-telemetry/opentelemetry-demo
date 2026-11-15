@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.26)
 project(currency-proto)
 
-find_package(Protobuf REQUIRED)
+find_package(Protobuf CONFIG REQUIRED)
 find_package(gRPC CONFIG REQUIRED)
 
 set(PROTO_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../proto")
@@ -21,7 +21,9 @@ set(HEALTH_PB_H_FILE "${GENERATED_HEALTH_PROTOBUF_PATH}/health.pb.h")
 set(HEALTH_GRPC_PB_CPP_FILE "${GENERATED_HEALTH_PROTOBUF_PATH}/health.grpc.pb.cc")
 set(HEALTH_GRPC_PB_H_FILE "${GENERATED_HEALTH_PROTOBUF_PATH}/health.grpc.pb.h")
 
-foreach(IMPORT_DIR ${PROTOBUF_IMPORT_DIRS})
+get_target_property(Protobuf_INCLUDE_DIRS protobuf::libprotobuf INTERFACE_INCLUDE_DIRECTORIES)
+
+foreach(IMPORT_DIR ${Protobuf_INCLUDE_DIRS})
   list(APPEND PROTOBUF_INCLUDE_FLAGS "-I${IMPORT_DIR}")
 endforeach()
 
@@ -38,7 +40,7 @@ add_custom_command(
            ${HEALTH_GRPC_PB_H_FILE}
 
     COMMAND
-      ${PROTOBUF_PROTOC_EXECUTABLE} ARGS "--experimental_allow_proto3_optional"
+      protobuf::protoc ARGS "--experimental_allow_proto3_optional"
       "--proto_path=${PROTO_PATH}" ${PROTOBUF_INCLUDE_FLAGS}
       "--cpp_out=${GENERATED_PROTOBUF_PATH}"
       "--grpc_out=generate_mock_code=true:${GENERATED_PROTOBUF_PATH}"

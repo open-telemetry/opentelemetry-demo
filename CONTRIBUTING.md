@@ -16,11 +16,17 @@ We meet every other Wednesday at 8:00 PT. The schedule may change based on
 contributors' availability. Check the [OpenTelemetry Community Calendar](https://github.com/open-telemetry/community?tab=readme-ov-file#special-interest-groups)
 for specific dates and Zoom links.
 
+The call is open to all. Whether you're a seasoned OpenTelemetry developer,
+just starting your journey, or simply curious about the work we do, you're more
+than welcome to participate.
+
 See the
 [public meeting notes](https://docs.google.com/document/d/16f-JOjKzLgWxULRxY8TmpM_FjlI1sthvKurnqFz9x98/edit)
 for a summary description of past meetings.
 For edit access, ask in our
 [Slack channel](https://cloud-native.slack.com/archives/C03B4CWV4DA).
+If you are new to the CNCF Slack community, you can [create an
+account](https://slack.cncf.io/).
 
 ### Sign the Contributor License Agreement (CLA)
 
@@ -79,7 +85,18 @@ make start
 ### Using Podman Instead of Docker
 
 The demo supports both Docker and Podman. Docker is the default container
-runtime. To use Podman instead, set the following environment variables:
+runtime. To use Podman instead, first set the `DOCKER_SOCK` to use podman,
+in `.env.override` uncomment `# DOCKER_SOCK=/run/user/1000/podman/podman.sock`
+This is needed for the otel-collector to work correctly. For example, you should
+have:
+
+```sh
+# Rootless podman: use the podman Docker-compatible API socket so the collector's
+# docker resource detector and docker_stats receiver can connect.
+DOCKER_SOCK=/run/user/1000/podman/podman.sock
+```
+
+Next you can run podman with:
 
 ```sh
 DOCKER_COMPOSE_CMD="podman compose" make start
@@ -110,8 +127,13 @@ Once the images are built and containers are started, visit:
 - **Webstore**: [http://localhost:8080/](http://localhost:8080/)
 - **Jaeger**: [http://localhost:8080/jaeger/ui/](http://localhost:8080/jaeger/ui/)
 - **Grafana**: [http://localhost:8080/grafana/](http://localhost:8080/grafana/)
+- **OpAMP**: [http://localhost:8080/opamp/](http://localhost:8080/opamp/)
 - **Feature Flags UI**: [http://localhost:8080/feature/](http://localhost:8080/feature/)
 - **Load Generator UI**: [http://localhost:8080/loadgen/](http://localhost:8080/loadgen/)
+
+The OpAMP UI shows the OpenTelemetry Collector as a managed agent. Click the
+collector instance ID to view its health status, version, attributes, and
+effective configuration.
 
 ## Troubleshooting Common Issues
 
@@ -252,13 +274,90 @@ Check out a new branch, make modifications and push the branch to your fork:
 ```sh
 $ git checkout -b feature
 # change files
-# Test your changes locally.
-$ make build && make start
-# Go to Webstore, Jaeger or container logs etc. as appropriate to make sure your changes are working correctly.
 $ git add my/changed/files
 $ git commit -m "short description of the change"
 $ git push fork feature
 ```
+
+Test your changes locally before opening a PR. For a change that affects one
+service, rebuild and restart only that service:
+
+```sh
+make build service=<service-name>
+make restart service=<service-name>
+```
+
+For example, if you change the Shipping service:
+
+```sh
+make build service=shipping
+make restart service=shipping
+```
+
+If the demo is not already running, or your change affects shared Docker Compose
+configuration, environment variables, generated protobufs, cross-service
+contracts, or collector/frontend-proxy configuration, start the demo stack after
+building the affected service:
+
+```sh
+make build service=<service-name>
+make start
+```
+
+Verify the change using the path that matches what you changed: the Webstore UI,
+direct service endpoints, container logs, Jaeger traces, Grafana dashboards, or
+other telemetry views as appropriate.
+
+Update the relevant [documentation][docs] before opening the PR for user-visible
+behavior, telemetry, configuration, or workflow changes.
+
+#### Adding a changelog entry
+
+The `CHANGELOG.md` is generated from individual fragment files under
+[`.chloggen`](./.chloggen), one per pull request, using
+[chloggen](https://github.com/open-telemetry/opentelemetry-go-build-tools/tree/main/chloggen).
+Because each PR adds its own file instead of editing a shared section, changelog
+merge conflicts are avoided.
+
+For any user-visible behavior, telemetry, configuration, or workflow change:
+
+1. Create a fragment for your branch: `make chlog-new`. This copies
+   [`.chloggen/TEMPLATE.yaml`](./.chloggen/TEMPLATE.yaml) to
+   `.chloggen/<your-branch>.yaml`.
+2. Fill in `change_type`, `component`, `note`, and `issues` (use your PR number
+   if there is no separate issue).
+3. Validate it: `make chlog-validate`. You can preview the rendered changelog
+   with `make chlog-preview`.
+4. Commit the fragment as part of your PR.
+
+The `Changelog` check fails if a PR adds no fragment, or edits `CHANGELOG.md`
+directly. Trivial typo, cosmetic, and purely internal cleanup changes may not
+need a changelog entry. For those, a maintainer or approver can add the
+`Skip Changelog` label to skip the check. Dependabot and Renovate PRs are
+skipped automatically.
+
+#### How fragments become the changelog at release time
+
+The fragments that accumulate in `.chloggen/` between releases are the
+"unreleased" changelog. During a release a maintainer runs
+`make chlog-update VERSION=x.x.x` (see [Making a new release](#making-a-new-release)),
+which collects every fragment, groups the entries by `change_type`, inserts a
+new `## x.x.x` section into `CHANGELOG.md` directly below the
+`<!-- next version -->` marker, and then deletes the consumed fragment files
+(leaving `TEMPLATE.yaml`). The marker stays in place for the next cycle.
+
+Within the new version section, entries are rendered under these fixed headings,
+in this order, and only headings that have entries appear:
+
+- `Breaking changes` (`breaking`)
+- `Deprecations` (`deprecation`)
+- `New components` (`new_component`)
+- `Enhancements` (`enhancement`)
+- `Bug fixes` (`bug_fix`)
+
+Each entry renders as `` - `component`: note (#issue) `` with any `subtext`
+indented beneath it. Run `make chlog-preview` at any time to see exactly what the
+next release section will look like without modifying any files.
 
 Open a pull request against the main `opentelemetry-demo` repo.
 
@@ -272,8 +371,8 @@ Open a pull request against the main `opentelemetry-demo` repo.
 - Make sure the PR title reflects the contribution.
 - Write a summary that helps understand the change.
 - Include usage examples in the summary, where applicable.
-- Include benchmarks (before/after) in the summary, for contributions that are
-  performance enhancements.
+- For performance-related changes, include before/after measurements in the
+  summary and describe how they were collected.
 
 ### How to Get PRs Merged
 
@@ -303,7 +402,9 @@ on each other), the owner should try to get people aligned by:
 - Tagging subdomain experts (by looking at the change history) in the PR asking
   for suggestion.
 - Reaching out to more people on the [CNCF OpenTelemetry Community Demo Slack
-  channel](https://app.slack.com/client/T08PSQ7BQ/C03B4CWV4DA).
+  channel](https://app.slack.com/client/T08PSQ7BQ/C03B4CWV4DA). If you are new
+  to the CNCF Slack community, you can [create an
+  account](https://slack.cncf.io/).
 - Stepping back to see if it makes sense to narrow down the scope of the PR or
   split it up.
 - If none of the above worked and the PR has been stuck for more than 2 weeks,
@@ -364,8 +465,15 @@ Maintainers can create a new release when desired by following these steps.
    generate release notes. Prepend a summary of the major changes to the release
    notes.
 3. After images for the new release are built and published, create a new Pull
-   Request that updates the `CHANGELOG.md` with the new version leaving the
-   `Unreleased` section for the next release. Merge the Pull Request.
+   Request that folds the changelog fragments into `CHANGELOG.md`. Optionally
+   run `make chlog-preview` first to review the generated notes, then run
+   `make chlog-update VERSION=x.x.x`. This inserts a new `## x.x.x` section
+   directly below the `<!-- next version -->` marker (entries grouped by
+   `change_type`) and deletes the consumed fragment files, leaving `.chloggen/`
+   empty aside from `TEMPLATE.yaml` for the next release. See
+   [How fragments become the changelog at release time](#how-fragments-become-the-changelog-at-release-time)
+   for the grouping details. Add the `Skip Changelog` label, since this Pull
+   Request edits `CHANGELOG.md` directly, then merge it.
 4. Create a new Pull Request to update the deployment of the demo in the
    [OpenTelemetry Helm
    Charts](https://github.com/open-telemetry/opentelemetry-helm-charts) repo.

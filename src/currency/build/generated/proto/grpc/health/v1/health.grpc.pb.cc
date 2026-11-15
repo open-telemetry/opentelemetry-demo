@@ -19,6 +19,7 @@
 #include <grpcpp/server_context.h>
 #include <grpcpp/impl/service_type.h>
 #include <grpcpp/support/sync_stream.h>
+#include <grpcpp/ports_def.inc>
 namespace grpc {
 namespace health {
 namespace v1 {
@@ -87,4 +88,5 @@ Health::Service::~Service() {
 }  // namespace grpc
 }  // namespace health
 }  // namespace v1
+#include <grpcpp/ports_undef.inc>
 

@@ -92,6 +92,34 @@ const CheckoutForm = ({ onSubmit }: IProps) => {
         rules={{ required: true }}
         render={({ field: { onChange, onBlur, value } }) => (
           <Field
+            label="City"
+            placeholder="City"
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+          />
+        )}
+        name="city"
+      />
+      <Controller
+        control={control}
+        rules={{ required: true }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <Field
+            label="State"
+            placeholder="State"
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+          />
+        )}
+        name="state"
+      />
+      <Controller
+        control={control}
+        rules={{ required: true }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <Field
             label="Country"
             placeholder="Country"
             onBlur={onBlur}
@@ -162,7 +190,7 @@ const CheckoutForm = ({ onSubmit }: IProps) => {
         name="creditCardCvv"
       />
       <ThemedView style={styles.submitContainer}>
-        <Pressable style={styles.submit} onPress={handleSubmit(onSubmit)}>
+        <Pressable style={styles.submit} onPress={() => handleSubmit(onSubmit)()}>
           <ThemedText style={styles.submitText}>Place Order</ThemedText>
         </Pressable>
       </ThemedView>

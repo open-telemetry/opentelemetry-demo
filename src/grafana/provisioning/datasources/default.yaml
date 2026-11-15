@@ -21,3 +21,7 @@ datasources:
         - url: http://localhost:8080/jaeger/ui/trace/$${__value.raw}
           name: trace_id
           urlDisplayLabel: View in Jaeger UI
+
+        - url: http://localhost:8080/grafana/d/W2gX2zHVk/demo-dashboard?orgId=1&var-service=All&var-traceId=$${__value.raw}
+          name: trace_id
+          urlDisplayLabel: View in Logs (OpenSearch)

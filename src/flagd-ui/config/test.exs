@@ -27,4 +27,11 @@ config :phoenix, :plug_init_mode, :runtime
 config :phoenix_live_view,
   enable_expensive_runtime_checks: true
 
-config :flagd_ui, storage_file_path: "./test/fixtures/demo.flagd.json"
+storage_file_path = Path.expand("../tmp/demo.flagd.json", __DIR__)
+fixture_path = Path.expand("../../flagd/demo.flagd.json", __DIR__)
+
+File.mkdir_p!(Path.dirname(storage_file_path))
+_ = File.rm(storage_file_path)
+File.cp!(fixture_path, storage_file_path)
+
+config :flagd_ui, storage_file_path: storage_file_path

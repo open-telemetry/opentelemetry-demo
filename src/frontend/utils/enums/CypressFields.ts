@@ -16,7 +16,6 @@ export enum CypressFields {
   ProductCard = 'product-card',
   ProductList = 'product-list',
   ProductPrice = 'product-price',
-  ProductReviews = 'product-reviews',
   RecommendationList = 'recommendation-list',
   HomePage = 'home-page',
   ProductDetail = 'product-detail',

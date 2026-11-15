@@ -11,6 +11,7 @@ import { useCurrency } from './Currency.provider';
 interface IContext {
   cart: IProductCart;
   addItem(item: CartItem): void;
+  updateItemQuantity(productId: string, newQuantity: number): void;
   emptyCart(): void;
   placeOrder(order: PlaceOrderRequest): Promise<OrderResult>;
 }
@@ -18,6 +19,7 @@ interface IContext {
 export const Context = createContext<IContext>({
   cart: { userId: '', items: [] },
   addItem: () => {},
+  updateItemQuantity: () => {},
   emptyCart: () => {},
   placeOrder: () => Promise.resolve({} as OrderResult),
 });
@@ -63,13 +65,24 @@ const CartProvider = ({ children }: IProps) => {
     (item: CartItem) => addCartMutation.mutateAsync({ ...item, currencyCode: selectedCurrency }),
     [addCartMutation, selectedCurrency]
   );
+
+  const updateItemQuantity = useCallback(
+    (productId: string, newQuantity: number) => {
+      const existing = cart.items.find(i => i.productId === productId);
+      const delta = newQuantity - (existing?.quantity ?? 0);
+      if (delta !== 0) {
+        addCartMutation.mutateAsync({ productId, quantity: delta, currencyCode: selectedCurrency });
+      }
+    },
+    [addCartMutation, cart.items, selectedCurrency]
+  );
   const emptyCart = useCallback(() => emptyCartMutation.mutateAsync(), [emptyCartMutation]);
   const placeOrder = useCallback(
     (order: PlaceOrderRequest) => placeOrderMutation.mutateAsync({ ...order, currencyCode: selectedCurrency }),
     [placeOrderMutation, selectedCurrency]
   );
 
-  const value = useMemo(() => ({ cart, addItem, emptyCart, placeOrder }), [cart, addItem, emptyCart, placeOrder]);
+  const value = useMemo(() => ({ cart, addItem, updateItemQuantity, emptyCart, placeOrder }), [cart, addItem, updateItemQuantity, emptyCart, placeOrder]);
 
   return <Context.Provider value={value}>{children}</Context.Provider>;
 };

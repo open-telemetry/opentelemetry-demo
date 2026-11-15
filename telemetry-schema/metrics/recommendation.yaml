@@ -11,11 +11,12 @@ attributes:
     note: Categorizes the type of recommendation being made
 
 metrics:
-  - name: app_recommendations_counter
+  - name: demo.recommendation.requests
     brief: Recommendation request counter
     instrument: counter
     unit: "{recommendation}"
     stability: stable
+    requirement_level: recommended
     annotations:
       service: recommendation
     attributes:

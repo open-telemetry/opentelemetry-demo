@@ -1,0 +1,20 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+attributes:
+  - key: demo.cart.items.count
+    type: int
+    brief: Number of items in cart
+    stability: stable
+    note: The count of items currently in the shopping cart
+    examples: [0, 3, 7]
+  - key: demo.cart.trace_id
+    type: string
+    brief: Trace identifier deliberately added to demonstrate metric cardinality overflow
+    stability: development
+    note: >-
+      Added only to demo.cart.get_cart.latency when cartMetricCardinalityOverflow
+      is enabled and the current activity has a valid trace ID. Demonstrates an
+      incorrect attempt at metric-to-trace correlation; use exemplars instead.
+    examples: ["4bf92f3577b34da6a3ce929d0e0e4736"]

@@ -1,0 +1,7 @@
+change_type: bug_fix
+component: payment
+note: Move the runtime image to distroless nodejs24 (Node 24.22.1) and bump the build image to 26.12.1 for the October 2026 Node.js security releases
+issues: [4189]
+subtext: |-
+  No distroless nodejs22 build with the Node 22.23.4 fix is published, so the
+  runtime moves to the nodejs24 line, as the frontend already uses.

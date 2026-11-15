@@ -48,35 +48,44 @@ export default function Cart() {
       creditCardExpirationYear,
       creditCardNumber,
     }: IFormData) => {
-      const { userId } = await SessionGateway.getSession();
-      await placeOrder({
-        userId,
-        email,
-        address: {
-          streetAddress,
-          state,
-          country,
-          city,
-          zipCode,
-        },
-        // TODO simplify react native demo for now by hard-coding the selected currency
-        userCurrency: "USD",
-        creditCard: {
-          creditCardCvv,
-          creditCardExpirationMonth,
-          creditCardExpirationYear,
-          creditCardNumber,
-        },
-      });
+      try {
+        const { userId } = await SessionGateway.getSession();
+        await placeOrder({
+          userId,
+          email,
+          address: {
+            streetAddress,
+            state,
+            country,
+            city,
+            zipCode,
+          },
+          // TODO simplify react native demo for now by hard-coding the selected currency
+          userCurrency: "USD",
+          creditCard: {
+            creditCardCvv,
+            creditCardExpirationMonth,
+            creditCardExpirationYear,
+            creditCardNumber,
+          },
+        });
 
-      Toast.show({
-        type: "success",
-        position: "bottom",
-        text1: "Your order is Complete!",
-        text2: "We've sent you a confirmation email.",
-      });
+        Toast.show({
+          type: "success",
+          position: "bottom",
+          text1: "Your order is Complete!",
+          text2: "We've sent you a confirmation email.",
+        });
 
-      router.replace("/");
+        router.replace("/");
+      } catch {
+        Toast.show({
+          type: "error",
+          position: "bottom",
+          text1: "Order failed",
+          text2: "Something went wrong. Please try again.",
+        });
+      }
     },
     [placeOrder],
   );

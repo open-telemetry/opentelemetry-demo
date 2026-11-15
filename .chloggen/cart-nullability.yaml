@@ -1,0 +1,4 @@
+change_type: enhancement
+component: cart
+note: Enable nullable reference type analysis in the cart service and tests.
+issues: [4217]

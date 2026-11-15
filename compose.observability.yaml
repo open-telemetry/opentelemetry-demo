@@ -1,8 +1,8 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-# Observability stack layer: adds Jaeger, Prometheus, OpenSearch, and Grafana,
-# and patches the otel-collector to export to them.
+# Observability stack layer: adds Jaeger, Prometheus, OpenSearch, Grafana, and
+# an OpAMP server, and patches the otel-collector to export to or report to them.
 #
 # Usage:
 #   docker compose -f compose.yaml -f compose.observability.yaml up
@@ -32,6 +32,7 @@ services:
       - MEMORY_MAX_TRACES=25000
     volumes:
       - ./src/jaeger/config.yml:/etc/jaeger/config.yml
+      - ./src/jaeger/ui-config.json:/etc/jaeger/ui-config.json
     logging:
       driver: "json-file"
       options:
@@ -45,7 +46,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 175M
+          memory: 500M
     restart: unless-stopped
     environment:
       - "GF_INSTALL_PLUGINS=grafana-opensearch-datasource"
@@ -96,8 +97,6 @@ services:
     build:
       context: ./
       dockerfile: ${OPENSEARCH_DOCKERFILE}
-      args:
-        - OPENSEARCH_IMAGE
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-opensearch
     deploy:
@@ -136,6 +135,36 @@ services:
         max-size: "5m"
         max-file: "2"
 
+  # OpAMP Server
+  # The collector connects to this control plane and reports status through the
+  # opampextension.
+  opamp-server:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-opamp-server
+    container_name: opamp-server
+    build:
+      context: ./
+      dockerfile: ${OPAMP_SERVER_DOCKERFILE}
+      args:
+        OPAMP_GO_REF: ${OPAMP_GO_REF}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-opamp-server
+    deploy:
+      resources:
+        limits:
+          memory: 65M
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:4321/"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
   # Patch frontend-proxy to wait for observability UIs
   frontend-proxy:
     depends_on:
@@ -143,6 +172,8 @@ services:
         condition: service_started
       grafana:
         condition: service_started
+      opamp-server:
+        condition: service_healthy
 
   # Patch otel-collector to add observability exporters and wait for backends.
   # Note: otelcol-config-full.yml is included here to maintain correct config ordering
@@ -167,4 +198,22 @@ services:
       jaeger:
         condition: service_started
       opensearch:
+        condition: service_healthy
+      opamp-server:
+        condition: service_healthy
+
+  cart:
+    environment:
+      - OPAMP_SERVER_ENDPOINT=wss://${OPAMP_SERVER_HOST}:4320/v1/opamp
+      - OPAMP_SERVER_TLS_INSECURE_SKIP_VERIFY=true
+    depends_on:
+      opamp-server:
+        condition: service_healthy
+
+  product-catalog:
+    environment:
+      - OPAMP_SERVER_ENDPOINT=wss://${OPAMP_SERVER_HOST}:4320/v1/opamp
+      - OPAMP_SERVER_TLS_INSECURE_SKIP_VERIFY=true
+    depends_on:
+      opamp-server:
         condition: service_healthy

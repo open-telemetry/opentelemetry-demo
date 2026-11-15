@@ -1,0 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+[[IgnoredVulns]]
+id = "GO-2026-5932"
+reason = "The checkout service does not import the affected golang.org/x/crypto/openpgp packages."

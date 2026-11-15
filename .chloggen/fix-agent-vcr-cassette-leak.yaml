@@ -1,0 +1,7 @@
+change_type: bug_fix
+
+component: agent
+
+note: Fix memory growth with every request when `USE_VCR=True` by serializing the VCR cassette scope so concurrent requests no longer leave stale patches behind.
+
+issues: [4218]
