@@ -38,6 +38,8 @@ composer.lock
 .venv
 .dockerhub.env
 .ghcr.env
+local/kaldb/permissions/.state/
+docs/superpowers/**/.*.swp
 *.apk
 /.lycheecache
 

@@ -1,0 +1,2 @@
+bcrypt>=4.2,<6
+selenium>=4.30,<5

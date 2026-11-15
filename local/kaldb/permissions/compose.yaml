@@ -1,0 +1,21 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+name: kaldb-permissions
+services:
+  opensearch:
+    image: ${PERMISSIONS_OPENSEARCH_IMAGE:-opensearchproject/opensearch:3.9.0}
+    environment:
+      discovery.type: single-node
+      DISABLE_INSTALL_DEMO_CONFIG: "true"
+      OPENSEARCH_JAVA_OPTS: -Xms256m -Xmx256m
+    mem_limit: 768m
+    volumes:
+      - ./.state/opensearch.yml:/usr/share/opensearch/config/opensearch.yml:ro
+      - ./.state/security:/usr/share/opensearch/config/opensearch-security:ro
+      - ./.state/certs:/usr/share/opensearch/config/permissions-certs:ro
+    networks: [policy]
+
+networks:
+  policy:
+    internal: true
