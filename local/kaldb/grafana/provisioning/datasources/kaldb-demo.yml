@@ -48,7 +48,7 @@ datasources:
         filterByTraceID: true
         filterBySpanID: false
         customQuery: true
-        query: 'trace_id:"$${__trace.traceId}"'
+        query: 'traceId:"$${__trace.traceId}"'
     version: 1
 
   - name: otel-demo-traces

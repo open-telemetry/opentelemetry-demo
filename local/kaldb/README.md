@@ -6,6 +6,11 @@ KalDB checkout.
 All KalDB-specific OpenTelemetry Demo files live in `local/kaldb/`. The root
 `Makefile` only exposes convenience targets.
 
+The KalDB build must include OTLP/HTTP trace ingestion at `POST /v1/traces` on
+port `8086`. Builds without that endpoint can accept logs, but trace exports
+fail with HTTP `404`. Rebuild the KalDB image after changing backend versions;
+startup can reuse an existing image.
+
 ## Start
 
 ```bash
@@ -76,8 +81,14 @@ KalDB's S3Mock dependency keeps container port `9090` but binds host port
 `19090` by default, so an existing Prometheus on host `9090` can keep running.
 The KalDB compose layer also caps the OTel load generator to one Locust user
 and disables browser traffic so the local KalDB/ZooKeeper stack stays stable.
+KalDB uses a 30-second ZooKeeper session timeout and a 5-second connection
+timeout to tolerate local startup and scheduling delays. Override these with
+`KALDB_ZK_SESSION_TIMEOUT_MS` and `KALDB_ZK_CONNECT_TIMEOUT_MS`.
 
 ## URLs
+
+The KalDB overlay uses Grafana `13.2.1` to support the installed datasource and
+app plugins. Override it with `KALDB_GRAFANA_IMAGE` when needed.
 
 ```text
 OpenTelemetry Demo: http://localhost:18080
@@ -103,6 +114,24 @@ trace ID to render the
 Zipkin/Jaeger-style waterfall. KalDB's current Zipkin compatibility exposes
 trace-by-ID rendering; service/span discovery and trace search return empty
 lists, so the trace workflow starts from a known trace ID.
+
+## OpenSearch Dashboards
+
+Open `http://localhost:5601/app/discover` and create an index pattern for each
+exact dataset name: `otel-demo-logs` and `otel-demo-traces`.
+
+- For logs, select `@timestamp` as the time field.
+- For traces, select the option to use no time filter. The current OTLP trace
+  documents contain `_timesinceepoch`, not `@timestamp`, and Dashboards does not
+  offer `_timesinceepoch` in its time-field selector. An `@timestamp` filter
+  would hide the trace documents. Use Grafana for time-filtered span browsing.
+
+Wildcard index patterns are not supported by this local KalDB setup.
+
+Use Discover to search logs and span documents. The provisioned dashboard and
+trace-by-ID waterfall are in Grafana.
+Span documents use `trace_id`; log documents from the OpenSearch exporter use
+`traceId`. The Grafana trace-to-logs link searches the latter field.
 
 ## Verify
 
