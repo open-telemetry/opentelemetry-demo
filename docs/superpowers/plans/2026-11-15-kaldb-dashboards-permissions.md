@@ -10,11 +10,15 @@
 
 **Spec:** `docs/superpowers/specs/2026-11-15-kaldb-dashboards-permissions-design.md`
 
-**Execution revision:** Native 2.11.1 and latest 3.9.0 both failed the independent
-multi-field exclusion probe. Use 3.9.0 for this new isolated demo and reject whole
-indexes containing multi-fields or aliases before contacting KalDB. Keep a native
-unsafe-schema reproduction, and qualify standalone/object/nested schemas before
-Task 2. This supersedes pinned-2.11 and supported-multi-field assumptions below.
+**Execution revision:** Focus this branch on 2.11.1; 3.9 work is parked separately.
+Both versions failed the independent multi-field exclusion probe. Reject whole
+indexes containing multi-fields or aliases. On 2.11 support exact negative leaf
+FLS rules only; reject includes, wildcards, regex and parent rules. A read-only
+policy account may inspect complete native mappings, but cannot search data.
+Keep unsafe-schema/parent-policy negative controls and qualify supported schemas
+before integration. Include a scripted showcase and real Dashboards permission
+configuration, login, Discover and Dev Tools verification. This supersedes broad
+FLS and supported-multi-field assumptions below.
 Evidence: `docs/superpowers/specs/2026-11-15-kaldb-permissions-native-feasibility.md`.
 
 ## Global Constraints

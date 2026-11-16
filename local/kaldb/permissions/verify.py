@@ -50,9 +50,12 @@ def native_checks(client):
     check("events.code" in visible["fls_reader"], "Public leaf of a genuine nested field remains visible")
     status, result = client("GET", f"/{public}/_field_caps?fields=*", user="parent_reader")
     parent_fields = set(result.get("fields", {}))
-    check(status == 200 and not any(name == "customer" or name.startswith("customer.") or
-                                   name == "events" or name.startswith("events.") for name in parent_fields),
-          "Parent exclusions hide all object and nested descendants")
+    check(status == 200 and {"customer.region", "events.code"}.issubset(parent_fields),
+          "Negative control: 2.11 parent exclusions leave descendants in capabilities; policy must be rejected")
+    status, parent_mapping = client("GET", f"/{public}/_mapping", user="parent_reader")
+    properties = parent_mapping.get(public, {}).get("mappings", {}).get("properties", {})
+    check(status == 200 and "customer" in properties and "events" in properties,
+          "Negative control: 2.11 filtered mappings cannot establish parent-exclusion permissions")
     # 2.11 defaults do not let the unrestricted role override FLS from another role.
     check(visible["mixed_reader"] == visible["fls_reader"], "Mixed roles retain the native FLS restriction")
     status, result = client("GET", f"/{public}/_field_caps?fields=body.keyword", user="fls_reader")
@@ -68,6 +71,11 @@ def native_checks(client):
     check(status == 403, f"Policy reader cannot write roles: got {status}")
     status, _ = client("GET", "/_plugins/_security/api/internalusers", user="policy_reader")
     check(status == 403, f"Policy reader cannot access internal users: got {status}")
+    status, mapping = client("GET", f"/{public}/_mapping", user="policy_reader")
+    check(status == 200 and "secret" in mapping.get(public, {}).get("mappings", {}).get("properties", {}),
+          "Policy reader can inspect complete schema for unsupported features")
+    status, _ = client("POST", f"/{public}/_search", {"size": 0}, "policy_reader")
+    check(status == 403, f"Policy reader cannot search data: got {status}")
     require(not failures, f"Native feasibility gate failed ({len(failures)} checks); do not implement this oracle")
     print("PASS qualified native policy gate (standalone/object/nested schema; multi-fields unsupported)", flush=True)
     return visible

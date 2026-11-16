@@ -4,12 +4,12 @@
 name: kaldb-permissions
 services:
   opensearch:
-    image: ${PERMISSIONS_OPENSEARCH_IMAGE:-opensearchproject/opensearch:3.9.0}
+    image: opensearchproject/opensearch:2.11.1
     environment:
       discovery.type: single-node
       DISABLE_INSTALL_DEMO_CONFIG: "true"
-      OPENSEARCH_JAVA_OPTS: -Xms256m -Xmx256m
-    mem_limit: 768m
+      OPENSEARCH_JAVA_OPTS: -Xms256m -Xmx256m -XX:ActiveProcessorCount=2
+    mem_limit: 1024m
     volumes:
       - ./.state/opensearch.yml:/usr/share/opensearch/config/opensearch.yml:ro
       - ./.state/security:/usr/share/opensearch/config/opensearch-security:ro

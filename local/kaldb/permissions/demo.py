@@ -79,7 +79,8 @@ def prepare_state():
                        "index_permissions": [{"index_patterns": ["*"], "allowed_actions": ["*"]}],
                        "tenant_permissions": [{"tenant_patterns": ["*"], "allowed_actions": ["kibana_all_write"]}]},
         "demo_full": full, "demo_fls": restricted, "demo_parent": parent_restricted,
-        "demo_policy_reader": {"cluster_permissions": [], "index_permissions": []},
+        "demo_policy_reader": {"cluster_permissions": [], "index_permissions": [{
+            "index_patterns": list(DATASETS), "allowed_actions": ["indices:admin/mappings/get"]}]},
         "demo_dashboards": {"cluster_permissions": ["cluster_composite_ops_ro", "cluster:monitor/main", "cluster:monitor/nodes/info"],
                             "index_permissions": [{"index_patterns": [".kibana*", ".opensearch_dashboards*"], "allowed_actions": ["*"]}],
                             "tenant_permissions": [{"tenant_patterns": ["global_tenant"], "allowed_actions": ["kibana_all_write"]}]},
@@ -97,6 +98,9 @@ def prepare_state():
     write_json(security / "roles.yml", roles)
     write_json(security / "roles_mapping.yml", mappings)
     write_json(security / "internal_users.yml", users)
+    policy_credentials = STATE / "gateway-policy.json"
+    policy_credentials.write_text(json.dumps({"username": "policy_reader", "password": credentials["policy_reader"]}))
+    policy_credentials.chmod(0o600)
     write_json(security / "config.yml", {"_meta": {"type": "config", "config_version": 2}, "config": {"dynamic": {
         "http": {"anonymous_auth_enabled": False}, "authc": {"basic_internal_auth_domain": {
             "http_enabled": True, "transport_enabled": True, "order": 0,

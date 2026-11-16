@@ -2,12 +2,17 @@
 
 ## Intent and selected approach
 
-Implementation revision after native feasibility testing: the isolated demo now
-targets OpenSearch/Dashboards 3.9.0. Secured mode rejects entire indexes containing
-multi-field mappings or field aliases. Supported demo schemas use standalone
+Implementation revision after native feasibility testing and user delivery
+steering: this branch targets OpenSearch/Dashboards 2.11.1. The 3.9 experiment is
+parked on a separate branch. Secured mode rejects entire indexes containing
+multi-field mappings or field aliases. Supported FLS policies use exact negative
+leaf-field rules; includes, wildcards, regular expressions and parent exclusions
+are rejected rather than interpreting them locally. The policy reader may GET
+complete schema mappings on registered datasets to classify unsupported features,
+but cannot search data or write roles. Supported demo schemas use standalone
 fields and object/nested leaves. See the
 [native evidence and bounded revision](2026-11-15-kaldb-permissions-native-feasibility.md).
-This revision supersedes the original 2.11 and multi-field assumptions below;
+This revision supersedes the original broad FLS and multi-field assumptions below;
 the original text remains as the record of the approved approach and its gate.
 
 Add a repeatable demo in this repository that uses real OpenSearch Dashboards
