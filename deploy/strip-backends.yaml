@@ -1,0 +1,244 @@
+# Removes the demo's own observability backends — the estate (ObserveNow on
+# eks-prod-2) is the single store for traces, metrics and logs, so keeping
+# in-namespace Jaeger/Prometheus/OpenSearch/Grafana would double the story and the
+# resource bill for nothing. The demo's APP data stores (postgresql, valkey-cart,
+# kafka) stay — they are where the demo's failure modes live.
+#
+# Kustomize "$patch: delete" removes each matched resource from the rendered output.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: otel-demo
+$patch: delete
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: otel-demo
+$patch: delete
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jaeger
+$patch: delete
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger-agent
+$patch: delete
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger-collector
+$patch: delete
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger-query
+$patch: delete
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: otel-demo
+$patch: delete
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: otel-demo
+$patch: delete
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: opensearch
+$patch: delete
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: opensearch
+$patch: delete
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: opensearch-headless
+$patch: delete
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: opensearch-pdb
+$patch: delete
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: grafana
+  namespace: otel-demo
+$patch: delete
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jaeger
+$patch: delete
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus
+  namespace: otel-demo
+$patch: delete
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: grafana
+  namespace: otel-demo
+$patch: delete
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana
+  namespace: otel-demo
+$patch: delete
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-alerting
+  namespace: otel-demo
+$patch: delete
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-config-dashboards
+  namespace: otel-demo
+$patch: delete
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasources
+  namespace: otel-demo
+$patch: delete
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-nginx-metrics
+  namespace: otel-demo
+$patch: delete
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-apm-dashboard
+  namespace: otel-demo
+$patch: delete
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-demo-dashboard
+  namespace: otel-demo
+$patch: delete
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-exemplars-dashboard
+  namespace: otel-demo
+$patch: delete
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-linux-dashboard
+  namespace: otel-demo
+$patch: delete
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-opentelemetry-collector
+  namespace: otel-demo
+$patch: delete
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-postgresql-dashboard
+  namespace: otel-demo
+$patch: delete
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-spanmetrics-dashboard
+  namespace: otel-demo
+$patch: delete
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opensearch-config
+$patch: delete
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus
+  namespace: otel-demo
+$patch: delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: grafana-clusterrole
+$patch: delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: grafana-clusterrolebinding
+$patch: delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: prometheus
+$patch: delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prometheus
+$patch: delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: grafana
+  namespace: otel-demo
+$patch: delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: grafana
+  namespace: otel-demo
+$patch: delete

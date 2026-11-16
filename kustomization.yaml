@@ -2,10 +2,26 @@
 #
 # Base: the upstream-rendered single manifest (kubernetes/opentelemetry-demo.yaml,
 # unchanged — this fork tracks the open-telemetry/opentelemetry-demo main).
-# Overlay: the demo's internal collector now ALSO forwards every trace, log and
-# metric to the estate collector (devopsnow), whose zipkin/PRW exporters land in
-# stephgen-medussa (ObserveNow). The demo's in-namespace jaeger/prometheus/
-# opensearch/graphana stay untouched.
+#
+# Overlay = one-way merge. The demo generates telemetry, the estate stores it:
+#   - in-namespace Jaeger / Prometheus / OpenSearch / Grafana are deleted
+#     (deploy/strip-backends.yaml) — ObserveNow on eks-prod-2 is the only store
+#   - the demo collector is a pure relay: traces + metrics + LOGS ->
+#     data-recipes-traces-relay.data-recipes:4318 (deploy/collector-relay-patch.yaml),
+#     which fans out to medussa with the estate basic-auth already applied
+#   - app services push continuous profiles straight to the estate Pyroscope
+#     (deploy/telemetry-env-patches.yaml + fork-image SDK code); backend services
+#     whose languages have no Pyroscope SDK (currency C++, quote PHP, email Ruby,
+#     image-provider nginx) are covered by OBI eBPF profiles on the estate side
+#   - the browser side sends Faro payloads to https://faro.stackgen.run
+#     (deploy/telemetry-env-patches.yaml + src/frontend FaroTracer.ts)
+#   - fork-modified services run fork-built images (deploy/fork-images.yaml)
+#
+# App data stores postgresql / valkey-cart / kafka stay: they are where the demo's
+# failure modes live (flagd chaos flags, kafka backpressure, database errors).
+#
+# Out-of-band: Secret "pyroscope-estate" in the otel-demo namespace (template +
+# apply instructions in deploy/pyroscope-estate.yaml). Nothing else is hand-applied.
 #
 # Note: OBI (the estate eBPF DaemonSet) instruments this namespace too, so spans
 # will appear twice (once from the SDKs, once from OBI) in ObserveNow until OBI
@@ -16,3 +32,6 @@ resources:
   - kubernetes/opentelemetry-demo.yaml
 patches:
   - path: deploy/collector-relay-patch.yaml
+  - path: deploy/strip-backends.yaml
+  - path: deploy/fork-images.yaml
+  - path: deploy/telemetry-env-patches.yaml

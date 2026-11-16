@@ -74,5 +74,43 @@ pub fn init_otel() -> Result<()> {
     init_logger_provider();
     init_tracer_provider();
     init_meter_provider();
+    init_pyroscope().ok(); // profiling is best-effort; never block startup
+    Ok(())
+}
+
+// Continuous profiling: the pyroscope agent pushes pprof samples to the estate
+// Pyroscope when PYROSCOPE_SERVER_ADDRESS is set (deploy/telemetry-env-patches.yaml).
+// No span_id labelling in the Rust agent (pyroscope-rs), so profiles are keyed by
+// application name/tags only.
+fn init_pyroscope() -> Result<(), Box<dyn std::error::Error>> {
+    let addr = match std::env::var("PYROSCOPE_SERVER_ADDRESS") {
+        Ok(v) if !v.is_empty() => v,
+        _ => return Ok(()), // profiling off; local/estate-less runs unchanged
+    };
+    let app_name = std::env::var("OTEL_SERVICE_NAME")
+        .ok()
+        .filter(|v| !v.is_empty())
+        .unwrap_or_else(|| "shipping".to_string());
+
+    let agent = pyroscope::pyroscope::PyroscopeAgentBuilder::new(
+        addr,
+        app_name,
+        100,
+        "pyroscope-rs",
+        env!("CARGO_PKG_VERSION"),
+        pyroscope::backend::pprof_backend(
+            pyroscope::backend::PprofConfig::default(),
+            pyroscope::backend::BackendConfig::default(),
+        ),
+    )
+    .basic_auth(
+        std::env::var("PYROSCOPE_BASIC_AUTH_USER").unwrap_or_default(),
+        std::env::var("PYROSCOPE_BASIC_AUTH_PASSWORD").unwrap_or_default(),
+    )
+    .tags(vec![("service_namespace", "opentelemetry-demo")])
+    .build()?;
+
+    // agent running state must be kept alive for the process lifetime
+    std::mem::forget(agent.start()?);
     Ok(())
 }

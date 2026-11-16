@@ -128,6 +128,23 @@ def check_feature_flag(flag_name: str):
 
 if __name__ == "__main__":
     service_name = must_map_env('OTEL_SERVICE_NAME')
+
+    # Continuous profiling: push py-spy-sampled stacks to the estate Pyroscope when
+    # PYROSCOPE_SERVER_ADDRESS is set (deploy/telemetry-env-patches.yaml). Idles off
+    # otherwise, so local runs keep working unchanged.
+    profiler_address = os.environ.get('PYROSCOPE_SERVER_ADDRESS')
+    if profiler_address:
+        try:
+            import pyroscope
+            pyroscope.start(
+                application_name=service_name,
+                server_address=profiler_address,
+                basic_auth_username=os.environ.get('PYROSCOPE_BASIC_AUTH_USER', ''),
+                basic_auth_password=os.environ.get('PYROSCOPE_BASIC_AUTH_PASSWORD', ''),
+                tags={'service_namespace': 'opentelemetry-demo'},
+            )
+        except Exception as e:  # profiling must never take the service down
+            logging.warning("pyroscope profiler disabled: %s", e)
     api.set_provider(FlagdProvider(host=os.environ.get('FLAGD_HOST', 'flagd'), port=os.environ.get('FLAGD_PORT', 8013)))
     api.add_hooks([TracingHook()])
 

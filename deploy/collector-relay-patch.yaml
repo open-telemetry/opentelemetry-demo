@@ -1,60 +1,180 @@
+# Replaces the demo otel-collector ConfigMap (data key "relay") so the demo is a
+# pure telemetry relay — one-way merge into the estate (ObserveNow / stephgen-medussa):
+#
+#   traces + metrics + logs -> otlphttp/estate = data-recipes-traces-relay.data-recipes:4318
+#     (the fan-out point the faro-collector already uses; on fe-stackgen-run, the relay
+#      exports traces -> medussa traces-collector, metrics -> medussa PRW and
+#      logs -> medussa Loki with service_name label promotion; it holds the estate
+#      basic-auth credential, so the demo never needs one)
+#
+# Differences vs the earlier relay patch:
+#   - logs now actually reach Loki (otel-collector.devopsnow:4318 silently DROPPED logs)
+#   - jaeger / prometheus / opensearch exporters are gone: the in-namespace backends
+#     are stripped from the deployment entirely (deploy/strip-backends.yaml)
+#   - spanmetrics keeps dims for method/path so estate APM dashboards can group per API
+# kafka / valkey / postgresql receivers stay — those are the demo's app data stores,
+# the source of its failure modes.
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: otel-collector
   namespace: otel-demo
 data:
-  relay: "connectors:\n  spanmetrics: {}\nexporters:\n  debug: {}\n  opensearch:\n\
-    \    http:\n      endpoint: http://opensearch:9200\n      tls:\n        insecure:\
-    \ true\n    logs_index: otel-logs\n    logs_index_time_format: yyyy-MM-dd\n  otlp:\n\
-    \    endpoint: jaeger-collector:4317\n    tls:\n      insecure: true\n  otlphttp/prometheus:\n\
-    \    endpoint: http://prometheus:9090/api/v1/otlp\n    tls:\n      insecure: true\n\
-    \  otlphttp/stephgen:\n    endpoint: http://otel-collector.devopsnow:4318\nextensions:\n\
-    \  health_check:\n    endpoint: ${env:MY_POD_IP}:13133\nprocessors:\n  batch:\
-    \ {}\n  k8sattributes:\n    extract:\n      metadata:\n      - k8s.namespace.name\n\
-    \      - k8s.deployment.name\n      - k8s.statefulset.name\n      - k8s.daemonset.name\n\
-    \      - k8s.cronjob.name\n      - k8s.job.name\n      - k8s.node.name\n     \
-    \ - k8s.pod.name\n      - k8s.pod.uid\n      - k8s.pod.start_time\n    passthrough:\
-    \ false\n    pod_association:\n    - sources:\n      - from: resource_attribute\n\
-    \        name: k8s.pod.ip\n    - sources:\n      - from: resource_attribute\n\
-    \        name: k8s.pod.uid\n    - sources:\n      - from: connection\n  memory_limiter:\n\
-    \    check_interval: 5s\n    limit_percentage: 80\n    spike_limit_percentage:\
-    \ 25\n  resource:\n    attributes:\n    - action: insert\n      from_attribute:\
-    \ k8s.pod.uid\n      key: service.instance.id\n  resourcedetection:\n    detectors:\n\
-    \    - env\n    - system\n  transform:\n    error_mode: ignore\n    trace_statements:\n\
-    \    - context: span\n      statements:\n      - replace_pattern(name, \"\\\\\
-    ?.*\", \"\")\n      - replace_match(name, \"GET /api/products/*\", \"GET /api/products/{productId}\"\
-    )\nreceivers:\n  httpcheck/frontend-proxy:\n    targets:\n    - endpoint: http://frontend-proxy:8080\n\
-    \  jaeger:\n    protocols:\n      grpc:\n        endpoint: ${env:MY_POD_IP}:14250\n\
-    \      thrift_compact:\n        endpoint: ${env:MY_POD_IP}:6831\n      thrift_http:\n\
-    \        endpoint: ${env:MY_POD_IP}:14268\n  nginx:\n    collection_interval:\
-    \ 10s\n    endpoint: http://image-provider:8081/status\n  otlp:\n    protocols:\n\
-    \      grpc:\n        endpoint: ${env:MY_POD_IP}:4317\n      http:\n        cors:\n\
-    \          allowed_origins:\n          - http://*\n          - https://*\n   \
-    \     endpoint: ${env:MY_POD_IP}:4318\n  postgresql:\n    endpoint: postgresql:5432\n\
-    \    metrics:\n      postgresql.blks_hit:\n        enabled: true\n      postgresql.blks_read:\n\
-    \        enabled: true\n      postgresql.deadlocks:\n        enabled: true\n \
-    \     postgresql.tup_deleted:\n        enabled: true\n      postgresql.tup_fetched:\n\
-    \        enabled: true\n      postgresql.tup_inserted:\n        enabled: true\n\
-    \      postgresql.tup_returned:\n        enabled: true\n      postgresql.tup_updated:\n\
-    \        enabled: true\n    password: otel\n    tls:\n      insecure: true\n \
-    \   username: root\n  prometheus:\n    config:\n      scrape_configs:\n      -\
-    \ job_name: opentelemetry-collector\n        scrape_interval: 10s\n        static_configs:\n\
-    \        - targets:\n          - ${env:MY_POD_IP}:8888\n  redis:\n    collection_interval:\
-    \ 10s\n    endpoint: valkey-cart:6379\n    username: valkey\n  zipkin:\n    endpoint:\
-    \ ${env:MY_POD_IP}:9411\nservice:\n  extensions:\n  - health_check\n  pipelines:\n\
-    \    logs:\n      exporters:\n      - opensearch\n      - debug\n      - otlphttp/stephgen\n\
-    \      processors:\n      - k8sattributes\n      - memory_limiter\n      - resourcedetection\n\
-    \      - resource\n      - batch\n      receivers:\n      - otlp\n    metrics:\n\
-    \      exporters:\n      - otlphttp/prometheus\n      - debug\n      - otlphttp/stephgen\n\
-    \      processors:\n      - k8sattributes\n      - memory_limiter\n      - resourcedetection\n\
-    \      - resource\n      - batch\n      receivers:\n      - httpcheck/frontend-proxy\n\
-    \      - nginx\n      - otlp\n      - postgresql\n      - redis\n      - spanmetrics\n\
-    \    traces:\n      exporters:\n      - otlp\n      - debug\n      - spanmetrics\n\
-    \      - otlphttp/stephgen\n      processors:\n      - k8sattributes\n      -\
-    \ memory_limiter\n      - resourcedetection\n      - resource\n      - transform\n\
-    \      - batch\n      receivers:\n      - otlp\n      - jaeger\n      - zipkin\n\
-    \  telemetry:\n    metrics:\n      level: detailed\n      readers:\n      - periodic:\n\
-    \          exporter:\n            otlp:\n              endpoint: otel-collector:4318\n\
-    \              protocol: http/protobuf\n          interval: 10000\n          timeout:\
-    \ 5000\n"
+  relay: |
+    connectors:
+      spanmetrics:
+        dimensions:
+          - name: http.request.method
+          - name: url.path
+        dimensions_cache_size: 1000
+    exporters:
+      otlphttp/estate:
+        endpoint: http://data-recipes-traces-relay.data-recipes.svc.cluster.local:4318
+    extensions:
+      health_check:
+        endpoint: ${env:MY_POD_IP}:13133
+    processors:
+      batch: {}
+      k8sattributes:
+        extract:
+          metadata:
+            - k8s.namespace.name
+            - k8s.deployment.name
+            - k8s.statefulset.name
+            - k8s.daemonset.name
+            - k8s.cronjob.name
+            - k8s.job.name
+            - k8s.node.name
+            - k8s.pod.name
+            - k8s.pod.uid
+            - k8s.pod.start_time
+        passthrough: false
+        pod_association:
+          - sources:
+              - from: resource_attribute
+                name: k8s.pod.ip
+          - sources:
+              - from: resource_attribute
+                name: k8s.pod.uid
+          - sources:
+              - from: connection
+      memory_limiter:
+        check_interval: 5s
+        limit_percentage: 80
+        spike_limit_percentage: 25
+      resource:
+        attributes:
+          - action: insert
+            from_attribute: k8s.pod.uid
+            key: service.instance.id
+      resourcedetection:
+        detectors:
+          - env
+          - system
+      transform:
+        error_mode: ignore
+        trace_statements:
+          - context: span
+            statements:
+              - replace_pattern(name, "\\?.*", "")
+              - replace_match(name, "GET /api/products/*", "GET /api/products/{productId}")
+    receivers:
+      httpcheck/frontend-proxy:
+        targets:
+          - endpoint: http://frontend-proxy:8080
+      jaeger:
+        protocols:
+          grpc:
+            endpoint: ${env:MY_POD_IP}:14250
+          thrift_compact:
+            endpoint: ${env:MY_POD_IP}:6831
+          thrift_http:
+            endpoint: ${env:MY_POD_IP}:14268
+      nginx:
+        collection_interval: 10s
+        endpoint: http://image-provider:8081/status
+      otlp:
+        protocols:
+          grpc:
+            endpoint: ${env:MY_POD_IP}:4317
+          http:
+            cors:
+              allowed_origins:
+                - http://*
+                - https://*
+            endpoint: ${env:MY_POD_IP}:4318
+      postgresql:
+        endpoint: postgresql:5432
+        metrics:
+          postgresql.blks_hit:
+            enabled: true
+          postgresql.blks_read:
+            enabled: true
+          postgresql.deadlocks:
+            enabled: true
+          postgresql.tup_deleted:
+            enabled: true
+          postgresql.tup_fetched:
+            enabled: true
+          postgresql.tup_inserted:
+            enabled: true
+          postgresql.tup_returned:
+            enabled: true
+          postgresql.tup_updated:
+            enabled: true
+        password: otel
+        tls:
+          insecure: true
+        username: root
+      redis:
+        collection_interval: 10s
+        endpoint: valkey-cart:6379
+        username: valkey
+      zipkin:
+        endpoint: ${env:MY_POD_IP}:9411
+    service:
+      extensions:
+        - health_check
+      pipelines:
+        logs:
+          exporters:
+            - otlphttp/estate
+          processors:
+            - k8sattributes
+            - memory_limiter
+            - resourcedetection
+            - resource
+            - batch
+          receivers:
+            - otlp
+        metrics:
+          exporters:
+            - otlphttp/estate
+          processors:
+            - k8sattributes
+            - memory_limiter
+            - resourcedetection
+            - resource
+            - batch
+          receivers:
+            - httpcheck/frontend-proxy
+            - nginx
+            - otlp
+            - postgresql
+            - redis
+            - spanmetrics
+        traces:
+          exporters:
+            - otlphttp/estate
+            - spanmetrics
+          processors:
+            - k8sattributes
+            - memory_limiter
+            - resourcedetection
+            - resource
+            - transform
+            - batch
+          receivers:
+            - otlp
+            - jaeger
+            - zipkin

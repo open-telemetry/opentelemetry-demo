@@ -43,7 +43,36 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/XSAM/otelsql"
+	otelpyroscope "github.com/grafana/otel-profiling-go"
+	pyroscope "github.com/grafana/pyroscope-go"
 )
+
+// initPyroscope starts pyroscope-go pushing to the estate Pyroscope when
+// PYROSCOPE_SERVER_ADDRESS is set (deploy/telemetry-env-patches.yaml); nil, nil = off.
+func initPyroscope() (*pyroscope.Profiler, error) {
+	addr := os.Getenv("PYROSCOPE_SERVER_ADDRESS")
+	if addr == "" {
+		return nil, nil
+	}
+	appName := os.Getenv("OTEL_SERVICE_NAME")
+	if appName == "" {
+		appName = "product-catalog"
+	}
+	return pyroscope.Start(pyroscope.Config{
+		ApplicationName:   appName,
+		ServerAddress:     addr,
+		BasicAuthUser:     os.Getenv("PYROSCOPE_BASIC_AUTH_USER"),
+		BasicAuthPassword: os.Getenv("PYROSCOPE_BASIC_AUTH_PASSWORD"),
+		Tags:              map[string]string{"service_namespace": "opentelemetry-demo"},
+		ProfileTypes: []pyroscope.ProfileType{
+			pyroscope.ProfileCPU,
+			pyroscope.ProfileAllocObjects,
+			pyroscope.ProfileAllocSpace,
+			pyroscope.ProfileInuseObjects,
+			pyroscope.ProfileInuseSpace,
+		},
+	})
+}
 
 type productCatalog struct {
 	pb.UnimplementedProductCatalogServiceServer
@@ -106,8 +135,17 @@ func main() {
 		logger.Info("Shutdown OpenTelemetry SDK")
 	}()
 
-	// Set global providers and propagator
-	otel.SetTracerProvider(sdk.TracerProvider())
+	// Set global providers and propagator. The otelpyroscope wrapper adds
+	// span_id/span_name pprof labels (span profiling) when the profiler is running.
+	pyroscopeProfiler, pyroscopeErr := initPyroscope()
+	if pyroscopeErr != nil {
+		logger.Error(fmt.Sprintf("pyroscope profiler disabled: %v", pyroscopeErr))
+		otel.SetTracerProvider(sdk.TracerProvider())
+	} else if pyroscopeProfiler != nil {
+		otel.SetTracerProvider(otelpyroscope.NewTracerProvider(sdk.TracerProvider()))
+	} else {
+		otel.SetTracerProvider(sdk.TracerProvider())
+	}
 	otel.SetMeterProvider(sdk.MeterProvider())
 	global.SetLoggerProvider(sdk.LoggerProvider())
 	otel.SetTextMapPropagator(sdk.Propagator())

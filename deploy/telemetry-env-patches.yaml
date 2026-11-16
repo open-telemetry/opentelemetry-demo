@@ -1,0 +1,214 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkout
+spec:
+  template:
+    spec:
+      containers:
+      - name: checkout
+        env:
+        - name: PYROSCOPE_SERVER_ADDRESS
+          value: https://profiles-stephgen-medussa.observe.devopsnow.cloud
+        - name: PYROSCOPE_BASIC_AUTH_USER
+          valueFrom:
+            secretKeyRef:
+              name: pyroscope-estate
+              key: basic-auth-user
+        - name: PYROSCOPE_BASIC_AUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: pyroscope-estate
+              key: basic-auth-password
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-catalog
+spec:
+  template:
+    spec:
+      containers:
+      - name: product-catalog
+        env:
+        - name: PYROSCOPE_SERVER_ADDRESS
+          value: https://profiles-stephgen-medussa.observe.devopsnow.cloud
+        - name: PYROSCOPE_BASIC_AUTH_USER
+          valueFrom:
+            secretKeyRef:
+              name: pyroscope-estate
+              key: basic-auth-user
+        - name: PYROSCOPE_BASIC_AUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: pyroscope-estate
+              key: basic-auth-password
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ad
+spec:
+  template:
+    spec:
+      containers:
+      - name: ad
+        env:
+        - name: PYROSCOPE_SERVER_ADDRESS
+          value: https://profiles-stephgen-medussa.observe.devopsnow.cloud
+        - name: PYROSCOPE_APPLICATION_NAME
+          value: ad
+        - name: PYROSCOPE_BASIC_AUTH_USER
+          valueFrom:
+            secretKeyRef:
+              name: pyroscope-estate
+              key: basic-auth-user
+        - name: PYROSCOPE_BASIC_AUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: pyroscope-estate
+              key: basic-auth-password
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fraud-detection
+spec:
+  template:
+    spec:
+      containers:
+      - name: fraud-detection
+        env:
+        - name: PYROSCOPE_SERVER_ADDRESS
+          value: https://profiles-stephgen-medussa.observe.devopsnow.cloud
+        - name: PYROSCOPE_APPLICATION_NAME
+          value: fraud-detection
+        - name: PYROSCOPE_BASIC_AUTH_USER
+          valueFrom:
+            secretKeyRef:
+              name: pyroscope-estate
+              key: basic-auth-user
+        - name: PYROSCOPE_BASIC_AUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: pyroscope-estate
+              key: basic-auth-password
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recommendation
+spec:
+  template:
+    spec:
+      containers:
+      - name: recommendation
+        env:
+        - name: PYROSCOPE_SERVER_ADDRESS
+          value: https://profiles-stephgen-medussa.observe.devopsnow.cloud
+        - name: PYROSCOPE_BASIC_AUTH_USER
+          valueFrom:
+            secretKeyRef:
+              name: pyroscope-estate
+              key: basic-auth-user
+        - name: PYROSCOPE_BASIC_AUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: pyroscope-estate
+              key: basic-auth-password
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment
+spec:
+  template:
+    spec:
+      containers:
+      - name: payment
+        env:
+        - name: PYROSCOPE_SERVER_ADDRESS
+          value: https://profiles-stephgen-medussa.observe.devopsnow.cloud
+        - name: PYROSCOPE_BASIC_AUTH_USER
+          valueFrom:
+            secretKeyRef:
+              name: pyroscope-estate
+              key: basic-auth-user
+        - name: PYROSCOPE_BASIC_AUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: pyroscope-estate
+              key: basic-auth-password
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shipping
+spec:
+  template:
+    spec:
+      containers:
+      - name: shipping
+        env:
+        - name: PYROSCOPE_SERVER_ADDRESS
+          value: https://profiles-stephgen-medussa.observe.devopsnow.cloud
+        - name: PYROSCOPE_BASIC_AUTH_USER
+          valueFrom:
+            secretKeyRef:
+              name: pyroscope-estate
+              key: basic-auth-user
+        - name: PYROSCOPE_BASIC_AUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: pyroscope-estate
+              key: basic-auth-password
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cart
+spec:
+  template:
+    spec:
+      containers:
+      - name: cart
+        env:
+        - name: PYROSCOPE_PROFILING_ENABLED
+          value: '1'
+        - name: PYROSCOPE_SERVER_ADDRESS
+          value: https://profiles-stephgen-medussa.observe.devopsnow.cloud
+        - name: PYROSCOPE_BASIC_AUTH_USER
+          valueFrom:
+            secretKeyRef:
+              name: pyroscope-estate
+              key: basic-auth-user
+        - name: PYROSCOPE_BASIC_AUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: pyroscope-estate
+              key: basic-auth-password
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  template:
+    spec:
+      containers:
+      - name: frontend
+        env:
+        - name: PYROSCOPE_SERVER_ADDRESS
+          value: https://profiles-stephgen-medussa.observe.devopsnow.cloud
+        - name: PYROSCOPE_BASIC_AUTH_USER
+          valueFrom:
+            secretKeyRef:
+              name: pyroscope-estate
+              key: basic-auth-user
+        - name: PYROSCOPE_BASIC_AUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: pyroscope-estate
+              key: basic-auth-password
+        - name: GRAFANA_FARO_ENDPOINT
+          value: https://faro.stackgen.run

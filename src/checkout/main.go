@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	stdruntime "runtime"
 	"strconv"
 	"sync"
 	"syscall"
@@ -25,6 +26,8 @@ import (
 
 	"github.com/IBM/sarama"
 	"github.com/google/uuid"
+	otelpyroscope "github.com/grafana/otel-profiling-go"
+	pyroscope "github.com/grafana/pyroscope-go"
 	otelhooks "github.com/open-feature/go-sdk-contrib/hooks/open-telemetry/pkg"
 	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
 	"github.com/open-feature/go-sdk/openfeature"
@@ -95,9 +98,56 @@ func initTracerProvider() *sdktrace.TracerProvider {
 		sdktrace.WithBatcher(exporter),
 		sdktrace.WithResource(initResource()),
 	)
-	otel.SetTracerProvider(tp)
+
+	// Continuous profiling: pyroscope-go pushes pprof to the estate Pyroscope when
+	// PYROSCOPE_SERVER_ADDRESS is set (deploy/telemetry-env-patches.yaml). The
+	// otel-profiling-go wrapper adds span_id/span_name runtime/pprof labels so
+	// samples correlate with spans (span profiling / drilldown in ObserveNow).
+	if pyroscopeProfiler, err := initProfilerProvider(); err != nil {
+		logger.Error(fmt.Sprintf("pyroscope profiler disabled: %v", err))
+	} else if pyroscopeProfiler != nil {
+		otel.SetTracerProvider(otelpyroscope.NewTracerProvider(tp))
+	} else {
+		otel.SetTracerProvider(tp)
+	}
 	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 	return tp
+}
+
+// initProfilerProvider starts a pyroscope-go push profiler against the estate server.
+// Returns (nil, nil) when PYROSCOPE_SERVER_ADDRESS is unset — profiling off.
+func initProfilerProvider() (*pyroscope.Profiler, error) {
+	addr := os.Getenv("PYROSCOPE_SERVER_ADDRESS")
+	if addr == "" {
+		return nil, nil
+	}
+	stdruntime.SetMutexProfileFraction(5)
+	stdruntime.SetBlockProfileRate(5)
+	appName := os.Getenv("OTEL_SERVICE_NAME")
+	if appName == "" {
+		appName = "checkout"
+	}
+	cfg := pyroscope.Config{
+		ApplicationName:   appName,
+		ServerAddress:     addr,
+		BasicAuthUser:     os.Getenv("PYROSCOPE_BASIC_AUTH_USER"),
+		BasicAuthPassword: os.Getenv("PYROSCOPE_BASIC_AUTH_PASSWORD"),
+		Tags: map[string]string{
+			"service_namespace": "opentelemetry-demo",
+		},
+		ProfileTypes: []pyroscope.ProfileType{
+			pyroscope.ProfileCPU,
+			pyroscope.ProfileAllocObjects,
+			pyroscope.ProfileAllocSpace,
+			pyroscope.ProfileInuseObjects,
+			pyroscope.ProfileInuseSpace,
+		},
+	}
+	profiler, err := pyroscope.Start(cfg)
+	if err != nil {
+		return nil, err
+	}
+	return profiler, nil
 }
 
 func initMeterProvider() *sdkmetric.MeterProvider {

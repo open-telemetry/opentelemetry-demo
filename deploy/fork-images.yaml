@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkout
+spec:
+  template:
+    spec:
+      containers:
+      - name: checkout
+        image: ghcr.io/srclos-net/demo:2.1.3-faro.1-checkout
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-catalog
+spec:
+  template:
+    spec:
+      containers:
+      - name: product-catalog
+        image: ghcr.io/srclos-net/demo:2.1.3-faro.1-product-catalog
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ad
+spec:
+  template:
+    spec:
+      containers:
+      - name: ad
+        image: ghcr.io/srclos-net/demo:2.1.3-faro.1-ad
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fraud-detection
+spec:
+  template:
+    spec:
+      containers:
+      - name: fraud-detection
+        image: ghcr.io/srclos-net/demo:2.1.3-faro.1-fraud-detection
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recommendation
+spec:
+  template:
+    spec:
+      containers:
+      - name: recommendation
+        image: ghcr.io/srclos-net/demo:2.1.3-faro.1-recommendation
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment
+spec:
+  template:
+    spec:
+      containers:
+      - name: payment
+        image: ghcr.io/srclos-net/demo:2.1.3-faro.1-payment
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shipping
+spec:
+  template:
+    spec:
+      containers:
+      - name: shipping
+        image: ghcr.io/srclos-net/demo:2.1.3-faro.1-shipping
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cart
+spec:
+  template:
+    spec:
+      containers:
+      - name: cart
+        image: ghcr.io/srclos-net/demo:2.1.3-faro.1-cart
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  template:
+    spec:
+      containers:
+      - name: frontend
+        image: ghcr.io/srclos-net/demo:2.1.3-faro.1-frontend

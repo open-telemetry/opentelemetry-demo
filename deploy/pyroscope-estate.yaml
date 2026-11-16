@@ -1,0 +1,22 @@
+# TEMPLATE only — do not commit the real credential here (this fork is public).
+#
+# Apply the real Secret out-of-band from the fe-stackgen-run estate, e.g.:
+#   kubectl --kubeconfig ~/.kube/config.civo -n otel-demo create secret generic \
+#     pyroscope-estate \
+#     --from-literal=basic-auth-user=devopsnow \
+#     --from-literal=basic-auth-password=<the estate basic-auth password \
+#       used by the faro-collector/traces-relay Authorization headers> \
+#     --from-literal=server-address=https://profiles-stephgen-medussa.observe.devopsnow.cloud
+#
+# The same credential is embedded in fe-stackgen-run/manifests/faro-collector.yaml and
+# the medussa envoy-gateway SecurityPolicy (secret envoy-basic-auth) — reuse it verbatim.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pyroscope-estate
+  namespace: otel-demo
+type: Opaque
+stringData:
+  basic-auth-user: devopsnow
+  basic-auth-password: REPLACE_ME_OUT_OF_BAND
+  server-address: https://profiles-stephgen-medussa.observe.devopsnow.cloud
