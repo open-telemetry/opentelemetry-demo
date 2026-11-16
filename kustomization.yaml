@@ -1,0 +1,18 @@
+# Deploy overlay for fe-stackgen-run (Argo CD Application in deploy/argocd.yaml).
+#
+# Base: the upstream-rendered single manifest (kubernetes/opentelemetry-demo.yaml,
+# unchanged — this fork tracks the open-telemetry/opentelemetry-demo main).
+# Overlay: the demo's internal collector now ALSO forwards every trace, log and
+# metric to the estate collector (devopsnow), whose zipkin/PRW exporters land in
+# stephgen-medussa (ObserveNow). The demo's in-namespace jaeger/prometheus/
+# opensearch/graphana stay untouched.
+#
+# Note: OBI (the estate eBPF DaemonSet) instruments this namespace too, so spans
+# will appear twice (once from the SDKs, once from OBI) in ObserveNow until OBI
+# gains an exclusion for the demo namespace — acceptable for a demo.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - kubernetes/opentelemetry-demo.yaml
+patches:
+  - path: deploy/collector-relay-patch.yaml

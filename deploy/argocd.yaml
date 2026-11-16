@@ -8,17 +8,8 @@ spec:
   source:
     repoURL: https://github.com/srclos-net/opentelemetry-demo.git
     targetRevision: main
-    path: deploy
-    # allow referencing ../kubernetes (the kustomize load-restrictor default
-    # blocks parent-directory resources)
-    kustomize:
-      buildOptions: --load-restrictor LoadRestrictionsNone
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: otel-demo
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
+    # kustomization.yaml lives at the repo root; the collector overlay patch
+    # lives under deploy/ (hand-apply deploy/argocd.yaml once, as with the
+    # bank/obi/train/via-trains Applications).
+    path: .
+ 
