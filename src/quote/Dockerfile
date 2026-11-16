@@ -8,7 +8,7 @@ FROM docker.io/library/composer:2.11.1@sha256:8de2184c6de224f4689e8f80ed5f5edaf0
 
 WORKDIR /tmp/
 
-COPY ./src/quote/composer.json composer.json
+COPY ./src/quote/composer.json ./src/quote/composer.lock ./
 
 RUN composer install \
     --ignore-platform-reqs \
