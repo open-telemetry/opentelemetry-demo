@@ -13,6 +13,10 @@ repositories {
     mavenCentral()
 }
 
+dependencyLocking {
+    lockAllConfigurations()
+}
+
 description = 'Recommendation Service'
 group = "recommendation"
 version = "0.1.0-SNAPSHOT"
