@@ -12,4 +12,12 @@ spec:
     # lives under deploy/ (hand-apply deploy/argocd.yaml once, as with the
     # bank/obi/train/via-trains Applications).
     path: .
- 
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: otel-demo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
