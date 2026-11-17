@@ -215,9 +215,21 @@ def api_checks():
     mixed = "\n".join(json.dumps(item) for item in [
         {"index": public}, {"query": {"match_all": {}}}, {"index": private}, {"query": {"match_all": {}}}]) + "\n"
     denied("mixed-index multi-search is atomic", "user1", "/_msearch", mixed)
+    unsupported = "\n".join(json.dumps(item) for item in [
+        {"index": public}, {}, {"index": public}, {"post_filter": {"match_none": {}}}]) + "\n"
+    denied("unsupported later multi-search item is atomic", "user1", "/_msearch", unsupported, 400)
     for label, body in (("scripts", {"script_fields": {"x": {"script": "1"}}}), ("runtime fields", {"runtime_mappings": {}}),
-                        ("unknown DSL", {"query": {"script": {}}})):
+                        ("unknown DSL", {"query": {"script": {}}}),
+                        ("unsupported post-filter", {"post_filter": {"match_none": {}}}),
+                        ("unsupported query-string options", {"query": {"query_string": {"query": "alpha beta", "default_operator": "AND"}}})):
         denied(label, "user1", f"/{public}/_search", body, 400)
+    oversized = {"query": {"bool": {"should": [{"bool": {"should": [{"match_all": {}}] * 100}}] * 30}}}
+    denied("aggregate query-node budget", "user1", f"/{public}/_search", oversized, 400)
+    denied("search URL field selector is unsupported", "user2", f"/{private}/_search?fields=secret", {}, 400)
+    denied("hidden field-capability URL selector", "user2", f"/{private}/_field_caps?fields=secret", {})
+    status, response = host_request(GATEWAY_URL, "GET", f"/{private}/_field_caps?fields=body", user="user2")
+    require(status == 200 and set(response.get("fields", {})) == {"body"}, "Field-capability URL selector was ignored")
+    result("field-capability URL selector limits metadata", status)
     denied("unregistered index", "user1", "/permissions-demo-missing/_search", {})
     denied("unsupported parent FLS policy", "parent_reader", f"/{public}/_search", {})
     for user, expected in (("user1", public), ("user2", private)):

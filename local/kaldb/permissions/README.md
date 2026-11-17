@@ -132,8 +132,17 @@ do not affect counter comparisons. A complete passing run writes sanitized
 only after both users render actual data and the admin role-change check passes.
 
 Secured mode rejects multi-field/alias schemas, parent/include/wildcard/regex FLS,
-DLS, masking, scripts, runtime fields, and unimplemented query operations. This
+DLS, masking, scripts, runtime fields, `post_filter`, and unimplemented query operations. This
 is a bounded security demo, not full OpenSearch query compatibility.
+Literal `query_string`/`simple_query_string` supports `query`, `fields`, and
+`default_field`; operator and other options are rejected instead of ignored.
+Use structured supported queries for filters. URL `fields` selectors apply only
+to `_field_caps`; unsupported search URL field selectors fail before KalDB.
+Wildcard matching has a shared work limit. Each request allows up to 2,048
+field selectors and query nodes, 4,096 expanded text clauses, and schemas of up
+to 2,048 leaves. Multi-search shares these budgets across all items. Metadata
+discovery allows at most 32 index selectors of 128 characters each. Excessive
+requests fail closed; these are demo limits, not tunable production quotas.
 The dashboard's maximum-duration panel uses a concrete aggregation. KalDB's
 count-only `size: 0` requests remain unsupported in this branch.
 
