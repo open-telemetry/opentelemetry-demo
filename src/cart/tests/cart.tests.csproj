@@ -8,6 +8,8 @@
     <PackageReference Include="Grpc.Net.Client" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <!-- System.Formats.Cbor is indirect dependency for OpenFeature.Providers.Flagd through cart project. It is affected by https://github.com/advisories/GHSA-vmv3-wvjp-wqpj. Remove when OpenFeature.Providers.Flagd is updated to 0.8.0+ version -->
+    <PackageReference Include="System.Formats.Cbor" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio">
       <PrivateAssets>all</PrivateAssets>
