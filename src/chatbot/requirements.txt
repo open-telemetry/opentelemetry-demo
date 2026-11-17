@@ -406,9 +406,9 @@ click==8.5.1 \
     # via
     #   huggingface-hub
     #   uvicorn
-fastapi==0.162.5 \
-    --hash=sha256:1ca37f64f61c99cebd38636e67525fb721c5e8c1169f07f2a35d73b0a63265d4 \
-    --hash=sha256:5303c67415fde762889ca337db79d27b755b8bd09cef314fa7a4340bb30bfd2b
+fastapi==0.162.7 \
+    --hash=sha256:b7503029c8ef2d2d5fea9049294cf8d0f2805c6621f4677ede269fce19f01efb \
+    --hash=sha256:fa3be857122ec8d91d4d234e86ac19acf4ef23f5c6c3dfcce78ec0c27c0c5ab4
     # via
     #   -r requirements.in
     #   gradio
@@ -785,9 +785,9 @@ opentelemetry-instrumentation-requests==0.66b2 \
     --hash=sha256:b0ba903a0bd7ebb234c8b32d3d957efc4061ba8571916558dc3f3dcdabb5e5e1 \
     --hash=sha256:bcfbdc3ff3ec8524044908788f0e7f3c25e219053b496fd9926d75f8d7c7bc96
     # via -r requirements.in
-opentelemetry-opamp-client==0.5b0 \
-    --hash=sha256:6bd36ecc67a510bb92c7139f287b96f1fb7fe45e82222a5a90c324a3c533a6df \
-    --hash=sha256:babfbe469ebfd1722a8b2b154aed801a0297b48b4ddbf8dd896275ffa8e835ce
+opentelemetry-opamp-client==0.6b0 \
+    --hash=sha256:8fb5d91a85e4c457c89690b31f17016dd93e58aadbd5aff4540842fbb60767da \
+    --hash=sha256:c6631226936831f8736b0fed6a84f49c9d84b0b6a816b75f7cf9c16a2c139d77
     # via -r requirements.in
 opentelemetry-proto==1.45.2 \
     --hash=sha256:03a7ca1b43f89fd5b965d5975902bb2515c0c86e2428b456836e9a6149c6235a \
