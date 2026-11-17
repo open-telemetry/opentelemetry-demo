@@ -16,6 +16,140 @@ services:
       - ./.state/certs:/usr/share/opensearch/config/permissions-certs:ro
     networks: [policy]
 
+  zookeeper:
+    image: zookeeper:3.9
+    environment:
+      ZOO_STANDALONE_ENABLED: "true"
+      ZOO_4LW_COMMANDS_WHITELIST: ruok,stat
+      JVMFLAGS: -Xms32m -Xmx64m -XX:ActiveProcessorCount=2
+    mem_limit: 256m
+    networks: [backend]
+    healthcheck:
+      test: [CMD, zkServer.sh, status]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+
+  kafka:
+    image: bitnamilegacy/kafka:3.2.3
+    environment:
+      KAFKA_BROKER_ID: "1"
+      KAFKA_LISTENERS: INTERNAL://:29092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_HEAP_OPTS: -Xms128m -Xmx256m
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+    mem_limit: 512m
+    networks: [backend]
+    depends_on:
+      zookeeper: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, kafka-topics.sh, --list, --bootstrap-server, localhost:29092]
+      interval: 5s
+      timeout: 10s
+      retries: 30
+
+  kafka-init:
+    image: bitnamilegacy/kafka:3.2.3
+    command: [kafka-topics.sh, --create, --if-not-exists, --topic, permissions-demo, --partitions, "1", --replication-factor, "1", --bootstrap-server, kafka:29092]
+    networks: [backend]
+    depends_on:
+      kafka: {condition: service_healthy}
+
+  s3:
+    image: adobe/s3mock:2.1.29
+    environment:
+      initialBuckets: test-s3-bucket
+      JAVA_TOOL_OPTIONS: -Xms32m -Xmx128m -XX:ActiveProcessorCount=2
+    mem_limit: 384m
+    networks: [backend]
+
+  kaldb:
+    image: kaldb-permissions-runtime:2.11
+    build: {context: ., dockerfile: runtime.Dockerfile}
+    command: [--enable-preview, -jar, /runtime/astra.jar, /runtime/config.yaml]
+    environment:
+      JAVA_TOOL_OPTIONS: -Xms128m -Xmx640m -XX:ActiveProcessorCount=2
+      NODE_ROLES: QUERY,INDEX,CACHE,MANAGER,RECOVERY,PREPROCESSOR
+      ASTRA_INDEX_SERVER_ADDRESS: kaldb
+      ASTRA_QUERY_SERVER_ADDRESS: kaldb
+      ASTRA_MANAGER_SERVER_ADDRESS: kaldb
+      ASTRA_CACHE_SERVER_ADDRESS: kaldb
+      ASTRA_RECOVERY_SERVER_ADDRESS: kaldb
+      ASTRA_PREPROCESSOR_SERVER_ADDRESS: kaldb
+      ASTRA_MANAGER_CONNECTION_STRING: kaldb:8083
+      ASTRA_ZK_CONNECTION_STRING: zookeeper:2181
+      ASTRA_ZK_SESSION_TIMEOUT_MS: "30000"
+      ASTRA_ZK_CONNECT_TIMEOUT_MS: "5000"
+      ASTRA_MANAGER_API_MIN_NUMBER_OF_PARTITIONS: "1"
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      KAFKA_TOPIC: permissions-demo
+      KAFKA_TOPIC_PARTITION: "0"
+      INDEXER_READ_FROM_LOCATION_ON_START: EARLIEST
+      INDEXER_ENABLE_FULL_TEXT_SEARCH: "true"
+      INDEXER_REFRESH_DURATION_SECS: "1"
+      PREPROCESSOR_SCHEMA_FILE: /runtime/ingest-schema.json
+      S3_ENDPOINT: http://s3:9090
+      S3_PATH_PREFIX: permissions-demo
+      TRACING_SAMPLING_RATE: "0.0"
+    mem_limit: 1536m
+    networks: [backend]
+    depends_on:
+      kafka-init: {condition: service_completed_successfully}
+      s3: {condition: service_started}
+
+  recorder:
+    image: python:3.12-slim
+    command: [python, /recorder.py]
+    volumes: [./recorder.py:/recorder.py:ro]
+    mem_limit: 64m
+    networks:
+      query: {}
+      backend: {}
+      control: {aliases: [recorder-control]}
+    depends_on: [kaldb]
+
+  gateway:
+    image: kaldb-permissions-runtime:2.11
+    command: [-jar, /runtime/gateway.jar]
+    environment:
+      JAVA_TOOL_OPTIONS: -Xms32m -Xmx128m -XX:ActiveProcessorCount=2
+      SECURED_MODE: "true"
+      ASTRA_URL: http://recorder:8080
+      OPENSEARCH_URL: https://opensearch:9200
+      OPENSEARCH_CA_FILE: /run/secrets/native-ca.pem
+      POLICY_READER_CREDENTIALS_FILE: /run/secrets/policy.json
+      REGISTERED_DATASETS: permissions-demo-public,permissions-demo-private
+      MAX_REQUEST_BYTES: "1048576"
+    volumes:
+      - ./.state/certs/ca.pem:/run/secrets/native-ca.pem:ro
+      - ./.state/gateway-policy.json:/run/secrets/policy.json:ro
+    ports: [127.0.0.1:29201:9200]
+    mem_limit: 384m
+    networks: [edge, policy, query]
+    depends_on: [opensearch, recorder]
+
+  dashboards:
+    image: opensearchproject/opensearch-dashboards:2.11.1
+    environment:
+      NODE_OPTIONS: --max-old-space-size=384
+    volumes:
+      - ./.state/dashboards.yml:/usr/share/opensearch-dashboards/config/opensearch_dashboards.yml:ro
+    ports: [127.0.0.1:25601:5601]
+    mem_limit: 768m
+    networks: [edge]
+    depends_on: [gateway]
+
 networks:
   policy:
     internal: true
+  backend:
+    internal: true
+  query:
+    internal: true
+  control:
+    internal: true
+  edge: {}

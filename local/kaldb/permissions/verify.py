@@ -3,6 +3,131 @@
 
 import argparse
 import json
+import subprocess
+
+
+def api_checks():
+    """Exercise real native policy, real KalDB data, and zero-call denials."""
+    from demo import DATASETS, STATE, GATEWAY_URL, DASHBOARDS_URL, host_request, native_request, recorder_calls, compose, wait_ready
+    public, private = DATASETS
+    evidence = []
+
+    def result(name, status, delta=None):
+        evidence.append({"case": name, "status": status, "kaldb_calls": delta})
+        print(f"PASS {name}: HTTP {status}" + (f", KalDB calls +{delta}" if delta is not None else ""), flush=True)
+
+    def denied(name, user, path, body=None, expected=403, extra_headers=None):
+        before = recorder_calls()["count"]
+        status, response = host_request(GATEWAY_URL, "POST", path, body, user, extra_headers=extra_headers)
+        delta = recorder_calls()["count"] - before
+        require(status == expected, f"{name}: expected HTTP {expected}, got {status}")
+        require(delta == 0, f"{name}: rejected request reached KalDB ({delta} calls)")
+        result(name, status, delta)
+        return response
+
+    for user, dataset, marker in (("user1", public, "TEAM_A_ORDER_READY"), ("user2", private, "TEAM_B_ORDER_READY")):
+        before = recorder_calls()["count"]
+        status, response = host_request(GATEWAY_URL, "POST", f"/{dataset}/_search", {"size": 10, "query": {"match_all": {}}}, user)
+        delta = recorder_calls()["count"] - before
+        text = json.dumps(response)
+        require(status == 200 and marker in text and delta > 0, f"{user} positive control must return actual assigned KalDB fixtures")
+        if user == "user2":
+            require("PRIVATE_B_SENTINEL" not in text and "private-b@example.invalid" not in text and "NESTED_PRIVATE_B" not in text,
+                    "User 2 FLS must remove private and nested values")
+        result(user + " reads actual assigned fixtures", status, delta)
+    status, response = host_request(GATEWAY_URL, "POST", f"/{private}/_search", {"size": 10}, "full_reader")
+    require(status == 200 and "PRIVATE_B_SENTINEL" in json.dumps(response), "Full-reader private sentinel positive control failed")
+    result("full reader sees actual private sentinel", status)
+    denied("missing credentials", None, f"/{public}/_search", {}, 401)
+    denied("invalid credentials", "invalid", f"/{public}/_search", {}, 401)
+    denied("user 1 cannot read index B", "user1", f"/{private}/_search", {})
+    denied("user 2 cannot read index A", "user2", f"/{public}/_search", {})
+    denied("no-access account", "no_access", f"/{public}/_search", {})
+    denied("forged identity headers", "user1", f"/{private}/_search", {}, extra_headers={"x-proxy-user": "admin", "_opendistro_security_user": "admin"})
+    for label, body in (
+        ("query", {"query": {"term": {"secret": "PRIVATE_B_SENTINEL"}}}),
+        ("filter", {"query": {"bool": {"filter": [{"exists": {"field": "secret"}}]}}}),
+        ("sort", {"sort": [{"secret": "asc"}]}),
+        ("aggregation", {"aggs": {"values": {"terms": {"field": "secret"}}}}),
+        ("source", {"_source": ["secret"]}),
+        ("wildcard source", {"_source": ["customer.*"]}),
+        ("nested source", {"_source": ["events.secret"]}),
+        ("fields", {"fields": ["customer.email"]}),
+        ("docvalues", {"docvalue_fields": ["secret"]}),
+    ):
+        denied("hidden field in " + label, "user2", f"/{private}/_search", body)
+    mixed = "\n".join(json.dumps(item) for item in [
+        {"index": public}, {"query": {"match_all": {}}}, {"index": private}, {"query": {"match_all": {}}}]) + "\n"
+    denied("mixed-index multi-search is atomic", "user1", "/_msearch", mixed)
+    for label, body in (("scripts", {"script_fields": {}}), ("runtime fields", {"runtime_mappings": {}}),
+                        ("unknown DSL", {"query": {"script": {}}})):
+        denied(label, "user1", f"/{public}/_search", body, 400)
+    denied("unregistered index", "user1", "/permissions-demo-missing/_search", {})
+    denied("unsupported parent FLS policy", "parent_reader", f"/{public}/_search", {})
+    for user, expected in (("user1", public), ("user2", private)):
+        for path in ("/_resolve/index/permissions-demo-*", "/_mapping", "/_field_caps?fields=*"):
+            status, response = host_request(GATEWAY_URL, "GET", path, user=user)
+            require(status == 200 and expected in json.dumps(response), f"{user} metadata discovery failed")
+            forbidden_index = private if user == "user1" else public
+            require(forbidden_index not in json.dumps(response), f"{user} metadata exposed another index")
+            if user == "user2":
+                require("secret" not in json.dumps(response) and "customer.email" not in json.dumps(response), "Metadata exposed hidden fields")
+        result(user + " metadata contains only assigned index and fields", 200)
+    status, response = host_request(GATEWAY_URL, "POST", f"/{private}/_search",
+                                  {"query": {"query_string": {"query": "PRIVATE_B_SENTINEL"}}}, "user2")
+    require(status == 200 and not response.get("hits", {}).get("hits"), "Unfielded text matched a hidden value")
+    result("hidden values cannot influence unfielded search hits", status)
+    status, response = host_request(GATEWAY_URL, "POST", f"/{public}/_search", {
+        "size": 0, "aggs": {"over_time": {"date_histogram": {"field": "@timestamp", "fixed_interval": "1h"}}}}, "user1")
+    require(status == 200 and "aggregations" in response, "Visible date histogram failed on actual KalDB")
+    result("visible date histogram", status)
+
+    status, roles = native_request("GET", "/_plugins/_security/api/roles/demo_user1")
+    require(status == 200, "Cannot snapshot demo-owned role")
+    original = {key: roles["demo_user1"].get(key, []) for key in ("cluster_permissions", "index_permissions", "tenant_permissions")}
+    try:
+        modified = json.loads(json.dumps(original)); modified["index_permissions"] = []
+        status, _ = native_request("PUT", "/_plugins/_security/api/roles/demo_user1", modified)
+        require(status in (200, 201), "Role revocation failed")
+        denied("completed index revocation affects next request", "user1", f"/{public}/_search", {})
+    finally:
+        status, _ = native_request("PUT", "/_plugins/_security/api/roles/demo_user1", original)
+        require(status in (200, 201), "Could not restore demo-owned role")
+    for key, value in (("dls", '{"match_all":{}}'), ("masked_fields", ["secret"])):
+        try:
+            modified = json.loads(json.dumps(original)); modified["index_permissions"][0][key] = value
+            status, _ = native_request("PUT", "/_plugins/_security/api/roles/demo_user1", modified)
+            require(status in (200, 201), "Unsupported-policy fixture update failed")
+            denied("unsupported " + key + " fails closed", "user1", f"/{public}/_search", {})
+        finally:
+            status, _ = native_request("PUT", "/_plugins/_security/api/roles/demo_user1", original)
+            require(status in (200, 201), "Could not restore unsupported-policy fixture")
+    try:
+        compose("stop", "opensearch", stdout=subprocess.DEVNULL)
+        denied("native authority outage fails closed", "user1", f"/{public}/_search", {}, 503)
+    finally:
+        compose("start", "opensearch", stdout=subprocess.DEVNULL)
+        wait_ready("Native authority restored", lambda: native_request("GET", "/_cluster/health"))
+
+    for user, tenant, other_tenant, own_id, other_id in (
+        ("user1", "team_a", "team_b", "security-user1-dashboard", "security-user2-dashboard"),
+        ("user2", "team_b", "team_a", "security-user2-dashboard", "security-user1-dashboard"),
+    ):
+        status, _ = host_request(DASHBOARDS_URL, "GET", "/api/saved_objects/dashboard/" + own_id, user=user, tenant=tenant)
+        require(status == 200, user + " cannot load its own saved dashboard")
+        result(user + " own dashboard saved object", status)
+        status, _ = host_request(DASHBOARDS_URL, "GET", "/api/saved_objects/dashboard/" + other_id, user=user, tenant=tenant)
+        require(status == 404, user + " can see another tenant's saved dashboard")
+        result(user + " other dashboard is absent", status)
+        status, _ = host_request(DASHBOARDS_URL, "GET", "/api/saved_objects/dashboard/" + other_id, user=user, tenant=other_tenant)
+        require(status in (403, 404), user + " could bypass dashboard isolation with a tenant header")
+        result(user + " forged tenant cannot retrieve other dashboard", status)
+    probe = "const net=require('net');const s=net.connect(8081,'kaldb');s.on('connect',()=>process.exit(1));s.on('error',()=>process.exit(0));setTimeout(()=>process.exit(0),3000);"
+    test = compose("exec", "-T", "dashboards", "/usr/share/opensearch-dashboards/node/bin/node", "-e", probe, stdout=subprocess.DEVNULL)
+    require(test.returncode == 0, "User-facing container can bypass gateway to KalDB")
+    result("user-facing network cannot reach KalDB directly", 0)
+    (STATE / "api-report.json").write_text(json.dumps(evidence, indent=2))
+    print(f"PASS API security matrix ({len(evidence)} cases); report: local/kaldb/permissions/.state/api-report.json", flush=True)
 
 
 def require(condition, message):
@@ -76,6 +201,18 @@ def native_checks(client):
           "Policy reader can inspect complete schema for unsupported features")
     status, _ = client("POST", f"/{public}/_search", {"size": 0}, "policy_reader")
     check(status == 403, f"Policy reader cannot search data: got {status}")
+    for user, own, other, tenant, other_tenant in (
+        ("user1", public, private, "team_a", "team_b"),
+        ("user2", private, public, "team_b", "team_a"),
+    ):
+        status, _ = client("POST", f"/{own}/_search", {"size": 0, "query": {"match_none": {}}}, user)
+        check(status == 200, f"{user} can read only its assigned index (positive control)")
+        status, _ = client("POST", f"/{other}/_search", {"size": 0}, user)
+        check(status == 403, f"{user} cannot read the other index")
+        status, identity = client("GET", "/_plugins/_security/authinfo", user=user)
+        tenants = identity.get("tenants", {})
+        check(status == 200 and tenant in tenants and other_tenant not in tenants,
+              f"{user} has only its own dashboard tenant")
     require(not failures, f"Native feasibility gate failed ({len(failures)} checks); do not implement this oracle")
     print("PASS qualified native policy gate (standalone/object/nested schema; multi-fields unsupported)", flush=True)
     return visible
@@ -99,6 +236,8 @@ def main():
     from demo import native_request
     if args.mode == "native":
         native_checks(native_request)
+    elif args.mode == "api":
+        api_checks()
     else:
         raise SystemExit("API/UI verification is not implemented yet")
 
