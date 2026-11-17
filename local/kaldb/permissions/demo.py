@@ -11,6 +11,7 @@ import secrets
 import shutil
 import subprocess
 import time
+import zipfile
 import urllib.error
 import urllib.request
 
@@ -166,6 +167,8 @@ def prepare_state():
         "opensearch_security.multitenancy.tenants.preferred": ["team_a", "team_b"],
         "opensearch_security.readonly_mode.roles": ["demo_user1", "demo_user2"],
         "opensearch_security.cookie.secure": False,
+        "home.disableWelcomeScreen": True,
+        "home.disableNewThemeModal": True,
     })
 
 
@@ -272,7 +275,7 @@ def wait_ready(label, request, attempts=90):
 def build_runtime(kaldb_home, skip_build):
     """Build from the selected KalDB checkout and package only runtime artifacts."""
     source = Path(kaldb_home).resolve()
-    if not (source / "contrib/dashboards-gateway/pom.xml").is_file():
+    if not (source / "contrib/dashboards-gateway/src/main/java/com/slack/astra/contrib/dashboardsgateway/GatewayAuthorization.java").is_file():
         raise RuntimeError("--kaldb-home must point to the KalDB permissions branch")
     if not skip_build:
         for arguments in (["-pl", "astra", "-am", "-DskipTests", "package"],
@@ -281,6 +284,9 @@ def build_runtime(kaldb_home, skip_build):
                 subprocess.run(["mvn", "-q", *arguments], cwd=source, stdout=log, stderr=subprocess.STDOUT, check=True)
     runtime = STATE / "runtime"
     runtime.mkdir(exist_ok=True)
+    with zipfile.ZipFile(source / "contrib/dashboards-gateway/target/tools-dashboards-gateway.jar") as archive:
+        if "com/slack/astra/contrib/dashboardsgateway/GatewayAuthorization.class" not in archive.namelist():
+            raise RuntimeError("Selected gateway jar lacks secured mode; rebuild the permissions branch")
     for origin, target in [("astra/target/astra.jar", "astra.jar"),
                            ("contrib/dashboards-gateway/target/tools-dashboards-gateway.jar", "gateway.jar"),
                            ("config/config.yaml", "config.yaml")]:
@@ -345,6 +351,12 @@ def seed_kaldb():
 def seed_dashboards():
     """Create each dashboard inside its own real Security tenant."""
     wait_ready("Dashboards", lambda: host_request(DASHBOARDS_URL, "GET", "/api/status", user="admin"))
+    def tenant_template_ready():
+        status, response = native_request("GET", "/_index_template/tenant_template")
+        templates = response.get("index_templates", [])
+        mappings = templates[0].get("index_template", {}).get("template", {}).get("mappings", {}) if templates else {}
+        return (200 if status == 200 and mappings.get("properties", {}).get("type", {}).get("type") == "keyword" else 503), {}
+    wait_ready("Native tenant saved-object template", tenant_template_ready)
     for user, dataset, tenant, group in (("user1", DATASETS[0], "team_a", "A"), ("user2", DATASETS[1], "team_b", "B")):
         pattern_id, search_id, metric_id, dashboard_id = [f"security-{user}-{kind}" for kind in ("index", "search", "metric", "dashboard")]
         status, caps = native_request("GET", "/" + dataset + "/_field_caps?fields=*", user=user)
@@ -365,8 +377,8 @@ def seed_dashboards():
             ("index-pattern", pattern_id, {"title": dataset, "timeFieldName": "@timestamp", "fields": json.dumps(fields)}, []),
             ("search", search_id, {"title": f"Team {group} records", "columns": ["body", "level", "customer.region"],
                                    "sort": [["@timestamp", "desc"]], "kibanaSavedObjectMeta": {"searchSourceJSON": search_source}}, index_ref),
-            ("visualization", metric_id, {"title": f"Team {group} record count", "visState": json.dumps({"title": "Records", "type": "metric",
-                "params": {"fontSize": 60}, "aggs": [{"id": "1", "enabled": True, "type": "count", "schema": "metric", "params": {}}]}),
+            ("visualization", metric_id, {"title": f"Team {group} max duration", "visState": json.dumps({"title": "Max duration", "type": "metric",
+                "params": {"fontSize": 60}, "aggs": [{"id": "1", "enabled": True, "type": "max", "schema": "metric", "params": {"field": "duration_ms", "customLabel": "Max duration (ms)"}}]}),
                 "uiStateJSON": "{}", "kibanaSavedObjectMeta": {"searchSourceJSON": search_source}}, index_ref),
         ]
         panels = [{"version": "2.11.1", "type": kind, "panelRefName": f"panel_{i}", "panelIndex": str(i),
@@ -382,6 +394,13 @@ def seed_dashboards():
                                      {"attributes": attributes, "references": references}, "admin", tenant)
             if status != 200:
                 raise RuntimeError(f"Saved object {kind} creation failed: HTTP {status}")
+        status, found = host_request(DASHBOARDS_URL, "GET", "/api/saved_objects/_find?type=index-pattern&per_page=100", user=user, tenant=tenant)
+        if status != 200 or not any(item.get("id") == pattern_id for item in found.get("saved_objects", [])):
+            raise RuntimeError("Tenant index pattern is not searchable; inspect native saved-object migrations before using the demo")
+        status, _ = host_request(DASHBOARDS_URL, "POST", "/api/opensearch-dashboards/settings",
+                                 {"changes": {"defaultIndex": pattern_id}}, "admin", tenant)
+        if status != 200:
+            raise RuntimeError(f"Tenant default index setup failed: HTTP {status}")
         print(f"{user}: {DASHBOARDS_URL}/app/dashboards?security_tenant={tenant}#/view/{dashboard_id}", flush=True)
 
 
@@ -450,6 +469,9 @@ def main():
         if args.action == "start":
             compose("up", "-d")
             wait_ready("Secured Java gateway", lambda: host_request(GATEWAY_URL, "GET", "/_astra/gateway/health"))
+            status, _ = host_request(GATEWAY_URL, "POST", "/" + DATASETS[0] + "/_search", {"query": {"match_none": {}}})
+            if status != 401:
+                raise RuntimeError("Gateway did not enforce authentication; refusing fixture setup")
             seed_kaldb()
             seed_dashboards()
 

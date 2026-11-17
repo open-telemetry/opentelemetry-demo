@@ -444,3 +444,16 @@ endif
 .PHONY: build-react-native-android
 build-react-native-android:
 	$(DOCKER_CMD) build -f src/react-native-app/android.Dockerfile --platform=linux/amd64 --output=. src/react-native-app
+
+.PHONY: start-kaldb-permissions verify-kaldb-permissions showcase-kaldb-permissions stop-kaldb-permissions
+start-kaldb-permissions:
+	KALDB_HOME="$(KALDB_HOME)" ./local/kaldb/permissions/security_demo.sh start
+
+verify-kaldb-permissions:
+	./local/kaldb/permissions/security_demo.sh verify all
+
+showcase-kaldb-permissions:
+	./local/kaldb/permissions/security_demo.sh showcase
+
+stop-kaldb-permissions:
+	./local/kaldb/permissions/security_demo.sh stop

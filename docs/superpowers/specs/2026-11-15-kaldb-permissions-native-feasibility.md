@@ -70,8 +70,10 @@ it must not implement its own role-merging rules.
 
 ## Adopted bounded revision
 
-Following the user's request to update OpenSearch and target a demo tomorrow,
-the new isolated demo uses 3.9.0. The original 25-assertion matrix was also run
+The initial isolated experiment used 3.9.0. It is now parked on
+`codex/kaldb-permissions-opensearch-3.9`; the deliverable targets **2.11.1** on
+`codex/security-demo-2.11-review`, following the user's subsequent instruction.
+The original 25-assertion matrix was also run
 unchanged against that release: 23 passed and the same two multi-field checks
 failed. The native 3.9 field filter shares field restriction code with data
 filtering, but that code still normalizes `.keyword` names. Upgrading alone does

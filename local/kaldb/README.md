@@ -143,3 +143,17 @@ Generate traffic in the shop, then open the `KalDB OTel Demo` dashboard. Use
 `otel-demo-logs` for log search, `otel-demo-traces` to find trace IDs, and
 `otel-demo-traces-waterfall` for trace-by-ID waterfall rendering in Grafana
 Explore.
+
+## Two-user security demo (OpenSearch 2.11)
+
+The [separate permissions demo](permissions/README.md) uses real Security users,
+two native tenants/dashboards, two KalDB datasets, and gateway index/FLS checks.
+It has its own Compose project and loopback ports; it does not enable security
+in this existing OTel demo profile.
+
+```sh
+make start-kaldb-permissions KALDB_HOME=/path/to/kaldb-permissions-checkout
+make verify-kaldb-permissions
+make showcase-kaldb-permissions
+make stop-kaldb-permissions
+```
