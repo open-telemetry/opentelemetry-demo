@@ -47,6 +47,10 @@ your preferred deployment method:
 - [Docker](https://opentelemetry.io/docs/demo/docker_deployment/)
 - [Kubernetes](https://opentelemetry.io/docs/demo/kubernetes_deployment/)
 
+With Docker Compose, use `make start-agentic` to try the
+[storefront assistant](src/frontend/README.md#shop-assistant).
+`make start` leaves the assistant disabled.
+
 ## Documentation
 
 For detailed documentation, see [Demo Documentation][docs]. If you're curious
@@ -138,7 +142,7 @@ For more information about the emeritus role, see the [community repository](htt
 [Bronto]: https://docs.bronto.io/getting-started/otel-demo
 [Causely]: https://github.com/causely-oss/otel-demo
 [ClickStack]: https://github.com/ClickHouse/opentelemetry-demo
-[Coralogix]: https://coralogix.com/blog/configure-otel-demo-send-telemetry-data-coralogix
+[Coralogix]: https://coralogix.com/blog/how-to-configure-the-otel-community-demo-app-to-send-telemetry-data-to-coralogix/
 [Dash0]: https://github.com/dash0hq/opentelemetry-demo
 [Datadog]: https://docs.datadoghq.com/opentelemetry/guide/otel_demo_to_datadog
 [Dynatrace]: https://www.dynatrace.com/news/blog/opentelemetry-demo-application-with-dynatrace/

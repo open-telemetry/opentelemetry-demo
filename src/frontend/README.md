@@ -32,6 +32,10 @@ Open it to ask a question, then send a follow-up to continue the conversation.
 Conversation history stays in the current page and is cleared on reload.
 The separate Gradio chatbot remains available.
 
+The demo agent uses recorded model responses by default. Try
+`Show all available products in the store.` for a recorded question. Free-form
+questions and follow-ups require a live model if they miss the recordings.
+
 The panel is off by default. With `make start`, the button is hidden and
 `POST /api/assistant` returns 404. The agentic Compose overlay sets
 `ASSISTANT_ENABLED=true` and passes `AGENT_ADDR` to the frontend at runtime.
