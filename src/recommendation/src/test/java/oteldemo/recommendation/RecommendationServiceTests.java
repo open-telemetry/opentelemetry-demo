@@ -8,6 +8,7 @@ package oteldemo.recommendation;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertTimeout;
 
 import dev.openfeature.sdk.OpenFeatureAPI;
 import dev.openfeature.sdk.providers.memory.Flag;
@@ -25,6 +26,7 @@ import io.opentelemetry.sdk.testing.exporter.InMemoryMetricReader;
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +60,7 @@ class RecommendationServiceTests {
   private static final List<String> CATALOG =
       List.of("0PUK6V6EV0", "1YMWWN1N4O", "2ZYFJ3GM2N", "66VCHSJNUP", "6E92ZMJLZN", "9SOIN3QJO0", "L9ECAV7KIM");
   private static final AtomicBoolean CATALOG_DOWN = new AtomicBoolean(false);
+  private static final AtomicBoolean CATALOG_STALLED = new AtomicBoolean(false);
 
   @Autowired private GrpcChannelFactory channels;
   @Autowired private InMemorySpanExporter spans;
@@ -124,6 +127,23 @@ class RecommendationServiceTests {
   }
 
   @Test
+  void boundsTheWaitForACatalogThatNeverReplies() {
+    CATALOG_STALLED.set(true);
+    try {
+      assertTimeout(Duration.ofSeconds(4), () ->
+          assertThatThrownBy(() -> listRecommendations("66VCHSJNUP"))
+              .isInstanceOf(StatusRuntimeException.class)
+              .hasMessageContaining("DEADLINE_EXCEEDED"));
+    } finally {
+      CATALOG_STALLED.set(false);
+    }
+
+    SpanData productList = spanNamed("get_product_list", SpanKind.INTERNAL);
+    assertThat(productList.getStatus().getStatusCode()).isEqualTo(StatusCode.ERROR);
+    assertThat(productList.getEvents()).anyMatch(event -> event.getName().equals("exception"));
+  }
+
+  @Test
   void recordsSpanAttributesAndCounter() {
     long before = recommendationsCounted();
 
@@ -179,6 +199,7 @@ class RecommendationServiceTests {
 
   private ListRecommendationsResponse listRecommendations(List<String> productIds) {
     return RecommendationServiceGrpc.newBlockingStub(channels.createChannel("recommendation"))
+        .withDeadlineAfter(5, TimeUnit.SECONDS)
         .listRecommendations(
             ListRecommendationsRequest.newBuilder()
                 .setUserId("test-user")
@@ -257,6 +278,9 @@ class RecommendationServiceTests {
       return new ProductCatalogServiceGrpc.ProductCatalogServiceImplBase() {
         @Override
         public void listProducts(Empty request, StreamObserver<ListProductsResponse> responseObserver) {
+          if (CATALOG_STALLED.get()) {
+            return;
+          }
           if (CATALOG_DOWN.get()) {
             responseObserver.onError(
                 Status.UNAVAILABLE.withDescription("catalog down").asRuntimeException());

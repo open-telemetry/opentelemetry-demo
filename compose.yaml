@@ -856,6 +856,8 @@ services:
       - --config=/etc/otelcol-config-extras.yml
       - --feature-gates=service.profilesSupport
     user: 0:0
+    security_opt:
+      - "label=${OTEL_COLLECTOR_SELINUX_LABEL:-type:container_t}"
     volumes:
       - ${HOST_FILESYSTEM}:/hostfs:ro
       - ${DOCKER_SOCK}:/var/run/docker.sock:ro

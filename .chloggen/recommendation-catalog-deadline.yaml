@@ -1,0 +1,4 @@
+change_type: bug_fix
+component: recommendation
+note: Bound catalog calls with a configurable deadline so unresponsive catalogs do not hold requests open indefinitely.
+issues: [4232]

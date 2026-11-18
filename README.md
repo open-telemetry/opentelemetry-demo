@@ -91,7 +91,7 @@ us in
 ### Maintainers
 
 - [Cyrille Le Clerc](https://github.com/cyrille-leclerc), Datadog
-- [Juliano Costa](https://github.com/julianocosta89), Datadog
+- [Juliano Costa](https://github.com/julianocosta89), Dash0
 - [Shenoy Pratik](https://github.com/ps48), AWS OpenSearch
 
 For more information about the maintainer role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).
@@ -138,7 +138,7 @@ For more information about the emeritus role, see the [community repository](htt
 [Bronto]: https://docs.bronto.io/getting-started/otel-demo
 [Causely]: https://github.com/causely-oss/otel-demo
 [ClickStack]: https://github.com/ClickHouse/opentelemetry-demo
-[Coralogix]: https://coralogix.com/blog/configure-otel-demo-send-telemetry-data-coralogix
+[Coralogix]: https://coralogix.com/blog/how-to-configure-the-otel-community-demo-app-to-send-telemetry-data-to-coralogix/
 [Dash0]: https://github.com/dash0hq/opentelemetry-demo
 [Datadog]: https://docs.datadoghq.com/opentelemetry/guide/otel_demo_to_datadog
 [Dynatrace]: https://www.dynatrace.com/news/blog/opentelemetry-demo-application-with-dynatrace/
