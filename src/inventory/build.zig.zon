@@ -1,0 +1,17 @@
+.{
+    .name = .inventory,
+    .version = "0.1.0",
+    .fingerprint = 0xb12d4a3628fef5c5,
+    .minimum_zig_version = "0.16.0",
+    .dependencies = .{
+        .opentelemetry = .{
+            .url = "git+https://github.com/open-telemetry/opentelemetry-zig#32debdbcbf6e5d4bd85b8e448e55e754c750bbe9",
+            .hash = "opentelemetry-0.0.1-U_uKJ4lMJQAozLiKfpfAi8toCso7ftMOHf55G3yDKyKe",
+        },
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+}

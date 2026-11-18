@@ -276,6 +276,19 @@ updates:
     cooldown:
       default-days: 3
     directories:
+      - "/src/inventory/**"
+    groups:
+      src-inventory:
+        patterns:
+          - "*"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "03:50"
+  - package-ecosystem: "docker"
+    cooldown:
+      default-days: 3
+    directories:
       - "/src/kafka/**"
     groups:
       src-kafka:

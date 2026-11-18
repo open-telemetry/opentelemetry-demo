@@ -1,0 +1,37 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+attributes:
+  - key: demo.inventory.reservation.status
+    type: string
+    brief: Outcome of an inventory reservation
+    stability: stable
+    examples: ["reserved", "rejected"]
+    note: Whether the inventory service reserved stock for the order or rejected it
+
+metrics:
+  - name: demo.inventory.reservations
+    brief: Inventory reservation counter
+    instrument: counter
+    unit: "{reservation}"
+    stability: stable
+    requirement_level: recommended
+    note: Counts the order reservations processed by the inventory service
+    annotations:
+      service: inventory
+    attributes:
+      - ref: demo.inventory.reservation.status
+        requirement_level: required
+  - name: demo.inventory.stock.level
+    brief: Inventory stock level
+    instrument: gauge
+    unit: "{unit}"
+    stability: stable
+    requirement_level: recommended
+    note: Units in stock for a product after its last reservation
+    annotations:
+      service: inventory
+    attributes:
+      - ref: demo.product.id
+        requirement_level: required
