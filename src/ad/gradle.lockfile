@@ -4,15 +4,16 @@
 # To regenerate this file, run: ./gradlew :dependencies --write-locks
 biz.aQute.bnd:biz.aQute.bnd.annotation:7.1.0=compileClasspath,testCompileClasspath
 com.ethlo.time:itu:1.14.0=compileClasspath,compileProtoPath,runtimeClasspath,testCompileClasspath,testCompileProtoPath,testRuntimeClasspath
-com.fasterxml.jackson.core:jackson-annotations:2.22=compileClasspath,compileProtoPath,runtimeClasspath,testCompileClasspath,testCompileProtoPath,testRuntimeClasspath
+com.fasterxml.jackson.core:jackson-annotations:2.22=compileClasspath,compileProtoPath,testCompileClasspath,testCompileProtoPath
+com.fasterxml.jackson.core:jackson-annotations:2.23=runtimeClasspath,testRuntimeClasspath
 com.fasterxml.jackson.core:jackson-core:2.22.3=compileClasspath,compileProtoPath,testCompileClasspath,testCompileProtoPath
-com.fasterxml.jackson.core:jackson-core:2.22.4=runtimeClasspath,testRuntimeClasspath
+com.fasterxml.jackson.core:jackson-core:2.23.0=runtimeClasspath,testRuntimeClasspath
 com.fasterxml.jackson.core:jackson-databind:2.22.3=compileClasspath,compileProtoPath,testCompileClasspath,testCompileProtoPath
-com.fasterxml.jackson.core:jackson-databind:2.22.4=runtimeClasspath,testRuntimeClasspath
+com.fasterxml.jackson.core:jackson-databind:2.23.0=runtimeClasspath,testRuntimeClasspath
 com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.22.3=compileClasspath,compileProtoPath,testCompileClasspath,testCompileProtoPath
-com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.22.4=runtimeClasspath,testRuntimeClasspath
+com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.23.0=runtimeClasspath,testRuntimeClasspath
 com.fasterxml.jackson:jackson-bom:2.22.3=compileClasspath,compileProtoPath,testCompileClasspath,testCompileProtoPath
-com.fasterxml.jackson:jackson-bom:2.22.4=runtimeClasspath,testRuntimeClasspath
+com.fasterxml.jackson:jackson-bom:2.23.0=runtimeClasspath,testRuntimeClasspath
 com.google.android:annotations:4.1.1.4=compileProtoPath,runtimeClasspath,testCompileProtoPath,testRuntimeClasspath
 com.google.api.grpc:proto-google-common-protos:2.81.0=compileClasspath,compileProtoPath,runtimeClasspath,testCompileClasspath,testCompileProtoPath,testRuntimeClasspath
 com.google.code.findbugs:jsr305:3.0.2=compileClasspath,compileProtoPath,runtimeClasspath,testCompileClasspath,testCompileProtoPath,testRuntimeClasspath
