@@ -15,6 +15,10 @@ repositories {
     mavenLocal()
 }
 
+dependencyLocking {
+    lockAllConfigurations()
+}
+
 description = 'Ad Service'
 group = "ad"
 version = "0.1.0-SNAPSHOT"
