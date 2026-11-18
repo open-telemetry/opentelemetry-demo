@@ -144,9 +144,9 @@ GEM
       opentelemetry-instrumentation-active_support (~> 0.10)
     opentelemetry-instrumentation-active_support (0.12.1)
       opentelemetry-instrumentation-base (~> 0.25)
-    opentelemetry-instrumentation-all (0.100.0)
+    opentelemetry-instrumentation-all (0.101.0)
       opentelemetry-instrumentation-active_model_serializers (~> 0.25.0)
-      opentelemetry-instrumentation-anthropic (~> 0.5.0)
+      opentelemetry-instrumentation-anthropic (~> 0.6.0)
       opentelemetry-instrumentation-aws_lambda (~> 0.7.0)
       opentelemetry-instrumentation-aws_sdk (~> 0.13.0)
       opentelemetry-instrumentation-bunny (~> 0.25.0)
@@ -183,7 +183,7 @@ GEM
       opentelemetry-instrumentation-sidekiq (~> 0.29.0)
       opentelemetry-instrumentation-sinatra (~> 0.30.0)
       opentelemetry-instrumentation-trilogy (~> 0.69.0)
-    opentelemetry-instrumentation-anthropic (0.5.0)
+    opentelemetry-instrumentation-anthropic (0.6.0)
       opentelemetry-instrumentation-base (~> 0.25)
     opentelemetry-instrumentation-aws_lambda (0.7.1)
       opentelemetry-instrumentation-base (~> 0.25)
@@ -304,7 +304,7 @@ GEM
     ostruct (0.6.3)
     pony (1.13.1)
       mail (>= 2.0)
-    puma (8.0.2)
+    puma (8.0.3)
       nio4r (~> 2.0)
     rack (3.2.8)
     rack-protection (4.2.1)
@@ -347,7 +347,7 @@ DEPENDENCIES
   opentelemetry-exporter-otlp (~> 0.36)
   opentelemetry-exporter-otlp-logs (~> 0.7)
   opentelemetry-exporter-otlp-metrics (~> 0.15)
-  opentelemetry-instrumentation-all (~> 0.100)
+  opentelemetry-instrumentation-all (~> 0.101)
   opentelemetry-logs-sdk (~> 0.8)
   opentelemetry-metrics-sdk (~> 0.22)
   opentelemetry-sdk (~> 1.13)
@@ -408,8 +408,8 @@ CHECKSUMS
   opentelemetry-instrumentation-active_record (0.13.0) sha256=239fceaae5a42e82dd9dd87bc63b1888bea32058dac0779b5ea36110fcb3a299
   opentelemetry-instrumentation-active_storage (0.5.1) sha256=7acbab82184db6bf00c52fdb4ce7e2f4e6a1c6e3e5585b100d43d5d3e2d69b5b
   opentelemetry-instrumentation-active_support (0.12.1) sha256=c90dc3bb2a02ab614f95bee56f8f14ba6164a7dfaee6f87a2ca3de30fa87413d
-  opentelemetry-instrumentation-all (0.100.0) sha256=921d1be76b60c0a772313e5f1ab3c374578e6219d69dc03f81488f62cc305cfc
-  opentelemetry-instrumentation-anthropic (0.5.0) sha256=a6b1e1f324d35323d4714a7f204c9d34c46da07529877a725829420a4a44bb13
+  opentelemetry-instrumentation-all (0.101.0) sha256=93bc69c481a91714300014f5e4336a8e27765460098b4afe6f00c5b3ed9a08c3
+  opentelemetry-instrumentation-anthropic (0.6.0) sha256=ae7ae06eb83bdcfd65f2f7a5263e3359ad8c5886ebd965df8868f10533fb9e7f
   opentelemetry-instrumentation-aws_lambda (0.7.1) sha256=e7d19e8fc850fe337f9b5b4b692d02cec5172908e71e265c55af726cbeaab37b
   opentelemetry-instrumentation-aws_sdk (0.13.0) sha256=9f8cc9c80f5a520b5307eebc9f511120d35135e024045a5b3b30d42de6dc7355
   opentelemetry-instrumentation-base (0.27.0) sha256=e55edb82cd0b018e82e746be61fa36cb05b7b68b2fa37f0e4a96b923ad3d7735
@@ -456,7 +456,7 @@ CHECKSUMS
   opentelemetry-semantic_conventions (1.44.0) sha256=b09b8793422f13b01c08f7a6f29b5f511f47f37bcdb57c0513465a0464168513
   ostruct (0.6.3) sha256=95a2ed4a4bd1d190784e666b47b2d3f078e4a9efda2fccf18f84ddc6538ed912
   pony (1.13.1) sha256=ab507c8ade8b35de96f1e75c0ae4566a3c40ac8a0d5101433969b6fd29c718a7
-  puma (8.0.2) sha256=c8ed871dfbbe66448ea9ffd46692342d9804d4071522b52b5331b7b6e7b686fb
+  puma (8.0.3) sha256=6383a60bbc3d9495b2e453d93e60cefa817f7e854a302a5013f31fd9f514a5f3
   rack (3.2.8) sha256=1fecc85e463ebc7a2a945fff829ffcd549babeb1556384796fad946c28dc4ec7
   rack-protection (4.2.1) sha256=cf6e2842df8c55f5e4d1a4be015e603e19e9bc3a7178bae58949ccbb58558bac
   rack-session (2.1.2) sha256=595434f8c0c3473ae7d7ac56ecda6cc6dfd9d37c0b2b5255330aa1576967ffe8
