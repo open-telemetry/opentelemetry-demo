@@ -2,5 +2,5 @@ change_type: enhancement
 
 component: frontend
 
-note: Add a `webInteractionSlowdown` feature flag that makes a stand-in third-party analytics tag serialize a large event queue on every click, blocking the browser main thread and degrading Interaction to Next Paint (INP).
+note: Add a `webInteractionSlowdown` feature flag that makes a stand-in analytics tag block the main thread on every click, degrading Interaction to Next Paint (INP).
 issues: [4320]
