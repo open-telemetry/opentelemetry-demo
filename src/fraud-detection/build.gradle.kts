@@ -30,6 +30,10 @@ repositories {
     gradlePluginPortal()
 }
 
+dependencyLocking {
+    lockAllConfigurations()
+}
+
 
 
 dependencies {

@@ -2,6 +2,7 @@
   "name": "react-native-app",
   "main": "expo-router/entry",
   "version": "1.0.0",
+  "packageManager": "npm@11.21.2+sha512.ec73c0a64f807e53146af4ac78bd4f9ba0a762a3081e4e77c7e2a6ba1aa64c3a8f9233cc8312294cf713aac13dd4428dc3880504957d7e75e249d1a6d435eaf4",
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
@@ -49,7 +50,7 @@
     "eslint": "^9.39.5",
     "eslint-config-expo": "~58.0.4",
     "eslint-import-resolver-typescript": "^3.10.1",
-    "ts-proto": "^2.18.6",
+    "ts-proto": "^2.20.0",
     "typescript": "~6.0.3"
   },
   "overrides": {
