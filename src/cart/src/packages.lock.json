@@ -49,15 +49,15 @@
       },
       "OpenFeature.Providers.Flagd": {
         "type": "Direct",
-        "requested": "[0.8.0, )",
-        "resolved": "0.8.0",
-        "contentHash": "Y0Fa2n+L7Vd9xShOGwkoNbPevGPj66t0IpLqV74cuJcPDVBDAMixSR8xxhqvuJ8LolnZPxA/uuKIl61XtYvQzg==",
+        "requested": "[0.8.1, )",
+        "resolved": "0.8.1",
+        "contentHash": "sp616PVsPTX0/jGcEhH/tbDlkOeVZfEiUhaFnxgNgBRzFSk5HtkeM+Tdf3lIMFiKa8lyLJkEOyZmWzQZKw8TtQ==",
         "dependencies": {
           "Google.Protobuf": "3.30.2",
           "Grpc.Net.Client": "2.71.0",
           "OpenFeature": "[2.9.0, 2.99999.0]",
           "OpenFeature.Hosting": "[2.9.0, 2.99999.0]",
-          "OpenFeature.Providers.Flagd.Core": "2.0.0",
+          "OpenFeature.Providers.Flagd.Core": "2.0.2",
           "murmurhash": "1.0.3"
         }
       },
@@ -287,8 +287,8 @@
       },
       "OpenFeature.Providers.Flagd.Core": {
         "type": "Transitive",
-        "resolved": "2.0.0",
-        "contentHash": "m0p7Dnnuqba0MpzNTQ0eboH4vowuvMJLFi45rPo3idGnmIw8noeHHdLssa2WBdkr1Tsipss0hGp+gDncWz/PzA==",
+        "resolved": "2.0.2",
+        "contentHash": "gc6vfaVvJryfhTAGibprJtS4XQ+E/IQGPmsoQFe3D1QJqhOG/Ti+zoZRuzwtN5sZlBtCqdJlj8I7kiVI+j8KZA==",
         "dependencies": {
           "JsonLogic": "[6.0.2]",
           "NJsonSchema": "11.0.0",

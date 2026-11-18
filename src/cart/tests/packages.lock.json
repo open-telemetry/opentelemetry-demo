@@ -27,12 +27,6 @@
           "Microsoft.TestPlatform.TestHost": "18.12.0"
         }
       },
-      "System.Formats.Cbor": {
-        "type": "Direct",
-        "requested": "[11.0.0, )",
-        "resolved": "11.0.0",
-        "contentHash": "2ULEPU67LRt4YVwBnCk1OhjsJspIBzg1JlDkN2hnZm9im3fC9bSbVQorLraOIcLMlA6/8eWQG1fjTpurHkIFZw=="
-      },
       "xunit": {
         "type": "Direct",
         "requested": "[2.9.3, )",
@@ -256,14 +250,14 @@
       },
       "OpenFeature.Providers.Flagd.Core": {
         "type": "Transitive",
-        "resolved": "2.0.0",
-        "contentHash": "m0p7Dnnuqba0MpzNTQ0eboH4vowuvMJLFi45rPo3idGnmIw8noeHHdLssa2WBdkr1Tsipss0hGp+gDncWz/PzA==",
+        "resolved": "2.0.2",
+        "contentHash": "gc6vfaVvJryfhTAGibprJtS4XQ+E/IQGPmsoQFe3D1QJqhOG/Ti+zoZRuzwtN5sZlBtCqdJlj8I7kiVI+j8KZA==",
         "dependencies": {
           "JsonLogic": "[6.0.2]",
           "NJsonSchema": "11.0.0",
           "OpenFeature": "[2.9.0, 2.99999.0]",
           "Semver": "3.0.0",
-          "System.Formats.Cbor": "8.0.0",
+          "System.Formats.Cbor": "8.0.2",
           "murmurhash": "1.0.3"
         }
       },
@@ -299,6 +293,11 @@
         "type": "Transitive",
         "resolved": "3.0.0",
         "contentHash": "9jZCicsVgTebqkAujRWtC9J1A5EQVlu0TVKHcgoCuv345ve5DYf4D1MjhKEnQjdRZo6x/vdv6QQrYFs7ilGzLA=="
+      },
+      "System.Formats.Cbor": {
+        "type": "Transitive",
+        "resolved": "8.0.2",
+        "contentHash": "C7D+Z/Pt2McSFp2bHKZQW/37kjVFZ1mTqGn2u6MME/XCgXNaSquCRW1/FD7w/AqpT+H6q32kzUevDJFsmCCsGw=="
       },
       "System.IO.Hashing": {
         "type": "Transitive",
@@ -353,7 +352,7 @@
           "Grpc.Net.Client": "[2.85.0, )",
           "OpenFeature": "[2.14.1, )",
           "OpenFeature.Hosting": "[2.14.1, )",
-          "OpenFeature.Providers.Flagd": "[0.8.0, )",
+          "OpenFeature.Providers.Flagd": "[0.8.1, )",
           "OpenTelemetry.Exporter.OpenTelemetryProtocol": "[1.21.0, )",
           "OpenTelemetry.Extensions.Hosting": "[1.21.0, )",
           "OpenTelemetry.Instrumentation.AspNetCore": "[1.21.0, )",
@@ -406,15 +405,15 @@
       },
       "OpenFeature.Providers.Flagd": {
         "type": "CentralTransitive",
-        "requested": "[0.8.0, )",
-        "resolved": "0.8.0",
-        "contentHash": "Y0Fa2n+L7Vd9xShOGwkoNbPevGPj66t0IpLqV74cuJcPDVBDAMixSR8xxhqvuJ8LolnZPxA/uuKIl61XtYvQzg==",
+        "requested": "[0.8.1, )",
+        "resolved": "0.8.1",
+        "contentHash": "sp616PVsPTX0/jGcEhH/tbDlkOeVZfEiUhaFnxgNgBRzFSk5HtkeM+Tdf3lIMFiKa8lyLJkEOyZmWzQZKw8TtQ==",
         "dependencies": {
           "Google.Protobuf": "3.30.2",
           "Grpc.Net.Client": "2.71.0",
           "OpenFeature": "[2.9.0, 2.99999.0]",
           "OpenFeature.Hosting": "[2.9.0, 2.99999.0]",
-          "OpenFeature.Providers.Flagd.Core": "2.0.0",
+          "OpenFeature.Providers.Flagd.Core": "2.0.2",
           "murmurhash": "1.0.3"
         }
       },
