@@ -10,6 +10,7 @@
   extends: [
     'config:best-practices',
     'customManagers:makefileVersions',
+    'helpers:pinGitHubActionDigestsToSemver',
   ],
   labels: [
     'dependencies',
@@ -42,7 +43,8 @@
   },
   osvVulnerabilityAlerts: true,
   postUpdateOptions: [
-    'gomodTidy',
+    'gomodTidyAll',
+    'gomodUpdateImportPaths',
   ],
   'pip-compile': {
     managerFilePatterns: [
@@ -125,6 +127,20 @@
       enabled: true,
     },
     {
+      description: 'No major updates for indirect or replaced Go modules: a new major is a different import path that the direct dependency has to adopt first',
+      matchDepTypes: [
+        'indirect',
+        'replace',
+      ],
+      matchUpdateTypes: [
+        'major',
+      ],
+      matchCategories: [
+        'golang',
+      ],
+      enabled: false,
+    },
+    {
       description: 'Images in .env are referenced by tag only',
       matchFileNames: [
         '.env',
@@ -157,6 +173,10 @@
         'test/telemetry/**',
       ],
       groupName: 'test-telemetry',
+    },
+    {
+      matchFileNames: ['src/**/*'],
+      groupName: 'src-{{parentDir}}',
     },
     {
       matchFileNames: [
@@ -309,12 +329,25 @@
       groupName: 'src-telemetry-docs',
     },
     {
-      description: 'The json gem stays on its current major in the React Native app',
+      description: 'Separate major and minor for the json gem so minor stays in the service group and major goes through approval with the next rule',
+      matchManagers: [
+        'bundler',
+      ],
       matchFileNames: [
         'src/react-native-app/**',
       ],
+      matchPackageNames: [
+        'json',
+      ],
+      separateMajorMinor: true,
+    },
+    {
+      description: 'Major updates of the json gem in the React Native app need approval on the Dependency Dashboard',
       matchManagers: [
         'bundler',
+      ],
+      matchFileNames: [
+        'src/react-native-app/**',
       ],
       matchPackageNames: [
         'json',
@@ -322,7 +355,8 @@
       matchUpdateTypes: [
         'major',
       ],
-      enabled: false,
+      groupName: null,
+      dependencyDashboardApproval: true,
     },
     {
       description: 'npm 12 needs a newer Node than the React Native Android build image ships',

@@ -1,10 +1,11 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-import { createContext, useCallback, useContext, useMemo, useState, useEffect } from 'react';
+import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import ApiGateway from '../gateways/Api.gateway';
 import SessionGateway from '../gateways/Session.gateway';
+import useClientValue from '../utils/hooks/useClientValue';
 
 const { currencyCode } = SessionGateway.getSession();
 
@@ -31,14 +32,12 @@ const CurrencyProvider = ({ children }: IProps) => {
     queryKey: ['currency'],
     queryFn: ApiGateway.getSupportedCurrencyList
   });
-  const [selectedCurrency, setSelectedCurrency] = useState<string>('');
-
-  useEffect(() => {
-    setSelectedCurrency(currencyCode);
-  }, []);
+  const sessionCurrency = useClientValue(() => currencyCode, '');
+  const [chosenCurrency, setChosenCurrency] = useState<string | null>(null);
+  const selectedCurrency = chosenCurrency ?? sessionCurrency;
 
   const onSelectCurrency = useCallback((currencyCode: string) => {
-    setSelectedCurrency(currencyCode);
+    setChosenCurrency(currencyCode);
     SessionGateway.setSessionValue('currencyCode', currencyCode);
   }, []);
 
