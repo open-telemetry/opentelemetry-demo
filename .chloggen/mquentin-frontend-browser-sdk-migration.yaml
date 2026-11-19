@@ -1,0 +1,11 @@
+change_type: breaking
+component: frontend
+note: Instrument the browser with `@opentelemetry/browser-sdk` and `@opentelemetry/browser-instrumentation` instead of assembling the web tracer by hand
+issues: [4329]
+subtext: |-
+  `startBrowserSdk` now owns the tracer provider, propagators, context manager
+  and the OTLP/HTTP batch span processor. The session id span processor, the
+  500ms export delay and the `demo.synthetic_request` attribute are preserved.
+  `auto-instrumentations-web`, `context-zone`, `exporter-trace-otlp-http`,
+  `instrumentation` and `opentelemetry-browser-detector` are no longer frontend
+  dependencies.
