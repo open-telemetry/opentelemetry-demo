@@ -6,6 +6,7 @@ import { IProductCart, IProductCartItem, IProductCheckout } from '../types/Cart'
 import request from '../utils/Request';
 import { AttributeNames } from '../utils/enums/AttributeNames';
 import SessionGateway from './Session.gateway';
+import { sessionManager } from '../utils/telemetry/BrowserSession';
 import { context, propagation } from "@opentelemetry/api";
 
 const { userId } = SessionGateway.getSession();
@@ -106,9 +107,11 @@ const ApiGateway = new Proxy(Apis(), {
 
     return function (...args: unknown[]) {
       const baggage = propagation.getActiveBaggage() || propagation.createBaggage();
-      const newBaggage = baggage
-        .setEntry(AttributeNames.SESSION_ID, { value: userId })
-        .setEntry(AttributeNames.ENDUSER_ID, { value: userId });
+      const sessionId = sessionManager.getSessionId();
+      let newBaggage = baggage.setEntry(AttributeNames.ENDUSER_ID, { value: userId });
+      if (sessionId) {
+        newBaggage = newBaggage.setEntry(AttributeNames.SESSION_ID, { value: sessionId });
+      }
       const newContext = propagation.setBaggage(context.active(), newBaggage);
       return context.with(newContext, () => {
         return Reflect.apply(originalFunction, undefined, args);
