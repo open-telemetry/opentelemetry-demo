@@ -1,11 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net11.0</TargetFramework>
+    <RuntimeIdentifiers>linux-musl-x64;linux-musl-arm64</RuntimeIdentifiers>
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
     <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
-    <PublishSingleFile>true</PublishSingleFile>
-    <SelfContained>true</SelfContained>
+    <PublishSingleFile Condition="'$(RuntimeIdentifier)' != ''">true</PublishSingleFile>
+    <SelfContained Condition="'$(RuntimeIdentifier)' != ''">true</SelfContained>
     <PublishTrimmed>false</PublishTrimmed>
     <ProtosDir>$(ProjectDir)..\pb</ProtosDir>
   </PropertyGroup>

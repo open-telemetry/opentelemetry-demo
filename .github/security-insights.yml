@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 header:
-  last-reviewed: '2026-06-11'
-  last-updated: '2026-06-11'
+  last-reviewed: '2026-11-16'
+  last-updated: '2026-11-16'
   schema-version: 2.0.0
   url: https://raw.githubusercontent.com/open-telemetry/opentelemetry-demo/main/.github/security-insights.yml
   comment: |
@@ -89,7 +89,7 @@ repository:
       primary: false
   documentation:
     contributing-guide: https://github.com/open-telemetry/opentelemetry-demo/blob/main/CONTRIBUTING.md
-    dependency-management-policy: https://github.com/open-telemetry/opentelemetry-demo/blob/main/.github/dependabot.yml
+    dependency-management-policy: https://github.com/open-telemetry/opentelemetry-demo/blob/main/.github/renovate.json5
     security-policy: https://opentelemetry.io/docs/security/security-response/
   license:
     expression: Apache-2.0
@@ -121,7 +121,7 @@ repository:
         rulesets:
           - https://github.com/open-telemetry/opentelemetry-demo/blob/main/.github/workflows/codeql-analysis.yml
         type: SAST
-      - name: Dependabot
+      - name: Renovate
         comment: |
           Automated dependency updates across GitHub Actions, Docker, and service package ecosystems.
         integration:
@@ -129,7 +129,7 @@ repository:
           ci: true
           release: true
         rulesets:
-          - https://github.com/open-telemetry/opentelemetry-demo/blob/main/.github/dependabot.yml
+          - https://github.com/open-telemetry/opentelemetry-demo/blob/main/.github/renovate.json5
         type: SCA
       - name: GitHub Secret Scanning
         comment: |
