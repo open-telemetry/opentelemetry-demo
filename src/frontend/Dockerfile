@@ -27,7 +27,9 @@ COPY ./src/frontend/utils/Request.ts utils/Request.ts
 
 COPY ./src/frontend/next.config.js next.config.js
 COPY ./src/frontend/tsconfig.json tsconfig.json
+COPY ./src/frontend/eslint.config.mjs eslint.config.mjs
 
+RUN npm run lint
 RUN npm run build
 
 # -----------------------------------------------------------------------------
