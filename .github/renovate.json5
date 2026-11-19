@@ -124,7 +124,18 @@
       matchDepTypes: [
         'indirect',
       ],
+      abandonmentThreshold: '50 years',
       enabled: true,
+    },
+    {
+      matchDepTypes: ["indirect", "replace"],
+      matchUpdateTypes: [
+        'major'
+      ],
+      matchCategories: [
+        'golang',
+      ],
+      enabled: false,
     },
     {
       description: 'Images in .env are referenced by tag only',
@@ -161,154 +172,17 @@
       groupName: 'test-telemetry',
     },
     {
-      matchFileNames: [
-        'src/accounting/**',
-      ],
-      groupName: 'src-accounting',
+      matchFileNames: ['src/**/*'],
+      groupName: 'src-{{parentDir}}',
     },
     {
-      matchFileNames: [
-        'src/ad/**',
-      ],
-      groupName: 'src-ad',
-    },
-    {
-      matchFileNames: [
-        'src/agent/**',
-      ],
-      groupName: 'src-agent',
-    },
-    {
-      matchFileNames: [
-        'src/cart/**',
-      ],
+      description: 'Nuget need dedicated rule as dependencies aren't always in root',
+      matchFileNames: ['src/cart/**'],
       groupName: 'src-cart',
     },
     {
-      matchFileNames: [
-        'src/chatbot/**',
-      ],
-      groupName: 'src-chatbot',
-    },
-    {
-      matchFileNames: [
-        'src/checkout/**',
-      ],
-      groupName: 'src-checkout',
-    },
-    {
-      matchFileNames: [
-        'src/currency/**',
-      ],
-      groupName: 'src-currency',
-    },
-    {
-      matchFileNames: [
-        'src/email/**',
-      ],
-      groupName: 'src-email',
-    },
-    {
-      matchFileNames: [
-        'src/flagd-ui/**',
-      ],
-      groupName: 'src-flagd-ui',
-    },
-    {
-      matchFileNames: [
-        'src/fraud-detection/**',
-      ],
-      groupName: 'src-fraud-detection',
-    },
-    {
-      matchFileNames: [
-        'src/frontend/**',
-      ],
-      groupName: 'src-frontend',
-    },
-    {
-      matchFileNames: [
-        'src/frontend-proxy/**',
-      ],
-      groupName: 'src-frontend-proxy',
-    },
-    {
-      matchFileNames: [
-        'src/image-provider/**',
-      ],
-      groupName: 'src-image-provider',
-    },
-    {
-      matchFileNames: [
-        'src/kafka/**',
-      ],
-      groupName: 'src-kafka',
-    },
-    {
-      matchFileNames: [
-        'src/load-generator/**',
-      ],
-      groupName: 'src-load-generator',
-    },
-    {
-      matchFileNames: [
-        'src/mcp/**',
-      ],
-      groupName: 'src-mcp',
-    },
-    {
-      matchFileNames: [
-        'src/opamp-server/**',
-      ],
-      groupName: 'src-opamp-server',
-    },
-    {
-      matchFileNames: [
-        'src/opensearch/**',
-      ],
-      groupName: 'src-opensearch',
-    },
-    {
-      matchFileNames: [
-        'src/payment/**',
-      ],
-      groupName: 'src-payment',
-    },
-    {
-      matchFileNames: [
-        'src/product-catalog/**',
-      ],
-      groupName: 'src-product-catalog',
-    },
-    {
-      matchFileNames: [
-        'src/quote/**',
-      ],
-      groupName: 'src-quote',
-    },
-    {
-      matchFileNames: [
-        'src/react-native-app/**',
-      ],
-      groupName: 'src-react-native-app',
-    },
-    {
-      matchFileNames: [
-        'src/recommendation/**',
-      ],
-      groupName: 'src-recommendation',
-    },
-    {
-      matchFileNames: [
-        'src/shipping/**',
-      ],
-      groupName: 'src-shipping',
-    },
-    {
-      matchFileNames: [
-        'src/telemetry-docs/**',
-      ],
-      groupName: 'src-telemetry-docs',
+      matchFileNames: ['src/accounting/**'],
+      groupName: 'src-accounting',
     },
     {
       description: 'Separate major and minor for the json gem so minor stays in the service group and major goes through approval with the next rule',
@@ -337,7 +211,7 @@
       matchUpdateTypes: [
         'major',
       ],
-      groupName: '{{categories}} {{updateType}} {{depName}}',
+      groupName: null,
       dependencyDashboardApproval: true,
     },
     {
