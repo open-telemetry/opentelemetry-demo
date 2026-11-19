@@ -193,6 +193,7 @@ anyio==4.15.1 \
     --hash=sha256:6152fdbbf9a77fdec97731721bebf7c4c44f7c29b424b0065826173efc7ed101 \
     --hash=sha256:9f28306018cbd6d329e64a36d58256edff76dd996fe423bc957326e578b82a94
     # via
+    #   fastapi
     #   httpx
     #   httpx2
     #   langsmith
@@ -821,9 +822,9 @@ exceptiongroup==1.3.1 \
     --hash=sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219 \
     --hash=sha256:a7a39a3bd276781e98394987d3a5701d0c4edffb633bb7a5144577f82c773598
     # via fastmcp-slim
-fastapi==0.162.0 \
-    --hash=sha256:3785963de305dd09912426cb81f2d230fce98ab3521cdfe97265c8d14983128c \
-    --hash=sha256:6a22c1e2e6e32e0633ee7e170f00009a29b8228b16feb219ee42f32fd8d88a8f
+fastapi==0.162.7 \
+    --hash=sha256:b7503029c8ef2d2d5fea9049294cf8d0f2805c6621f4677ede269fce19f01efb \
+    --hash=sha256:fa3be857122ec8d91d4d234e86ac19acf4ef23f5c6c3dfcce78ec0c27c0c5ab4
     # via -r requirements.in
 fastmcp==3.4.10 \
     --hash=sha256:68f422db0a7c6228142663f17d9f79a5a12a509e1408a8ac207b3e442e166e38 \
@@ -1349,13 +1350,13 @@ keyring==25.7.0 \
     --hash=sha256:be4a0b195f149690c166e850609a477c532ddbfbaed96a404d4e43f8d5e2689f \
     --hash=sha256:fe01bd85eb3f8fb3dd0405defdeac9a5b4f6f0439edbb3149577f244a2e8245b
     # via py-key-value-aio
-langchain==1.4.9 \
-    --hash=sha256:449905dd841442562f897267ceaa05f80f42daa2cf019549b2650a9b02e85d8b \
-    --hash=sha256:87cf3c15dfddaebd0e421d253e3b4abf70b70d6e18e56c45b9eb1873cc46f154
+langchain==1.5.0 \
+    --hash=sha256:24e94c496a3e532be1f9541edb475d5d0975aeb1211c3f8fecc042da3ec44cfa \
+    --hash=sha256:62b8d048847d7063cf769b39d32219c4a8ff8abc75f3ebfde461e65b9ff8ff49
     # via -r requirements.in
-langchain-core==1.7.6 \
-    --hash=sha256:0833781e3a8e6fe83073c8412c21180a0545d5ccdf3437889951caf9589ece6c \
-    --hash=sha256:f61908be526fbeb5da8cc1ffd9d24bce3b50cf45b3a2f1737c1a7a2958046ce6
+langchain-core==1.8.1 \
+    --hash=sha256:778b9bf1d18d4b7a716311defa230db190006ef75fe175930e00012d82df603b \
+    --hash=sha256:e093de87371e648af23517f1e98cefc316f8be7c72a137b0e0f94d3e8e8cc421
     # via
     #   langchain
     #   langchain-mcp-adapters
@@ -1368,9 +1369,9 @@ langchain-mcp-adapters==0.3.2 \
     --hash=sha256:094e6b3096dbcc408417d5722f6915f164772e50c502ae3d8989405bf12c3c84 \
     --hash=sha256:61cd1a09597adb619a9bafb0642938ffc2a9463d699a753f7af0420ea46c381a
     # via -r requirements.in
-langchain-openai==1.7.4 \
-    --hash=sha256:8fd90e41588526d990f32262447adf8e130d7ce28ed66cefa315e64cc9dd12ce \
-    --hash=sha256:aaee93369765bac7ebf640aab62f8ae16df403ed982737ae51f88f6a24a151ab
+langchain-openai==1.8.0 \
+    --hash=sha256:55a6aca37b7d4fa7011fef7faad53e6a544640c2b9a2fecf2e18d95115497555 \
+    --hash=sha256:670a39def25c550ac7b828f6c4336f5653a440e992584590f6cc168525d993b7
     # via -r requirements.in
 langchain-protocol==0.0.20 \
     --hash=sha256:0f5bd002474265648e91161771a9e0438fe9480bd55a416e51af0f60070637ec \
@@ -1388,9 +1389,9 @@ langgraph-checkpoint==4.3.1 \
     # via
     #   langgraph
     #   langgraph-prebuilt
-langgraph-prebuilt==1.1.1 \
-    --hash=sha256:f1b1a4772e7f9f15ba736411aad3877183ad40cd9349748df76bd2b9f58a83c7 \
-    --hash=sha256:fae17c22562e501940eb7aa052a15c58a431febbabf33f8ad172e1b44354a7e4
+langgraph-prebuilt==1.1.2 \
+    --hash=sha256:2f5f4d8bd84c1bc8f6bbd309145e2ffa19ffc712301cff7b0cca909cd7d1b069 \
+    --hash=sha256:8ad6353b16ea76b04b1e35fdc9ed4ead469346f80730ca346e08f26549e7b56a
     # via
     #   -r requirements.in
     #   langgraph

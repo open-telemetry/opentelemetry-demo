@@ -7,6 +7,7 @@ import * as S from './Ad.styled';
 
 const Ad = () => {
   const { adList } = useAd();
+  // eslint-disable-next-line react-hooks/purity -- a different ad on every render is intended
   const { text, redirectUrl } = adList[Math.floor(Math.random() * adList.length)] || { text: '', redirectUrl: '' };
 
   return (

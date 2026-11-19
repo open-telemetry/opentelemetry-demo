@@ -20,13 +20,16 @@ COPY ./src/frontend/styles/ styles/
 COPY ./src/frontend/types/ types/
 
 COPY ./src/frontend/utils/enums/ utils/enums/
+COPY ./src/frontend/utils/hooks/ utils/hooks/
 COPY ./src/frontend/utils/telemetry/ utils/telemetry/
 COPY ./src/frontend/utils/imageLoader.js utils/imageLoader.js
 COPY ./src/frontend/utils/Request.ts utils/Request.ts
 
 COPY ./src/frontend/next.config.js next.config.js
 COPY ./src/frontend/tsconfig.json tsconfig.json
+COPY ./src/frontend/eslint.config.mjs eslint.config.mjs
 
+RUN npm run lint
 RUN npm run build
 
 # -----------------------------------------------------------------------------
