@@ -1,0 +1,86 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
+pipeline {
+    agent any
+
+    options {
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '30'))
+    }
+
+    parameters {
+        choice(
+            name: 'SERVICE',
+            choices: ['all', 'accounting', 'cart'],
+            description: '.NET service to build and push to Artifact Registry'
+        )
+        string(
+            name: 'CUSTOM_TAG',
+            defaultValue: '',
+            trim: true,
+            description: 'Image tag override. Leave blank to use <build number>-<git short SHA>'
+        )
+    }
+
+    environment {
+        REGISTRY_HOST = 'asia-south1-docker.pkg.dev'
+        REGISTRY      = "${REGISTRY_HOST}/ct-lens/otel"
+        PLATFORM      = 'linux/amd64'
+    }
+
+    stages {
+        stage('Prepare') {
+            steps {
+                script {
+                    def sha = sh(script: 'git rev-parse --short=7 HEAD', returnStdout: true).trim()
+                    env.IMAGE_TAG = params.CUSTOM_TAG ?: "${env.BUILD_NUMBER}-${sha}"
+                    currentBuild.description = "${params.SERVICE} : ${env.IMAGE_TAG}"
+                    echo "Service: ${params.SERVICE} | Tag: ${env.IMAGE_TAG} | Registry: ${env.REGISTRY}"
+                }
+            }
+        }
+
+        stage('Login to Artifact Registry') {
+            steps {
+                withCredentials([file(credentialsId: 'GCP_SERVICE_ACCOUNT_KEY', variable: 'GCP_KEY_FILE')]) {
+                    sh 'docker login -u _json_key --password-stdin "${REGISTRY_HOST}" < "${GCP_KEY_FILE}"'
+                }
+            }
+        }
+
+        stage('accounting') {
+            when { expression { params.SERVICE == 'all' || params.SERVICE == 'accounting' } }
+            steps { script { buildAndPush('accounting', 'src/accounting/Dockerfile') } }
+        }
+
+        stage('cart') {
+            when { expression { params.SERVICE == 'all' || params.SERVICE == 'cart' } }
+            steps { script { buildAndPush('cart', 'src/cart/src/Dockerfile') } }
+        }
+    }
+
+    post {
+        success {
+            echo "Pushed ${params.SERVICE} to ${env.REGISTRY} with tag ${env.IMAGE_TAG}"
+        }
+        always {
+            sh 'docker logout "${REGISTRY_HOST}" || true'
+            cleanWs()
+        }
+    }
+}
+
+def buildAndPush(String service, String dockerfile) {
+    def image = "${env.REGISTRY}/${service}"
+    sh """
+        docker buildx build \\
+            --platform ${env.PLATFORM} \\
+            -f ${dockerfile} \\
+            -t ${image}:${env.IMAGE_TAG} \\
+            -t ${image}:latest \\
+            --push \\
+            .
+        docker rmi ${image}:${env.IMAGE_TAG} ${image}:latest || true
+    """
+}
