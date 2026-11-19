@@ -176,7 +176,7 @@
       groupName: 'src-{{parentDir}}',
     },
     {
-      description: 'Nuget need dedicated rule as dependencies aren't always in root',
+      description: 'NuGet needs a dedicated rule because its dependencies are not always in the service root',
       matchFileNames: ['src/cart/**'],
       groupName: 'src-cart',
     },
