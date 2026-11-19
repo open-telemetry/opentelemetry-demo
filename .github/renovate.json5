@@ -117,7 +117,7 @@
   ],
   packageRules: [
     {
-      description: 'Update indirect Go modules as well',
+      description: 'Update indirect Go modules as well, and do not treat old but stable ones as abandoned',
       matchManagers: [
         'gomod',
       ],
@@ -128,6 +128,7 @@
       enabled: true,
     },
     {
+      description: 'No major updates for indirect or replaced Go modules: a new major is a different import path that the direct dependency has to adopt first',
       matchDepTypes: ["indirect", "replace"],
       matchUpdateTypes: [
         'major'
