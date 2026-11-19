@@ -156,7 +156,7 @@ jobs:
         env:
           GITHUB_WORKSPACE_PATH: ${{ github.workspace }}
         run: |
-          # Reuse the Dependabot-tracked weaver pin from the telemetry-docs Dockerfile so this
+          # Reuse the Renovate-tracked weaver pin from the telemetry-docs Dockerfile so this
           # check never drifts from the version used to actually generate the docs.
           WEAVER_IMAGE=$(grep -oP '(?<=^FROM )\S*otel/weaver\S*' src/telemetry-docs/Dockerfile)
           docker run --rm \
