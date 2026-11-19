@@ -23,7 +23,7 @@ WORKDIR /usr/src/app/
 COPY ./src/cart/ ./
 COPY ./pb/ ./pb/
 
-RUN dotnet restore ./tests/cart.tests.csproj -r linux-musl-$TARGETARCH
+RUN dotnet restore ./tests/cart.tests.csproj --locked-mode
 
 FROM base AS test
 

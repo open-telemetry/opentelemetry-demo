@@ -3,8 +3,9 @@
 name: Agentic Telemetry Tests
 
 on:
-  # Dependabot PRs only. GitHub Actions does not support actor filters in the
-  # on: block, so the gate job below enforces the dependabot-only rule.
+  # Dependency bot PRs (Dependabot, Renovate) only. GitHub Actions does not
+  # support actor filters in the on: block, so the gate job below enforces the
+  # bot-only rule.
   # Human PRs that touch these paths must be approved first — see
   # pull_request_review below.
   pull_request:
@@ -73,16 +74,21 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
+          IS_DEPENDENCY_BOT=false
+          if [[ "$PR_AUTHOR" == "dependabot[bot]" || "$PR_AUTHOR" == "renovate[bot]" ]]; then
+            IS_DEPENDENCY_BOT=true
+          fi
+
           # push / workflow_dispatch: paths filter already ensured relevance.
           if [[ "$EVENT_NAME" == "workflow_dispatch" || "$EVENT_NAME" == "push" ]]; then
             echo "should_run=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          # pull_request: only dependabot PRs run without approval.
+          # pull_request: only dependency bot PRs run without approval.
           # Human PRs must go through pull_request_review instead.
           if [[ "$EVENT_NAME" == "pull_request" ]]; then
-            if [[ "$PR_AUTHOR" == "dependabot[bot]" ]]; then
+            if [[ "$IS_DEPENDENCY_BOT" == "true" ]]; then
               echo "should_run=true" >> "$GITHUB_OUTPUT"
             else
               echo "should_run=false" >> "$GITHUB_OUTPUT"
@@ -91,12 +97,12 @@ jobs:
           fi
 
           # pull_request_review: run when a human approves a PR that touches
-          # agentic paths. This is the only path for non-dependabot contributors.
-          # Dependabot PRs are skipped here — they already ran on pull_request.
+          # agentic paths. This is the only path for non-bot contributors.
+          # Dependency bot PRs are skipped here — they already ran on pull_request.
           if [[ "$EVENT_NAME" == "pull_request_review" \
              && "$REVIEW_STATE" == "approved" \
              && "$PR_STATE" == "open" \
-             && "$PR_AUTHOR" != "dependabot[bot]" ]]; then
+             && "$IS_DEPENDENCY_BOT" == "false" ]]; then
             git fetch --quiet origin "$BASE_SHA"
             AGENTIC_PATTERN='^(src/(agent|mcp|chatbot|shared)/|compose[^/]*\.yaml|Makefile$|test/telemetry/|\.env$|\.github/workflows/)'
             if git diff --name-only "$BASE_SHA" "$HEAD_SHA" | grep -qE "$AGENTIC_PATTERN"; then
