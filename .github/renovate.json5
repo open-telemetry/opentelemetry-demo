@@ -117,14 +117,13 @@
   ],
   packageRules: [
     {
-      description: 'Update indirect Go modules as well, and do not treat old but stable ones as abandoned',
+      description: 'Update indirect Go modules as well',
       matchManagers: [
         'gomod',
       ],
       matchDepTypes: [
         'indirect',
       ],
-      abandonmentThreshold: '50 years',
       enabled: true,
     },
     {
