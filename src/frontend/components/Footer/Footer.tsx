@@ -1,22 +1,18 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useState } from 'react';
 import * as S from './Footer.styled';
 import SessionGateway from '../../gateways/Session.gateway';
 import { CypressFields } from '../../utils/enums/CypressFields';
 import PlatformFlag from '../PlatformFlag';
+import useClientValue from '../../utils/hooks/useClientValue';
 
 const currentYear = new Date().getFullYear();
 
 const { userId } = SessionGateway.getSession();
 
 const Footer = () => {
-  const [sessionId, setSessionId] = useState('');
-
-  useEffect(() => {
-    setSessionId(userId);
-  }, []);
+  const sessionId = useClientValue(() => userId, '');
 
   return (
     <S.Footer>

@@ -5,7 +5,7 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Ad from '../../../components/Ad';
 import Layout from '../../../components/Layout';
@@ -32,9 +32,11 @@ const ProductDetail: NextPage = () => {
   const { selectedCurrency } = useCurrency();
   const productId = query.productId as string;
 
-  useEffect(() => {
+  const [quantityProductId, setQuantityProductId] = useState(productId);
+  if (quantityProductId !== productId) {
+    setQuantityProductId(productId);
     setQuantity(1);
-  }, [productId]);
+  }
 
   const {
     data: {
