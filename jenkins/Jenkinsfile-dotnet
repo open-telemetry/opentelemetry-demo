@@ -19,7 +19,7 @@ pipeline {
             name: 'CUSTOM_TAG',
             defaultValue: '',
             trim: true,
-            description: 'Image tag override. Leave blank to use <build number>-<git short SHA>'
+            description: 'Image tag override. Must be a tag that does not already exist (the repository has tag immutability). Leave blank to use <build number>-<git short SHA>'
         )
     }
 
@@ -72,15 +72,17 @@ pipeline {
 }
 
 def buildAndPush(String service, String dockerfile) {
-    def image = "${env.REGISTRY}/${service}"
+    def image = "${env.REGISTRY}/${service}:${env.IMAGE_TAG}"
+    if (sh(script: "docker buildx imagetools inspect ${image} > /dev/null 2>&1", returnStatus: true) == 0) {
+        error("${image} already exists and the repository has tag immutability enabled. Use a new CUSTOM_TAG or leave it blank.")
+    }
     sh """
         docker buildx build \\
             --platform ${env.PLATFORM} \\
             -f ${dockerfile} \\
-            -t ${image}:${env.IMAGE_TAG} \\
-            -t ${image}:latest \\
+            -t ${image} \\
             --push \\
             .
-        docker rmi ${image}:${env.IMAGE_TAG} ${image}:latest || true
+        docker rmi ${image} || true
     """
 }
