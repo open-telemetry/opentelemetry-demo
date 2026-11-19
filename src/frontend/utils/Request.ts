@@ -5,7 +5,7 @@ interface IRequestParams {
   url: string;
   body?: object;
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
-  queryParams?: Record<string, any>;
+  queryParams?: Record<string, string | string[]>;
   headers?: Record<string, string>;
 }
 
@@ -18,7 +18,8 @@ const request = async <T>({
     'content-type': 'application/json',
   },
 }: IRequestParams): Promise<T> => {
-  const response = await fetch(`${url}?${new URLSearchParams(queryParams).toString()}`, {
+  const searchParams = new URLSearchParams(Object.entries(queryParams).map(([key, value]) => [key, String(value)]));
+  const response = await fetch(`${url}?${searchParams.toString()}`, {
     method,
     body: body ? JSON.stringify(body) : undefined,
     headers,
