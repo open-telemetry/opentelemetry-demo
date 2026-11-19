@@ -129,9 +129,12 @@
     },
     {
       description: 'No major updates for indirect or replaced Go modules: a new major is a different import path that the direct dependency has to adopt first',
-      matchDepTypes: ["indirect", "replace"],
+      matchDepTypes: [
+        'indirect',
+        'replace',
+      ],
       matchUpdateTypes: [
-        'major'
+        'major',
       ],
       matchCategories: [
         'golang',
