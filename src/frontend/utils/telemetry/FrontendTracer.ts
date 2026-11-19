@@ -14,6 +14,7 @@ import { UserActionInstrumentation } from '@opentelemetry/browser-instrumentatio
 import { WebVitalsInstrumentation } from '@opentelemetry/browser-instrumentation/experimental/web-vitals';
 import { XhrInstrumentation } from '@opentelemetry/browser-instrumentation/experimental/xhr';
 import { startBrowserSdk } from '@opentelemetry/browser-sdk';
+import { browserDetector } from '@opentelemetry/browser-sdk/browser-detector';
 import {
   createDocumentLogRecordProcessor,
   createDocumentSpanProcessor,
@@ -47,6 +48,7 @@ const FrontendTracer = async () => {
 
   const sdk = startBrowserSdk({
     serviceName: NEXT_PUBLIC_OTEL_SERVICE_NAME,
+    resourceAttributes: browserDetector.detect().attributes,
     traces: {
       processors: [
         createSessionSpanProcessor(sessionManager),
