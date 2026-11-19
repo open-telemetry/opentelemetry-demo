@@ -32,11 +32,12 @@ const ProductCard = ({
   const imageSlowLoad = useNumberFlagValue('imageSlowLoad', 0);
   const [imageSrc, setImageSrc] = useState<string>('');
 
+  if (!picture && imageSrc !== '') {
+    setImageSrc('');
+  }
+
   useEffect(() => {
-    if (!picture) {
-      setImageSrc('');
-      return;
-    }
+    if (!picture) return;
     const controller = new AbortController();
     let objectUrl: string | null = null;
     let cancelled = false;

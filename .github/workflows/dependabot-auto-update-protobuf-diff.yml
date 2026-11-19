@@ -1,10 +1,10 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-name: Dependabot auto-update protobuf diff
+name: Dependency bot auto-update protobuf diff
 
 on:
-  pull_request_target:  # zizmor: ignore[dangerous-triggers] restricted to Dependabot PRs and pushes only generated protobuf updates
+  pull_request_target:  # zizmor: ignore[dangerous-triggers] restricted to Dependabot and Renovate PRs and pushes only generated protobuf updates
     branches: [ main ]
 
 permissions:
@@ -19,10 +19,10 @@ jobs:
     name: Update protobuf diff
     permissions:
       contents: write  # required to push generated protobuf updates
-      pull-requests: write  # required to update Dependabot PR branches
+      pull-requests: write  # required to update dependency bot PR branches
     runs-on: ubuntu-latest
-    # Only run this job if the PR is opened by dependabot and the last commit is from dependabot
-    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    # Only run this job if the PR is opened by Dependabot or Renovate
+    if: contains(fromJSON('["dependabot[bot]", "renovate[bot]"]'), github.event.pull_request.user.login)
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -35,11 +35,17 @@ jobs:
       - name: Commit only if there are changes
         env:
           BRANCH_NAME: ${{ github.head_ref }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
           DEPENDABOT_TOKEN: ${{ secrets.DEPENDABOT_TOKEN }}
         run: |
           if ! git diff --quiet; then
-            git config user.name "dependabot[bot]"
-            git config user.email "49699333+dependabot[bot]@users.noreply.github.com"
+            if [[ "$PR_AUTHOR" == "renovate[bot]" ]]; then
+              BOT_USER_ID=29139614
+            else
+              BOT_USER_ID=49699333
+            fi
+            git config user.name "$PR_AUTHOR"
+            git config user.email "${BOT_USER_ID}+${PR_AUTHOR}@users.noreply.github.com"
             git add .
             git commit -s -m "chore: update protobuf"
             AUTH_HEADER=$(printf 'x-access-token:%s' "${DEPENDABOT_TOKEN}" | base64 -w 0)

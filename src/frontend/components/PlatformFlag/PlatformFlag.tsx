@@ -1,16 +1,14 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useState } from 'react';
 import * as S from './PlatformFlag.styled';
+import useClientValue from '../../utils/hooks/useClientValue';
 
 const PlatformFlag = () => {
-  const [platform, setPlatform] = useState('local');
-
-  useEffect(() => {
+  const platform = useClientValue(() => {
     const { NEXT_PUBLIC_PLATFORM = 'local' } = window.ENV;
-    setPlatform(NEXT_PUBLIC_PLATFORM);
-  }, []);
+    return NEXT_PUBLIC_PLATFORM;
+  }, 'local');
 
   return (
     <S.Block>{platform}</S.Block>

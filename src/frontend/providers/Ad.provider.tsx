@@ -4,7 +4,7 @@
 import { createContext, useContext, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import ApiGateway from '../gateways/Api.gateway';
-import { Ad, Money, Product } from '../protos/demo';
+import { Ad, Product } from '../protos/demo';
 import { useCurrency } from './Currency.provider';
 
 interface IContext {
