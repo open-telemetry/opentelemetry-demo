@@ -1,0 +1,11 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+attributes:
+  - key: demo.kafka.producer.queued_messages
+    type: int
+    brief: Messages queued on the Kafka producer
+    stability: stable
+    note: The number of extra messages queued on the local Kafka producer while the kafkaQueueProblems feature flag saturates its queue
+    examples: [10, 100]
