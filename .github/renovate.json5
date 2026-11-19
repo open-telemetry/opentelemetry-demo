@@ -175,6 +175,10 @@
       groupName: 'test-telemetry',
     },
     {
+      matchFileNames: ['src/**/*'],
+      groupName: 'src-{{parentDir}}',
+    },
+    {
       matchFileNames: [
         'src/accounting/**',
       ],
