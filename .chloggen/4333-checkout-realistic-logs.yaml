@@ -1,0 +1,5 @@
+change_type: enhancement
+component: checkout
+note: "Log order failures with error detail and ids, log order success summaries with ids and amounts, and log the Kafka producer queue state when the queue problem flag is on"
+issues: [4333]
+subtext:
