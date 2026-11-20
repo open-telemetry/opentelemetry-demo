@@ -39,6 +39,12 @@ attributes:
     stability: stable
     note: The number of products remaining after applying filters (e.g., availability, category, price range)
     examples: [5, 20, 50]
+  - key: demo.product.lock_duration_ms
+    type: int
+    brief: Planned duration a product table lock is held
+    stability: development
+    note: Milliseconds the ACCESS EXCLUSIVE lock on the product table is held
+    examples: [30000, 1500]
   - key: demo.product.filtered.list
     type: string[]
     brief: List of filtered product IDs
