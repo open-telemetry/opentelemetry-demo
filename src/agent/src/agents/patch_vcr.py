@@ -79,7 +79,6 @@ def clean_response(response):
             data["created"] = 0
         for key in [
             "system_fingerprint",
-            "usage",
             "prompt_filter_results",
             "service_tier",
         ]:

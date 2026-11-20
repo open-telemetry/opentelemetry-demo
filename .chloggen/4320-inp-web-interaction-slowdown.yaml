@@ -1,0 +1,6 @@
+change_type: enhancement
+
+component: frontend
+
+note: Add a `webInteractionSlowdown` feature flag that makes a stand-in analytics tag block the main thread on every click, degrading Interaction to Next Paint (INP).
+issues: [4320]

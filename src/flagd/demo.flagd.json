@@ -216,6 +216,17 @@
         "off": false,
         "on": true
       }
+    },
+    "webInteractionSlowdown": {
+      "defaultVariant": "off",
+      "description": "make a third-party analytics tag serialize, sort and fingerprint a large event queue on every click, blocking the main thread and degrading Interaction to Next Paint",
+      "state": "ENABLED",
+      "variants": {
+        "1200k": 1200000,
+        "300k": 300000,
+        "600k": 600000,
+        "off": 0
+      }
     }
   }
 }

@@ -1,0 +1,4 @@
+change_type: bug_fix
+component: frontend
+note: Reduce layout shift on the product page while the product loads
+issues: [4289]

@@ -1,0 +1,4 @@
+change_type: enhancement
+component: fraud-detection
+note: Record order counts and product sales by currency in the existing order consumer.
+issues: [850]
