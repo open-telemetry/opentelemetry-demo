@@ -20,13 +20,16 @@ COPY ./src/frontend/styles/ styles/
 COPY ./src/frontend/types/ types/
 
 COPY ./src/frontend/utils/enums/ utils/enums/
+COPY ./src/frontend/utils/hooks/ utils/hooks/
 COPY ./src/frontend/utils/telemetry/ utils/telemetry/
 COPY ./src/frontend/utils/imageLoader.js utils/imageLoader.js
 COPY ./src/frontend/utils/Request.ts utils/Request.ts
 
 COPY ./src/frontend/next.config.js next.config.js
 COPY ./src/frontend/tsconfig.json tsconfig.json
+COPY ./src/frontend/eslint.config.mjs eslint.config.mjs
 
+RUN npm run lint
 RUN npm run build
 
 # -----------------------------------------------------------------------------
@@ -42,7 +45,7 @@ RUN npm ci --omit=dev
 
 # -----------------------------------------------------------------------------
 
-FROM gcr.io/distroless/nodejs24-debian13:nonroot@sha256:088a01637f22908632ba09018be2e0b516f2fa6f7869c191d29491139db43c78
+FROM gcr.io/distroless/nodejs24-debian13:nonroot@sha256:6abfcb367ebc291572c774c1592a986be2ab26a2486f73093401327495a5962a
 
 WORKDIR /app
 

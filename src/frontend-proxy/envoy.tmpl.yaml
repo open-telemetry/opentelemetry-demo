@@ -53,7 +53,11 @@ static_resources:
                         - match: { path: "/grafana" }
                           redirect: { path_redirect: "/grafana/" }
                         - match: { prefix: "/grafana/" }
-                          route: { cluster: grafana }
+                          route:
+                            cluster: grafana
+                            timeout: 0s
+                            upgrade_configs:
+                              - upgrade_type: websocket
                         - match: { path: "/opamp" }
                           redirect: { path_redirect: "/opamp/" }
                         - match: { prefix: "/opamp/" }

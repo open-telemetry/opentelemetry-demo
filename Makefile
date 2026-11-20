@@ -43,11 +43,13 @@ endif
 # see https://github.com/open-telemetry/build-tools/releases for semconvgen updates
 # Keep links in semantic_conventions/README.md and .vscode/settings.json in sync!
 SEMCONVGEN_VERSION=0.11.0
+# renovate: datasource=pypi depName=yamllint
 YAMLLINT_VERSION=1.30.0
 
 # Changelog fragment tooling (chloggen). Pinned to match the OpenTelemetry
 # Collector. Invoked from the repo root, which has no go.mod, so `go run` runs
 # the pinned tool without touching any local Go module.
+# renovate: datasource=go depName=go.opentelemetry.io/build-tools/chloggen extractVersion=^v(?<version>.+)$
 CHLOGGEN_VERSION=0.30.0
 CHLOGGEN_CONFIG=.chloggen/config.yaml
 CHLOGGEN=go run go.opentelemetry.io/build-tools/chloggen@v$(CHLOGGEN_VERSION)

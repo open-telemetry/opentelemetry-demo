@@ -7,17 +7,17 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["/src/accounting/", "Accounting/"]
 COPY ["/pb/demo.proto", "Accounting/src/protos/demo.proto"]
-RUN dotnet restore "./Accounting/Accounting.csproj" -r linux-$TARGETARCH
+RUN dotnet restore "./Accounting/Accounting.csproj" --locked-mode
 WORKDIR "/src/Accounting"
 
-RUN dotnet build "./Accounting.csproj" -r linux-$TARGETARCH -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./Accounting.csproj" -r linux-$TARGETARCH -c $BUILD_CONFIGURATION --no-restore -o /app/build
 
 # -----------------------------------------------------------------------------
 
 FROM builder AS publish
 ARG TARGETARCH
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Accounting.csproj" -r linux-$TARGETARCH -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Accounting.csproj" -r linux-$TARGETARCH -c $BUILD_CONFIGURATION --no-restore -o /app/publish /p:UseAppHost=false
 
 # -----------------------------------------------------------------------------
 

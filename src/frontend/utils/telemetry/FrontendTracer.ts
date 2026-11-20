@@ -21,7 +21,7 @@ const {
 const FrontendTracer = async () => {
   const { ZoneContextManager } = await import('@opentelemetry/context-zone');
 
-  let resource = defaultResource()
+  const resource = defaultResource()
     .merge(
       resourceFromAttributes({
         [ATTR_SERVICE_NAME]: NEXT_PUBLIC_OTEL_SERVICE_NAME,

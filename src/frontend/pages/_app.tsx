@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App, { AppContext, AppProps } from 'next/app';
 import CurrencyProvider from '../providers/Currency.provider';
 import CartProvider from '../providers/Cart.provider';
+import AnalyticsTag from '../components/AnalyticsTag/AnalyticsTag';
 import { ThemeProvider } from 'styled-components';
 import Theme from '../styles/Theme';
 import FrontendTracer from '../utils/telemetry/FrontendTracer';
@@ -65,6 +66,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <QueryClientProvider client={queryClient}>
           <CurrencyProvider>
             <CartProvider>
+              <AnalyticsTag />
               <Component {...pageProps} />
             </CartProvider>
           </CurrencyProvider>

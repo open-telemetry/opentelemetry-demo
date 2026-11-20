@@ -23,7 +23,7 @@ WORKDIR /usr/src/app/
 COPY ./src/cart/ ./
 COPY ./pb/ ./pb/
 
-RUN dotnet restore ./tests/cart.tests.csproj -r linux-musl-$TARGETARCH
+RUN dotnet restore ./tests/cart.tests.csproj --locked-mode
 
 FROM base AS test
 
@@ -40,7 +40,7 @@ RUN dotnet publish ./src/cart.csproj -r linux-musl-$TARGETARCH --no-restore -o /
 # -----------------------------------------------------------------------------
 
 # https://mcr.microsoft.com/v2/dotnet/runtime-deps/tags/list
-FROM ghcr.io/grpc-ecosystem/grpc-health-probe:v0.4.61@sha256:9df7b8dfbaf01d20eaedcd6de084c557074046f87cfc0413b7939ae18087c249 AS grpc-health-probe
+FROM ghcr.io/grpc-ecosystem/grpc-health-probe:v0.4.63@sha256:1d6cc5716f1c80cbcf97d5bc7eef3cd5bd4c7a7b942c0dc4f533dea70dcb5173 AS grpc-health-probe
 
 FROM mcr.microsoft.com/dotnet/runtime-deps:11.0.0-alpine3.24@sha256:5597d4a0c9ea3fb84fc210333013d761fc350d5925fc9042f62992675e15b58b
 

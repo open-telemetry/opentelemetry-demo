@@ -22,7 +22,7 @@ gem 'opentelemetry-metrics-sdk',           "~> 0.22"
 gem "opentelemetry-exporter-otlp",         "~> 0.36"
 gem 'opentelemetry-exporter-otlp-metrics', "~> 0.15"
 gem 'opentelemetry-exporter-otlp-logs',    "~> 0.7"
-gem "opentelemetry-instrumentation-all",   "~> 0.100"
+gem "opentelemetry-instrumentation-all",   "~> 0.101"
 
 gem "openfeature-sdk", "~> 0.8"
 gem "openfeature-flagd-provider", "~> 0.1"

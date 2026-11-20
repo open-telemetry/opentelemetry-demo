@@ -24,7 +24,7 @@ export const Image = styled.div<{ $src: string }>`
   width: 100%;
   height: 150px;
 
-  background: ${({ $src }) => `url("${$src}")`} no-repeat center;
+  background: ${({ $src }) => ($src ? `url("${$src}")` : 'none')} no-repeat center;
   background-size: contain;
 
   ${({ theme }) => theme.breakpoints.desktop} {
@@ -39,6 +39,14 @@ export const Details = styled.div<{ $fullWidth?: boolean }>`
   gap: 16px;
   padding: 0 20px;
   ${({ $fullWidth }) => $fullWidth && 'grid-column: 1 / -1;'}
+`;
+
+export const DetailsPlaceholder = styled.div`
+  min-height: 300px;
+
+  ${({ theme }) => theme.breakpoints.desktop} {
+    display: none;
+  }
 `;
 
 export const AddToCart = styled(Button)`
