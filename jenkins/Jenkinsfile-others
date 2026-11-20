@@ -21,6 +21,11 @@ pipeline {
             trim: true,
             description: 'Image tag override. Must be a tag that does not already exist (the repository has tag immutability). Leave blank to use <build number>-<git short SHA>'
         )
+        booleanParam(
+            name: 'ENFORCE_SCAN',
+            defaultValue: true,
+            description: 'Block the push when Trivy finds CRITICAL vulnerabilities that have a fix. Untick only when the risk is accepted; the scan and report still run.'
+        )
     }
 
     environment {
@@ -38,7 +43,7 @@ pipeline {
                 script {
                     def sha = sh(script: 'git rev-parse --short=7 HEAD', returnStdout: true).trim()
                     env.IMAGE_TAG = params.CUSTOM_TAG ?: "${env.BUILD_NUMBER}-${sha}"
-                    currentBuild.description = "${params.SERVICE} : ${env.IMAGE_TAG}"
+                    currentBuild.description = "${params.SERVICE} : ${env.IMAGE_TAG}" + (params.ENFORCE_SCAN ? '' : ' (scan not enforced)')
                     echo "Service: ${params.SERVICE} | Tag: ${env.IMAGE_TAG} | Registry: ${env.REGISTRY}"
                 }
             }
@@ -138,8 +143,14 @@ def buildAndPush(String service, String dockerfile, List buildArgs) {
         sh """
             trivy image --no-progress --severity ${env.SCAN_REPORT_SEVERITY} --output trivy-${service}.txt ${image}
             cat trivy-${service}.txt
-            trivy image --no-progress --severity ${env.SCAN_FAIL_SEVERITY} --ignore-unfixed --exit-code 1 ${image}
         """
+        def gate = sh(script: "trivy image --no-progress --severity ${env.SCAN_FAIL_SEVERITY} --ignore-unfixed --exit-code 1 ${image}", returnStatus: true)
+        if (gate != 0) {
+            if (params.ENFORCE_SCAN) {
+                error("${service}: Trivy found ${env.SCAN_FAIL_SEVERITY} vulnerabilities that have a fix. Image not pushed.")
+            }
+            unstable("${service}: Trivy found ${env.SCAN_FAIL_SEVERITY} vulnerabilities, pushed anyway because ENFORCE_SCAN is off.")
+        }
         sh "docker push ${image}"
     } finally {
         sh "docker rmi ${image} || true"
