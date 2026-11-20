@@ -181,6 +181,7 @@ public final class AdService {
 
       // get the current span in context
       Span span = Span.current();
+      long startNanos = System.nanoTime();
       try {
         List<Ad> allAds = new ArrayList<>();
         AdRequestType adRequestType;
@@ -198,7 +199,7 @@ public final class AdService {
             span.setAttribute("enduser.id", enduserId);
           }
         } else {
-          logger.info("no baggage found in context");
+          logger.debug("no baggage found in context");
         }
 
         CPULoad cpuload = CPULoad.getInstance();
@@ -207,7 +208,6 @@ public final class AdService {
         span.setAttribute("demo.ad.context_keys", req.getContextKeysList().toString());
         span.setAttribute("demo.ad.context_keys.count", req.getContextKeysCount());
         if (req.getContextKeysCount() > 0) {
-          logger.info("Targeted ad request received for " + req.getContextKeysList());
           for (int i = 0; i < req.getContextKeysCount(); i++) {
             Collection<Ad> ads = service.getAdsByCategory(req.getContextKeys(i));
             allAds.addAll(ads);
@@ -215,7 +215,6 @@ public final class AdService {
           adRequestType = AdRequestType.TARGETED;
           adResponseType = AdResponseType.TARGETED;
         } else {
-          logger.info("Non-targeted ad request received, preparing random response.");
           allAds = service.getRandomAds();
           adRequestType = AdRequestType.NOT_TARGETED;
           adResponseType = AdResponseType.RANDOM;
@@ -245,6 +244,12 @@ public final class AdService {
           gct.doExecute();
         }
 
+        long durationMs = (System.nanoTime() - startNanos) / 1_000_000;
+        if (req.getContextKeysCount() > 0) {
+          logger.info("Served {} ads for context keys {} in {} ms", allAds.size(), req.getContextKeysList(), durationMs);
+        } else {
+          logger.info("Served {} random ads in {} ms", allAds.size(), durationMs);
+        }
         AdResponse reply = AdResponse.newBuilder().addAllAds(allAds).build();
         responseObserver.onNext(reply);
         responseObserver.onCompleted();

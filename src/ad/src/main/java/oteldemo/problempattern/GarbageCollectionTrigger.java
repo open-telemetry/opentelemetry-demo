@@ -44,7 +44,12 @@ public class GarbageCollectionTrigger {
         if (System.currentTimeMillis() - lastGC > gc_delay) {
             logger.info("Triggering a manual garbage collection, next one in " + (gc_delay/1000) + " seconds.");
             // clear old data, we want to clear old Entry objects, because their finalization is expensive
+            long usedBefore = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
+            long gcStart = System.currentTimeMillis();
             System.gc();
+            long gcPause = System.currentTimeMillis() - gcStart;
+            long usedAfter = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
+            logger.info("Manual GC heap used before={} MB after={} MB pause_ms={}", usedBefore / (1024 * 1024), usedAfter / (1024 * 1024), gcPause);
 
             long total = 0;
             for (int i = 0; i < 10; i++) {
