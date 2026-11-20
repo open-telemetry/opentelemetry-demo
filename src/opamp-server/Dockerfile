@@ -3,14 +3,14 @@
 
 FROM golang:1.27.1-alpine@sha256:cf6fca6641884b8433441b2b0652976f975e1d0fdd26d177eaaf8596087f3125 AS builder
 
-ARG OPAMP_GO_REF
+ARG OPAMP_GO_VERSION
 
 RUN apk add --no-cache git
 
 WORKDIR /src/opamp-go
 RUN git init && \
     git remote add origin https://github.com/open-telemetry/opamp-go.git && \
-    git fetch --depth 1 origin ${OPAMP_GO_REF} && \
+    git fetch --depth 1 origin refs/tags/v${OPAMP_GO_VERSION} && \
     git checkout FETCH_HEAD
 
 RUN sed -i 's|href="/"|href="/opamp/"|g' internal/examples/html/html/agent.html && \
