@@ -1,0 +1,17 @@
+change_type: breaking
+component: frontend
+note: Instrument the browser with `@opentelemetry/browser-sdk` and `@opentelemetry/browser-instrumentation` instead of assembling the web tracer by hand
+issues: [4329]
+subtext: |-
+  `startBrowserSdk` now owns the tracer and logger providers, the propagators,
+  the context manager and the OTLP/HTTP batch processors. The browser emits
+  fetch, XHR and document load spans plus click, web vitals, error, console,
+  navigation and timing events, matching the instrumentation set of the
+  browser SDK sandbox. Events are exported to the new
+  `PUBLIC_OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`, which is proxied to the collector
+  like the traces endpoint. `session.id` is now the browser SDK session,
+  persisted in local storage and rotated on inactivity, and is propagated to
+  the backend through baggage; `enduser.id` keeps the demo session user id.
+  `auto-instrumentations-web`, `context-zone`, `exporter-trace-otlp-http`,
+  `instrumentation` and `opentelemetry-browser-detector` are no longer frontend
+  dependencies.
