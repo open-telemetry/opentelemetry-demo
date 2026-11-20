@@ -114,10 +114,11 @@ def buildAndPush(String service, String dockerfile, List buildArgs) {
                 .
         """
         sh """
-            trivy image --no-progress --severity ${env.SCAN_REPORT_SEVERITY} --output trivy-${service}.txt ${image}
+            mkdir -p \$HOME/.cache/trivy-tmp
+            TMPDIR=\$HOME/.cache/trivy-tmp trivy image --no-progress --severity ${env.SCAN_REPORT_SEVERITY} --output trivy-${service}.txt ${image}
             cat trivy-${service}.txt
         """
-        def gate = sh(script: "trivy image --no-progress --severity ${env.SCAN_FAIL_SEVERITY} --ignore-unfixed --exit-code 1 ${image}", returnStatus: true)
+        def gate = sh(script: "TMPDIR=\$HOME/.cache/trivy-tmp trivy image --no-progress --severity ${env.SCAN_FAIL_SEVERITY} --ignore-unfixed --exit-code 1 ${image}", returnStatus: true)
         if (gate != 0) {
             if (params.ENFORCE_SCAN) {
                 error("${service}: Trivy found ${env.SCAN_FAIL_SEVERITY} vulnerabilities that have a fix. Image not pushed.")
