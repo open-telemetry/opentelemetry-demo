@@ -48,7 +48,7 @@ public class CartServiceTests
     public async Task GetItem_NoAddItemBefore_EmptyCartReturned()
     {
         // Setup test server and client
-        using var server = await _host.StartAsync();
+        using var server = await _host.StartAsync(TestContext.Current.CancellationToken);
         var httpClient = server.GetTestClient();
         Assert.NotNull(httpClient.BaseAddress);
 
@@ -67,7 +67,7 @@ public class CartServiceTests
             UserId = userId,
         };
 
-        var cart = await cartClient.GetCartAsync(request);
+        var cart = await cartClient.GetCartAsync(request, cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(cart);
 
         // All grpc objects implement IEquitable, so we can compare equality with by-value semantics
@@ -78,7 +78,7 @@ public class CartServiceTests
     public async Task AddItem_ItemExists_Updated()
     {
         // Setup test server and client
-        using var server = await _host.StartAsync();
+        using var server = await _host.StartAsync(TestContext.Current.CancellationToken);
         var httpClient = server.GetTestClient();
         Assert.NotNull(httpClient.BaseAddress);
 
@@ -102,30 +102,30 @@ public class CartServiceTests
         };
 
         // First add - nothing should fail
-        await client.AddItemAsync(request);
+        await client.AddItemAsync(request, cancellationToken: TestContext.Current.CancellationToken);
 
         // Second add of existing product - quantity should be updated
-        await client.AddItemAsync(request);
+        await client.AddItemAsync(request, cancellationToken: TestContext.Current.CancellationToken);
 
         var getCartRequest = new GetCartRequest
         {
             UserId = userId
         };
-        var cart = await client.GetCartAsync(getCartRequest);
+        var cart = await client.GetCartAsync(getCartRequest, cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(cart);
         Assert.Equal(userId, cart.UserId);
         Assert.Single(cart.Items);
         Assert.Equal(2, cart.Items[0].Quantity);
 
         // Cleanup
-        await client.EmptyCartAsync(new EmptyCartRequest { UserId = userId });
+        await client.EmptyCartAsync(new EmptyCartRequest { UserId = userId }, cancellationToken: TestContext.Current.CancellationToken);
     }
 
     [Fact]
     public async Task AddItem_New_Inserted()
     {
         // Setup test server and client
-        using var server = await _host.StartAsync();
+        using var server = await _host.StartAsync(TestContext.Current.CancellationToken);
         var httpClient = server.GetTestClient();
         Assert.NotNull(httpClient.BaseAddress);
 
@@ -150,19 +150,19 @@ public class CartServiceTests
             }
         };
 
-        await client.AddItemAsync(request);
+        await client.AddItemAsync(request, cancellationToken: TestContext.Current.CancellationToken);
 
         var getCartRequest = new GetCartRequest
         {
             UserId = userId
         };
-        var cart = await client.GetCartAsync(getCartRequest);
+        var cart = await client.GetCartAsync(getCartRequest, cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(cart);
         Assert.Equal(userId, cart.UserId);
         Assert.Single(cart.Items);
 
-        await client.EmptyCartAsync(new EmptyCartRequest { UserId = userId });
-        cart = await client.GetCartAsync(getCartRequest);
+        await client.EmptyCartAsync(new EmptyCartRequest { UserId = userId }, cancellationToken: TestContext.Current.CancellationToken);
+        cart = await client.GetCartAsync(getCartRequest, cancellationToken: TestContext.Current.CancellationToken);
         Assert.Empty(cart.Items);
     }
 
