@@ -42,7 +42,7 @@ RUN dotnet publish ./src/cart.csproj -r linux-musl-$TARGETARCH --no-restore -o /
 # https://mcr.microsoft.com/v2/dotnet/runtime-deps/tags/list
 FROM ghcr.io/grpc-ecosystem/grpc-health-probe:v0.4.63@sha256:1d6cc5716f1c80cbcf97d5bc7eef3cd5bd4c7a7b942c0dc4f533dea70dcb5173 AS grpc-health-probe
 
-FROM mcr.microsoft.com/dotnet/runtime-deps:10.0.12-alpine3.23@sha256:ec7978b6668931a141e5a6d5b831aea858e4f8fa908ca75900299e40fb17529e
+FROM mcr.microsoft.com/dotnet/runtime-deps:11.0.0-alpine3.24@sha256:5597d4a0c9ea3fb84fc210333013d761fc350d5925fc9042f62992675e15b58b
 
 WORKDIR /usr/src/app/
 COPY --from=builder /cart/ ./
