@@ -85,23 +85,6 @@
     {
       customType: 'regex',
       description: [
-        'opamp-go commit pinned in .env.',
-        'The pattern matches OPAMP_GO_REF= followed by a 40 character commit SHA.',
-      ],
-      managerFilePatterns: [
-        '/^\\.env$/',
-      ],
-      matchStrings: [
-        'OPAMP_GO_REF=(?<currentDigest>[a-f0-9]{40})',
-      ],
-      depNameTemplate: 'open-telemetry/opamp-go',
-      packageNameTemplate: 'https://github.com/open-telemetry/opamp-go',
-      datasourceTemplate: 'git-refs',
-      currentValueTemplate: 'main',
-    },
-    {
-      customType: 'regex',
-      description: [
         'Go version passed to the shared changelog workflow (setup-go inputs are handled natively).',
         'The pattern matches go-version: followed by a three part version with single, double or no quotes.',
       ],

@@ -145,7 +145,7 @@ services:
       context: ./
       dockerfile: ${OPAMP_SERVER_DOCKERFILE}
       args:
-        OPAMP_GO_REF: ${OPAMP_GO_REF}
+        OPAMP_GO_VERSION: ${OPAMP_GO_VERSION}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-opamp-server
     deploy:
