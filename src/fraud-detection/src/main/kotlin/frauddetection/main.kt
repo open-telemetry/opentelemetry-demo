@@ -8,6 +8,7 @@ package frauddetection
 import io.opentelemetry.api.GlobalOpenTelemetry
 import org.apache.kafka.clients.consumer.ConsumerConfig.*
 import org.apache.kafka.clients.consumer.KafkaConsumer
+import org.apache.kafka.common.KafkaException
 import org.apache.kafka.common.serialization.ByteArrayDeserializer
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.logging.log4j.LogManager
@@ -68,7 +69,7 @@ fun main() {
             // kafkaConsumerDead: leave the group and stop polling; re-subscribe when off
             if (getBooleanFeatureFlagValue("kafkaConsumerDead")) {
                 if (subscribed) {
-                    logger.info("FeatureFlag 'kafkaConsumerDead' is enabled, unsubscribing from '$topic' (group goes Empty, members -> 0)")
+                    logger.info("Consumer unsubscribed from topic $topic in group $groupID (group goes Empty, members -> 0)")
                     consumer.unsubscribe()
                     subscribed = false
                 }
@@ -76,30 +77,34 @@ fun main() {
                 Thread.sleep(1000)
                 continue
             } else if (!subscribed) {
-                logger.info("FeatureFlag 'kafkaConsumerDead' is disabled, re-subscribing to '$topic' (rejoining group)")
+                logger.info("Consumer resubscribed to topic $topic in group $groupID (rejoining group)")
                 consumer.subscribe(listOf(topic))
                 subscribed = true
             }
 
-            totalCount = consumer
-                .poll(ofMillis(100))
-                .fold(totalCount) { accumulator, record ->
-                    val newCount = accumulator + 1
-                    // Flag value = per-record sleep in ms
-                    val sleepMs = getFeatureFlagValue("kafkaQueueProblems")
-                    if (sleepMs > 0) {
-                        logger.info("FeatureFlag 'kafkaQueueProblems' is enabled, sleeping ${sleepMs}ms")
-                        Thread.sleep(sleepMs.toLong())
-                    }
-                    val orders = OrderResult.parseFrom(record.value())
-                    try {
-                        orderMetrics.record(orders)
-                    } catch (e: IllegalArgumentException) {
-                        logger.warn("Skipping business metrics for invalid order", e)
-                    }
-                    logger.info("Consumed record with orderId: ${orders.orderId}, and updated total count to: $newCount")
-                    newCount
+            val records = try {
+                consumer.poll(ofMillis(100))
+            } catch (e: KafkaException) {
+                logger.error("Kafka poll failed for group $groupID on topic $topic: ${e.message ?: e.javaClass.name}", e)
+                throw e
+            }
+            totalCount = records.fold(totalCount) { accumulator, record ->
+                val newCount = accumulator + 1
+                // Flag value = per-record sleep in ms
+                val sleepMs = getFeatureFlagValue("kafkaQueueProblems")
+                if (sleepMs > 0) {
+                    logger.warn("Consumer processing delayed: sleeping ${sleepMs}ms before handling record at partition ${record.partition()} offset ${record.offset()} (group $groupID, topic $topic)")
+                    Thread.sleep(sleepMs.toLong())
                 }
+                val orders = OrderResult.parseFrom(record.value())
+                try {
+                    orderMetrics.record(orders)
+                } catch (e: IllegalArgumentException) {
+                    logger.warn("Skipping business metrics for invalid order: ${e.message ?: e.javaClass.name}", e)
+                }
+                logger.info("Consumed record with orderId: ${orders.orderId}, topic=$topic, partition=${record.partition()}, offset=${record.offset()}, and updated total count to: $newCount")
+                newCount
+            }
         }
     }
 }
