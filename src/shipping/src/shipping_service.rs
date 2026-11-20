@@ -4,7 +4,7 @@
 use actix_web::{post, web, HttpResponse, Responder};
 use open_feature::provider::FeatureProvider;
 use open_feature::EvaluationContext;
-use tracing::{info, warn};
+use tracing::{error, info, warn};
 
 mod quote;
 use quote::create_quote_from_count;
@@ -19,11 +19,13 @@ const NANOS_MULTIPLE: u32 = 10000000u32;
 
 #[post("/get-quote")]
 pub async fn get_quote(req: web::Json<GetQuoteRequest>) -> impl Responder {
+    let start = std::time::Instant::now();
     let itemct: u32 = req.items.iter().map(|item| item.quantity as u32).sum();
 
     let quote = match create_quote_from_count(itemct).await {
         Ok(q) => q,
         Err(e) => {
+            error!(name: "shipping.quote.failed", error = %e, "Failed to get quote: {}", e);
             return HttpResponse::InternalServerError().body(format!("Failed to get quote: {}", e));
         }
     };
@@ -36,11 +38,17 @@ pub async fn get_quote(req: web::Json<GetQuoteRequest>) -> impl Responder {
         }),
     };
 
+    let country = req.address.as_ref().map(|a| a.country.as_str()).unwrap_or_default();
+    let quote_amount = quote.dollars as f64 + quote.cents as f64 / 100.0;
     info!(
-        name: "shipping.quote.sent",
-        dollars = quote.dollars,
-        cents = quote.cents,
-        "Sending Quote"
+        demo.shipping.quote.items_count = itemct,
+        demo.shipping.quote.cost.total = quote_amount,
+        demo.shipping.destination.country = country,
+        "Shipping quote returned: {} items to {}, ${:.2} in {} ms",
+        itemct,
+        country,
+        quote_amount,
+        start.elapsed().as_millis()
     );
 
     HttpResponse::Ok().json(reply)
@@ -51,6 +59,7 @@ pub async fn ship_order(
     req: web::Json<ShipOrderRequest>,
     flag_provider: web::Data<dyn FeatureProvider>,
 ) -> impl Responder {
+    let start = std::time::Instant::now();
     let is_outside_us = req
         .address
         .as_ref()
@@ -84,19 +93,19 @@ pub async fn ship_order(
     };
 
     if slowdown_secs > 0 {
-        info!(
-            name: "shipping.international.slowdown",
-            delay_secs = slowdown_secs,
-            "Delaying international shipment due to intlShippingSlowdown feature flag"
+        warn!(
+            demo.shipping.carrier.latency_ms = slowdown_secs * 1000,
+            "Carrier rate API timeout for international shipment, falling back to slow path"
         );
         actix_web::rt::time::sleep(std::time::Duration::from_secs(slowdown_secs as u64)).await;
     }
 
     let tid = create_tracking_id();
     info!(
-        name: "shipping.tracking_id.created",
-        tracking_id = tid.as_str(),
-        "Tracking ID Created"
+        demo.shipping.tracking.id = tid.as_str(),
+        "Shipment created, tracking id {} in {} ms",
+        tid,
+        start.elapsed().as_millis()
     );
     HttpResponse::Ok().json(ShipOrderResponse { tracking_id: tid })
 }

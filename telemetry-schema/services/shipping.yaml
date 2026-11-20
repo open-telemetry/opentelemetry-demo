@@ -9,3 +9,8 @@ attribute_groups:
     stability: stable
     attributes:
       - ref: demo.shipping.cost.total
+      - ref: demo.shipping.quote.items_count
+      - ref: demo.shipping.quote.cost.total
+      - ref: demo.shipping.tracking.id
+      - ref: demo.shipping.destination.country
+      - ref: demo.shipping.carrier.latency_ms
