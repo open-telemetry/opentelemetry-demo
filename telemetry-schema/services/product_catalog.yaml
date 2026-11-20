@@ -10,5 +10,6 @@ attribute_groups:
     attributes:
       - ref: demo.product.count
       - ref: demo.product.id
+      - ref: demo.product.lock_duration_ms
       - ref: demo.product.name
       - ref: demo.product.search.count

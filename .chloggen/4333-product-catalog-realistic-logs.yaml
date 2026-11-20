@@ -1,0 +1,5 @@
+change_type: enhancement
+component: product-catalog
+note: "Log product lookup failures, not-found products, lock contention with database-style error text, slow catalog.products query warnings and successful list, search and lookup results"
+issues: [4333]
+subtext:

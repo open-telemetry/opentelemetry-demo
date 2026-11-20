@@ -11,6 +11,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net"
@@ -374,7 +375,10 @@ func (p *productCatalog) Watch(req *healthpb.HealthCheckRequest, ws healthpb.Hea
 func (p *productCatalog) ListProducts(ctx context.Context, req *pb.Empty) (*pb.ListProductsResponse, error) {
 	span := trace.SpanFromContext(ctx)
 
+	start := time.Now()
 	products, err := loadProductsFromDB(ctx)
+	elapsed := time.Since(start)
+	logSlowQuery(ctx, "ListProducts", elapsed)
 	if err != nil {
 		span.SetStatus(otelcodes.Error, err.Error())
 		return nil, status.Errorf(codes.Internal, "failed to load products: %v", err)
@@ -383,6 +387,7 @@ func (p *productCatalog) ListProducts(ctx context.Context, req *pb.Empty) (*pb.L
 	span.SetAttributes(
 		attribute.Int("demo.product.count", len(products)),
 	)
+	logger.InfoContext(ctx, fmt.Sprintf("Listed %d products in %d ms", len(products), elapsed.Milliseconds()))
 	return &pb.ListProductsResponse{Products: products}, nil
 }
 
@@ -394,14 +399,29 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 
 	// GetProduct will fail on a specific product when feature flag is enabled
 	if p.checkProductFailure(ctx, req.Id) {
-		msg := "Error: Product Catalog Fail Feature Flag Enabled"
+		dbErr := errors.New(`pq: could not read block in file "base/16384/24576": Input/output error`)
+		msg := fmt.Sprintf("failed to query product: %v", dbErr)
+		logger.LogAttrs(
+			ctx,
+			slog.LevelError, msg,
+			slog.String("demo.product.id", req.Id),
+			slog.Any("error", dbErr),
+		)
 		span.SetStatus(otelcodes.Error, msg)
 		span.AddEvent(msg)
 		return nil, status.Error(codes.Internal, msg)
 	}
 
+	start := time.Now()
 	found, err := getProductFromDB(ctx, req.Id)
+	elapsed := time.Since(start)
+	logSlowQuery(ctx, "GetProduct", elapsed)
 	if err != nil {
+		logger.LogAttrs(
+			ctx,
+			slog.LevelWarn, "product not found: "+req.Id,
+			slog.String("demo.product.id", req.Id),
+		)
 		msg := fmt.Sprintf("Product Not Found: %s", req.Id)
 		span.SetStatus(otelcodes.Error, msg)
 		span.AddEvent(msg)
@@ -416,7 +436,7 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 
 	logger.LogAttrs(
 		ctx,
-		slog.LevelInfo, "Product Found",
+		slog.LevelInfo, fmt.Sprintf("Product found: %s (%s) in %d ms", found.Name, req.Id, elapsed.Milliseconds()),
 		slog.String("demo.product.name", found.Name),
 		slog.String("demo.product.id", req.Id),
 	)
@@ -427,7 +447,10 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 func (p *productCatalog) SearchProducts(ctx context.Context, req *pb.SearchProductsRequest) (*pb.SearchProductsResponse, error) {
 	span := trace.SpanFromContext(ctx)
 
+	start := time.Now()
 	result, err := searchProductsFromDB(ctx, req.Query)
+	elapsed := time.Since(start)
+	logSlowQuery(ctx, "SearchProducts", elapsed)
 	if err != nil {
 		span.SetStatus(otelcodes.Error, err.Error())
 		return nil, status.Errorf(codes.Internal, "failed to search products: %v", err)
@@ -436,11 +459,31 @@ func (p *productCatalog) SearchProducts(ctx context.Context, req *pb.SearchProdu
 	span.SetAttributes(
 		attribute.Int("demo.product.search.count", len(result)),
 	)
+	logger.InfoContext(ctx, fmt.Sprintf("Search for %q returned %d products in %d ms", req.Query, len(result), elapsed.Milliseconds()))
 	return &pb.SearchProductsResponse{Results: result}, nil
 }
 
 func (p *productCatalog) checkProductFailure(ctx context.Context, id string) bool {
 	return flags.ProductCatalogFailure.Value(ctx, openfeature.NewTargetlessEvaluationContext(map[string]any{"product_id": id}))
+}
+
+const slowQueryThreshold = time.Second
+
+func isSlowQuery(elapsed time.Duration) bool {
+	return elapsed > slowQueryThreshold
+}
+
+func logSlowQuery(ctx context.Context, operation string, elapsed time.Duration) {
+	if !isSlowQuery(elapsed) {
+		return
+	}
+	logger.LogAttrs(
+		ctx,
+		slog.LevelWarn,
+		fmt.Sprintf("slow query on catalog.products: %s took %s", operation, elapsed.Round(time.Millisecond)),
+		slog.String("db.operation.name", operation),
+		slog.String("db.collection.name", "products"),
+	)
 }
 
 func triggerLockContentionLoop(ctx context.Context) {
@@ -477,9 +520,15 @@ func triggerLockContention(ctx context.Context) {
 		return
 	}
 
-	logger.Info("lock contention scenario active: holding ACCESS EXCLUSIVE lock on catalog.products")
+	const holdDuration = 30 * time.Second
+	logger.LogAttrs(
+		ctx,
+		slog.LevelInfo,
+		"holding lock on catalog.products",
+		slog.Int64("demo.product.lock_duration_ms", holdDuration.Milliseconds()),
+	)
 	select {
 	case <-ctx.Done():
-	case <-time.After(30 * time.Second):
+	case <-time.After(holdDuration):
 	}
 }
