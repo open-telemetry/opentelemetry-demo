@@ -27,11 +27,14 @@ pipeline {
         REGISTRY_HOST = 'asia-south1-docker.pkg.dev'
         REGISTRY      = "${REGISTRY_HOST}/ct-lens/otel"
         PLATFORM      = 'linux/amd64'
+        SCAN_REPORT_SEVERITY = 'HIGH,CRITICAL'
+        SCAN_FAIL_SEVERITY   = 'CRITICAL'
     }
 
     stages {
         stage('Prepare') {
             steps {
+                sh 'trivy --version'
                 script {
                     def sha = sh(script: 'git rev-parse --short=7 HEAD', returnStdout: true).trim()
                     env.IMAGE_TAG = params.CUSTOM_TAG ?: "${env.BUILD_NUMBER}-${sha}"
@@ -65,6 +68,7 @@ pipeline {
             echo "Pushed ${params.SERVICE} to ${env.REGISTRY} with tag ${env.IMAGE_TAG}"
         }
         always {
+            archiveArtifacts artifacts: 'trivy-*.txt', allowEmptyArchive: true
             sh 'docker logout "${REGISTRY_HOST}" || true'
             cleanWs()
         }
@@ -76,13 +80,22 @@ def buildAndPush(String service, String dockerfile) {
     if (sh(script: "docker buildx imagetools inspect ${image} > /dev/null 2>&1", returnStatus: true) == 0) {
         error("${image} already exists and the repository has tag immutability enabled. Use a new CUSTOM_TAG or leave it blank.")
     }
-    sh """
-        docker buildx build \\
-            --platform ${env.PLATFORM} \\
-            -f ${dockerfile} \\
-            -t ${image} \\
-            --push \\
-            .
-        docker rmi ${image} || true
-    """
+    try {
+        sh """
+            docker buildx build \\
+                --platform ${env.PLATFORM} \\
+                -f ${dockerfile} \\
+                -t ${image} \\
+                --load \\
+                .
+        """
+        sh """
+            trivy image --no-progress --severity ${env.SCAN_REPORT_SEVERITY} --output trivy-${service}.txt ${image}
+            cat trivy-${service}.txt
+            trivy image --no-progress --severity ${env.SCAN_FAIL_SEVERITY} --ignore-unfixed --exit-code 1 ${image}
+        """
+        sh "docker push ${image}"
+    } finally {
+        sh "docker rmi ${image} || true"
+    }
 }
