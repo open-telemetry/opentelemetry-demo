@@ -1,17 +1,17 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-import nextVitals from 'eslint-config-next/core-web-vitals';
-import nextTypeScript from 'eslint-config-next/typescript';
+import { defineConfig, globalIgnores } from 'eslint/config';
+import nextCoreWebVitals from 'eslint-config-next/core-web-vitals';
+import nextTypescript from 'eslint-config-next/typescript';
+import react from 'eslint-plugin-react';
 
-const config = [
-  ...nextVitals,
-  ...nextTypeScript,
+export default defineConfig([
+  globalIgnores(['.next/**', 'next-env.d.ts', 'protos/**']),
+  react.configs.flat.recommended,
+  ...nextCoreWebVitals,
+  ...nextTypescript,
   {
-    ignores: ['protos/**', 'cypress/screenshots/**', 'cypress/videos/**'],
-  },
-  {
-    files: ['**/*.{js,jsx,mjs,ts,tsx,mts,cts}'],
     rules: {
       '@typescript-eslint/no-non-null-assertion': 'off',
       'react-hooks/exhaustive-deps': 'warn',
@@ -31,9 +31,15 @@ const config = [
     },
   },
   {
-    files: ['**/*.cjs', 'next.config.js', 'utils/telemetry/Instrumentation.js'],
-    rules: { '@typescript-eslint/no-require-imports': 'off' },
+    files: ['**/*.js'],
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+    },
   },
-];
-
-export default config;
+  {
+    files: ['cypress/**'],
+    rules: {
+      '@typescript-eslint/no-unused-expressions': 'off',
+    },
+  },
+]);
