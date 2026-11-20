@@ -1,0 +1,147 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
+pipeline {
+    agent any
+
+    options {
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '30'))
+    }
+
+    parameters {
+        choice(
+            name: 'SERVICE',
+            choices: ['all', 'currency', 'email', 'flagd-ui', 'quote', 'shipping'],
+            description: 'C++ / Ruby / Elixir / PHP / Rust service to build, scan and push to Artifact Registry'
+        )
+        string(
+            name: 'CUSTOM_TAG',
+            defaultValue: '',
+            trim: true,
+            description: 'Image tag override. Must be a tag that does not already exist (the repository has tag immutability). Leave blank to use <build number>-<git short SHA>'
+        )
+    }
+
+    environment {
+        REGISTRY_HOST = 'asia-south1-docker.pkg.dev'
+        REGISTRY      = "${REGISTRY_HOST}/ct-lens/otel"
+        PLATFORM      = 'linux/amd64'
+        SCAN_REPORT_SEVERITY = 'HIGH,CRITICAL'
+        SCAN_FAIL_SEVERITY   = 'CRITICAL'
+    }
+
+    stages {
+        stage('Prepare') {
+            steps {
+                sh 'trivy --version'
+                script {
+                    def sha = sh(script: 'git rev-parse --short=7 HEAD', returnStdout: true).trim()
+                    env.IMAGE_TAG = params.CUSTOM_TAG ?: "${env.BUILD_NUMBER}-${sha}"
+                    currentBuild.description = "${params.SERVICE} : ${env.IMAGE_TAG}"
+                    echo "Service: ${params.SERVICE} | Tag: ${env.IMAGE_TAG} | Registry: ${env.REGISTRY}"
+                }
+            }
+        }
+
+        stage('Login to Artifact Registry') {
+            steps {
+                withCredentials([file(credentialsId: 'GCP_SERVICE_ACCOUNT_KEY', variable: 'GCP_KEY_FILE')]) {
+                    sh 'docker login -u _json_key --password-stdin "${REGISTRY_HOST}" < "${GCP_KEY_FILE}"'
+                }
+            }
+        }
+
+        stage('currency') {
+            when { expression { params.SERVICE == 'all' || params.SERVICE == 'currency' } }
+            steps {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    script { buildAndPush('currency', 'src/currency/Dockerfile', ['OPENTELEMETRY_CPP_VERSION']) }
+                }
+            }
+        }
+
+        stage('email') {
+            when { expression { params.SERVICE == 'all' || params.SERVICE == 'email' } }
+            steps {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    script { buildAndPush('email', 'src/email/Dockerfile', []) }
+                }
+            }
+        }
+
+        stage('flagd-ui') {
+            when { expression { params.SERVICE == 'all' || params.SERVICE == 'flagd-ui' } }
+            steps {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    script { buildAndPush('flagd-ui', 'src/flagd-ui/Dockerfile', []) }
+                }
+            }
+        }
+
+        stage('quote') {
+            when { expression { params.SERVICE == 'all' || params.SERVICE == 'quote' } }
+            steps {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    script { buildAndPush('quote', 'src/quote/Dockerfile', []) }
+                }
+            }
+        }
+
+        stage('shipping') {
+            when { expression { params.SERVICE == 'all' || params.SERVICE == 'shipping' } }
+            steps {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    script { buildAndPush('shipping', 'src/shipping/Dockerfile', []) }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Pushed ${params.SERVICE} to ${env.REGISTRY} with tag ${env.IMAGE_TAG}"
+        }
+        always {
+            archiveArtifacts artifacts: 'trivy-*.txt', allowEmptyArchive: true
+            sh 'docker logout "${REGISTRY_HOST}" || true'
+            cleanWs()
+        }
+    }
+}
+
+def buildAndPush(String service, String dockerfile, List buildArgs) {
+    def image = "${env.REGISTRY}/${service}:${env.IMAGE_TAG}"
+    if (sh(script: "docker buildx imagetools inspect ${image} > /dev/null 2>&1", returnStatus: true) == 0) {
+        error("${image} already exists and the repository has tag immutability enabled. Use a new CUSTOM_TAG or leave it blank.")
+    }
+    def buildArgFlags = ''
+    for (int i = 0; i < buildArgs.size(); i++) {
+        def name = buildArgs[i]
+        // Regex '^NAME=' picks the NAME=value line from the repo's .env; cut keeps only the value
+        def value = sh(script: "grep '^${name}=' .env | cut -d= -f2-", returnStdout: true).trim()
+        if (!value) {
+            error("${name} is missing from .env")
+        }
+        buildArgFlags += " --build-arg ${name}=${value}"
+    }
+    try {
+        sh """
+            docker buildx build \\
+                --platform ${env.PLATFORM} \\
+                -f ${dockerfile} \\
+                -t ${image} \\
+                ${buildArgFlags} \\
+                --load \\
+                .
+        """
+        sh """
+            trivy image --no-progress --severity ${env.SCAN_REPORT_SEVERITY} --output trivy-${service}.txt ${image}
+            cat trivy-${service}.txt
+            trivy image --no-progress --severity ${env.SCAN_FAIL_SEVERITY} --ignore-unfixed --exit-code 1 ${image}
+        """
+        sh "docker push ${image}"
+    } finally {
+        sh "docker rmi ${image} || true"
+    }
+}

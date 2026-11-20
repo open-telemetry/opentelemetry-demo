@@ -13,7 +13,7 @@ pipeline {
         choice(
             name: 'SERVICE',
             choices: ['all', 'accounting', 'cart'],
-            description: '.NET service to build and push to Artifact Registry'
+            description: '.NET service to build, scan and push to Artifact Registry'
         )
         string(
             name: 'CUSTOM_TAG',
@@ -54,12 +54,20 @@ pipeline {
 
         stage('accounting') {
             when { expression { params.SERVICE == 'all' || params.SERVICE == 'accounting' } }
-            steps { script { buildAndPush('accounting', 'src/accounting/Dockerfile') } }
+            steps {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    script { buildAndPush('accounting', 'src/accounting/Dockerfile', []) }
+                }
+            }
         }
 
         stage('cart') {
             when { expression { params.SERVICE == 'all' || params.SERVICE == 'cart' } }
-            steps { script { buildAndPush('cart', 'src/cart/src/Dockerfile') } }
+            steps {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    script { buildAndPush('cart', 'src/cart/src/Dockerfile', []) }
+                }
+            }
         }
     }
 
@@ -75,10 +83,20 @@ pipeline {
     }
 }
 
-def buildAndPush(String service, String dockerfile) {
+def buildAndPush(String service, String dockerfile, List buildArgs) {
     def image = "${env.REGISTRY}/${service}:${env.IMAGE_TAG}"
     if (sh(script: "docker buildx imagetools inspect ${image} > /dev/null 2>&1", returnStatus: true) == 0) {
         error("${image} already exists and the repository has tag immutability enabled. Use a new CUSTOM_TAG or leave it blank.")
+    }
+    def buildArgFlags = ''
+    for (int i = 0; i < buildArgs.size(); i++) {
+        def name = buildArgs[i]
+        // Regex '^NAME=' picks the NAME=value line from the repo's .env; cut keeps only the value
+        def value = sh(script: "grep '^${name}=' .env | cut -d= -f2-", returnStdout: true).trim()
+        if (!value) {
+            error("${name} is missing from .env")
+        }
+        buildArgFlags += " --build-arg ${name}=${value}"
     }
     try {
         sh """
@@ -86,6 +104,7 @@ def buildAndPush(String service, String dockerfile) {
                 --platform ${env.PLATFORM} \\
                 -f ${dockerfile} \\
                 -t ${image} \\
+                ${buildArgFlags} \\
                 --load \\
                 .
         """
