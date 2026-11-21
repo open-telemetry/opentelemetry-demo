@@ -3,15 +3,20 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"net"
 	"net/http"
 	"strings"
 	"testing"
 	"time"
 
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/sdk/trace/tracetest"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/health"
@@ -125,5 +130,60 @@ func TestServerStartupAndGracefulStop(t *testing.T) {
 		}
 	case <-time.After(2 * time.Second):
 		t.Fatal("server did not exit after GracefulStop")
+	}
+}
+
+type fakeCartClient struct {
+	pb.CartServiceClient
+	emptyCartErr error
+	emptyCalls   int
+}
+
+func (f *fakeCartClient) EmptyCart(context.Context, *pb.EmptyCartRequest, ...grpc.CallOption) (*pb.Empty, error) {
+	f.emptyCalls++
+	return &pb.Empty{}, f.emptyCartErr
+}
+
+func TestEmptyCartAfterOrder(t *testing.T) {
+	tests := []struct {
+		name       string
+		err        error
+		wantEvents int
+		wantLog    bool
+	}{
+		{name: "success is silent"},
+		{name: "failure is recorded and logged", err: errors.New("unavailable"), wantEvents: 1, wantLog: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var logs bytes.Buffer
+			oldLogger := logger
+			logger = slog.New(slog.NewTextHandler(&logs, nil))
+			t.Cleanup(func() { logger = oldLogger })
+
+			recorder := tracetest.NewSpanRecorder()
+			tp := sdktrace.NewTracerProvider(sdktrace.WithSpanProcessor(recorder))
+			ctx, span := tp.Tracer("test").Start(context.Background(), "PlaceOrder")
+
+			cart := &fakeCartClient{emptyCartErr: tt.err}
+			cs := &checkout{cartSvcClient: cart}
+			cs.emptyCartAfterOrder(ctx, "user-1", "order-1")
+			span.End()
+
+			if cart.emptyCalls != 1 {
+				t.Fatalf("EmptyCart calls = %d, want 1", cart.emptyCalls)
+			}
+			ended := recorder.Ended()
+			if len(ended) != 1 {
+				t.Fatalf("ended spans = %d, want 1", len(ended))
+			}
+			if got := len(ended[0].Events()); got != tt.wantEvents {
+				t.Errorf("span events = %d, want %d", got, tt.wantEvents)
+			}
+			if got := strings.Contains(logs.String(), "cart could not be emptied"); got != tt.wantLog {
+				t.Errorf("warning logged = %v, want %v; logs: %s", got, tt.wantLog, logs.String())
+			}
+		})
 	}
 }
