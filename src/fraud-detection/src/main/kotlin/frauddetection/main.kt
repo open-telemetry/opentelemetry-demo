@@ -69,17 +69,17 @@ fun main() {
             // kafkaConsumerDead: leave the group and stop polling; re-subscribe when off
             if (getBooleanFeatureFlagValue("kafkaConsumerDead")) {
                 if (subscribed) {
-                    logger.info("Consumer unsubscribed from topic $topic in group $groupID (group goes Empty, members -> 0)")
                     consumer.unsubscribe()
                     subscribed = false
+                    logger.info("Consumer unsubscribed from topic $topic in group $groupID")
                 }
                 // Do not poll while dead; sleep to avoid a busy loop.
                 Thread.sleep(1000)
                 continue
             } else if (!subscribed) {
-                logger.info("Consumer resubscribed to topic $topic in group $groupID (rejoining group)")
                 consumer.subscribe(listOf(topic))
                 subscribed = true
+                logger.info("Consumer resubscribed to topic $topic in group $groupID")
             }
 
             val records = try {
