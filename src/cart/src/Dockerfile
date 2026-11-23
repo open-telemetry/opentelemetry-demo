@@ -27,7 +27,7 @@ RUN dotnet restore ./tests/cart.tests.csproj --locked-mode
 
 FROM base AS test
 
-RUN dotnet test ./tests/cart.tests.csproj --no-restore --configuration Release \
+RUN dotnet test --project ./tests/cart.tests.csproj --no-restore --configuration Release \
   && touch /tmp/cart-tests-passed
 
 FROM base AS builder
