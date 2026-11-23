@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import org.apache.logging.log4j.CloseableThreadContext;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -245,12 +246,16 @@ public final class AdService {
         }
 
         long durationMs = (System.nanoTime() - startNanos) / 1_000_000;
-        if (adResponseType == AdResponseType.TARGETED) {
-          logger.info("Served {} ads for context keys {} in {} ms", allAds.size(), req.getContextKeysList(), durationMs);
-        } else if (adRequestType == AdRequestType.TARGETED) {
-          logger.info("Served {} random ads for unmatched context keys {} in {} ms", allAds.size(), req.getContextKeysList(), durationMs);
-        } else {
-          logger.info("Served {} random ads in {} ms", allAds.size(), durationMs);
+        try (CloseableThreadContext.Instance ignored =
+            CloseableThreadContext.put("demo.ad.request_type", adRequestType.name())
+                .put("demo.ad.response_type", adResponseType.name())) {
+          if (adResponseType == AdResponseType.TARGETED) {
+            logger.info("Served {} ads for context keys {} in {} ms", allAds.size(), req.getContextKeysList(), durationMs);
+          } else if (adRequestType == AdRequestType.TARGETED) {
+            logger.info("Served {} random ads for unmatched context keys {} in {} ms", allAds.size(), req.getContextKeysList(), durationMs);
+          } else {
+            logger.info("Served {} random ads in {} ms", allAds.size(), durationMs);
+          }
         }
         AdResponse reply = AdResponse.newBuilder().addAllAds(allAds).build();
         responseObserver.onNext(reply);
