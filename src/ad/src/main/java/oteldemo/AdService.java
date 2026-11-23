@@ -245,8 +245,10 @@ public final class AdService {
         }
 
         long durationMs = (System.nanoTime() - startNanos) / 1_000_000;
-        if (req.getContextKeysCount() > 0) {
+        if (adResponseType == AdResponseType.TARGETED) {
           logger.info("Served {} ads for context keys {} in {} ms", allAds.size(), req.getContextKeysList(), durationMs);
+        } else if (adRequestType == AdRequestType.TARGETED) {
+          logger.info("Served {} random ads for unmatched context keys {} in {} ms", allAds.size(), req.getContextKeysList(), durationMs);
         } else {
           logger.info("Served {} random ads in {} ms", allAds.size(), durationMs);
         }

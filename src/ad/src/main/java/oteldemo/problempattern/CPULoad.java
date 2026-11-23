@@ -4,12 +4,8 @@
 */
 package oteldemo.problempattern;
 
-import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
-import io.grpc.ManagedChannelBuilder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,15 +42,10 @@ public class CPULoad {
      */
     public void execute(Boolean enabled) {
         if (enabled) {
-            double cpuLoad = ManagementFactory.getOperatingSystemMXBean() instanceof com.sun.management.OperatingSystemMXBean osBean ? osBean.getProcessCpuLoad() : -1;
-            if (cpuLoad < 0 || Double.isNaN(cpuLoad)) {
-                logger.info("Request processing time exceeded threshold: thread pool saturated, active={}", runningWorkers.size());
-            } else {
-                logger.info("Request processing time exceeded threshold: thread pool saturated, active={} cpu={}%", runningWorkers.size(), Math.round(cpuLoad * 1000) / 10.0);
-            }
             if (!running) {
                 spawnLoadWorkers(THREAD_COUNT);
                 running = true;
+                logger.info("Started {} workers to simulate high CPU load", THREAD_COUNT);
             }
         } else {
             running = false;
