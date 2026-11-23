@@ -99,6 +99,7 @@ For more information about the maintainer role, see the [community repository](h
 ### Approvers
 
 - [D&#xF3;nal O'Sullivan](https://github.com/osullivandonal), Elastic
+- [Matthew Wimpelberg](https://github.com/mwimpelberg28), Grafana Labs
 - [Piotr Kie&#x142;kowicz](https://github.com/Kielek), Splunk
 
 For more information about the approver role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver).
