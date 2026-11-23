@@ -116,7 +116,7 @@
     },
     "intlShippingSlowdown": {
       "defaultVariant": "off",
-      "description": "Delays international shipping responses to simulate overseas shipping delay",
+      "description": "Delays international shipping responses by 0 to 10 seconds to simulate overseas shipping delay",
       "state": "ENABLED",
       "variants": {
         "10sec": 10,

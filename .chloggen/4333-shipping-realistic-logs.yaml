@@ -1,5 +1,5 @@
 change_type: enhancement
 component: shipping
-note: "Log shipping quotes, tracking ids and the international slowdown with carrier latency"
+note: "Log shipping quotes, tracking ids and the configured international shipping delay"
 issues: [4333]
 subtext:

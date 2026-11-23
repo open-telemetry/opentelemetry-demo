@@ -43,11 +43,11 @@ attributes:
     type: string
     brief: Shipment destination country
     stability: development
-    note: The country of the shipping address, without the rest of the address
-    examples: ["US", "DE"]
-  - key: demo.shipping.carrier.latency_ms
+    note: The trimmed and uppercased country of the shipping address, or unknown if it is missing or empty
+    examples: ["UNITED STATES", "DE", "unknown"]
+  - key: demo.shipping.delay_ms
     type: int
-    brief: Carrier rate API latency
+    brief: Injected shipping delay
     stability: development
-    note: The delay in milliseconds injected into the carrier rate call for an international shipment
+    note: The configured delay in milliseconds injected into an international shipment
     examples: [5000, 10000]

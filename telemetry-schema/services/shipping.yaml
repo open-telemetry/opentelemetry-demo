@@ -13,4 +13,4 @@ attribute_groups:
       - ref: demo.shipping.quote.cost.total
       - ref: demo.shipping.tracking.id
       - ref: demo.shipping.destination.country
-      - ref: demo.shipping.carrier.latency_ms
+      - ref: demo.shipping.delay_ms
