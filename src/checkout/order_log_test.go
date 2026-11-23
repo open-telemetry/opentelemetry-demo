@@ -13,11 +13,54 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/IBM/sarama"
+	"github.com/open-feature/go-sdk/openfeature"
 	"go.opentelemetry.io/otel"
 	"google.golang.org/grpc"
 
+	flags "github.com/open-telemetry/opentelemetry-demo/src/checkout/flags"
 	pb "github.com/open-telemetry/opentelemetry-demo/src/checkout/genproto/oteldemo"
 )
+
+type fakeProducer struct {
+	sarama.AsyncProducer
+	input     chan *sarama.ProducerMessage
+	successes chan *sarama.ProducerMessage
+	errors    chan *sarama.ProducerError
+}
+
+func (p *fakeProducer) Input() chan<- *sarama.ProducerMessage     { return p.input }
+func (p *fakeProducer) Successes() <-chan *sarama.ProducerMessage { return p.successes }
+func (p *fakeProducer) Errors() <-chan *sarama.ProducerError      { return p.errors }
+
+func TestKafkaOverloadSimulationLog(t *testing.T) {
+	var buf bytes.Buffer
+	oldLogger, oldTracer, oldFlag := logger, tracer, flags.KafkaQueueProblems.Value
+	logger = slog.New(slog.NewJSONHandler(&buf, nil))
+	tracer = otel.Tracer("checkout-test")
+	flags.KafkaQueueProblems.Value = func(context.Context, openfeature.EvaluationContext) int64 { return 1 }
+	t.Cleanup(func() {
+		logger, tracer, flags.KafkaQueueProblems.Value = oldLogger, oldTracer, oldFlag
+	})
+
+	producer := &fakeProducer{
+		input:     make(chan *sarama.ProducerMessage, 2),
+		successes: make(chan *sarama.ProducerMessage, 2),
+		errors:    make(chan *sarama.ProducerError),
+	}
+	producer.successes <- &sarama.ProducerMessage{}
+	producer.successes <- &sarama.ProducerMessage{}
+	cs := &checkout{KafkaProducerClient: producer}
+	cs.sendToPostProcessor(context.Background(), &pb.OrderResult{OrderId: "test-order"})
+
+	output := buf.String()
+	if !strings.Contains(output, `"demo.kafka.producer.simulated_messages":1`) {
+		t.Errorf("simulation count missing from log: %s", output)
+	}
+	if strings.Contains(output, "queue full") || strings.Contains(output, "queued_messages") {
+		t.Errorf("simulation was logged as measured queue saturation: %s", output)
+	}
+}
 
 type fakeCart struct{ pb.CartServiceClient }
 
@@ -105,6 +148,9 @@ func TestPlaceOrderSuccessLogsOrderSummary(t *testing.T) {
 	}
 	if id, _ := found["demo.order.id"].(string); id == "" {
 		t.Errorf("demo.order.id missing from log: %v", found)
+	}
+	if msg, _ := found["msg"].(string); !strings.Contains(msg, "1 distinct items") {
+		t.Errorf("summary does not identify distinct items: %s", msg)
 	}
 }
 

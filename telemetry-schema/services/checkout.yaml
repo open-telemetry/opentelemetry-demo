@@ -22,4 +22,4 @@ attribute_groups:
       - ref: demo.order.amount
       - ref: demo.order.items.count
       - ref: demo.cart.items.count
-      - ref: demo.kafka.producer.queued_messages
+      - ref: demo.kafka.producer.simulated_messages

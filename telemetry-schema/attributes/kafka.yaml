@@ -3,9 +3,9 @@
 
 file_format: definition/2
 attributes:
-  - key: demo.kafka.producer.queued_messages
+  - key: demo.kafka.producer.simulated_messages
     type: int
-    brief: Messages queued on the Kafka producer
-    stability: stable
-    note: The number of extra messages queued on the local Kafka producer while the kafkaQueueProblems feature flag saturates its queue
+    brief: Extra Kafka message send goroutines started for simulation
+    stability: development
+    note: The configured number of extra producer send goroutines started when the kafkaQueueProblems feature flag is enabled; this is not the measured queue size
     examples: [10, 100]

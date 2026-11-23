@@ -428,7 +428,7 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 	)
 	logger.LogAttrs(
 		ctx,
-		slog.LevelInfo, fmt.Sprintf("Order placed: %s, %d items, total %.2f %s in %d ms", orderID.String(), len(prep.orderItems), totalPriceFloat, req.UserCurrency, time.Since(start).Milliseconds()),
+		slog.LevelInfo, fmt.Sprintf("Order placed: %s, %d distinct items, total %.2f %s in %d ms", orderID.String(), len(prep.orderItems), totalPriceFloat, req.UserCurrency, time.Since(start).Milliseconds()),
 		slog.String("demo.order.id", orderID.String()),
 		slog.Float64("demo.shipping.amount", shippingCostFloat),
 		slog.Float64("demo.order.amount", totalPriceFloat),
@@ -772,19 +772,17 @@ func (cs *checkout) sendToPostProcessor(ctx context.Context, result *pb.OrderRes
 
 	ffValue := flags.KafkaQueueProblems.Value(ctx, openfeature.EvaluationContext{})
 	if ffValue > 0 {
-		logger.Info("Warning: FeatureFlag 'kafkaQueueProblems' is activated, overloading queue now.")
-		logger.ErrorContext(ctx, "kafka: producer queue full: local queue saturated, delivery to topic orders delayed",
-			slog.String("messaging.destination.name", kafka.Topic),
-			slog.String("demo.order.id", result.GetOrderId()),
-			slog.Int64("demo.kafka.producer.queued_messages", ffValue),
-		)
 		for range ffValue {
 			go func(msg sarama.ProducerMessage) {
 				cs.KafkaProducerClient.Input() <- &msg
 				<-cs.KafkaProducerClient.Successes()
 			}(msg)
 		}
-		logger.Info(fmt.Sprintf("Done with #%d messages for overload simulation.", ffValue))
+		logger.WarnContext(ctx, "Started goroutines to send extra Kafka messages for overload simulation",
+			slog.String("messaging.destination.name", kafka.Topic),
+			slog.String("demo.order.id", result.GetOrderId()),
+			slog.Int64("demo.kafka.producer.simulated_messages", ffValue),
+		)
 	}
 }
 
