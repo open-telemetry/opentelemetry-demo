@@ -68,15 +68,21 @@ func TestGetProductLookupLogsDistinguishMissingFromDatabaseFailure(t *testing.T)
 		name     string
 		queryErr error
 		want     string
+		wantCode codes.Code
 	}{
-		{name: "missing", want: `"msg":"product not found"`},
-		{name: "database failure", queryErr: errors.New("database unavailable"), want: `"error":"failed to scan product row: database unavailable"`},
+		{name: "missing", want: `"msg":"product not found"`, wantCode: codes.NotFound},
+		{name: "database failure", queryErr: errors.New("database unavailable"), want: `"error":"failed to scan product row: database unavailable"`, wantCode: codes.Internal},
+		{name: "canceled", queryErr: context.Canceled, want: `"msg":"failed to query product"`, wantCode: codes.Canceled},
+		{name: "deadline exceeded", queryErr: context.DeadlineExceeded, want: `"msg":"failed to query product"`, wantCode: codes.DeadlineExceeded},
 	} {
 		t.Run(tt.name, func(t *testing.T) {
 			buf := setupLogTest(t, tt.queryErr)
 			_, err := (&productCatalog{}).GetProduct(context.Background(), &pb.GetProductRequest{Id: "test-product"})
-			if status.Code(err) != codes.NotFound {
-				t.Fatalf("GetProduct() code = %v, want existing NotFound behavior", status.Code(err))
+			if status.Code(err) != tt.wantCode {
+				t.Fatalf("GetProduct() code = %v, want %v", status.Code(err), tt.wantCode)
+			}
+			if tt.wantCode == codes.Internal && status.Convert(err).Message() != "failed to query product" {
+				t.Errorf("GetProduct() exposed database error: %v", err)
 			}
 			if !strings.Contains(buf.String(), tt.want) {
 				t.Errorf("log = %s, want %s", buf.String(), tt.want)

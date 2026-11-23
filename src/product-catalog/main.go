@@ -419,16 +419,21 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			logger.WarnContext(ctx, "product not found", slog.String("demo.product.id", req.Id))
-		} else {
-			logger.ErrorContext(ctx, "failed to query product",
-				slog.String("demo.product.id", req.Id),
-				slog.Any("error", err),
-			)
+			msg := fmt.Sprintf("Product Not Found: %s", req.Id)
+			span.SetStatus(otelcodes.Error, msg)
+			span.AddEvent(msg)
+			return nil, status.Error(codes.NotFound, msg)
 		}
-		msg := fmt.Sprintf("Product Not Found: %s", req.Id)
-		span.SetStatus(otelcodes.Error, msg)
-		span.AddEvent(msg)
-		return nil, status.Error(codes.NotFound, msg)
+		logger.ErrorContext(ctx, "failed to query product",
+			slog.String("demo.product.id", req.Id),
+			slog.Any("error", err),
+		)
+		span.SetStatus(otelcodes.Error, "failed to query product")
+		span.RecordError(err)
+		if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+			return nil, status.FromContextError(err).Err()
+		}
+		return nil, status.Error(codes.Internal, "failed to query product")
 	}
 
 	span.AddEvent("Product Found")
