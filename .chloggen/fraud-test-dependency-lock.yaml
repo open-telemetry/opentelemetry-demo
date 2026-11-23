@@ -1,0 +1,4 @@
+change_type: bug_fix
+component: fraud-detection
+note: Update fraud detection test dependency locks to unblock Gradle tests
+issues: [4343]
