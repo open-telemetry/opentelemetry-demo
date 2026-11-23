@@ -294,7 +294,7 @@ func getProductFromDB(ctx context.Context, productID string) (*pb.Product, error
 
 	if err := row.Scan(&id, &name, &description, &picture, &currencyCode, &units, &nanos, &categoriesStr); err != nil {
 		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("product not found")
+			return nil, fmt.Errorf("product not found: %w", err)
 		}
 		return nil, fmt.Errorf("failed to scan product row: %w", err)
 	}
@@ -417,11 +417,14 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 	elapsed := time.Since(start)
 	logSlowQuery(ctx, "GetProduct", elapsed)
 	if err != nil {
-		logger.LogAttrs(
-			ctx,
-			slog.LevelWarn, "product not found: "+req.Id,
-			slog.String("demo.product.id", req.Id),
-		)
+		if errors.Is(err, sql.ErrNoRows) {
+			logger.WarnContext(ctx, "product not found", slog.String("demo.product.id", req.Id))
+		} else {
+			logger.ErrorContext(ctx, "failed to query product",
+				slog.String("demo.product.id", req.Id),
+				slog.Any("error", err),
+			)
+		}
 		msg := fmt.Sprintf("Product Not Found: %s", req.Id)
 		span.SetStatus(otelcodes.Error, msg)
 		span.AddEvent(msg)
@@ -459,7 +462,9 @@ func (p *productCatalog) SearchProducts(ctx context.Context, req *pb.SearchProdu
 	span.SetAttributes(
 		attribute.Int("demo.product.search.count", len(result)),
 	)
-	logger.InfoContext(ctx, fmt.Sprintf("Search for %q returned %d products in %d ms", req.Query, len(result), elapsed.Milliseconds()))
+	logger.InfoContext(ctx, fmt.Sprintf("Search returned %d products in %d ms", len(result), elapsed.Milliseconds()),
+		slog.Int("demo.product.search.count", len(result)),
+	)
 	return &pb.SearchProductsResponse{Results: result}, nil
 }
 

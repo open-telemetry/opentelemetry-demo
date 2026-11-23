@@ -43,7 +43,7 @@ attributes:
     type: int
     brief: Planned duration a product table lock is held
     stability: development
-    note: Milliseconds the ACCESS EXCLUSIVE lock on the product table is held
+    note: Planned hold time in milliseconds for the ACCESS EXCLUSIVE lock on the product table; cancellation can end the hold early
     examples: [30000, 1500]
   - key: demo.product.filtered.list
     type: string[]
