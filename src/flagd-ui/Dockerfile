@@ -14,7 +14,7 @@
 #   - https://pkgs.org/ - resource for finding needed packages
 #   - Ex: docker.io/hexpm/elixir:1.20.1-erlang-28.5-debian-trixie-20260610-slim
 #
-FROM docker.io/hexpm/elixir:1.20.1-erlang-28.5-debian-trixie-20260610-slim@sha256:d80ab56d5f111c4285f20ea22ade8deafd00968f37722e7c8515070dfe86f98a AS base
+FROM docker.io/hexpm/elixir:1.20.1-erlang-28.5-debian-trixie-20260610-slim@sha256:7d5094306672fef85cc9973a8b068d9888c1d75eb1faaa3939e895a28b054189 AS base
 
 # install build dependencies
 RUN apt-get update \
