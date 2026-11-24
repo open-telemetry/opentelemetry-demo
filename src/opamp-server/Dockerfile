@@ -1,7 +1,7 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-FROM golang:1.27.1-alpine@sha256:cf6fca6641884b8433441b2b0652976f975e1d0fdd26d177eaaf8596087f3125 AS builder
+FROM golang:1.27.4-alpine@sha256:70bd7ddea8b6cbe5d6943cde279d6b67feb10cc924fb9100d1d8757c1575b280 AS builder
 
 ARG OPAMP_GO_VERSION
 
@@ -30,7 +30,7 @@ RUN sed -i 's|href="/"|href="/opamp/"|g' internal/examples/html/html/agent.html 
 WORKDIR /src/opamp-go/internal/examples
 RUN go build -trimpath -ldflags="-s -w" -o /opamp-server ./server
 
-FROM alpine:3.22@sha256:14358309a308569c32bdc37e2e0e9694be33a9d99e68afb0f5ff33cc1f695dce
+FROM alpine:3.24@sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf
 
 RUN apk add --no-cache ca-certificates
 
