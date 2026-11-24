@@ -23,6 +23,10 @@ From the root directory, run:
 docker compose build product-catalog
 ```
 
+`GetProduct` returns `NotFound` for a missing product and `Internal` for a
+database failure. Canceled requests and expired deadlines retain their gRPC
+status.
+
 Database Calls Instrumentation
 
 PostgreSQL queries are instrumented with
