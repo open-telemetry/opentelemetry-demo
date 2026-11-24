@@ -18,5 +18,6 @@ datasources:
       logMessageField: body
       pplEnabled: true
       timeField: observedTimestamp
-      # version must be in sync with src\opensearch\Dockerfile
+      # version must be in sync with src/opensearch/Dockerfile; Renovate bumps both in one PR
+      # renovate: datasource=docker depName=docker.io/opensearchproject/opensearch
       version: 3.9.0
