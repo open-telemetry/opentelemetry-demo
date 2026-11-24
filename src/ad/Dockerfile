@@ -27,6 +27,7 @@ WORKDIR /usr/src/app/
 COPY --from=builder /usr/src/app/ ./
 ADD --chmod=644 https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v$OTEL_JAVA_AGENT_VERSION/opentelemetry-javaagent.jar /usr/src/app/opentelemetry-javaagent.jar
 ENV JAVA_TOOL_OPTIONS="-javaagent:/usr/src/app/opentelemetry-javaagent.jar -Xmx200m"
+ENV OTEL_INSTRUMENTATION_LOG4J_APPENDER_EXPERIMENTAL_MDC_ATTRIBUTES_INCLUDED="demo.ad.request_type,demo.ad.response_type"
 
 ARG AD_PORT=9555
 ARG AD_PROMETHEUS_PORT=9465

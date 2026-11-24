@@ -1,0 +1,11 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+attributes:
+  - key: demo.kafka.producer.simulated_messages
+    type: int
+    brief: Extra Kafka message send goroutines started for simulation
+    stability: development
+    note: The configured number of extra producer send goroutines started when the kafkaQueueProblems feature flag is enabled; this is not the measured queue size
+    examples: [10, 100]

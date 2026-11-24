@@ -76,7 +76,7 @@ async def get_cart(user_id: str):
     url = f"http://{BASE_URL}/api/cart"
     try:
         async with httpx.AsyncClient(timeout=TIMEOUT) as client:
-            res = await client.get(url, params={"user_id": user_id})
+            res = await client.get(url, params={"sessionId": user_id})
             res.raise_for_status()
             return res.json()
     except Exception as e:
@@ -128,12 +128,14 @@ async def get_product(product_id: str):
 @count_tool_call
 async def checkout(checkout_person):
     """Checkout the user's cart and create an order.
-    Takes request in the format {string user_id, string userCurrency, Address address, string email, CreditCardInfo creditCard}
+    Takes request in the format {string userId, string userCurrency, Address address, string email, CreditCardInfo creditCard}
     Where Address is {string streetAddress, string city, string state, string country, string zipCode} and
     CreditCardInfo is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear, int32 creditCardExpirationMonth}
     """
     url = f"http://{BASE_URL}/api/checkout"
     try:
+        if isinstance(checkout_person, str):
+            checkout_person = json.loads(checkout_person)
         async with httpx.AsyncClient(timeout=TIMEOUT) as client:
             res = await client.post(url, json=checkout_person)
             if not res.is_success:

@@ -1,0 +1,5 @@
+change_type: enhancement
+component: ad
+note: "Log heap and pause time for manual GC, CPU load for the high CPU pattern, and ad count and duration per request"
+issues: [4333]
+subtext:

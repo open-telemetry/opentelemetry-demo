@@ -15,7 +15,7 @@
 # limitations under the License.
 
 # https://mcr.microsoft.com/v2/dotnet/sdk/tags/list
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:11.0.100@sha256:65f3c7c6a25a239ab3e6719f2896147e7b68242ff2d8818dd70498bde6ef8bea AS base
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:11.0.100@sha256:2794448a07118a6eaf00f29ab5d2bf44928517ce5ff86505a63a69230374f599 AS base
 ARG TARGETARCH
 
 WORKDIR /usr/src/app/
@@ -27,7 +27,7 @@ RUN dotnet restore ./tests/cart.tests.csproj --locked-mode
 
 FROM base AS test
 
-RUN dotnet test ./tests/cart.tests.csproj --no-restore --configuration Release \
+RUN dotnet test --project ./tests/cart.tests.csproj --no-restore --configuration Release \
   && touch /tmp/cart-tests-passed
 
 FROM base AS builder
