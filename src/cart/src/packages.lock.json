@@ -34,17 +34,17 @@
       },
       "OpenFeature": {
         "type": "Direct",
-        "requested": "[2.14.1, )",
-        "resolved": "2.14.1",
-        "contentHash": "ubw4ACEyAcHzeRNepzStTE0DgIJHpsYqRNcvdghUpPFXIf9whYiZlYLgBU6jdI2qdoVMXBrzqP6y9w9iDOuEDQ=="
+        "requested": "[2.14.2, )",
+        "resolved": "2.14.2",
+        "contentHash": "yYqoTIwcDrLBJq+treTjBoO+MLsRJEp5QVuylnE4qM16YVsNcR9d8H9M8i1AM7YXy/y/6m0gWyD3rESHNT7stg=="
       },
       "OpenFeature.Hosting": {
         "type": "Direct",
-        "requested": "[2.14.1, )",
-        "resolved": "2.14.1",
-        "contentHash": "VeoXlHJBO0DvfW13+8+7SNMLnSn8gUHlbMo64vjZHulP2291ybDVjiLhlzwPURbOvNrFDeu1a3W8kk3wwzBN5Q==",
+        "requested": "[2.14.2, )",
+        "resolved": "2.14.2",
+        "contentHash": "KvhkLnZoD541RuPYoTQMK6tzKQU9kMQWbuAsqP+vSxoGTgycDBYHvSTv0tVgAwaNIIeQwlAQMTMwQoqGMb5byg==",
         "dependencies": {
-          "OpenFeature": "2.14.1"
+          "OpenFeature": "2.14.2"
         }
       },
       "OpenFeature.Providers.Flagd": {
