@@ -40,6 +40,12 @@ From the root of `opentelemetry-demo`, run:
 docker build --file ./src/ad/Dockerfile ./
 ```
 
+The container configures the Java agent to capture `demo.ad.request_type` and
+`demo.ad.response_type` from the ad response log's Log4j context. When running
+outside the container with the Java agent, configure
+`OTEL_INSTRUMENTATION_LOG4J_APPENDER_EXPERIMENTAL_MDC_ATTRIBUTES_INCLUDED`
+with those keys to export the same attributes.
+
 ## Custom metrics: bridging Prometheus to OpenTelemetry
 
 The Ad service intentionally emits custom metrics in **two different ways**:
