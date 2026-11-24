@@ -14,7 +14,7 @@
 #   - https://pkgs.org/ - resource for finding needed packages
 #   - Ex: docker.io/hexpm/elixir:1.20.1-erlang-28.5-debian-trixie-20260610-slim
 #
-FROM docker.io/hexpm/elixir:1.20.1-erlang-28.5-debian-trixie-20260610-slim@sha256:7d5094306672fef85cc9973a8b068d9888c1d75eb1faaa3939e895a28b054189 AS base
+FROM docker.io/hexpm/elixir:1.20.5-erlang-29.1.2-debian-trixie-20261123-slim@sha256:eed78763a32f23b30c53ac45f3a8f21a63f7d87924be14e1fdbff6f295b7f327 AS base
 
 # install build dependencies
 RUN apt-get update \
@@ -83,7 +83,7 @@ RUN mix release
 
 # start a new build stage so that the final image will only contain
 # the compiled release and other runtime necessities
-FROM docker.io/debian:trixie-20260824-slim@sha256:d7e12182ce18b85b93007c1dedf31f2d29e01ccf3182cc4017c709b6259bc132 AS final
+FROM docker.io/debian:trixie-20261123-slim@sha256:8aa5a7bf5a1955bddbe7d74fcdd0b91ab30e74362a8b73af672b0481b35b44a0 AS final
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends libstdc++6 openssl locales ca-certificates \
