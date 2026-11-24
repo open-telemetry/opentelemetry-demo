@@ -97,6 +97,19 @@
       depNameTemplate: 'go',
       datasourceTemplate: 'golang-version',
     },
+    {
+      customType: 'regex',
+      description: [
+        'OpenSearch version in the Grafana OpenSearch datasource; it must match the image in src/opensearch/Dockerfile.',
+        'The pattern matches a "# renovate: datasource=... depName=..." comment followed by a version: line.',
+      ],
+      managerFilePatterns: [
+        '/^src/grafana/provisioning/datasources/opensearch\\.yaml$/',
+      ],
+      matchStrings: [
+        '# renovate: datasource=(?<datasource>[a-zA-Z0-9-._]+?) depName=(?<depName>[^\\s]+?)\\s+version:\\s*(?<currentValue>\\S+)',
+      ],
+    },
   ],
   packageRules: [
     {
@@ -264,10 +277,19 @@
       groupName: 'src-opamp-server',
     },
     {
+      description: 'The Grafana OpenSearch datasource version moves with the OpenSearch image, so both land in one pull request',
       matchFileNames: [
         'src/opensearch/**',
+        'src/grafana/provisioning/datasources/opensearch.yaml',
       ],
       groupName: 'src-opensearch',
+    },
+    {
+      description: 'The Grafana datasource holds a bare version, so there is no digest to pin',
+      matchFileNames: [
+        'src/grafana/provisioning/datasources/opensearch.yaml',
+      ],
+      pinDigests: false,
     },
     {
       matchFileNames: [
