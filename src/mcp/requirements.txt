@@ -659,13 +659,13 @@ fastapi==0.165.0 \
     --hash=sha256:896f48462042bb4f162147eb8fac7e858753dc1f486765709baf105d70e4fc5b \
     --hash=sha256:dd94d4128319c1e1d50535ab023ab698f850a4d2822f0e181747b46f4ff3c0ab
     # via -r requirements.in
-fastmcp==4.2.4 \
-    --hash=sha256:9039b0eb7cde12353ae60396015e9bf8bedd278ed7b6196ee4a8eb4b63d84b06 \
-    --hash=sha256:fddc1fe906ad0c202862469ecc5b8bf69dbc81a1ea8141112399c72449527cd4
+fastmcp==4.2.5 \
+    --hash=sha256:733f6a59705c4141ad74b1aa889561fbccd2790a74e18c4c72d4b08611746107 \
+    --hash=sha256:f6703db40224101f90732f1a41e4a1e3c72811422a53764e093509b97f24454d
     # via -r requirements.in
-fastmcp-slim==4.2.4 \
-    --hash=sha256:2aa508dace0e5d9176fe116077cdbf22a18c62f97ddd1decf5625b9f4faf55df \
-    --hash=sha256:d8c4ecad3b7ad6cb4c0a26c0d05c66af74033753d39601bee5290a10cf102a24
+fastmcp-slim==4.2.5 \
+    --hash=sha256:5d4992bccf2b8215229a0afa608e81670e09874ec353f4bb0aceb03ce27fb8ab \
+    --hash=sha256:bcb07c8f81c223c102da1e6c74dcc547fa1e753b90d5441ead8161cd2d25bd97
     # via fastmcp
 frozenlist==1.8.0 \
     --hash=sha256:0325024fe97f94c41c08872db482cf8ac4800d80e79222c6b0b7b162d5b13686 \
