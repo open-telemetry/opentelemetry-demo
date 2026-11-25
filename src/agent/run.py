@@ -12,7 +12,6 @@ from dotenv import load_dotenv
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
 from opentelemetry.instrumentation.openai import OpenAIInstrumentor
-from src.agents.agents import Agent
 from src.agents.feature_flags import init_feature_flags
 from traceloop.sdk import Traceloop
 
@@ -27,6 +26,11 @@ Traceloop.init(
 init_feature_flags()
 
 HTTPXClientInstrumentor().instrument()
+
+# Import after instrumenting httpx: vcrpy (imported through src.agents.agents)
+# keeps the httpx transport methods it finds at import time, see
+# https://github.com/open-telemetry/opentelemetry-demo/issues/4388
+from src.agents.agents import Agent
 
 if not OpenAIInstrumentor().is_instrumented_by_opentelemetry:
     OpenAIInstrumentor().instrument()

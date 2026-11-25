@@ -1,0 +1,9 @@
+change_type: bug_fix
+
+component: agent
+
+note: Instrument httpx before vcrpy is imported, so the agent's tool calls keep their trace context while a VCR cassette is in use.
+
+issues: [4388]
+
+subtext:
