@@ -23,6 +23,9 @@ internal static partial class Log
     [LoggerMessage(Level = LogLevel.Debug, EventName = "cart.redis.small_test_result", Message = "Small test result: {result}")]
     public static partial void RedisSmallTestResult(ILogger logger, string? result);
 
+    [LoggerMessage(Level = LogLevel.Warning, EventName = "cart.redis.small_test_oom", Message = "Small test write rejected because Valkey is out of memory")]
+    public static partial void RedisSmallTestOutOfMemory(ILogger logger);
+
     [LoggerMessage(Level = LogLevel.Information, EventName = "cart.redis.connection_restored", Message = "Connection to redis was restored successfully.")]
     public static partial void RedisConnectionRestored(ILogger logger);
 
@@ -31,6 +34,18 @@ internal static partial class Log
 
     [LoggerMessage(Level = LogLevel.Error, EventName = "cart.redis.internal_error", Message = "Redis internal error")]
     public static partial void RedisInternalError(ILogger logger, Exception exception);
+
+    [LoggerMessage(Level = LogLevel.Warning, EventName = "cart.valkey.memory_pressure_enabled", Message = "valkeyMemoryPressure enabled: set Valkey maxmemory below used memory")]
+    public static partial void ValkeyMemoryPressureEnabled(ILogger logger);
+
+    [LoggerMessage(Level = LogLevel.Error, EventName = "cart.valkey.write_oom", Message = "Valkey rejected the cart write: OOM command not allowed when used memory > 'maxmemory'")]
+    public static partial void ValkeyWriteOutOfMemory(ILogger logger);
+
+    [LoggerMessage(Level = LogLevel.Information, EventName = "cart.valkey.memory_pressure_disabled", Message = "valkeyMemoryPressure disabled: removed Valkey maxmemory limit")]
+    public static partial void ValkeyMemoryPressureDisabled(ILogger logger);
+
+    [LoggerMessage(Level = LogLevel.Error, EventName = "cart.valkey.memory_pressure_failed", Message = "Failed to apply valkeyMemoryPressure to Valkey")]
+    public static partial void ValkeyMemoryPressureFailed(ILogger logger, Exception exception);
 
     [LoggerMessage(Level = LogLevel.Information, EventName = "cart.add_item", Message = "AddItemAsync called with userId={userId}, productId={productId}, quantity={quantity}")]
     public static partial void AddItemAsync(ILogger logger, string userId, string productId, int quantity);

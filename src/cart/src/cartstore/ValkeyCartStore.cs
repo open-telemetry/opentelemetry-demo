@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using OpenFeature;
+using OpenFeature.Constant;
 using System.Threading.Tasks;
 using Grpc.Core;
 using StackExchange.Redis;
@@ -47,6 +48,11 @@ public class ValkeyCartStore : ICartStore
         });
     private readonly ConfigurationOptions _redisConnectionOptions;
 
+    private const long MemoryPressureMarginBytes = 30_000;
+    private static readonly TimeSpan MemoryPressureInterval = TimeSpan.FromSeconds(5);
+    private string? _evictionPolicyBeforePressure;
+    private bool? _lastMemoryPressureFlag;
+
     public ValkeyCartStore(ILogger<ValkeyCartStore> logger, string valkeyAddress, IFeatureClient featureClient, string? valkeyPassword = null, bool valkeyTls = false)
     {
         _logger = logger;
@@ -80,6 +86,7 @@ public class ValkeyCartStore : ICartStore
     public void Initialize()
     {
         EnsureRedisConnected();
+        _ = Task.Run(ReconcileMemoryPressureLoopAsync);
     }
 
     [MemberNotNull(nameof(_redis))]
@@ -114,10 +121,17 @@ public class ValkeyCartStore : ICartStore
             var cache = _redis.GetDatabase();
 
             Log.RedisSmallTest(_logger);
-            cache.StringSet("cart", "OK" );
-            string? res = cache.StringGet("cart");
+            try
+            {
+                cache.StringSet("cart", "OK" );
+                string? res = cache.StringGet("cart");
 
-            Log.RedisSmallTestResult(_logger, res);
+                Log.RedisSmallTestResult(_logger, res);
+            }
+            catch (Exception ex) when (IsOutOfMemory(ex))
+            {
+                Log.RedisSmallTestOutOfMemory(_logger);
+            }
 
             _redis.InternalError += (_, e) => { Log.RedisInternalError(_logger, e.Exception); };
             _redis.ConnectionRestored += (_, _) =>
@@ -178,12 +192,89 @@ public class ValkeyCartStore : ICartStore
         }
         catch (Exception ex)
         {
+            if (IsOutOfMemory(ex))
+            {
+                Log.ValkeyWriteOutOfMemory(_logger);
+            }
+
             throw new RpcException(new Status(StatusCode.FailedPrecondition, $"Can't access cart storage. {ex}"));
         }
         finally
         {
             addItemHistogram.Record(stopwatch.Elapsed.TotalSeconds);
         }
+    }
+
+    private static bool IsOutOfMemory(Exception ex) =>
+        ex is RedisServerException && ex.Message.StartsWith("OOM", StringComparison.Ordinal);
+
+    private async Task ReconcileMemoryPressureLoopAsync()
+    {
+        using var timer = new PeriodicTimer(MemoryPressureInterval);
+        do
+        {
+            try
+            {
+                await ReconcileMemoryPressureAsync();
+            }
+            catch (Exception ex)
+            {
+                Log.ValkeyMemoryPressureFailed(_logger, ex);
+            }
+        } while (await timer.WaitForNextTickAsync());
+    }
+
+    private async Task ReconcileMemoryPressureAsync()
+    {
+        if (!_isRedisConnectionOpened || _redis is null)
+        {
+            return;
+        }
+
+        var flag = await _featureClient.GetBooleanDetailsAsync("valkeyMemoryPressure", false);
+        if (flag.ErrorType != ErrorType.None)
+        {
+            return;
+        }
+
+        var enabled = flag.Value;
+        if (!enabled && _lastMemoryPressureFlag == false)
+        {
+            return;
+        }
+
+        var server = _redis.GetServer(_redis.GetEndPoints()[0]);
+        var maxMemory = long.Parse((await server.ConfigGetAsync("maxmemory"))[0].Value);
+        var memoryInfo = await server.InfoAsync("memory");
+        var usedMemory = long.Parse(memoryInfo.SelectMany(section => section).First(kv => kv.Key == "used_memory").Value);
+        var underPressure = maxMemory > 0 && usedMemory > maxMemory;
+
+        if (enabled && !underPressure)
+        {
+            var policy = (await server.ConfigGetAsync("maxmemory-policy"))[0].Value;
+            if (policy != "noeviction")
+            {
+                _evictionPolicyBeforePressure = policy;
+                await server.ConfigSetAsync("maxmemory-policy", "noeviction");
+            }
+
+            var newMaxMemory = Math.Max(1, usedMemory - MemoryPressureMarginBytes);
+            await server.ConfigSetAsync("maxmemory", newMaxMemory);
+            Log.ValkeyMemoryPressureEnabled(_logger);
+        }
+        else if (!enabled && underPressure)
+        {
+            await server.ConfigSetAsync("maxmemory", 0);
+            if (_evictionPolicyBeforePressure is not null)
+            {
+                await server.ConfigSetAsync("maxmemory-policy", _evictionPolicyBeforePressure);
+                _evictionPolicyBeforePressure = null;
+            }
+
+            Log.ValkeyMemoryPressureDisabled(_logger);
+        }
+
+        _lastMemoryPressureFlag = enabled;
     }
 
     public async Task EmptyCartAsync(string userId)
@@ -200,6 +291,11 @@ public class ValkeyCartStore : ICartStore
         }
         catch (Exception ex)
         {
+            if (IsOutOfMemory(ex))
+            {
+                Log.ValkeyWriteOutOfMemory(_logger);
+            }
+
             throw new RpcException(new Status(StatusCode.FailedPrecondition, $"Can't access cart storage. {ex}"));
         }
     }

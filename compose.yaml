@@ -823,6 +823,7 @@ services:
     image: ${VALKEY_IMAGE}
     container_name: valkey-cart
     user: valkey
+    command: ["valkey-server", "--logfile", "/data/valkey.log"]
     deploy:
       resources:
         limits:
@@ -830,6 +831,8 @@ services:
     restart: unless-stopped
     ports:
       - "${VALKEY_PORT}"
+    volumes:
+      - valkey-data:/data
     healthcheck:
       test: ["CMD-SHELL", "valkey-cli ping"]
       start_period: 5s
@@ -865,6 +868,7 @@ services:
       - ${DOCKER_SOCK}:/var/run/docker.sock:ro
       - ${OTEL_COLLECTOR_CONFIG}:/etc/otelcol-config.yml
       - ${OTEL_COLLECTOR_CONFIG_EXTRAS}:/etc/otelcol-config-extras.yml
+      - valkey-data:/var/log/valkey:ro
     ports:
       - "${OTEL_COLLECTOR_PORT_GRPC}"
       - "${OTEL_COLLECTOR_PORT_HTTP}"
@@ -882,3 +886,6 @@ services:
       - POSTGRES_PORT
       - POSTGRES_MONITORING_PASSWORD
       - GOMEMLIMIT=160MiB
+
+volumes:
+  valkey-data:
