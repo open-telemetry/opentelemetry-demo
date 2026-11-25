@@ -2,12 +2,22 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM --platform=${BUILDPLATFORM} docker.io/library/gradle:9.9.2-jdk17@sha256:d66c9f700fc22daad6c5f1f03e34c5e46e7ae95f575e8ae26e08a6939963ae04 AS builder
+FROM --platform=${BUILDPLATFORM} docker.io/library/gradle:9.9.2-jdk17@sha256:d66c9f700fc22daad6c5f1f03e34c5e46e7ae95f575e8ae26e08a6939963ae04 AS base
 
 WORKDIR /usr/src/app/
 
 COPY ./src/fraud-detection/ ./
 COPY ./pb/ ./src/main/proto/
+
+FROM base AS test
+
+RUN gradle test --no-daemon \
+  && touch /tmp/fraud-detection-tests-passed
+
+FROM base AS builder
+
+# BuildKit skips unused stages, so depend on the test marker to require tests before building the release.
+COPY --from=test /tmp/fraud-detection-tests-passed /tmp/fraud-detection-tests-passed
 
 RUN gradle shadowJar
 

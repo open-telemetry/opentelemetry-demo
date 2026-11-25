@@ -1,0 +1,4 @@
+change_type: bug_fix
+component: fraud-detection
+note: Run the fraud detection Gradle tests during the Docker image build
+issues: [4343]
