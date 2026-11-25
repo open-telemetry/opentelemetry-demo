@@ -39,3 +39,15 @@ attributes:
     stability: stable
     note: The total monetary amount of a quote
     examples: [89.99, 150.00]
+  - key: demo.shipping.destination.country
+    type: string
+    brief: Shipment destination country
+    stability: development
+    note: The trimmed and uppercased country of the shipping address, or unknown if it is missing or empty
+    examples: ["UNITED STATES", "DE", "unknown"]
+  - key: demo.shipping.delay_ms
+    type: int
+    brief: Injected shipping delay
+    stability: development
+    note: The configured delay in milliseconds injected into an international shipment
+    examples: [5000, 10000]

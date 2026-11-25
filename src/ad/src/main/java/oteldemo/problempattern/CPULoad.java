@@ -6,9 +6,6 @@ package oteldemo.problempattern;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
-import io.grpc.ManagedChannelBuilder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,10 +42,10 @@ public class CPULoad {
      */
     public void execute(Boolean enabled) {
         if (enabled) {
-            logger.info("High CPU-Load problempattern enabled");
             if (!running) {
                 spawnLoadWorkers(THREAD_COUNT);
                 running = true;
+                logger.info("Started {} workers to simulate high CPU load", THREAD_COUNT);
             }
         } else {
             running = false;

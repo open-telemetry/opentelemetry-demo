@@ -1,0 +1,12 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+attribute_groups:
+  - id: service.fraud_detection
+    visibility: public
+    brief: Fraud detection service attributes
+    stability: development
+    attributes:
+      - ref: messaging.consumer.group.name
+      - ref: messaging.destination.name
