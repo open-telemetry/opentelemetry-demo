@@ -8,7 +8,9 @@ import logging
 import os
 from difflib import SequenceMatcher
 
+import httpx
 import vcr
+import vcr.patch
 import vcr.stubs.httpx_stubs
 
 logging.getLogger("vcr").setLevel(logging.ERROR)
@@ -32,6 +34,26 @@ def patched_deserialize_response(vcr_response, httpx_module):
 use_vcr = os.getenv("USE_VCR", "False").lower() == "true"
 if use_vcr:
     vcr.stubs.httpx_stubs._deserialize_response = patched_deserialize_response
+
+
+# vcrpy keeps the httpx transport methods it finds when it is imported, which
+# is before run.py instruments httpx, so the requests it sends to the real
+# server skip the OpenTelemetry wrapper and carry no trace context. Point it at
+# the instrumented methods through plain functions: vcrpy's force_reset()
+# compares the saved methods by identity, which wrapt wrappers never pass.
+# See https://github.com/open-telemetry/opentelemetry-demo/issues/4388
+def use_instrumented_httpx_transports():
+    instrumented_handle_request = httpx.HTTPTransport.handle_request
+    instrumented_handle_async_request = httpx.AsyncHTTPTransport.handle_async_request
+
+    def handle_request(self, request):
+        return instrumented_handle_request(self, request)
+
+    async def handle_async_request(self, request):
+        return await instrumented_handle_async_request(self, request)
+
+    vcr.patch._HttpxHttpTransport_handle_request = handle_request
+    vcr.patch._HttpxAsyncHttpTransport_handle_async_request = handle_async_request
 
 
 def normalize_body(request):
