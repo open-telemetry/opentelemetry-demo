@@ -1,0 +1,5 @@
+change_type: enhancement
+component: fraud-detection
+note: "Log consumer processing delay, and topic, partition and offset per consumed record, and consumer poll errors"
+issues: [4333]
+subtext:

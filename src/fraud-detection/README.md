@@ -32,3 +32,9 @@ To build using Docker run from the repo root:
 ```sh
 docker build -f ./src/fraud-detection/Dockerfile .
 ```
+
+The container configures the Java agent to capture `messaging.destination.name`
+and `messaging.consumer.group.name` from the consumer's Log4j context. When
+running outside the container with the Java agent, configure
+`OTEL_INSTRUMENTATION_LOG4J_APPENDER_EXPERIMENTAL_MDC_ATTRIBUTES_INCLUDED`
+with those keys to export the same attributes.
