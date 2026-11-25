@@ -304,7 +304,7 @@ GEM
     ostruct (0.6.3)
     pony (1.13.1)
       mail (>= 2.0)
-    puma (8.1.2)
+    puma (8.1.3)
       nio4r (~> 2.0)
     rack (3.2.9)
     rack-protection (4.2.2)
@@ -456,7 +456,7 @@ CHECKSUMS
   opentelemetry-semantic_conventions (1.45.0) sha256=f6a5b5187d3421e125576692be2a1cfd510d07a9abff81a1e71c67dc1a835cb5
   ostruct (0.6.3) sha256=95a2ed4a4bd1d190784e666b47b2d3f078e4a9efda2fccf18f84ddc6538ed912
   pony (1.13.1) sha256=ab507c8ade8b35de96f1e75c0ae4566a3c40ac8a0d5101433969b6fd29c718a7
-  puma (8.1.2) sha256=3a6d9a34c9a4d0175eabd11b703939b5d43ebe08bc2534ac7dfd4df33a6ceedc
+  puma (8.1.3) sha256=a12de11fb2f20f8a3ef25a5b1447eabe7142846719eeb9672ee8ec0705b8c3a8
   rack (3.2.9) sha256=8235c1d08f0c461bedcff4413bbeba888173e5b09e1332ae951c98f0ee460dcc
   rack-protection (4.2.2) sha256=0e75764dae462c4041544452ce568bb1f1ced556b791cd32ac479d0781065a99
   rack-session (2.1.2) sha256=595434f8c0c3473ae7d7ac56ecda6cc6dfd9d37c0b2b5255330aa1576967ffe8
