@@ -11,7 +11,10 @@ subtext: |-
   `PUBLIC_OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`, which is proxied to the collector
   like the traces endpoint. `session.id` is now the browser SDK session,
   persisted in local storage and rotated on inactivity, and is propagated to
-  the backend through baggage; `enduser.id` keeps the demo session user id.
+  the backend through baggage; `enduser.id` keeps the demo session user id. The
+  Next.js server reads both from baggage with a `BaggageSpanProcessor`, so the
+  server spans of a request carry the same session as the browser span that
+  started it.
   `auto-instrumentations-web`, `context-zone`, `exporter-trace-otlp-http`,
   `instrumentation` and `opentelemetry-browser-detector` are no longer frontend
   dependencies.
