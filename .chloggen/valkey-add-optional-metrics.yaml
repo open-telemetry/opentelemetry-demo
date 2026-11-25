@@ -7,7 +7,7 @@ change_type: enhancement
 component: collector
 
 # A brief description of the change. Surround your text with quotes ("") if it needs to start with a backtick (`).
-note: Enable the optional `redis.maxmemory`, `redis.role`, `redis.cmd.calls` and `redis.cmd.latency` metrics and the `server.address` and `server.port` resource attributes on the `redis` receiver that scrapes Valkey.
+note: Enable the optional `redis.maxmemory`, `redis.role`, `redis.cmd.calls` and `redis.cmd.latency` metrics on the `redis` receiver that scrapes Valkey.
 
 # One or more tracking issues or pull requests related to the change. You can use the PR number here if no issue exists.
 issues: [4389]
@@ -16,4 +16,6 @@ issues: [4389]
 # These lines will be padded with 2 spaces and then inserted directly into the document.
 # Use a strip-chomping block scalar (|-) for multiline entries so no trailing
 # whitespace is emitted into CHANGELOG.md.
-subtext:
+subtext: |-
+  Also enables the `server.address` and `server.port` resource attributes,
+  which identify the Valkey server each metric comes from.
