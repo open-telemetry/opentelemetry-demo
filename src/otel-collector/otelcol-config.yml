@@ -50,6 +50,20 @@ receivers:
     endpoint: "valkey-cart:6379"
     username: "valkey"
     collection_interval: 10s
+    resource_attributes:
+      server.address:
+        enabled: true
+      server.port:
+        enabled: true
+    metrics:
+      redis.maxmemory:
+        enabled: true
+      redis.role:
+        enabled: true
+      redis.cmd.calls:
+        enabled: true
+      redis.cmd.latency:
+        enabled: true
   postgresql:
     endpoint: ${POSTGRES_HOST}:${POSTGRES_PORT}
     username: monitoring_user
