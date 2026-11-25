@@ -44,7 +44,7 @@ otlp:
     - postgresql.table.name
     - postgresql.index.name
 
-    # Redis/Valkey resource attributes produced by the OTel Collector Redis receiver
+    # Valkey resource attributes produced by the OTel Collector Redis receiver
     # and used in dashboards.
     # See https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/redisreceiver/metadata.yaml
     - server.address
