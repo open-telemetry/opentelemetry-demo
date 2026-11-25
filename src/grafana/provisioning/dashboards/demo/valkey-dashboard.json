@@ -304,7 +304,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "description": "Share of key lookups that found the key, over the selected rate interval.",
+      "description": "Share of key lookups that found the key, over the latest rate interval. Shows \"No lookups\" when there were none.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -358,10 +358,11 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "sum (rate(redis_keyspace_hits_total{server_address=~\"$server\"}[$__rate_interval])) / (sum (rate(redis_keyspace_hits_total{server_address=~\"$server\"}[$__rate_interval])) + sum (rate(redis_keyspace_misses_total{server_address=~\"$server\"}[$__rate_interval])))",
+          "expr": "sum (rate(redis_keyspace_hits_total{server_address=~\"$server\"}[$__rate_interval])) / ((sum (rate(redis_keyspace_hits_total{server_address=~\"$server\"}[$__rate_interval])) + sum (rate(redis_keyspace_misses_total{server_address=~\"$server\"}[$__rate_interval]))) > 0)",
           "legendFormat": "",
-          "range": true,
-          "refId": "A"
+          "range": false,
+          "refId": "A",
+          "instant": true
         }
       ],
       "title": "Keyspace hit ratio",
@@ -1832,7 +1833,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "description": "CPU time consumed per second, by state. 100% equals one full core.",
+      "description": "CPU time consumed per second. 100% equals one full core. user and sys cover all Valkey threads, *_children covers forked processes such as RDB saves. The main thread line is already part of user and sys, so it is drawn on its own and not stacked.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1883,7 +1884,37 @@
           },
           "unit": "percentunit"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "main thread"
+            },
+            "properties": [
+              {
+                "id": "custom.stacking",
+                "value": {
+                  "group": "A",
+                  "mode": "none"
+                }
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    10,
+                    10
+                  ],
+                  "fill": "dash"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
@@ -1916,10 +1947,21 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "sum by (state) (rate(redis_cpu_time_seconds_total{server_address=~\"$server\"}[$__rate_interval]))",
+          "expr": "sum by (state) (rate(redis_cpu_time_seconds_total{server_address=~\"$server\", state!~\".*_main_thread\"}[$__rate_interval]))",
           "legendFormat": "{{state}}",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "sum (rate(redis_cpu_time_seconds_total{server_address=~\"$server\", state=~\".*_main_thread\"}[$__rate_interval]))",
+          "legendFormat": "main thread",
+          "range": true,
+          "refId": "B"
         }
       ],
       "title": "CPU usage",
