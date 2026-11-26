@@ -25,4 +25,6 @@ export enum CypressFields {
   ProductDescription = 'product-description',
   ProductQuantity = 'product-quantity',
   ProductAddToCart = 'product-add-to-cart',
+  AssistantToggle = 'assistant-toggle',
+  AssistantPanel = 'assistant-panel',
 }

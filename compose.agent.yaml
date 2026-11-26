@@ -2,7 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # Agent layer: adds the LLM-powered Agent, MCP, and Chatbot services
-# along with the frontend-proxy patches needed to route to the chatbot.
+# along with the frontend-proxy patches needed to route to the chatbot
+# and the frontend patch that turns on the storefront assistant panel.
 #
 # Usage (typical):
 #   docker compose -f compose.yaml -f compose.full.yaml \
@@ -139,6 +140,12 @@ services:
     depends_on:
       chatbot:
         condition: service_started
+
+  # Patch frontend to show the storefront assistant panel and route it to the agent
+  frontend:
+    environment:
+      - ASSISTANT_ENABLED=true
+      - AGENT_ADDR
 
   # Patch load-generator to also exercise the agent's /prompt endpoint
   load-generator:

@@ -96,6 +96,9 @@ static_resources:
                             timeout: 0s
                             upgrade_configs:
                               - upgrade_type: websocket
+                        - match: { path: "/api/assistant" }
+                          # The frontend enforces the agent's two-minute deadline.
+                          route: { cluster: frontend, timeout: 0s }
                         - match: { prefix: "/" }  # Default/catch-all route - keep last since prefix:"/" matches everything
                           route: { cluster: frontend }
                 http_filters:

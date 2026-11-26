@@ -47,6 +47,10 @@ your preferred deployment method:
 - [Docker](https://opentelemetry.io/docs/demo/docker_deployment/)
 - [Kubernetes](https://opentelemetry.io/docs/demo/kubernetes_deployment/)
 
+With Docker Compose, use `make start-agentic` to try the
+[storefront assistant](src/frontend/README.md#shop-assistant).
+`make start` leaves the assistant disabled.
+
 ## Documentation
 
 For detailed documentation, see [Demo Documentation][docs]. If you're curious

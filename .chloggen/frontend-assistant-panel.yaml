@@ -1,0 +1,7 @@
+change_type: enhancement
+
+component: frontend
+
+note: Add an opt-in shop assistant panel to the storefront that sends questions to the agent through a new `/api/assistant` route, traced from the browser. It is only shown with `make start-agentic`.
+
+issues: [4147]

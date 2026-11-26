@@ -3,6 +3,7 @@
 
 import { Ad, Address, Cart, CartItem, Money, PlaceOrderRequest, Product } from '../protos/demo';
 import { IProductCart, IProductCartItem, IProductCheckout } from '../types/Cart';
+import { IAssistantMessage, IAssistantReply } from '../types/Assistant';
 import request from '../utils/Request';
 import { AttributeNames } from '../utils/enums/AttributeNames';
 import SessionGateway from './Session.gateway';
@@ -89,6 +90,13 @@ const Apis = () => ({
       queryParams: {
         contextKeys,
       },
+    });
+  },
+  askAssistant(message: string, history: IAssistantMessage[]) {
+    return request<IAssistantReply>({
+      url: `${basePath}/assistant`,
+      method: 'POST',
+      body: { message, history },
     });
   },
 });
