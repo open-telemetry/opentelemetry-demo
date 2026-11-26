@@ -1,5 +1,5 @@
 change_type: breaking
-component: frontend
+component: frontend, collector
 note: Instrument the browser with `@opentelemetry/browser-sdk` and `@opentelemetry/browser-instrumentation` instead of assembling the web tracer by hand
 issues: [4329]
 subtext: |-
