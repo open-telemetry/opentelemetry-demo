@@ -133,7 +133,7 @@ When `MCP_ENABLED=True`, the service connects to:
 http://${MCP_ENDPOINT}:${MCP_PORT}/mcp
 ```
 
-Tools are loaded dynamically using `langchain_mcp_adapters.tools.load_mcp_tools`.
+Tools are loaded dynamically using `langchain.mcp.MCPAdapter`.
  In this mode, the built-in tools are not used.
 
 ## Observability
@@ -239,7 +239,6 @@ src/agent/
     `-- agents/
         |-- agents.py       # FastAPI app and LangChain agent orchestration
         |-- llm.py          # OpenAI-compatible LLM wrapper and VCR integration
-        |-- mcp_client.py   # MCP streamable HTTP client
         `--patch_vcr.py    # VCR helper integration
 ```
 

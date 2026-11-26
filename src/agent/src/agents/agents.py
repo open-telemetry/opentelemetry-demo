@@ -5,18 +5,17 @@
 
 import logging
 import os
-from contextlib import asynccontextmanager
+from contextlib import AsyncExitStack, asynccontextmanager
 from typing import Dict, List
 
 import uvicorn
 from fastapi import FastAPI, HTTPException
 from langchain.agents import create_agent
 from langchain.tools import tool
-from langchain_mcp_adapters.tools import load_mcp_tools
+from langchain.mcp import MCPAdapter
 from pydantic import BaseModel
 from src.agents.feature_flags import get_int_feature_flag
 from src.agents.llm import ChatLLM
-from src.agents.mcp_client import MCPClient
 from src.agents.tools import (
     add_to_cart,
     checkout,
@@ -48,14 +47,14 @@ class Agent:
 
     @asynccontextmanager
     async def lifespan(self, app: FastAPI):
-        mcp_enabled = os.getenv("MCP_ENABLED", "False") == "True"
-        if mcp_enabled:
-            logging.info("MCP tools enabled")
-            self.mcp_server = MCPClient()
-            await self.mcp_server.connect_to_mcp_server(self.mcp_server_url)
-        yield
-        if self.mcp_server:
-            await self.mcp_server.cleanup()
+        async with AsyncExitStack() as stack:
+            mcp_enabled = os.getenv("MCP_ENABLED", "False") == "True"
+            if mcp_enabled:
+                logging.info("MCP tools enabled")
+                self.mcp_server = await stack.enter_async_context(
+                    MCPAdapter(self.mcp_server_url)
+                )
+            yield
 
     async def handle_prompt(self, request: ChatRequest):
         return await self.run_agent(request.message, request.history)
@@ -63,7 +62,7 @@ class Agent:
     async def get_tool_list(self):
         mcp_enabled = os.getenv("MCP_ENABLED", "False") == "True"
         if mcp_enabled and self.mcp_server is not None:
-            return await load_mcp_tools(self.mcp_server.session)
+            return await self.mcp_server.list_tools()
         else:
             tool_list = [
                 add_to_cart,

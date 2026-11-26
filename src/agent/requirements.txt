@@ -216,10 +216,6 @@ attrs==26.1.0 \
     #   jsonschema
     #   jsonschema-path
     #   referencing
-authlib==1.9.10 \
-    --hash=sha256:c62d10e1b23945c6d4c578a16170bfefe4879bd23d4be62edea494993dce70aa \
-    --hash=sha256:f7453c4a3f5975f94cc55223c4d48ff9c7d8d3b4e3d727ed2549edaeb9b85d50
-    # via fastmcp-slim
 beartype==0.23.1 \
     --hash=sha256:4461b4dc57e3fdd6c8a8464b22cf118002eea107c33e9fef651c69068ab3cce3 \
     --hash=sha256:8b805f246b32931c74f2b321ea0939fe5bb2ff43c12a3eff19cc4c854b832e1d
@@ -437,6 +433,7 @@ certifi==2026.11.20 \
     --hash=sha256:7422df25243767b9877031a2248cb14d09ddac9beee846f4cef3d5c9191d488f \
     --hash=sha256:af1cb240a8133f105aa52684a3a3258339d7f2fd0bd4e2812698ff5cf5588c4e
     # via
+    #   fastmcp-slim
     #   httpcore
     #   httpx
     #   langchain-core
@@ -787,12 +784,11 @@ cryptography==50.0.2 \
     --hash=sha256:fa8f5efb344d6908a1ce62f4a24e2e5780f825d6f53f5f50ec5ffacac72936cb \
     --hash=sha256:fdd28f912fccfec1846a94e2e1e8f9b0012f557f0c46fe4f3eb0d7a87afcf90b
     # via
-    #   authlib
     #   joserfc
     #   pyjwt
-    #   secretstorage
-cuid==0.4 \
-    --hash=sha256:74eaba154916a2240405c3631acee708c263ef8fa05a86820b87d0f59f84e978
+cuid2==2.3.0 \
+    --hash=sha256:7409caadbd83682f94eb2a2a7421b29bc72ff3d7535ce914cd134d9703828c2c \
+    --hash=sha256:e9c1bf8a4259e4e76186ee90a8bf785bbf0b6f5b82e1d8516e9da3ae88996820
     # via traceloop-sdk
 cyclopts==5.5.2 \
     --hash=sha256:4fbe863ebace1c65dafc6520c82217915b103d27fbd1d8fcd168f2abcca3a12a \
@@ -822,17 +818,19 @@ exceptiongroup==1.3.2 \
     --hash=sha256:41c6a70dfec22050d3d8b43386b059a4dc0bca3f3d40a40971cb206fff1785af \
     --hash=sha256:ca82e69f0cb535fbde934885744b67669a3efddd50fe7bc00d3398839fcaddec
     # via fastmcp-slim
-fastapi==0.162.7 \
-    --hash=sha256:b7503029c8ef2d2d5fea9049294cf8d0f2805c6621f4677ede269fce19f01efb \
-    --hash=sha256:fa3be857122ec8d91d4d234e86ac19acf4ef23f5c6c3dfcce78ec0c27c0c5ab4
+fastapi==0.165.0 \
+    --hash=sha256:896f48462042bb4f162147eb8fac7e858753dc1f486765709baf105d70e4fc5b \
+    --hash=sha256:dd94d4128319c1e1d50535ab023ab698f850a4d2822f0e181747b46f4ff3c0ab
     # via -r requirements.in
-fastmcp==3.4.10 \
-    --hash=sha256:68f422db0a7c6228142663f17d9f79a5a12a509e1408a8ac207b3e442e166e38 \
-    --hash=sha256:c6474855d6230cce4feb7084d654ba518578b25856c6ef26a2ff2d806ef68969
-    # via -r requirements.in
-fastmcp-slim==3.4.10 \
-    --hash=sha256:d80ae606ead8dfefa1f21b009929824210ea87eb4b422653a1be8dca61797ccd \
-    --hash=sha256:f388941db8bdf38999e6c9d2536c4cd59a6571908d851cee2d10ee59f4e53532
+fastmcp==4.2.6 \
+    --hash=sha256:828b8b34f4b0b4656ee7e2cdfc49989e30d6a2b4b3d234fd3203fe1bb3632734 \
+    --hash=sha256:df629f183202124342a2cad58b069b4058d8bb53696a015694e41b128bf21651
+    # via
+    #   -r requirements.in
+    #   langchain
+fastmcp-slim==4.2.6 \
+    --hash=sha256:15467ae9bb3fc80897dec7b37eab5310b47b75066b56720e286a3c08fd469577 \
+    --hash=sha256:20fa67fd970ef806aa8b387db6a4f2a8d6fc37007186169c90f050ccb3bcec04
     # via fastmcp
 frozenlist==1.8.0 \
     --hash=sha256:0325024fe97f94c41c08872db482cf8ac4800d80e79222c6b0b7b162d5b13686 \
@@ -1144,20 +1142,16 @@ httpx==0.28.1 \
     --hash=sha256:d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad
     # via
     #   -r requirements.in
-    #   fastmcp-slim
     #   langchain-core
     #   langgraph-sdk
-    #   mcp
     #   traceloop-sdk
-httpx-sse==0.4.3 \
-    --hash=sha256:0ac1c9fe3c0afad2e0ebb25a934a59f4c7823b60792691f779fad2c5568830fc \
-    --hash=sha256:9b1ed0127459a66014aec3c56bebd93da3c1bc8bb6618c8082039a44889a755d
-    # via mcp
 httpx2==2.16.2 \
     --hash=sha256:748b615678f07d8e3b183efe81ad13b655ca88bfc56ce4589219b2d442860574 \
     --hash=sha256:f05c13aade4c45dbf1c9060647a1058f0acad62398fad96e741269edb33d46f5
     # via
+    #   fastmcp-slim
     #   langsmith
+    #   mcp
     #   openai
 idna==3.20 \
     --hash=sha256:a7db850025b95ded1eae8a46181a1a6c56c92c96f0e2b005d9ff8dc0210cab44 \
@@ -1173,24 +1167,6 @@ inflection==0.5.1 \
     --hash=sha256:1a29730d366e996aaacffb2f1f1cb9593dc38e2ddd30c91250c6dde09ea9b417 \
     --hash=sha256:f38b2b640938a4f35ade69ac3d053042959b62a0f1076a5bbaa1b9526605a8a2
     # via opentelemetry-instrumentation-llamaindex
-jaraco-classes==3.4.0 \
-    --hash=sha256:47a024b51d0239c0dd8c8540c6c7f484be3b8fcf0b2d85c13825780d3b3f3acd \
-    --hash=sha256:f662826b6bed8cace05e7ff873ce0f9283b5c924470fe664fff1c2f00f581790
-    # via keyring
-jaraco-context==6.1.2 \
-    --hash=sha256:bf8150b79a2d5d91ae48629d8b427a8f7ba0e1097dd6202a9059f29a36379535 \
-    --hash=sha256:f1a6c9d391e661cc5b8d39861ff077a7dc24dc23833ccee564b234b81c82dfe3
-    # via keyring
-jaraco-functools==4.6.0 \
-    --hash=sha256:880c577ec9720b3a052d5bc611fb9f2269b3d87902ef42440df443b88e443280 \
-    --hash=sha256:99e3dc0060c5cbe8fcd1cdb36258e2a65ca40f1566b2033b12abb1bb44dd3c30
-    # via keyring
-jeepney==0.9.0 \
-    --hash=sha256:97e5714520c16fc0a45695e5365a2e11b81ea79bba796e26f9f1d178cb182683 \
-    --hash=sha256:cf0e9e845622b81e4a28df94c40345400256ec608d0e55bb8a3feaa9163f5732
-    # via
-    #   keyring
-    #   secretstorage
 jinja2==3.1.6 \
     --hash=sha256:0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d \
     --hash=sha256:85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67
@@ -1305,9 +1281,7 @@ jiter==0.19.0 \
 joserfc==1.8.0 \
     --hash=sha256:176b836ac7ed9a46a88629e24076314b475f33a75d0bad7f26146e572eed7c79 \
     --hash=sha256:cbf03cb2c6db8cc5289f1ef8718842e53dba244b4c0de5fefa0c0eaee4bde8db
-    # via
-    #   authlib
-    #   fastmcp-slim
+    # via fastmcp-slim
 jsonpatch==1.48 \
     --hash=sha256:389f25f006940b7bc939c33ca0f6cf8875527dc70599520652a269040ce40b63 \
     --hash=sha256:81e9a03754137a1201d9b534ddd599cc0eb5983fe941bce238dc8a76e442bb94
@@ -1323,7 +1297,9 @@ jsonref==1.1.0 \
 jsonschema==4.26.0 \
     --hash=sha256:0c26707e2efad8aa1bfc5b7ce170f3fccc2e4918ff85989ba9ffa9facb2be326 \
     --hash=sha256:d489f15263b8d200f8387e64b4c3a75f06629559fb73deb8fdfb525f2dab50ce
-    # via mcp
+    # via
+    #   fastmcp-slim
+    #   mcp
 jsonschema-path==0.5.0 \
     --hash=sha256:2790a070bc7abb08ea3dbe4d340ece4efadf639223001f020c7503229ba068e2 \
     --hash=sha256:493b156ba895c97602655b620a8456caa2ce08c1aa389f5a7addec065e6e855c
@@ -1332,32 +1308,23 @@ jsonschema-specifications==2025.9.1 \
     --hash=sha256:98802fee3a11ee76ecaca44429fda8a41bff98b00a0f2838151b113f210cc6fe \
     --hash=sha256:b540987f239e745613c7a9176f3edb72b832a4ac465cf02712288397832b5e8d
     # via jsonschema
-keyring==25.7.0 \
-    --hash=sha256:be4a0b195f149690c166e850609a477c532ddbfbaed96a404d4e43f8d5e2689f \
-    --hash=sha256:fe01bd85eb3f8fb3dd0405defdeac9a5b4f6f0439edbb3149577f244a2e8245b
-    # via py-key-value-aio
-langchain==1.5.0 \
-    --hash=sha256:24e94c496a3e532be1f9541edb475d5d0975aeb1211c3f8fecc042da3ec44cfa \
-    --hash=sha256:62b8d048847d7063cf769b39d32219c4a8ff8abc75f3ebfde461e65b9ff8ff49
+langchain==1.5.2 \
+    --hash=sha256:63816aee7f55503db5c4f266a0874047d417957ae70cbf27397325c584982c52 \
+    --hash=sha256:e6c2df67337cae4f13b93460e586084ad8c7c7cfd540d27e2572a96308747a7c
     # via -r requirements.in
 langchain-core==1.8.4 \
     --hash=sha256:5755dee8f8b0c709cd22436dea3689c74a3f6e9dc4251590797dcd66bcd1ef67 \
     --hash=sha256:af8976d6df0b3338dc7c830ebf1c505c0fc05a0e3eb564f4901ed7546a418ab6
     # via
     #   langchain
-    #   langchain-mcp-adapters
     #   langchain-openai
     #   langgraph
     #   langgraph-checkpoint
     #   langgraph-prebuilt
     #   langgraph-sdk
-langchain-mcp-adapters==0.3.2 \
-    --hash=sha256:094e6b3096dbcc408417d5722f6915f164772e50c502ae3d8989405bf12c3c84 \
-    --hash=sha256:61cd1a09597adb619a9bafb0642938ffc2a9463d699a753f7af0420ea46c381a
-    # via -r requirements.in
-langchain-openai==1.8.0 \
-    --hash=sha256:55a6aca37b7d4fa7011fef7faad53e6a544640c2b9a2fecf2e18d95115497555 \
-    --hash=sha256:670a39def25c550ac7b828f6c4336f5653a440e992584590f6cc168525d993b7
+langchain-openai==1.8.5 \
+    --hash=sha256:53f2612f61290edc115712a887e384dac9984783689d2e2b4ca7fbc75c1e0e64 \
+    --hash=sha256:e5bc9d1da58231496caf2e09c42c5ed21ddc8bb4e2427300c8e8a7b1a8372bf1
     # via -r requirements.in
 langchain-protocol==0.0.22 \
     --hash=sha256:61267bc9f478c9df35ccdafd9fdf556b2698435232d59def54b3809bb02585bb \
@@ -1375,9 +1342,9 @@ langgraph-checkpoint==4.3.2 \
     # via
     #   langgraph
     #   langgraph-prebuilt
-langgraph-prebuilt==1.1.2 \
-    --hash=sha256:2f5f4d8bd84c1bc8f6bbd309145e2ffa19ffc712301cff7b0cca909cd7d1b069 \
-    --hash=sha256:8ad6353b16ea76b04b1e35fdc9ed4ead469346f80730ca346e08f26549e7b56a
+langgraph-prebuilt==1.1.3 \
+    --hash=sha256:7b55eb1c2004348b73b9af9e2f81e5f3eda47dcf13d885ccb4195538426c55ce \
+    --hash=sha256:7ee72332e925000e3d24d2d491dd0ebb9d3a44dbffe650185943b730a832cf6d
     # via
     #   -r requirements.in
     #   langgraph
@@ -1546,13 +1513,18 @@ markupsafe==3.0.4 \
     --hash=sha256:fd9f8797427910198f95bced71ddfed61130d7e349213bfb8466c9c99e2c46a8 \
     --hash=sha256:fdb4ca07ab75ffadab4a8b135ad59cdbb3156b99310f3d565370da74a15d6bd3
     # via jinja2
-mcp==1.30.0 \
-    --hash=sha256:445414625fce5c295faa505bb11bacece661ab6f4028d57c935db57820b7a3e4 \
-    --hash=sha256:666edb5009503e1047c9d60346a756f94b261f05cc2625f23d41c728ffc484d0
+mcp==2.3.0 \
+    --hash=sha256:8b147a50441cf059dc88c684e0aeed3687f0aa0f39c6cde7b90330effd2b34d8 \
+    --hash=sha256:dd0c44c089d16453e8ae31a3877a0054d7a2314caaa81f5e0541b9b1734b2377
     # via
     #   -r requirements.in
     #   fastmcp-slim
-    #   langchain-mcp-adapters
+mcp-types==2.3.0 \
+    --hash=sha256:968efdbdaedfab06adae40d378a34395f1090c5921d4be3c9cde283aaf76d91d \
+    --hash=sha256:d1e46549edb35ee19a94940fcee6d1addd7e589ab7ea92dda83f5d84781fc362
+    # via
+    #   fastmcp-slim
+    #   mcp
 mdurl==0.1.2 \
     --hash=sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8 \
     --hash=sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba
@@ -1719,12 +1691,6 @@ mmh3==5.3.1 \
     --hash=sha256:fc7a4ab919a66b9db72c1425d610f69a8480dce22aa4c6ad2218e4acf41f8c01 \
     --hash=sha256:fd3bbb5dc3c3a045605c1a618bfccb2de6d65ae89b99ff9a7f54556cf81175b7
     # via openfeature-flagd-core
-more-itertools==11.2.1 \
-    --hash=sha256:35a7377edd1dd6608dcb2cdf534ded55ea32d49448875ad042cd3f879fb1ded0 \
-    --hash=sha256:cbf08fd0af284dc69718b9b76a8e6203df624d70209ea511e4219d350c856f63
-    # via
-    #   jaraco-classes
-    #   jaraco-functools
 multidict==7.2.1 \
     --hash=sha256:02009b402129a73e1f3da68f48eb999afbacd29f25aef0d5052b84ff5c2786a2 \
     --hash=sha256:02d9c04d395a36eeebe89e45f2269614a4675b8e83fddcba15bba2be903971e5 \
@@ -1919,6 +1885,7 @@ opentelemetry-api==1.45.2 \
     #   -r requirements.in
     #   fastapi
     #   fastmcp-slim
+    #   mcp
     #   openfeature-hooks-opentelemetry
     #   opentelemetry-exporter-http-transport
     #   opentelemetry-exporter-otlp-proto-grpc
@@ -2093,9 +2060,9 @@ opentelemetry-instrumentation-lancedb==0.63.1 \
     --hash=sha256:3f914876b1fae3c17e3cb977423c2f1e44048a32915215be548cf91d94a0832c \
     --hash=sha256:a549cfd54676fb1b7b32bc1daebdfa8375f9981e2eb6469c7de20d244870cdc7
     # via traceloop-sdk
-opentelemetry-instrumentation-langchain==0.63.0 \
-    --hash=sha256:2c425b81b5dd2e1b562ba24293f0564455f7155ff27be5c52f35ef368cb245b9 \
-    --hash=sha256:2fb47e5b1b820bd70a6ad90c39fa389766e2ca05140e8b518f280b99b0b41092
+opentelemetry-instrumentation-langchain==0.63.1 \
+    --hash=sha256:0be00397e77e524d55b2d1b5a0978d538cc69b4cd3be527c49926194f898a1e1 \
+    --hash=sha256:b529b78df5be22f04732f5a7d2fa2ed67d4f447101b20a4e65d3a185de48730b
     # via
     #   -r requirements.in
     #   traceloop-sdk
@@ -2131,9 +2098,9 @@ opentelemetry-instrumentation-ollama==0.63.1 \
     --hash=sha256:eb9899eaa1219f3a4c34ae99e1b2815ccb8172bf6245b90b78e66ac07e1afe11 \
     --hash=sha256:ee20bd1383eacebadd2bc7cbb41a70f5b30dbcdad98b3e92915313609715d640
     # via traceloop-sdk
-opentelemetry-instrumentation-openai==0.63.0 \
-    --hash=sha256:c3ce3c823981d649f532e09d00a9866efb47c68d19909b94c1951c387d69be94 \
-    --hash=sha256:f63b7977fa4147548e70a2251c05ddb50a1b9a38a13626d0ba2b631e00083fe0
+opentelemetry-instrumentation-openai==0.63.1 \
+    --hash=sha256:ea027b12957a7b6cdc4fbf8b0940aafe882487401bf55319137329451cdd25bf \
+    --hash=sha256:f8614a2f1aa2a4b3cd92e77b6136b593fd0a73d7b1e925b9cf9dc4791de663dd
     # via
     #   -r requirements.in
     #   traceloop-sdk
@@ -2628,6 +2595,7 @@ pydantic==2.14.4 \
     #   langgraph
     #   langsmith
     #   mcp
+    #   mcp-types
     #   openai
     #   openapi-pydantic
     #   pydantic-settings
@@ -2777,9 +2745,7 @@ pydantic-core==2.50.5 \
 pydantic-settings==2.16.3 \
     --hash=sha256:10e36f616623ebb586c05ca3d3cd22927146869db413d4f14c20c514442a1337 \
     --hash=sha256:d1db16a2d34006323a1b42c0640898da58adfbad7ec30baaa9e2b18aafc08999
-    # via
-    #   fastmcp-slim
-    #   mcp
+    # via fastmcp-slim
 pygments==2.21.0 \
     --hash=sha256:2363c69b61c4a97c838da3b130dcd6468f4848992b21a82f2a63ec34377137d9 \
     --hash=sha256:610ca751c9bc2492b38eb9a38a7fbc93edbbb2d7182edaf34e66ae493dee5c8c
@@ -3170,10 +3136,6 @@ rpds-py==2026.9.1 \
     # via
     #   jsonschema
     #   referencing
-secretstorage==3.5.0 \
-    --hash=sha256:0ce65888c0725fcb2c5bc0fdb8e5438eece02c523557ea40ce0703c266248137 \
-    --hash=sha256:f04b8e4689cbce351744d5537bf6b1329c6fc68f91fa666f60a380edddcd11be
-    # via keyring
 semver==3.1.2 \
     --hash=sha256:45d107c3fa880910441dfab9d555046cba2829a25feeadfe4a1566439635c510 \
     --hash=sha256:bea193552413194252d33ff26ce0962b76669bd1c6fb17e8e203ac37f072feaf
@@ -3268,9 +3230,9 @@ tiktoken==0.14.0 \
     --hash=sha256:f5e7665f6624e052e5e7f6a36919ab69279decdc976d7b16b4fa15e1897d0513 \
     --hash=sha256:f702e0aeeb6506e57687e881c59e844ebe8f0a6a097ddafe20e3ab25f387be4e
     # via langchain-openai
-traceloop-sdk==0.63.0 \
-    --hash=sha256:3b25c62f130543a3a8c1535a85bd423b9bdd98a87028b71eef05c8cb4fc66889 \
-    --hash=sha256:c4351fb54f175d00a1e8476145e11f27adfb6590ae3dbed02e8003c6dc3d73da
+traceloop-sdk==0.63.1 \
+    --hash=sha256:775504eaad85372c8bcbda730f6982917c3541dbd1a0fbe4a05e04fce54d9393 \
+    --hash=sha256:d7eee0522fdcb6c724abd2a47c30eb47a325551d8f4b490ab817bc83e10560fd
     # via -r requirements.in
 truststore==0.10.5 \
     --hash=sha256:30d36967ccaded5cbb38d602c433f53600036c79d502f4533a49b60a03bbefcd \
@@ -3287,10 +3249,10 @@ typing-extensions==4.16.0 \
     #   fastmcp-slim
     #   grpcio
     #   langchain-core
-    #   langchain-mcp-adapters
     #   langchain-protocol
     #   langsmith
     #   mcp
+    #   mcp-types
     #   openai
     #   opentelemetry-api
     #   opentelemetry-exporter-otlp-proto-grpc
