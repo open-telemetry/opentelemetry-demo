@@ -15,6 +15,9 @@ subtext: |-
   Next.js server reads both from baggage with a `BaggageSpanProcessor`, so the
   server spans of a request carry the same session as the browser span that
   started it.
+  The collector derives a log body and a severity text for the browser events,
+  which carry an event name and attributes only, so they are readable in the
+  logs UI.
   `auto-instrumentations-web`, `context-zone`, `exporter-trace-otlp-http`,
   `instrumentation` and `opentelemetry-browser-detector` are no longer frontend
   dependencies.

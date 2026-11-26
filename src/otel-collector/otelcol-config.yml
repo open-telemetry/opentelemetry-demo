@@ -202,6 +202,20 @@ processors:
           # Upstream Issue: https://github.com/open-telemetry/opentelemetry-collector/issues/15221
           - set(attributes["otelcol_signal"], attributes["otelcol.signal"]) where attributes["otelcol.signal"] != nil and not IsMap(attributes["otelcol.signal"])
           - delete_key(attributes, "otelcol.signal") where attributes["otelcol_signal"] != nil
+  # The browser instrumentations emit events, which carry an event name and
+  # attributes but no body or severity text. Grafana renders the body as the
+  # log line and reads the level from the severity text, so both are derived
+  # here to keep browser events readable in the logs UI.
+  transform/browser_events:
+    error_mode: ignore
+    log_statements:
+      - context: log
+        statements:
+          - set(body, event_name) where event_name != "" and body == nil
+          - set(severity_text, "DEBUG") where severity_text == "" and severity_number >= 5 and severity_number < 9
+          - set(severity_text, "INFO") where severity_text == "" and severity_number >= 9 and severity_number < 13
+          - set(severity_text, "WARN") where severity_text == "" and severity_number >= 13 and severity_number < 17
+          - set(severity_text, "ERROR") where severity_text == "" and severity_number >= 17
   gen_ai_normalizer:
     sources:
       - name: openllmetry
@@ -266,7 +280,7 @@ service:
       exporters: [debug]
     logs:
       receivers: [otlp, postgresql]
-      processors: [resource_detection, memory_limiter, transform/sanitize_logs]
+      processors: [resource_detection, memory_limiter, transform/sanitize_logs, transform/browser_events]
       exporters: [debug]
     profiles:
       receivers: [otlp]
