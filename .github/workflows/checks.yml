@@ -116,6 +116,25 @@ jobs:
       - name: Check collector config layers keep earlier pipeline components
         run: python3 ./internal/tools/check_collector_pipelines.py
 
+  image-platforms:
+    name: Base image platforms
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          fetch-depth: 0  # needed to diff against the base commit
+          persist-credentials: false
+      # CI builds on amd64 runners, so builder stages pinned to
+      # --platform=${BUILDPLATFORM} never pull their arm64 variant. Check
+      # the manifests directly so a base image without arm64 cannot merge.
+      # Only Dockerfiles and .env image entries changed by this PR are checked;
+      # without a usable base commit (e.g. workflow_dispatch) everything is.
+      - name: Check images support linux/amd64 and linux/arm64
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || github.event.before }}
+        run: python3 ./internal/tools/check_image_platforms.py ${BASE_SHA:+--base "$BASE_SHA"}
+
   checklicense:
     name: Check license
     runs-on: ubuntu-latest
