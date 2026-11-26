@@ -70,7 +70,7 @@ signals it emits:
 | email            | yes    | yes     | yes   | minimal |
 | frontend         | yes    | yes     | yes   | minimal |
 | frontend-proxy   | yes    | yes     | yes   | minimal |
-| frontend-web     | yes    | yes     | no    | full    |
+| frontend-web     | yes    | yes     | yes   | full    |
 | image-provider   | yes    | yes     | no    | minimal |
 | kafka            | no     | yes     | yes   | full    |
 | payment          | yes    | yes     | yes   | minimal |

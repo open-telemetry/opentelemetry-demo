@@ -17,7 +17,7 @@ SIGNAL_MATRIX = {
     "email": {"traces": True, "metrics": True, "logs": True},
     "frontend": {"traces": True, "metrics": True, "logs": True},
     "frontend-proxy": {"traces": True, "metrics": True, "logs": True},
-    "frontend-web": {"traces": True, "metrics": True, "logs": False},
+    "frontend-web": {"traces": True, "metrics": True, "logs": True},
     "image-provider": {"traces": True, "metrics": True, "logs": False},
     "kafka": {"traces": False, "metrics": True, "logs": True},
     "payment": {"traces": True, "metrics": True, "logs": True},
@@ -39,7 +39,7 @@ SIGNAL_MATRIX = {
 # - accounting, fraud-detection, kafka: require Kafka (not in minimal compose)
 # - frontend-web: LOCUST_BROWSER_TRAFFIC_ENABLED is on in every scope, but
 #   LOCUST_BROWSER_USER_WEIGHT (1) is low relative to LOCUST_HTTP_USER_WEIGHT
-#   (9), so browser-driven traces are too infrequent to reliably land within
+#   (9), so browser-driven telemetry is too infrequent to reliably land within
 #   the test timeout
 FULL_ONLY_SERVICES = {"accounting", "fraud-detection", "frontend-web", "kafka"}
 
