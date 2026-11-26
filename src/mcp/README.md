@@ -150,7 +150,7 @@ curl -i http://localhost:8011/mcp
 
 A 4xx response with MCP-specific headers indicates the server is up; full
  interaction requires a proper MCP client (such as the `agent` service
-  with `MCP_ENABLED=True`, or `langchain_mcp_adapters`).
+  with `MCP_ENABLED=True`, or `langchain.mcp`).
 
 ## File Layout
 
