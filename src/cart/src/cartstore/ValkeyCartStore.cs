@@ -48,10 +48,6 @@ public class ValkeyCartStore : ICartStore
         });
     private readonly ConfigurationOptions _redisConnectionOptions;
 
-    private const long MemoryPressureMarginBytes = 30_000;
-    private string? _evictionPolicyBeforePressure;
-    private bool? _lastMemoryPressureFlag;
-
     public ValkeyCartStore(ILogger<ValkeyCartStore> logger, string valkeyAddress, IFeatureClient featureClient, string? valkeyPassword = null, bool valkeyTls = false)
     {
         _logger = logger;
@@ -208,7 +204,8 @@ public class ValkeyCartStore : ICartStore
 
     internal async Task ReconcileMemoryPressureAsync(CancellationToken cancellationToken)
     {
-        if (!_isRedisConnectionOpened || _redis is null)
+        var redis = _redis;
+        if (!_isRedisConnectionOpened || redis is null)
         {
             return;
         }
@@ -221,45 +218,12 @@ public class ValkeyCartStore : ICartStore
             return;
         }
 
-        var enabled = flag.Value;
-        if (!enabled && _lastMemoryPressureFlag == false)
-        {
-            return;
-        }
-
-        var server = _redis.GetServer(_redis.GetEndPoints()[0]);
-        var maxMemory = long.Parse((await server.ConfigGetAsync("maxmemory"))[0].Value);
-        var memoryInfo = await server.InfoAsync("memory");
-        var usedMemory = long.Parse(memoryInfo.SelectMany(section => section).First(kv => kv.Key == "used_memory").Value);
-        var underPressure = maxMemory > 0 && usedMemory > maxMemory;
-
-        cancellationToken.ThrowIfCancellationRequested();
-        if (enabled && !underPressure)
-        {
-            var policy = (await server.ConfigGetAsync("maxmemory-policy"))[0].Value;
-            if (policy != "noeviction")
-            {
-                _evictionPolicyBeforePressure = policy;
-                await server.ConfigSetAsync("maxmemory-policy", "noeviction");
-            }
-
-            var newMaxMemory = Math.Max(1, usedMemory - MemoryPressureMarginBytes);
-            await server.ConfigSetAsync("maxmemory", newMaxMemory);
-            Log.ValkeyMemoryPressureEnabled(_logger);
-        }
-        else if (!enabled && underPressure)
-        {
-            await server.ConfigSetAsync("maxmemory", 0);
-            if (_evictionPolicyBeforePressure is not null)
-            {
-                await server.ConfigSetAsync("maxmemory-policy", _evictionPolicyBeforePressure);
-                _evictionPolicyBeforePressure = null;
-            }
-
-            Log.ValkeyMemoryPressureDisabled(_logger);
-        }
-
-        _lastMemoryPressureFlag = enabled;
+        await ValkeyMemoryPressure.ReconcileAsync(
+            redis.GetServer(redis.GetEndPoints()[0]),
+            redis.GetDatabase(),
+            flag.Value,
+            _logger,
+            cancellationToken);
     }
 
     public async Task EmptyCartAsync(string userId)

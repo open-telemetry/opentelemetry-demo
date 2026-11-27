@@ -41,7 +41,7 @@ internal static partial class Log
     [LoggerMessage(Level = LogLevel.Error, EventName = "cart.valkey.write_oom", Message = "Valkey rejected the cart write: OOM command not allowed when used memory > 'maxmemory'")]
     public static partial void ValkeyWriteOutOfMemory(ILogger logger);
 
-    [LoggerMessage(Level = LogLevel.Information, EventName = "cart.valkey.memory_pressure_disabled", Message = "valkeyMemoryPressure disabled: removed Valkey maxmemory limit")]
+    [LoggerMessage(Level = LogLevel.Information, EventName = "cart.valkey.memory_pressure_disabled", Message = "valkeyMemoryPressure disabled: restored Valkey memory settings")]
     public static partial void ValkeyMemoryPressureDisabled(ILogger logger);
 
     [LoggerMessage(Level = LogLevel.Error, EventName = "cart.valkey.memory_pressure_failed", Message = "Failed to apply valkeyMemoryPressure to Valkey")]

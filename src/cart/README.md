@@ -34,7 +34,8 @@ just below its current memory usage, with the `noeviction` policy. The cart
 service checks the flag every 5 seconds and keeps `maxmemory` below used memory
 while the flag is on, so cart writes fail with
 `OOM command not allowed when used memory > 'maxmemory'`. Turning the flag off
-resets `maxmemory` to `0` (no limit).
+restores the previous memory limit and eviction policy. Cart saves these
+settings in Valkey so it can restore them after a cart restart.
 
 In the Valkey dashboard, the **Memory** panel shows `maxmemory` dropping below
 used memory. The **Cart impact and logs** row shows AddItem errors rising, the
