@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #pragma once
-#include "opentelemetry/exporters/otlp/otlp_grpc_exporter_factory.h"
+#include "opentelemetry/exporters/otlp/otlp_http_exporter_factory.h"
 #include "opentelemetry/context/propagation/global_propagator.h"
 #include "opentelemetry/context/propagation/text_map_propagator.h"
 #include "opentelemetry/exporters/ostream/span_exporter_factory.h"
@@ -72,7 +72,7 @@ public:
 
 std::shared_ptr<opentelemetry::sdk::trace::TracerProvider> initTracer()
 {
-  auto exporter = opentelemetry::exporter::otlp::OtlpGrpcExporterFactory::Create();
+  auto exporter = opentelemetry::exporter::otlp::OtlpHttpExporterFactory::Create();
   auto processor =
       opentelemetry::sdk::trace::BatchSpanProcessorFactory::Create(std::move(exporter), {});
   std::vector<std::unique_ptr<opentelemetry::sdk::trace::SpanProcessor>> processors;

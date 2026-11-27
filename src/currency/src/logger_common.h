@@ -1,13 +1,12 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-#include "opentelemetry/exporters/otlp/otlp_grpc_exporter_factory.h"
 #include "opentelemetry/logs/provider.h"
 #include "opentelemetry/sdk/logs/logger.h"
 #include "opentelemetry/sdk/logs/logger_provider_factory.h"
 #include "opentelemetry/sdk/logs/batch_log_record_processor_factory.h"
 #include "opentelemetry/sdk/logs/logger_context_factory.h"
-#include "opentelemetry/exporters/otlp/otlp_grpc_log_record_exporter_factory.h"
+#include "opentelemetry/exporters/otlp/otlp_http_log_record_exporter_factory.h"
 
 using namespace std;
 namespace nostd     = opentelemetry::nostd;
@@ -18,8 +17,8 @@ namespace logs_sdk  = opentelemetry::sdk::logs;
 namespace
 {
   std::shared_ptr<logs_sdk::LoggerProvider> initLogger() {
-    otlp::OtlpGrpcLogRecordExporterOptions loggerOptions;
-    auto exporter  = otlp::OtlpGrpcLogRecordExporterFactory::Create(loggerOptions);
+    otlp::OtlpHttpLogRecordExporterOptions loggerOptions;
+    auto exporter  = otlp::OtlpHttpLogRecordExporterFactory::Create(loggerOptions);
     auto processor = logs_sdk::BatchLogRecordProcessorFactory::Create(std::move(exporter), {});
     std::vector<std::unique_ptr<logs_sdk::LogRecordProcessor>> processors;
     processors.push_back(std::move(processor));

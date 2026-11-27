@@ -13,12 +13,17 @@ set(GENERATED_PROTOBUF_PATH "${CMAKE_BINARY_DIR}/generated/proto")
 
 add_subdirectory(genproto)
 
-include_directories("${GENERATED_PROTOBUF_PATH}" "${OPENTELEMETRY_CPP_INCLUDE_DIRS}")
+include_directories("${GENERATED_PROTOBUF_PATH}")
 
 add_executable(currency src/server.cpp)
 add_dependencies(currency demo-proto)
 target_link_libraries(
-    currency demo-proto protobuf::libprotobuf
-     ${OPENTELEMETRY_CPP_LIBRARIES} gRPC::grpc++ Threads::Threads)
+    currency demo-proto protobuf::libprotobuf gRPC::grpc++ Threads::Threads
+    opentelemetry-cpp::trace
+    opentelemetry-cpp::metrics
+    opentelemetry-cpp::logs
+    opentelemetry-cpp::otlp_http_exporter
+    opentelemetry-cpp::otlp_http_metric_exporter
+    opentelemetry-cpp::otlp_http_log_record_exporter)
 
 install(TARGETS currency DESTINATION bin)
