@@ -26,7 +26,7 @@ internal class DBContext : DbContext
 }
 
 
-internal class Consumer : BackgroundService
+public class Consumer : BackgroundService
 {
     private static readonly string TopicName = Environment.GetEnvironmentVariable("KAFKA_TOPIC") ?? "orders";
 
@@ -139,7 +139,7 @@ internal class Consumer : BackgroundService
         }
     }
 
-    private static IConsumer<string, byte[]> BuildConsumer(string servers)
+    public static IConsumer<string, byte[]> BuildConsumer(string servers)
     {
         var conf = new ConsumerConfig
         {
@@ -149,6 +149,52 @@ internal class Consumer : BackgroundService
             AutoOffsetReset = AutoOffsetReset.Earliest,
             EnableAutoCommit = true
         };
+
+        // Optional TLS/SASL settings for Kafka clusters that require them. Without them the connection stays plaintext.
+        var securityProtocol = Environment.GetEnvironmentVariable("KAFKA_SECURITY_PROTOCOL");
+        if (!string.IsNullOrEmpty(securityProtocol))
+        {
+            // Validate security protocol
+            var upperProtocol = securityProtocol.ToUpperInvariant();
+            if (upperProtocol != "PLAINTEXT" && upperProtocol != "SSL" && upperProtocol != "SASL_PLAINTEXT" && upperProtocol != "SASL_SSL")
+            {
+                throw new InvalidOperationException(
+                    $"Unsupported KAFKA_SECURITY_PROTOCOL: {securityProtocol}. " +
+                    "Supported values: PLAINTEXT, SSL, SASL_PLAINTEXT, SASL_SSL"
+                );
+            }
+
+            conf.Set("security.protocol", securityProtocol.ToUpperInvariant());
+
+            if (securityProtocol.StartsWith("SASL_", StringComparison.OrdinalIgnoreCase))
+            {
+                var mechanism = Environment.GetEnvironmentVariable("KAFKA_SASL_MECHANISM") is { Length: > 0 } m ? m : "PLAIN";
+
+                // Validate SASL mechanism
+                var upperMechanism = mechanism.ToUpperInvariant();
+                if (upperMechanism != "PLAIN" && upperMechanism != "SCRAM-SHA-256" && upperMechanism != "SCRAM-SHA-512")
+                {
+                    throw new InvalidOperationException(
+                        $"Unsupported KAFKA_SASL_MECHANISM: {mechanism}. " +
+                        "Supported values: PLAIN, SCRAM-SHA-256, SCRAM-SHA-512"
+                    );
+                }
+
+                conf.Set("sasl.mechanism", mechanism.ToUpperInvariant());
+                conf.SaslUsername = Environment.GetEnvironmentVariable("KAFKA_SASL_USERNAME");
+                conf.SaslPassword = Environment.GetEnvironmentVariable("KAFKA_SASL_PASSWORD");
+
+                // Ensure credentials are provided when SASL is enabled
+                if (string.IsNullOrEmpty(conf.SaslUsername))
+                {
+                    throw new InvalidOperationException("KAFKA_SASL_USERNAME is required when SASL is enabled");
+                }
+                if (string.IsNullOrEmpty(conf.SaslPassword))
+                {
+                    throw new InvalidOperationException("KAFKA_SASL_PASSWORD is required when SASL is enabled");
+                }
+            }
+        }
 
         return new ConsumerBuilder<string, byte[]>(conf)
             .Build();
