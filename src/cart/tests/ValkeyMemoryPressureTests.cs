@@ -102,6 +102,34 @@ public class ValkeyMemoryPressureTests
         Assert.Equal(0, valkey.ConfigurationWrites);
     }
 
+    [Fact]
+    public async Task On_BasesTheCapOnMemoryCountedForEviction()
+    {
+        var valkey = new StubValkey
+        {
+            UsedMemory = 125_000,
+            MemoryExcludedFromEviction = 55_000,
+        };
+
+        await valkey.ReconcileAsync(enabled: true);
+
+        Assert.Equal(40_000, valkey.MaxMemory);
+    }
+
+    [Fact]
+    public async Task On_ReappliesTheCapAfterCountedMemoryDrops()
+    {
+        var valkey = new StubValkey { UsedMemory = 170_000 };
+        await valkey.ReconcileAsync(enabled: true);
+        Assert.Equal(140_000, valkey.MaxMemory);
+
+        valkey.UsedMemory = 210_000;
+        valkey.MemoryExcludedFromEviction = 90_000;
+        await valkey.ReconcileAsync(enabled: true);
+
+        Assert.Equal(90_000, valkey.MaxMemory);
+    }
+
     private sealed class StubValkey
     {
         private readonly IServer _server;
@@ -116,6 +144,7 @@ public class ValkeyMemoryPressureTests
 
         public long MaxMemory { get; set; }
         public long UsedMemory { get; set; } = 100_000;
+        public long? MemoryExcludedFromEviction { get; set; }
         public string EvictionPolicy { get; set; } = "noeviction";
         public string RunId { get; set; } = "initial";
         public bool FailNextPolicyWrite { get; set; }
@@ -131,9 +160,8 @@ public class ValkeyMemoryPressureTests
             var parameter = ((RedisValue)args[0]!).ToString();
             return method.Name switch
             {
-                nameof(IServer.InfoAsync) when parameter == "server" => Info(parameter, "run_id", RunId),
-                nameof(IServer.InfoAsync) when parameter == "memory" => Info(
-                    parameter, "used_memory", UsedMemory.ToString(CultureInfo.InvariantCulture)),
+                nameof(IServer.InfoAsync) when parameter == "server" => Info(parameter, KeyValuePair.Create("run_id", RunId)),
+                nameof(IServer.InfoAsync) when parameter == "memory" => MemoryInfo(),
                 nameof(IServer.ConfigGetAsync) when parameter == "maxmemory" => Task.FromResult(
                     new[] { KeyValuePair.Create(parameter, MaxMemory.ToString(CultureInfo.InvariantCulture)) }),
                 nameof(IServer.ConfigGetAsync) when parameter == "maxmemory-policy" => Task.FromResult(
@@ -144,8 +172,17 @@ public class ValkeyMemoryPressureTests
         }
 
         private static Task<IGrouping<string, KeyValuePair<string, string>>[]> Info(
-            string section, string key, string value) =>
-            Task.FromResult(new[] { KeyValuePair.Create(key, value) }.GroupBy(_ => section).ToArray());
+            string section, params KeyValuePair<string, string>[] values) =>
+            Task.FromResult(values.GroupBy(_ => section).ToArray());
+
+        private Task<IGrouping<string, KeyValuePair<string, string>>[]> MemoryInfo()
+        {
+            var usedMemory = KeyValuePair.Create("used_memory", UsedMemory.ToString(CultureInfo.InvariantCulture));
+            return MemoryExcludedFromEviction is long excludedMemory
+                ? Info("memory", usedMemory, KeyValuePair.Create(
+                    "mem_not_counted_for_evict", excludedMemory.ToString(CultureInfo.InvariantCulture)))
+                : Info("memory", usedMemory);
+        }
 
         private Task SetConfigAsync(string parameter, RedisValue value)
         {

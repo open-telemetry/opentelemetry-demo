@@ -53,11 +53,15 @@ internal static class ValkeyMemoryPressure
         }
 
         var maxMemory = long.Parse((await server.ConfigGetAsync("maxmemory"))[0].Value, CultureInfo.InvariantCulture);
-        var memoryInfo = await server.InfoAsync("memory");
+        var memoryInfo = (await server.InfoAsync("memory")).SelectMany(section => section);
         var usedMemory = long.Parse(
-            memoryInfo.SelectMany(section => section).First(kv => kv.Key == "used_memory").Value,
+            memoryInfo.First(kv => kv.Key == "used_memory").Value,
             CultureInfo.InvariantCulture);
-        if (maxMemory > 0 && usedMemory > maxMemory)
+        var excludedMemory = long.Parse(
+            memoryInfo.FirstOrDefault(kv => kv.Key == "mem_not_counted_for_evict").Value ?? "0",
+            CultureInfo.InvariantCulture);
+        var countedMemory = Math.Max(0, usedMemory - excludedMemory);
+        if (maxMemory > 0 && countedMemory > maxMemory)
         {
             return;
         }
@@ -86,7 +90,7 @@ internal static class ValkeyMemoryPressure
             await setPolicy;
         }
 
-        var newMaxMemory = Math.Max(1, usedMemory - MemoryPressureMarginBytes);
+        var newMaxMemory = Math.Max(1, countedMemory - MemoryPressureMarginBytes);
         await server.ConfigSetAsync("maxmemory", newMaxMemory);
         Log.ValkeyMemoryPressureEnabled(logger);
     }
