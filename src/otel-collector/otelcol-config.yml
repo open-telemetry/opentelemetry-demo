@@ -8,6 +8,11 @@
 #   otelcol-config-observability.yml  adds observability exporters and OpAMP status reporting
 #   otelcol-config-extras.yml      extras/customizations (empty stub)
 
+extensions:
+  file_storage/valkey:
+    directory: /var/lib/otelcol/file_storage
+    create_directory: true
+
 receivers:
   otlp:
     protocols:
@@ -68,6 +73,7 @@ receivers:
     include:
       - /var/log/valkey/valkey.log
     start_at: beginning
+    storage: file_storage/valkey
     resource:
       service.name: valkey-cart
     operators:
@@ -318,6 +324,7 @@ connectors:
   span_metrics:
 
 service:
+  extensions: [file_storage/valkey]
   pipelines:
     traces:
       receivers: [otlp]

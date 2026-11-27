@@ -869,6 +869,7 @@ services:
       - ${OTEL_COLLECTOR_CONFIG}:/etc/otelcol-config.yml
       - ${OTEL_COLLECTOR_CONFIG_EXTRAS}:/etc/otelcol-config-extras.yml
       - valkey-data:/var/log/valkey:ro
+      - otel-collector-data:/var/lib/otelcol
     ports:
       - "${OTEL_COLLECTOR_PORT_GRPC}"
       - "${OTEL_COLLECTOR_PORT_HTTP}"
@@ -889,3 +890,4 @@ services:
 
 volumes:
   valkey-data:
+  otel-collector-data:
