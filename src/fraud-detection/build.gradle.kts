@@ -106,6 +106,14 @@ protobuf {
     }
 }
 
+sourceSets {
+    main {
+        proto {
+            srcDir("../../pb")
+        }
+    }
+}
+
 application {
     mainClass.set("frauddetection.MainKt")
 }
