@@ -823,7 +823,7 @@ services:
     image: ${VALKEY_IMAGE}
     container_name: valkey-cart
     user: valkey
-    command: ["valkey-server", "--logfile", "/data/valkey.log"]
+    command: ["sh", "-c", ": > /data/valkey.log && exec valkey-server --logfile /data/valkey.log"]
     deploy:
       resources:
         limits:

@@ -43,4 +43,4 @@ used memory. The **Cart impact and logs** row shows AddItem errors rising, the
 warning Valkey logs when `maxmemory` is set below current usage (collected by the
 `file_log/valkey` receiver), and the OOM errors cart receives. Because Valkey
 writes its server log to `/data/valkey.log`, `docker compose logs valkey-cart`
-shows no output.
+shows no output. The log file is emptied each time the Valkey container starts.
