@@ -8,6 +8,9 @@ WORKDIR /app
 COPY ./src/frontend/package.json package.json
 COPY ./src/frontend/package-lock.json package-lock.json
 
+# The Cypress binary is only needed for e2e tests, which run from Dockerfile.cypress
+ENV CYPRESS_INSTALL_BINARY=0
+
 RUN npm ci
 
 COPY ./src/frontend/components/ components/
@@ -45,7 +48,7 @@ RUN npm ci --omit=dev
 
 # -----------------------------------------------------------------------------
 
-FROM gcr.io/distroless/nodejs24-debian13:nonroot@sha256:39b0407357c9fadf1a9708d22088f02de21f0e1e8a688474eea2d8701e7d5693
+FROM gcr.io/distroless/nodejs26-debian13:nonroot@sha256:ffa8a7545403036c94ec76674b5dbac2d425af2d679147cdf3e30180071487b7
 
 WORKDIR /app
 
