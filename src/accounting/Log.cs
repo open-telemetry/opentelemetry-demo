@@ -43,5 +43,17 @@ namespace Accounting
             EventName = "accounting.order.parsing_failed",
             Message = "Order parsing failed:")]
         public static partial void OrderParsingFailed(ILogger logger, Exception exception);
+
+        [LoggerMessage(
+            Level = LogLevel.Error,
+            EventName = "accounting.order.save_failed",
+            Message = "Failed to save order {orderId}, it will be retried:")]
+        public static partial void OrderSaveFailed(ILogger logger, Exception exception, string orderId);
+
+        [LoggerMessage(
+            Level = LogLevel.Error,
+            EventName = "accounting.kafka.commit_failed",
+            Message = "Commit error: {reason}")]
+        public static partial void CommitError(ILogger logger, Exception exception, string reason);
     }
 }
