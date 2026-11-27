@@ -49,7 +49,6 @@ public class ValkeyCartStore : ICartStore
     private readonly ConfigurationOptions _redisConnectionOptions;
 
     private const long MemoryPressureMarginBytes = 30_000;
-    private static readonly TimeSpan MemoryPressureInterval = TimeSpan.FromSeconds(5);
     private string? _evictionPolicyBeforePressure;
     private bool? _lastMemoryPressureFlag;
 
@@ -86,7 +85,6 @@ public class ValkeyCartStore : ICartStore
     public void Initialize()
     {
         EnsureRedisConnected();
-        _ = Task.Run(ReconcileMemoryPressureLoopAsync);
     }
 
     [MemberNotNull(nameof(_redis))]
@@ -208,30 +206,16 @@ public class ValkeyCartStore : ICartStore
     private static bool IsOutOfMemory(Exception ex) =>
         ex is RedisServerException && ex.Message.StartsWith("OOM", StringComparison.Ordinal);
 
-    private async Task ReconcileMemoryPressureLoopAsync()
-    {
-        using var timer = new PeriodicTimer(MemoryPressureInterval);
-        do
-        {
-            try
-            {
-                await ReconcileMemoryPressureAsync();
-            }
-            catch (Exception ex)
-            {
-                Log.ValkeyMemoryPressureFailed(_logger, ex);
-            }
-        } while (await timer.WaitForNextTickAsync());
-    }
-
-    private async Task ReconcileMemoryPressureAsync()
+    internal async Task ReconcileMemoryPressureAsync(CancellationToken cancellationToken)
     {
         if (!_isRedisConnectionOpened || _redis is null)
         {
             return;
         }
 
-        var flag = await _featureClient.GetBooleanDetailsAsync("valkeyMemoryPressure", false);
+        var flag = await _featureClient
+            .GetBooleanDetailsAsync("valkeyMemoryPressure", false, cancellationToken: cancellationToken)
+            .WaitAsync(cancellationToken);
         if (flag.ErrorType != ErrorType.None)
         {
             return;
@@ -249,6 +233,7 @@ public class ValkeyCartStore : ICartStore
         var usedMemory = long.Parse(memoryInfo.SelectMany(section => section).First(kv => kv.Key == "used_memory").Value);
         var underPressure = maxMemory > 0 && usedMemory > maxMemory;
 
+        cancellationToken.ThrowIfCancellationRequested();
         if (enabled && !underPressure)
         {
             var policy = (await server.ConfigGetAsync("maxmemory-policy"))[0].Value;
