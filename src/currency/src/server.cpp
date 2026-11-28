@@ -171,7 +171,9 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
     span->AddEvent("Currencies fetched, response sent back");
     span->SetStatus(StatusCode::kOk);
 
-    logger->Info(eventName("currency.get_supported_currencies"), "GetSupportedCurrencies successful");
+    logger->Info(eventName("currency.get_supported_currencies"), std::chrono::system_clock::now(),
+                 std::to_string(response->currency_codes_size()) +
+                     " supported currencies retrieved successfully");
 
     // Make sure to end your spans!
     span->End();
@@ -246,11 +248,11 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
       span->AddEvent("Conversion successful, response sent back");
       span->SetStatus(StatusCode::kOk);
 
-      logger->Info(eventName("currency.conversion"),
-                   "conversion successful",
+      logger->Info(eventName("currency.conversion"), std::chrono::system_clock::now(),
+                   "Conversion from " + from_code + " to " + to_code + " successful",
                    opentelemetry::common::MakeAttributes(
-                       {{"currency.from", from_code.c_str()},
-                        {"currency.to", to_code.c_str()}}));
+                       {{"demo.exchange.from", from_code.c_str()},
+                        {"demo.exchange.to", to_code.c_str()}}));
       
       // End the span
       span->End();
@@ -260,7 +262,13 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
       span->AddEvent("Conversion failed");
       span->SetStatus(StatusCode::kError);
 
-      logger->Error(eventName("currency.conversion_failed"), "conversion failure");
+      const string from_code = request->from().currency_code();
+      const string to_code = request->to_code();
+      logger->Error(eventName("currency.conversion_failed"), std::chrono::system_clock::now(),
+                    "Conversion from " + from_code + " to " + to_code + " failed",
+                    opentelemetry::common::MakeAttributes(
+                        {{"demo.exchange.from", from_code.c_str()},
+                         {"demo.exchange.to", to_code.c_str()}}));
 
       span->End();
       return Status::CANCELLED;
@@ -284,7 +292,7 @@ ServerShutdownResult RunServer(uint16_t port, const sigset_t& shutdown_signals)
 
   if (ipv6_enabled != nullptr && std::string(ipv6_enabled) == "true") {
     ip = "[::]";
-    logger->Info(eventName("currency.server.ip_overwrite"),
+    logger->Info(eventName("currency.server.ip_overwrite"), std::chrono::system_clock::now(),
                  "Overwriting Localhost IP",
                  opentelemetry::common::MakeAttributes({{"server.address", ip.c_str()}}));
   }
@@ -305,7 +313,7 @@ ServerShutdownResult RunServer(uint16_t port, const sigset_t& shutdown_signals)
     return makeServerShutdownResult(false);
   }
 
-  logger->Info(eventName("currency.server.started"),
+  logger->Info(eventName("currency.server.started"), std::chrono::system_clock::now(),
                "Currency Server started",
                opentelemetry::common::MakeAttributes({{"server.address", address.c_str()}}));
 
@@ -318,7 +326,7 @@ ServerShutdownResult RunServer(uint16_t port, const sigset_t& shutdown_signals)
     const std::string shutdown_message =
         std::string("Received ") + signal_name + ", shutting down Currency Server";
     std::cout << shutdown_message << "\n";
-    logger->Info(eventName("currency.server.stopping"), shutdown_message);
+    logger->Info(eventName("currency.server.stopping"), std::chrono::system_clock::now(), shutdown_message);
   }
 
   const auto result = makeServerShutdownResult(signal_error == 0);

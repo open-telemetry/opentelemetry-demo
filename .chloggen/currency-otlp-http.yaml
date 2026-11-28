@@ -1,0 +1,23 @@
+# Use this changelog template to create an entry for release notes.
+
+# One of 'breaking', 'deprecation', 'new_component', 'enhancement', 'bug_fix'
+change_type: breaking
+
+# The name of the component, or a single word describing the area of concern, (e.g. frontend, checkout, collector, load-generator)
+component: currency
+
+# A brief description of the change. Surround your text with quotes ("") if it needs to start with a backtick (`).
+note: Export telemetry over OTLP/HTTP instead of OTLP/gRPC, slim the image, and fix log record timestamps
+
+# One or more tracking issues or pull requests related to the change. You can use the PR number here if no issue exists.
+issues: [4399]
+
+# (Optional) One or more lines of additional information to render under the primary note.
+# These lines will be padded with 2 spaces and then inserted directly into the document.
+# Use a strip-chomping block scalar (|-) for multiline entries so no trailing
+# whitespace is emitted into CHANGELOG.md.
+subtext: |-
+  `OTEL_EXPORTER_OTLP_ENDPOINT` for currency now points at the collector's HTTP
+  port (4318). Conversion logs use `demo.exchange.from` and `demo.exchange.to`
+  instead of `currency.from` and `currency.to`, and every log record now carries
+  a timestamp instead of `1970-01-01`. The image shrinks from 127 MB to 67.6 MB.

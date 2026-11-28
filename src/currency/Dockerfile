@@ -16,12 +16,10 @@
 
 FROM docker.io/library/alpine:3.24.4@sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf AS base
 
-RUN apk update && \
-    apk add grpc-dev protobuf-dev
-
 FROM base AS builder
 
-RUN apk add git cmake make g++ linux-headers
+RUN apk add --no-cache git cmake make g++ linux-headers \
+    grpc-dev protobuf-dev curl-dev nlohmann-json
 
 ARG OPENTELEMETRY_CPP_VERSION
 
@@ -31,8 +29,8 @@ RUN git clone --depth 1 --branch v${OPENTELEMETRY_CPP_VERSION} https://github.co
     && cd build \
     && cmake .. -DCMAKE_CXX_STANDARD=17 -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
           -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF \
-          -DWITH_BENCHMARK=OFF -DWITH_FUNC_TESTS=OFF \
-          -DWITH_EXAMPLES=OFF -DWITH_OTLP_GRPC=ON \
+          -DOTELCPP_WITH_BENCHMARK=OFF -DOTELCPP_WITH_FUNC_TESTS=OFF \
+          -DOTELCPP_WITH_EXAMPLES=OFF -DOTELCPP_WITH_OTLP_HTTP=ON \
     && make -j$(nproc || sysctl -n hw.ncpu || echo 1) install && cd ../..
 
 WORKDIR /currency
@@ -52,7 +50,10 @@ RUN mkdir -p build && cd build \
 
 FROM base AS release
 
-COPY --from=builder /usr/local /usr/local
+RUN apk add --no-cache grpc-cpp libprotobuf libcurl
+
+COPY --from=builder /usr/local/lib/libopentelemetry_proto.so /usr/local/lib/
+COPY --from=builder /usr/local/bin/currency /usr/local/bin/currency
 
 ARG CURRENCY_PORT=7001
 EXPOSE ${CURRENCY_PORT}
