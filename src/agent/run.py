@@ -14,6 +14,7 @@ from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
 from opentelemetry.instrumentation.openai import OpenAIInstrumentor
 from src.agents.agents import Agent
 from src.agents.feature_flags import init_feature_flags
+from src.agents.patch_vcr import use_instrumented_httpx_transports
 from traceloop.sdk import Traceloop
 
 logging.basicConfig(level=logging.INFO)
@@ -27,6 +28,7 @@ Traceloop.init(
 init_feature_flags()
 
 HTTPXClientInstrumentor().instrument()
+use_instrumented_httpx_transports()
 
 if not OpenAIInstrumentor().is_instrumented_by_opentelemetry:
     OpenAIInstrumentor().instrument()

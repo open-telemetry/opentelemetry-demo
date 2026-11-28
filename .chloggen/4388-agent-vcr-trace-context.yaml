@@ -1,0 +1,9 @@
+change_type: bug_fix
+
+component: agent
+
+note: Keep trace context on the agent's HTTP requests, including its tool calls to the frontend, while a VCR cassette is in use.
+
+issues: [4388]
+
+subtext:
