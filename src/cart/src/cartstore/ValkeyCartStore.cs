@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using OpenFeature;
+using OpenFeature.Constant;
 using System.Threading.Tasks;
 using Grpc.Core;
 using StackExchange.Redis;
@@ -114,10 +115,17 @@ public class ValkeyCartStore : ICartStore
             var cache = _redis.GetDatabase();
 
             Log.RedisSmallTest(_logger);
-            cache.StringSet("cart", "OK" );
-            string? res = cache.StringGet("cart");
+            try
+            {
+                cache.StringSet("cart", "OK" );
+                string? res = cache.StringGet("cart");
 
-            Log.RedisSmallTestResult(_logger, res);
+                Log.RedisSmallTestResult(_logger, res);
+            }
+            catch (Exception ex) when (IsOutOfMemory(ex))
+            {
+                Log.RedisSmallTestOutOfMemory(_logger);
+            }
 
             _redis.InternalError += (_, e) => { Log.RedisInternalError(_logger, e.Exception); };
             _redis.ConnectionRestored += (_, _) =>
@@ -178,12 +186,44 @@ public class ValkeyCartStore : ICartStore
         }
         catch (Exception ex)
         {
+            if (IsOutOfMemory(ex))
+            {
+                Log.ValkeyWriteOutOfMemory(_logger);
+            }
+
             throw new RpcException(new Status(StatusCode.FailedPrecondition, $"Can't access cart storage. {ex}"));
         }
         finally
         {
             addItemHistogram.Record(stopwatch.Elapsed.TotalSeconds);
         }
+    }
+
+    private static bool IsOutOfMemory(Exception ex) =>
+        ex is RedisServerException && ex.Message.StartsWith("OOM", StringComparison.Ordinal);
+
+    internal async Task ReconcileMemoryPressureAsync(CancellationToken cancellationToken)
+    {
+        var redis = _redis;
+        if (!_isRedisConnectionOpened || redis is null)
+        {
+            return;
+        }
+
+        var flag = await _featureClient
+            .GetBooleanDetailsAsync("valkeyMemoryPressure", false, cancellationToken: cancellationToken)
+            .WaitAsync(cancellationToken);
+        if (flag.ErrorType != ErrorType.None)
+        {
+            return;
+        }
+
+        await ValkeyMemoryPressure.ReconcileAsync(
+            redis.GetServer(redis.GetEndPoints()[0]),
+            redis.GetDatabase(),
+            flag.Value,
+            _logger,
+            cancellationToken);
     }
 
     public async Task EmptyCartAsync(string userId)
@@ -200,6 +240,11 @@ public class ValkeyCartStore : ICartStore
         }
         catch (Exception ex)
         {
+            if (IsOutOfMemory(ex))
+            {
+                Log.ValkeyWriteOutOfMemory(_logger);
+            }
+
             throw new RpcException(new Status(StatusCode.FailedPrecondition, $"Can't access cart storage. {ex}"));
         }
     }

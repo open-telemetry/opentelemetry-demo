@@ -217,6 +217,15 @@
         "on": true
       }
     },
+    "valkeyMemoryPressure": {
+      "defaultVariant": "off",
+      "description": "Sets the cart service's Valkey maxmemory just below its current usage with the noeviction policy, so cart writes fail with OOM errors.",
+      "state": "ENABLED",
+      "variants": {
+        "off": false,
+        "on": true
+      }
+    },
     "webInteractionSlowdown": {
       "defaultVariant": "off",
       "description": "make a third-party analytics tag serialize, sort and fingerprint a large event queue on every click, blocking the main thread and degrading Interaction to Next Paint",

@@ -8,6 +8,11 @@
 #   otelcol-config-observability.yml  adds observability exporters and OpAMP status reporting
 #   otelcol-config-extras.yml      extras/customizations (empty stub)
 
+extensions:
+  file_storage/valkey:
+    directory: /var/lib/otelcol/file_storage
+    create_directory: true
+
 receivers:
   otlp:
     protocols:
@@ -64,6 +69,42 @@ receivers:
         enabled: true
       redis.cmd.latency:
         enabled: true
+  file_log/valkey:
+    include:
+      - /var/log/valkey/valkey.log
+    start_at: beginning
+    storage: file_storage/valkey
+    resource:
+      service.name: valkey-cart
+    operators:
+      # Matches Valkey log lines such as
+      # "1:M 25 Nov 2026 17:42:22.123 # WARNING: ..." and captures the timestamp,
+      # the level marker (. debug, - verbose, * notice, # warning) and the message.
+      - type: regex_parser
+        regex: '^\d+:[A-Z] (?P<timestamp>\d{2} \w{3} \d{4} \d{2}:\d{2}:\d{2}\.\d{3}) (?P<level>[.*#-]) (?P<message>.*)$'
+        timestamp:
+          parse_from: attributes.timestamp
+          layout: '%d %b %Y %H:%M:%S.%L'
+          location: UTC
+        severity:
+          parse_from: attributes.level
+          overwrite_text: true
+          mapping:
+            debug: ["."]
+            debug2: ["-"]
+            info: ["*"]
+            warn: ["#"]
+        on_error: send_quiet
+      - type: move
+        from: attributes.message
+        to: body
+        on_error: send_quiet
+      - type: remove
+        field: attributes.timestamp
+        on_error: send_quiet
+      - type: remove
+        field: attributes.level
+        on_error: send_quiet
   postgresql:
     endpoint: ${POSTGRES_HOST}:${POSTGRES_PORT}
     username: monitoring_user
@@ -283,6 +324,7 @@ connectors:
   span_metrics:
 
 service:
+  extensions: [file_storage/valkey]
   pipelines:
     traces:
       receivers: [otlp]
@@ -293,7 +335,7 @@ service:
       processors: [resource_detection, memory_limiter]
       exporters: [debug]
     logs:
-      receivers: [otlp, postgresql]
+      receivers: [file_log/valkey, otlp, postgresql]
       processors: [resource_detection, memory_limiter, transform/sanitize_logs, transform/browser_events]
       exporters: [debug]
     profiles:

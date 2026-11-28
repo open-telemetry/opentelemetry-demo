@@ -35,12 +35,13 @@ builder.Logging
     .AddOpenTelemetry(options => options.AddOtlpExporter())
     .AddConsole();
 
-builder.Services.AddSingleton<ICartStore>(x =>
+builder.Services.AddSingleton<ValkeyCartStore>(x =>
 {
     var store = new ValkeyCartStore(x.GetRequiredService<ILogger<ValkeyCartStore>>(), valkeyAddress, x.GetRequiredService<IFeatureClient>(), valkeyPassword, valkeyTls);
     store.Initialize();
     return store;
 });
+builder.Services.AddSingleton<ICartStore>(x => x.GetRequiredService<ValkeyCartStore>());
 
 builder.Services.AddOpenFeature(openFeatureBuilder =>
 {
@@ -49,6 +50,7 @@ builder.Services.AddOpenFeature(openFeatureBuilder =>
         .AddHook<MetricsHook>()
         .AddHook<TraceEnricherHook>();
 });
+builder.Services.AddHostedService<ValkeyMemoryPressureService>();
 
 builder.Services.AddSingleton(x =>
     new CartService(
@@ -116,8 +118,8 @@ if (!string.IsNullOrEmpty(opampEndpoint))
     }
 }
 
-var ValkeyCartStore = (ValkeyCartStore)app.Services.GetRequiredService<ICartStore>();
-app.Services.GetRequiredService<StackExchangeRedisInstrumentation>().AddConnection(ValkeyCartStore.GetConnection());
+var valkeyCartStore = app.Services.GetRequiredService<ValkeyCartStore>();
+app.Services.GetRequiredService<StackExchangeRedisInstrumentation>().AddConnection(valkeyCartStore.GetConnection());
 
 app.MapGrpcService<CartService>();
 app.MapGrpcService<HealthServiceImpl>();

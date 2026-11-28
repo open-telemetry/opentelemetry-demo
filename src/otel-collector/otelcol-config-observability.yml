@@ -62,7 +62,7 @@ extensions:
         demo.collector.role: gateway
 
 service:
-  extensions: [opamp]
+  extensions: [file_storage/valkey, opamp]
   pipelines:
     traces:
       exporters: [debug, otlp_grpc/jaeger, span_metrics]
