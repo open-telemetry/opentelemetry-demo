@@ -1,0 +1,4 @@
+change_type: enhancement
+component: cart
+note: Configure cart in compose.yaml to export OTLP telemetry over http/protobuf (port 4318) using OTEL_EXPORTER_OTLP_ENDPOINT and OTEL_EXPORTER_OTLP_PROTOCOL.
+issues: [4286]
